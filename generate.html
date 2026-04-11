@@ -175,10 +175,7 @@ async function generate() {
     let length = parseInt(document.getElementById("length").value);
 
     // защита от убийства браузера
-    if (count > 500000) {
-        alert("Слишком много. Максимум ~500k для браузера.");
-        return;
-    }
+    
 
     btn.disabled = true;
     status.innerText = "Генерация...";
