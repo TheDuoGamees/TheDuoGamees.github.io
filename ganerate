@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>String Generator</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #2f2f45;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+    width: 300px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 80%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+}
+
+button {
+    background: #4CAF50;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ccc;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2>Генератор строк</h2>
+
+    <label>Количество:</label><br>
+    <input type="number" id="count" value="10000"><br>
+
+    <label>Длина:</label><br>
+    <input type="number" id="length" value="12"><br>
+
+    <button onclick="generate()">Сгенерировать</button>
+
+    <p id="status"></p>
+</div>
+
+<script>
+function generateRandomString(length) {
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const digits = "0123456789_";
+    const base = lowercase + digits;
+    const all = lowercase + uppercase + digits;
+
+    let result = [];
+
+    if (Math.random() < 0.4) {
+        for (let i = 0; i < length; i++) {
+            result.push(base[Math.floor(Math.random() * base.length)]);
+        }
+        let pos = Math.floor(Math.random() * length);
+        result[pos] = uppercase[Math.floor(Math.random() * uppercase.length)];
+    } else {
+        for (let i = 0; i < length; i++) {
+            result.push(all[Math.floor(Math.random() * all.length)]);
+        }
+    }
+
+    return result.join("");
+}
+
+function download(text) {
+    const blob = new Blob([text], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "output.txt";
+    a.click();
+}
+
+function generate() {
+    let count = parseInt(document.getElementById("count").value);
+    let length = parseInt(document.getElementById("length").value);
+    let status = document.getElementById("status");
+
+    status.innerText = "Генерация...";
+
+    setTimeout(() => {
+        let result = [];
+
+        for (let i = 0; i < count; i++) {
+            result.push(generateRandomString(length) + i.toString(16));
+        }
+
+        download(result.join("\n"));
+        status.innerText = "Готово ✅";
+    }, 50);
+}
+</script>
+
+</body>
+</html>
