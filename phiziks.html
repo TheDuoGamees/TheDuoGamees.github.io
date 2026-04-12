@@ -586,38 +586,127 @@ tickets.forEach(ticket => {
 });
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCyiEWQpFbi9F70u7r7ays4tORQA9oa_Ew",
   authDomain: "phiziks-e0c5c.firebaseapp.com",
   projectId: "phiziks-e0c5c",
-  storageBucket: "phiziks-e0c5c.firebasestorage.app",
-  messagingSenderId: "688298287547",
-  appId: "1:688298287547:web:d2e155531fc78e4804a49e"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// 📱 устройство
+function getDeviceId() {
+    return btoa(
+        navigator.userAgent +
+        screen.width +
+        screen.height +
+        Intl.DateTimeFormat().resolvedOptions().timeZone
+    );
+}
+
+// 🚫 инкогнито
+function isIncognito() {
+    try {
+        localStorage.setItem("test", "1");
+        localStorage.removeItem("test");
+        return false;
+    } catch {
+        return true;
+    }
+}
+
+// 📊 лог попыток
+async function logAttempt(code, success) {
+    await addDoc(collection(db, "logs"), {
+        code: code,
+        success: success,
+        device: getDeviceId(),
+        time: Date.now()
+    });
+}
+
+// ⏱ блокировка
+function getBlockTime(attempts) {
+    if (attempts < 3) return 0;
+    if (attempts === 3) return 15 * 60 * 1000;
+    return (15 + (attempts - 3) * 25) * 60 * 1000;
+}
+
+// 🔢 антиспам (задержка)
+let lastTry = 0;
+
 async function checkAccess() {
     let input = document.getElementById("passInput").value;
     let error = document.getElementById("error");
 
+    let now = Date.now();
+
+    // 🚫 инкогнито
+    if (isIncognito()) {
+        error.innerText = "Инкогнито запрещено";
+        return;
+    }
+
+    // 🚫 антиспам (1.5 сек)
+    if (now - lastTry < 1500) {
+        error.innerText = "Подожди...";
+        return;
+    }
+    lastTry = now;
+
+    let attempts = parseInt(localStorage.getItem("attempts") || "0");
+    let blockedUntil = parseInt(localStorage.getItem("blockedUntil") || "0");
+
+    // ⏱ если заблокирован
+    if (now < blockedUntil) {
+        let sec = Math.ceil((blockedUntil - now) / 1000);
+        error.innerText = "Блок: " + sec + " сек";
+        return;
+    }
+
     const ref = doc(db, "keys", input);
     const snap = await getDoc(ref);
 
+    // ❌ неверный код
     if (!snap.exists()) {
+        attempts++;
+        localStorage.setItem("attempts", attempts);
+
+        let blockTime = getBlockTime(attempts);
+        if (blockTime > 0) {
+            localStorage.setItem("blockedUntil", now + blockTime);
+        }
+
+        await logAttempt(input, false);
         error.innerText = "Неверный код";
         return;
     }
 
-    if (snap.data().used === true) {
-        error.innerText = "Код уже использован";
+    let device = getDeviceId();
+    let data = snap.data();
+
+    // 🔒 если уже привязан
+    if (data.device) {
+        if (data.device === device) {
+            await logAttempt(input, true);
+            document.getElementById("loginScreen").style.display = "none";
+        } else {
+            await logAttempt(input, false);
+            error.innerText = "Ключ уже используется";
+        }
         return;
     }
 
-    await updateDoc(ref, { used: true });
+    // ✅ первый вход
+    await updateDoc(ref, { device: device });
+
+    localStorage.setItem("attempts", "0");
+    localStorage.removeItem("blockedUntil");
+
+    await logAttempt(input, true);
 
     document.getElementById("loginScreen").style.display = "none";
 }
