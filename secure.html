@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Secure Access</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #05010a;
+    color: white;
+}
+
+#loginScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0a0015, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#00f0ff 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: moveParticles 10s linear infinite;
+    opacity: 0.2;
+}
+
+@keyframes moveParticles {
+    from { transform: translateY(0); }
+    to { transform: translateY(-40px); }
+}
+
+.login-box {
+    position: relative;
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(0,255,255,0.2);
+    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+    text-align: center;
+}
+
+.login-box h1 {
+    margin-bottom: 20px;
+    color: #00f0ff;
+    text-shadow: 0 0 10px #00f0ff;
+}
+
+#passInput {
+    width: 220px;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #00f0ff;
+    background: transparent;
+    color: white;
+    outline: none;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,255,255,0.3);
+}
+
+#loginBtn {
+    width: 240px;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(90deg, #00f0ff, #0088ff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 0 15px #00f0ff;
+}
+
+#loginBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00f0ff;
+}
+
+#loginBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#error {
+    margin-top: 10px;
+    color: #ff4d6d;
+    text-shadow: 0 0 10px #ff4d6d;
+}
+
+.container {
+    display: none;
+    padding: 40px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="loginScreen">
+    <div class="particles"></div>
+
+    <div class="login-box">
+        <h1>ACCESS</h1>
+        <input id="passInput" placeholder="Введите код">
+        <button id="loginBtn" onclick="checkAccess()">Войти</button>
+        <p id="error"></p>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Добро пожаловать 🔥</h2>
+    <p>Ты прошёл защиту</p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCyiEWQpFbi9F70u7r7ays4tORQA9oa_Ew",
+  authDomain: "phiziks-e0c5c.firebaseapp.com",
+  projectId: "phiziks-e0c5c",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function getDeviceId() {
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+    ctx.fillText("fingerprint", 10, 10);
+
+    return btoa([
+        navigator.userAgent,
+        navigator.language,
+        screen.width + "x" + screen.height,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+        canvas.toDataURL()
+    ].join("|"));
+}
+
+let cachedIP = null;
+async function getIP() {
+    if (cachedIP) return cachedIP;
+    try {
+        let res = await fetch("https://api64.ipify.org?format=json");
+        let data = await res.json();
+        cachedIP = data.ip;
+        return cachedIP;
+    } catch {
+        return "unknown";
+    }
+}
+
+async function isIncognito() {
+    try {
+        localStorage.setItem("t", "1");
+        localStorage.removeItem("t");
+    } catch {
+        return true;
+    }
+
+    if (!window.indexedDB) return true;
+
+    return await new Promise(resolve => {
+        const db = indexedDB.open("test_incog");
+        db.onerror = () => resolve(true);
+        db.onsuccess = () => {
+            indexedDB.deleteDatabase("test_incog");
+            resolve(false);
+        };
+    });
+}
+
+async function logAttempt(code, success) {
+    try {
+        await addDoc(collection(db, "logs"), {
+            code,
+            success,
+            time: new Date().toLocaleString()
+        });
+    } catch {}
+}
+
+function disableBtn() {
+    document.getElementById("loginBtn").disabled = true;
+}
+
+function enableBtn() {
+    document.getElementById("loginBtn").disabled = false;
+}
+
+function startCountdown(end, el) {
+    function update() {
+        let now = Date.now();
+
+        if (now >= end) {
+            el.innerText = "";
+            enableBtn();
+            return;
+        }
+
+        let diff = end - now;
+        let m = Math.floor(diff / 60000);
+        let s = Math.floor((diff % 60000) / 1000);
+
+        el.innerText = `Блок: ${m}м ${s}с`;
+        requestAnimationFrame(update);
+    }
+    update();
+}
+
+function registerFail() {
+    let attempts = parseInt(localStorage.getItem("attempts") || "0") + 1;
+    localStorage.setItem("attempts", attempts);
+
+    let blockTime = 0;
+
+    if (attempts >= 3 && attempts < 5) {
+        blockTime = 5 * 60 * 1000;
+    } else if (attempts >= 5) {
+        blockTime = 15 * 60 * 1000;
+    }
+
+    if (blockTime > 0) {
+        let end = Date.now() + blockTime;
+        localStorage.setItem("blockedUntil", end);
+        return end;
+    }
+
+    return null;
+}
+
+async function checkAccess() {
+    let input = document.getElementById("passInput").value.trim();
+    let error = document.getElementById("error");
+    let now = Date.now();
+
+    if (await isIncognito()) {
+        error.innerText = "Ошибка доступа";
+        return;
+    }
+
+    let blockedUntil = parseInt(localStorage.getItem("blockedUntil") || "0");
+    if (now < blockedUntil) {
+        disableBtn();
+        startCountdown(blockedUntil, error);
+        return;
+    }
+
+    error.innerText = "Подожди...";
+
+    try {
+        const ref = doc(db, "keys", input);
+        const snap = await getDoc(ref);
+
+        let device = await getDeviceId();
+        let ip = await getIP();
+
+        if (!snap.exists()) {
+            let end = registerFail();
+            await logAttempt(input, false);
+
+            if (end) {
+                disableBtn();
+                startCountdown(end, error);
+            } else {
+                error.innerText = "Неверный код";
+            }
+            return;
+        }
+
+        let data = snap.data();
+
+        if (data.device && data.device !== device) {
+            error.innerText = "Ключ уже используется";
+            return;
+        }
+
+        if (data.ip && data.ip !== ip) {
+            error.innerText = "Доступ запрещён";
+            return;
+        }
+
+        if (!data.device) {
+            await updateDoc(ref, { device, ip });
+        }
+
+        localStorage.setItem("attempts", "0");
+        localStorage.removeItem("blockedUntil");
+
+        await logAttempt(input, true);
+
+        document.getElementById("loginScreen").style.display = "none";
+        document.querySelector(".container").style.display = "block";
+
+    } catch (e) {
+        console.log(e);
+        error.innerText = "Ошибка подключения";
+    }
+}
+
+window.checkAccess = checkAccess;
+</script>
+
+</body>
+</html>
