@@ -678,48 +678,29 @@ async function checkAccess() {
         return;
     }
 
+    try {
     const ref = doc(db, "keys", input);
     const snap = await getDoc(ref);
 
-    // ❌ неверный код
     if (!snap.exists()) {
-        attempts++;
-        localStorage.setItem("attempts", attempts);
-
-        let blockTime = getBlockTime(attempts);
-        if (blockTime > 0) {
-            localStorage.setItem("blockedUntil", now + blockTime);
-        }
-
-        await logAttempt(input, false);
         error.innerText = "Неверный код";
         return;
     }
 
-    let device = getDeviceId();
-    let data = snap.data();
-
-    // 🔒 если уже привязан
-    if (data.device) {
-        if (data.device === device) {
-            await logAttempt(input, true);
-            document.getElementById("loginScreen").style.display = "none";
-        } else {
-            await logAttempt(input, false);
-            error.innerText = "Ключ уже используется";
-        }
+    if (snap.data().used === true) {
+        error.innerText = "Код уже используется";
         return;
     }
 
-    // ✅ первый вход
-    await updateDoc(ref, { device: device });
-
-    localStorage.setItem("attempts", "0");
-    localStorage.removeItem("blockedUntil");
-
-    await logAttempt(input, true);
+    await updateDoc(ref, { used: true });
 
     document.getElementById("loginScreen").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+
+} catch (e) {
+    console.log(e);
+    error.innerText = "Ошибка подключения";
+}
     document.querySelector(".container").style.display = "block";
 }
 
