@@ -113,8 +113,8 @@ app.post("/generate", (req, res) => {
     } = req.body;
 
     if (count > 50000) {
-        return res.status(400).json({ error: "Too many keys" });
-    }
+    console.log("⚠️ Large request:", count);
+}
 
     const charset = getCharset({ letters, digits, exclude });
     const pref = buildPrefix(type, env, prefix);
@@ -136,6 +136,8 @@ app.post("/generate", (req, res) => {
    🚀 START
 ========================= */
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log("Server running on port " + PORT);
 });
