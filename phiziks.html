@@ -60,6 +60,9 @@
     font-size: 13px;
     margin-top: 10px;
 }
+.container {
+    display: none;
+}
 </style>
   <style>
     * {
@@ -709,6 +712,7 @@ async function checkAccess() {
     await logAttempt(input, true);
 
     document.getElementById("loginScreen").style.display = "none";
+    document.querySelector(".container").style.display = "block";
 }
 
 window.checkAccess = checkAccess;
