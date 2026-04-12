@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <title>Secure Access</title>
@@ -11,84 +10,100 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #05010a;
+    background: radial-gradient(circle at center, #070b14, #02030a);
     color: white;
-    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
 }
 
+/* 🔒 экран */
 #loginScreen {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at center, #0a0015, #000);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     overflow: hidden;
-    padding: 20px;
 }
 
+/* ✨ частицы (снег) */
 .particles {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(#00f0ff 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: moveParticles 12s linear infinite;
-    opacity: 0.2;
+    overflow: hidden;
 }
 
-@keyframes moveParticles {
-    from { transform: translateY(0); }
-    to { transform: translateY(-40px); }
+.particles span {
+    position: absolute;
+    display: block;
+    width: 3px;
+    height: 3px;
+    background: rgba(79,220,255,0.6);
+    border-radius: 50%;
+    animation: fall linear infinite;
 }
 
+@keyframes fall {
+    from {
+        transform: translateY(-10vh);
+    }
+    to {
+        transform: translateY(110vh);
+    }
+}
+
+/* 🧊 карточка */
 .login-box {
     position: relative;
+    z-index: 2;
     width: 100%;
     max-width: 340px;
     padding: 25px 20px;
     border-radius: 18px;
-    backdrop-filter: blur(18px);
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(0,255,255,0.2);
-    box-shadow: 0 0 25px rgba(0,255,255,0.25);
+    backdrop-filter: blur(20px);
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(79,220,255,0.2);
+    box-shadow: 0 0 30px rgba(79,220,255,0.2);
     text-align: center;
 }
 
+/* 🧠 заголовок */
 .login-box h1 {
     margin-bottom: 15px;
     font-size: 24px;
-    color: #00f0ff;
-    text-shadow: 0 0 10px #00f0ff;
+    color: #4fdcff;
+    text-shadow: 0 0 10px rgba(79,220,255,0.6);
 }
 
+/* ⌨️ input */
 #passInput {
     width: 100%;
     padding: 14px;
     margin-bottom: 12px;
     border-radius: 12px;
-    border: 1px solid #00f0ff;
+    border: 1px solid rgba(79,220,255,0.4);
     background: transparent;
     color: white;
     outline: none;
     text-align: center;
     font-size: 16px;
-    box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    box-shadow: 0 0 10px rgba(79,220,255,0.2);
 }
 
+/* 🔘 кнопка */
 #loginBtn {
     width: 100%;
     padding: 14px;
     border-radius: 12px;
     border: none;
-    background: linear-gradient(90deg, #00f0ff, #0088ff);
+    background: linear-gradient(90deg, #4fdcff, #3a7bff);
     color: black;
     font-weight: bold;
     font-size: 16px;
     cursor: pointer;
     transition: 0.2s;
-    box-shadow: 0 0 15px #00f0ff;
+    box-shadow: 0 0 12px rgba(79,220,255,0.6);
 }
 
 #loginBtn:active {
@@ -100,13 +115,15 @@ body {
     cursor: not-allowed;
 }
 
+/* ❗ ошибка */
 #error {
     margin-top: 10px;
     font-size: 14px;
     color: #ff4d6d;
-    text-shadow: 0 0 10px #ff4d6d;
+    text-shadow: 0 0 8px rgba(255,77,109,0.6);
 }
 
+/* основной контент */
 .container {
     display: none;
     padding: 20px;
@@ -117,7 +134,7 @@ body {
 <body>
 
 <div id="loginScreen">
-    <div class="particles"></div>
+    <div class="particles" id="particles"></div>
 
     <div class="login-box">
         <h1>ACCESS</h1>
@@ -132,6 +149,7 @@ body {
     <p>Ты прошёл защиту</p>
 </div>
 
+<!-- ❗ ТВОЙ JS БЕЗ ИЗМЕНЕНИЙ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
@@ -145,6 +163,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// 🔐 DEVICE
 async function getDeviceId() {
     let canvas = document.createElement("canvas");
     let ctx = canvas.getContext("2d");
@@ -159,6 +178,7 @@ async function getDeviceId() {
     ].join("|"));
 }
 
+// 🌐 IP
 let cachedIP = null;
 async function getIP() {
     if (cachedIP) return cachedIP;
@@ -172,6 +192,7 @@ async function getIP() {
     }
 }
 
+// 🚫 ИНКОГНИТО
 async function isIncognito() {
     try {
         localStorage.setItem("t", "1");
@@ -192,6 +213,7 @@ async function isIncognito() {
     });
 }
 
+// 📊 ЛОГИ
 async function logAttempt(code, success) {
     try {
         await addDoc(collection(db, "logs"), {
@@ -202,6 +224,7 @@ async function logAttempt(code, success) {
     } catch {}
 }
 
+// 🔘 КНОПКА
 function disableBtn() {
     document.getElementById("loginBtn").disabled = true;
 }
@@ -210,6 +233,7 @@ function enableBtn() {
     document.getElementById("loginBtn").disabled = false;
 }
 
+// ⏱ ТАЙМЕР
 function startCountdown(end, el) {
     function update() {
         let now = Date.now();
@@ -230,6 +254,7 @@ function startCountdown(end, el) {
     update();
 }
 
+// 🔢 АНТИСПАМ
 function registerFail() {
     let attempts = parseInt(localStorage.getItem("attempts") || "0") + 1;
     localStorage.setItem("attempts", attempts);
@@ -251,6 +276,7 @@ function registerFail() {
     return null;
 }
 
+// 🚀 ВХОД
 async function checkAccess() {
     let input = document.getElementById("passInput").value.trim();
     let error = document.getElementById("error");
@@ -321,6 +347,20 @@ async function checkAccess() {
 }
 
 window.checkAccess = checkAccess;
+</script>
+
+<!-- ❗ ДОБАВЛЯЕМ ЧАСТИЦЫ -->
+<script>
+const particlesContainer = document.getElementById("particles");
+
+for (let i = 0; i < 60; i++) {
+    let p = document.createElement("span");
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = (5 + Math.random() * 10) + "s";
+    p.style.opacity = Math.random();
+    p.style.width = p.style.height = (2 + Math.random() * 3) + "px";
+    particlesContainer.appendChild(p);
+}
 </script>
 
 </body>
