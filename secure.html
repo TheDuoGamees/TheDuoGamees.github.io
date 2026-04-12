@@ -2,31 +2,35 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <title>Secure Access</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: radial-gradient(circle at center, #070b14, #02030a);
+    background: #02030a;
     color: white;
     overflow: hidden;
 }
 
-/* 🔒 экран */
+/* экран */
 #loginScreen {
     position: fixed;
     inset: 0;
+    background: radial-gradient(circle at center, #070b14, #02030a);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    overflow: hidden;
+    padding: 20px;
 }
 
-/* ✨ частицы (снег) */
+/* частицы */
 .particles {
     position: absolute;
     width: 100%;
@@ -36,101 +40,79 @@ body {
 
 .particles span {
     position: absolute;
-    display: block;
     width: 3px;
     height: 3px;
-    background: rgba(79,220,255,0.6);
+    background: #4fdcff;
     border-radius: 50%;
+    opacity: 0.6;
     animation: fall linear infinite;
 }
 
 @keyframes fall {
-    from {
-        transform: translateY(-10vh);
-    }
-    to {
-        transform: translateY(110vh);
-    }
+    from { transform: translateY(-10vh); }
+    to { transform: translateY(110vh); }
 }
 
-/* 🧊 карточка */
+/* карточка */
 .login-box {
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 340px;
-    padding: 25px 20px;
-    border-radius: 18px;
-    backdrop-filter: blur(20px);
-    background: rgba(0,0,0,0.5);
+    max-width: 320px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(10,15,25,0.9);
     border: 1px solid rgba(79,220,255,0.2);
-    box-shadow: 0 0 30px rgba(79,220,255,0.2);
+    box-shadow: 0 0 20px rgba(79,220,255,0.2);
     text-align: center;
 }
 
-/* 🧠 заголовок */
+/* заголовок */
 .login-box h1 {
     margin-bottom: 15px;
-    font-size: 24px;
+    font-size: 22px;
     color: #4fdcff;
-    text-shadow: 0 0 10px rgba(79,220,255,0.6);
 }
 
-/* ⌨️ input */
+/* input */
 #passInput {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     margin-bottom: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(79,220,255,0.4);
+    border-radius: 10px;
+    border: 1px solid rgba(79,220,255,0.3);
     background: transparent;
     color: white;
-    outline: none;
     text-align: center;
     font-size: 16px;
-    box-shadow: 0 0 10px rgba(79,220,255,0.2);
 }
 
-/* 🔘 кнопка */
+/* кнопка */
 #loginBtn {
     width: 100%;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 10px;
     border: none;
     background: linear-gradient(90deg, #4fdcff, #3a7bff);
     color: black;
     font-weight: bold;
     font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 0 12px rgba(79,220,255,0.6);
 }
 
-#loginBtn:active {
-    transform: scale(0.97);
-}
-
-#loginBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* ❗ ошибка */
 #error {
     margin-top: 10px;
     font-size: 14px;
     color: #ff4d6d;
-    text-shadow: 0 0 8px rgba(255,77,109,0.6);
 }
 
-/* основной контент */
+/* контент */
 .container {
     display: none;
     padding: 20px;
 }
 </style>
-
 </head>
+
 <body>
 
 <div id="loginScreen">
@@ -138,18 +120,15 @@ body {
 
     <div class="login-box">
         <h1>ACCESS</h1>
-        <input id="passInput" placeholder="Введите код">
+        <input type="password" id="passInput" placeholder="Введите код">
         <button id="loginBtn" onclick="checkAccess()">Войти</button>
         <p id="error"></p>
     </div>
 </div>
 
 <div class="container">
-    <h2>Добро пожаловать 🔥</h2>
-    <p>Ты прошёл защиту</p>
+    <h2>Добро пожаловать</h2>
 </div>
-
-<!-- ❗ ТВОЙ JS БЕЗ ИЗМЕНЕНИЙ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
@@ -282,11 +261,13 @@ async function checkAccess() {
     let error = document.getElementById("error");
     let now = Date.now();
 
+    // 🚫 инкогнито
     if (await isIncognito()) {
-        error.innerText = "Ошибка доступа";
+        error.innerText = "Инкогнито запрещено";
         return;
     }
 
+    // ⏱ блок
     let blockedUntil = parseInt(localStorage.getItem("blockedUntil") || "0");
     if (now < blockedUntil) {
         disableBtn();
@@ -303,6 +284,7 @@ async function checkAccess() {
         let device = await getDeviceId();
         let ip = await getIP();
 
+        // ❌ неверный код
         if (!snap.exists()) {
             let end = registerFail();
             await logAttempt(input, false);
@@ -318,16 +300,21 @@ async function checkAccess() {
 
         let data = snap.data();
 
+        // 🔒 DEVICE
         if (data.device && data.device !== device) {
+            await logAttempt(input, false);
             error.innerText = "Ключ уже используется";
             return;
         }
 
+        // 🔒 IP
         if (data.ip && data.ip !== ip) {
-            error.innerText = "Доступ запрещён";
+            await logAttempt(input, false);
+            error.innerText = "Доступ с другого интернета запрещён";
             return;
         }
 
+        // ✅ первый вход
         if (!data.device) {
             await updateDoc(ref, { device, ip });
         }
@@ -348,20 +335,3 @@ async function checkAccess() {
 
 window.checkAccess = checkAccess;
 </script>
-
-<!-- ❗ ДОБАВЛЯЕМ ЧАСТИЦЫ -->
-<script>
-const particlesContainer = document.getElementById("particles");
-
-for (let i = 0; i < 60; i++) {
-    let p = document.createElement("span");
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.animationDuration = (5 + Math.random() * 10) + "s";
-    p.style.opacity = Math.random();
-    p.style.width = p.style.height = (2 + Math.random() * 3) + "px";
-    particlesContainer.appendChild(p);
-}
-</script>
-
-</body>
-</html>
