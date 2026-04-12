@@ -2,6 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>Secure Access</title>
 
 <style>
@@ -10,6 +13,7 @@ body {
     font-family: Arial, sans-serif;
     background: #05010a;
     color: white;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #loginScreen {
@@ -21,6 +25,7 @@ body {
     align-items: center;
     z-index: 9999;
     overflow: hidden;
+    padding: 20px;
 }
 
 .particles {
@@ -29,7 +34,7 @@ body {
     height: 100%;
     background-image: radial-gradient(#00f0ff 1px, transparent 1px);
     background-size: 40px 40px;
-    animation: moveParticles 10s linear infinite;
+    animation: moveParticles 12s linear infinite;
     opacity: 0.2;
 }
 
@@ -40,50 +45,54 @@ body {
 
 .login-box {
     position: relative;
-    padding: 40px;
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
+    width: 100%;
+    max-width: 340px;
+    padding: 25px 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(18px);
     background: rgba(0,0,0,0.6);
     border: 1px solid rgba(0,255,255,0.2);
-    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+    box-shadow: 0 0 25px rgba(0,255,255,0.25);
     text-align: center;
 }
 
 .login-box h1 {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    font-size: 24px;
     color: #00f0ff;
     text-shadow: 0 0 10px #00f0ff;
 }
 
 #passInput {
-    width: 220px;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 10px;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
     border: 1px solid #00f0ff;
     background: transparent;
     color: white;
     outline: none;
     text-align: center;
+    font-size: 16px;
     box-shadow: 0 0 10px rgba(0,255,255,0.3);
 }
 
 #loginBtn {
-    width: 240px;
-    padding: 12px;
-    border-radius: 10px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
     border: none;
     background: linear-gradient(90deg, #00f0ff, #0088ff);
     color: black;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
     transition: 0.2s;
     box-shadow: 0 0 15px #00f0ff;
 }
 
-#loginBtn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px #00f0ff;
+#loginBtn:active {
+    transform: scale(0.97);
 }
 
 #loginBtn:disabled {
@@ -93,13 +102,14 @@ body {
 
 #error {
     margin-top: 10px;
+    font-size: 14px;
     color: #ff4d6d;
     text-shadow: 0 0 10px #ff4d6d;
 }
 
 .container {
     display: none;
-    padding: 40px;
+    padding: 20px;
 }
 </style>
 
