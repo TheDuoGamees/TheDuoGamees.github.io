@@ -584,42 +584,45 @@ tickets.forEach(ticket => {
   card.appendChild(content);
   container.appendChild(card);
 });
-</script>
-<script>
-const keys = ["nurshedff", "husravidin", "dortanian", "masssa"];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-function getDeviceId() {
-    return navigator.userAgent + screen.width + screen.height;
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyCyiEWQpFbi9F70u7r7ays4tORQA9oa_Ew",
+  authDomain: "phiziks-e0c5c.firebaseapp.com",
+  projectId: "phiziks-e0c5c",
+  storageBucket: "phiziks-e0c5c.firebasestorage.app",
+  messagingSenderId: "688298287547",
+  appId: "1:688298287547:web:d2e155531fc78e4804a49e"
+};
 
-function checkAccess() {
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function checkAccess() {
     let input = document.getElementById("passInput").value;
     let error = document.getElementById("error");
 
-    if (!keys.includes(input)) {
+    const ref = doc(db, "keys", input);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
         error.innerText = "Неверный код";
         return;
     }
 
-    let saved = localStorage.getItem("key_" + input);
-    let device = getDeviceId();
-
-    if (saved && saved !== device) {
-        error.innerText = "Код уже используется";
+    if (snap.data().used === true) {
+        error.innerText = "Код уже использован";
         return;
     }
 
-    localStorage.setItem("key_" + input, device);
+    await updateDoc(ref, { used: true });
 
     document.getElementById("loginScreen").style.display = "none";
 }
 
-// Enter нажал → вошёл
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("passInput").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") checkAccess();
-    });
-});
+window.checkAccess = checkAccess;
 </script>
 </body>
 </html>
