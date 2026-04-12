@@ -277,10 +277,7 @@ async function generate() {
     let length = parseInt(document.getElementById("length").value);
 
     // защита
-    if (count > 200000) {
-        alert("Слишком много строк (макс 200k)");
-        return;
-    }
+    
 
     generatedKeys = [];
 
