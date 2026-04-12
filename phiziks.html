@@ -594,10 +594,9 @@ tickets.forEach(ticket => {
   container.appendChild(card);
 });
 </script>
-  
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCyiEWQpFbi9F70u7r7ays4tORQA9oa_Ew",
@@ -631,12 +630,14 @@ function isIncognito() {
 
 // 📊 лог попыток
 async function logAttempt(code, success) {
-    await addDoc(collection(db, "logs"), {
-        code: code,
-        success: success,
-        device: getDeviceId(),
-        time: Date.now()
-    });
+    try {
+        await addDoc(collection(db, "logs"), {
+            code,
+            success,
+            device: getDeviceId(),
+            time: Date.now()
+        });
+    } catch {}
 }
 
 // ⏱ блокировка
@@ -646,13 +647,12 @@ function getBlockTime(attempts) {
     return (15 + (attempts - 3) * 25) * 60 * 1000;
 }
 
-// 🔢 антиспам (задержка)
+// 🔢 антиспам
 let lastTry = 0;
 
 async function checkAccess() {
-    let input = document.getElementById("passInput").value;
+    let input = document.getElementById("passInput").value.trim();
     let error = document.getElementById("error");
-
     let now = Date.now();
 
     // 🚫 инкогнито
@@ -661,7 +661,7 @@ async function checkAccess() {
         return;
     }
 
-    // 🚫 антиспам (1.5 сек)
+    // 🚫 антиспам
     if (now - lastTry < 1500) {
         error.innerText = "Подожди...";
         return;
@@ -671,36 +671,66 @@ async function checkAccess() {
     let attempts = parseInt(localStorage.getItem("attempts") || "0");
     let blockedUntil = parseInt(localStorage.getItem("blockedUntil") || "0");
 
-    // ⏱ если заблокирован
+    // ⏱ блок
     if (now < blockedUntil) {
         let sec = Math.ceil((blockedUntil - now) / 1000);
         error.innerText = "Блок: " + sec + " сек";
         return;
     }
 
+    error.innerText = "Подожди...";
+
     try {
-    const ref = doc(db, "keys", input);
-    const snap = await getDoc(ref);
+        const ref = doc(db, "keys", input);
+        const snap = await getDoc(ref);
 
-    if (!snap.exists()) {
-        error.innerText = "Неверный код";
-        return;
+        if (!snap.exists()) {
+            attempts++;
+            localStorage.setItem("attempts", attempts);
+
+            let blockTime = getBlockTime(attempts);
+            if (blockTime > 0) {
+                localStorage.setItem("blockedUntil", now + blockTime);
+            }
+
+            await logAttempt(input, false);
+            error.innerText = "Неверный код";
+            return;
+        }
+
+        let device = getDeviceId();
+        let data = snap.data();
+
+        // 🔒 уже привязан
+        if (data.device) {
+            if (data.device === device) {
+                await logAttempt(input, true);
+                openSite();
+            } else {
+                await logAttempt(input, false);
+                error.innerText = "Ключ уже используется";
+            }
+            return;
+        }
+
+        // ✅ первый вход
+        await updateDoc(ref, { device });
+
+        localStorage.setItem("attempts", "0");
+        localStorage.removeItem("blockedUntil");
+
+        await logAttempt(input, true);
+        openSite();
+
+    } catch (e) {
+        console.log(e);
+        error.innerText = "Ошибка подключения";
     }
-
-    if (snap.data().used === true) {
-        error.innerText = "Код уже используется";
-        return;
-    }
-
-    await updateDoc(ref, { used: true });
-
-    document.getElementById("loginScreen").style.display = "none";
-    document.querySelector(".container").style.display = "block";
-
-} catch (e) {
-    console.log(e);
-    error.innerText = "Ошибка подключения";
 }
+
+// открыть сайт
+function openSite() {
+    document.getElementById("loginScreen").style.display = "none";
     document.querySelector(".container").style.display = "block";
 }
 
