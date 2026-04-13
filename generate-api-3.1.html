@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Key Generator 3.1</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at top, #1a1a2e, #0f0f1a);
+    color: #fff;
+}
+
+.container {
+    max-width: 480px;
+    margin: auto;
+    padding: 16px;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+p {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.label {
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.options label {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 🔥 режим генерации */
+.mode {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.mode button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 13px;
+}
+
+.mode button.active {
+    background: linear-gradient(135deg, #4f7cff, #6f9cff);
+}
+
+/* ⚡ кнопки */
+.button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #4f7cff, #6f9cff);
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.status {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: center;
+    color: #aaa;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 600px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1>API Key Generator 3.1</h1>
+<p>Оптимизированная генерация без лимитов памяти</p>
+
+<!-- 📌 префикс -->
+<label class="label">Префикс</label>
+<input class="input" id="prefix" placeholder="api_live_">
+
+<!-- 📌 тип -->
+<label class="label">Тип ключа</label>
+<select id="type">
+<option value="">Без типа</option>
+<option value="api">API</option>
+<option value="sk">Secret</option>
+<option value="pk">Public</option>
+</select>
+
+<!-- 📌 окружение -->
+<label class="label">Окружение</label>
+<select id="env">
+<option value="">Без окружения</option>
+<option value="live">Live</option>
+<option value="test">Test</option>
+</select>
+
+<!-- 📌 параметры -->
+<label class="label">Количество</label>
+<input class="input" id="count" type="number" value="1000000">
+
+<label class="label">Длина</label>
+<input class="input" id="length" type="number" value="64">
+
+<!-- ⚙️ символы -->
+<div class="options">
+<label><input type="checkbox" id="letters" checked> Буквы</label>
+<label><input type="checkbox" id="digits" checked> Цифры</label>
+<label><input type="checkbox" id="exclude"> Без похожих</label>
+</div>
+
+<!-- 🔐 режим -->
+<label class="label">Режим генерации</label>
+<div class="mode">
+<button id="cryptoBtn" class="active" onclick="setMode('crypto')">
+🔐 Криптографический
+</button>
+<button id="fastBtn" onclick="setMode('fast')">
+⚡ Быстрый (Math.random)
+</button>
+</div>
+
+<!-- 📁 формат -->
+<label class="label">Формат файла</label>
+<select id="format">
+<option value="txt">TXT</option>
+<option value="csv">CSV</option>
+<option value="json">JSON</option>
+</select>
+
+<!-- 🎯 -->
+<button class="button" onclick="generate()">Сгенерировать файл</button>
+
+<div class="status" id="status"></div>
+
+</div>
+</div>
+
+<script>
+
+/* =========================
+   ⚙️ РЕЖИМ
+========================= */
+
+let mode = "crypto";
+
+function setMode(selected) {
+    mode = selected;
+
+    document.getElementById("cryptoBtn").classList.remove("active");
+    document.getElementById("fastBtn").classList.remove("active");
+
+    if (selected === "crypto") {
+        document.getElementById("cryptoBtn").classList.add("active");
+    } else {
+        document.getElementById("fastBtn").classList.add("active");
+    }
+}
+
+/* =========================
+   🔤 СИМВОЛЫ
+========================= */
+
+function getCharset() {
+    const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const digits = "0123456789";
+
+    let charset = "";
+
+    if (document.getElementById("letters").checked) charset += letters;
+    if (document.getElementById("digits").checked) charset += digits;
+
+    if (!charset) charset = letters + digits;
+
+    if (document.getElementById("exclude").checked) {
+        charset = charset.replace(/[0Ool1I]/g, "");
+    }
+
+    return charset;
+}
+
+/* =========================
+   🔑 PREFIX
+========================= */
+
+function buildPrefix() {
+    const custom = document.getElementById("prefix").value.trim();
+    const type = document.getElementById("type").value;
+    const env = document.getElementById("env").value;
+
+    let parts = [];
+
+    if (type) parts.push(type);
+    if (env) parts.push(env);
+
+    let base = parts.join("_");
+
+    if (custom) return custom;
+    if (base) return base + "_";
+
+    return "";
+}
+/* =========================
+   🔐 RANDOM
+========================= */
+
+function secureRandom(max) {
+    if (mode === "crypto" && window.crypto && crypto.getRandomValues) {
+        const arr = new Uint32Array(1);
+        crypto.getRandomValues(arr);
+        return arr[0] % max;
+    } else {
+        return Math.floor(Math.random() * max);
+    }
+}
+
+/* =========================
+   🔑 ГЕНЕРАЦИЯ КЛЮЧА
+========================= */
+
+function generateKey(length, charset) {
+    let result = "";
+    const max = charset.length;
+
+    for (let i = 0; i < length; i++) {
+        result += charset[secureRandom(max)];
+    }
+
+    return result;
+}
+
+/* =========================
+   📦 STREAM ГЕНЕРАЦИЯ (3.1)
+========================= */
+
+async function generate() {
+    const status = document.getElementById("status");
+
+    let count = parseInt(document.getElementById("count").value);
+    let length = parseInt(document.getElementById("length").value);
+    let format = document.getElementById("format").value;
+
+    const charset = getCharset();
+    const prefix = buildPrefix();
+
+    if (!count || count <= 0) return alert("Введите количество");
+
+    status.innerText = "Подготовка...";
+
+    await new Promise(r => setTimeout(r, 50));
+
+    /* 🔥 ВАЖНО: НЕТ generatedKeys */
+
+    let parts = [];
+    let chunk = [];
+
+    let chunkSize = 10000; // баланс скорость/память
+
+    for (let i = 0; i < count; i++) {
+
+        let key = prefix + generateKey(length, charset);
+
+        if (format === "json") {
+            chunk.push(JSON.stringify(key));
+        } else {
+            chunk.push(key);
+        }
+
+        /* 🔥 КАЖДЫЙ ЧАНК */
+        if (chunk.length >= chunkSize) {
+
+            if (format === "txt") {
+                parts.push(chunk.join("\n") + "\n");
+            }
+
+            if (format === "csv") {
+                parts.push(chunk.join("\n") + "\n");
+            }
+
+            if (format === "json") {
+                parts.push(chunk.join(",\n"));
+            }
+
+            chunk = [];
+
+            status.innerText = `Генерация: ${i.toLocaleString()}`;
+
+            // даём браузеру дышать
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+
+    /* остаток */
+    if (chunk.length) {
+        if (format === "txt" || format === "csv") {
+            parts.push(chunk.join("\n") + "\n");
+        }
+        if (format === "json") {
+            parts.push(chunk.join(",\n"));
+        }
+    }
+
+    status.innerText = "Создание файла...";
+
+    await new Promise(r => setTimeout(r, 50));
+
+    /* =========================
+       📁 СОЗДАНИЕ ФАЙЛА
+    ========================= */
+
+    let content;
+
+    if (format === "json") {
+        content = "[\n" + parts.join(",\n") + "\n]";
+    } else {
+        content = parts.join("");
+    }
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `keys_${count}.${format}`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    status.innerText = `Готово ✅ (${count.toLocaleString()})`;
+}
+/* =========================
+   ⛔ CONTROL (STOP / STATE)
+========================= */
+
+let isGenerating = false;
+let stopRequested = false;
+
+/* =========================
+   📊 ОЦЕНКА РАЗМЕРА
+========================= */
+
+function estimateSize(count, length, format) {
+    let bytesPerKey = length + 2;
+
+    if (format === "json") bytesPerKey += 4;
+
+    let total = count * bytesPerKey;
+
+    let mb = total / (1024 * 1024);
+
+    return mb.toFixed(1);
+}
+
+/* =========================
+   ⛔ STOP
+========================= */
+
+function stopGeneration() {
+    stopRequested = true;
+}
+
+/* =========================
+   🔄 ОБНОВЛЁННАЯ ГЕНЕРАЦИЯ
+========================= */
+
+async function generate() {
+
+    if (isGenerating) return;
+
+    isGenerating = true;
+    stopRequested = false;
+
+    const status = document.getElementById("status");
+    const button = document.querySelector(".button");
+
+    let count = parseInt(document.getElementById("count").value);
+    let length = parseInt(document.getElementById("length").value);
+    let format = document.getElementById("format").value;
+
+    const charset = getCharset();
+    const prefix = buildPrefix();
+
+    if (!count || count <= 0) {
+        isGenerating = false;
+        return alert("Введите количество");
+    }
+
+    /* 📊 оценка */
+    let size = estimateSize(count, length, format);
+
+    if (count > 1000000) {
+        if (!confirm(`Это большой файл (~${size} MB). Продолжить?`)) {
+            isGenerating = false;
+            return;
+        }
+    }
+
+    button.disabled = true;
+
+    status.innerText = "Подготовка...";
+
+    await new Promise(r => setTimeout(r, 50));
+
+    let parts = [];
+    let chunk = [];
+
+    let chunkSize = 10000;
+
+    for (let i = 0; i < count; i++) {
+
+        if (stopRequested) {
+            status.innerText = "Остановлено ❌";
+            button.disabled = false;
+            isGenerating = false;
+            return;
+        }
+
+        let key = prefix + generateKey(length, charset);
+
+        if (format === "json") {
+            chunk.push(JSON.stringify(key));
+        } else {
+            chunk.push(key);
+        }
+
+        if (chunk.length >= chunkSize) {
+
+            if (format === "txt" || format === "csv") {
+                parts.push(chunk.join("\n") + "\n");
+            }
+
+            if (format === "json") {
+                parts.push(chunk.join(",\n"));
+            }
+
+            chunk = [];
+
+            let percent = ((i / count) * 100).toFixed(1);
+
+            status.innerText =
+                `${percent}% • ${i.toLocaleString()} / ${count.toLocaleString()}`;
+
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+
+    if (chunk.length) {
+        if (format === "txt" || format === "csv") {
+            parts.push(chunk.join("\n") + "\n");
+        }
+        if (format === "json") {
+            parts.push(chunk.join(",\n"));
+        }
+    }
+
+    status.innerText = "Создание файла...";
+
+    await new Promise(r => setTimeout(r, 50));
+
+    let content;
+
+    if (format === "json") {
+        content = "[\n" + parts.join(",\n") + "\n]";
+    } else {
+        content = parts.join("");
+    }
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `keys_${count}.${format}`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    status.innerText = `Готово ✅ (${count.toLocaleString()})`;
+
+    button.disabled = false;
+    isGenerating = false;
+}
+</script>
+
+<!-- ⛔ КНОПКА СТОП -->
+<div style="max-width:480px;margin:auto;padding:16px;">
+<button class="button" onclick="stopGeneration()" style="background:#ff4d4d;">
+Остановить генерацию
+</button>
+</div>
+
+</body>
+</html>
