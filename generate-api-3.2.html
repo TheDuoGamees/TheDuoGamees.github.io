@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Key Generator SaaS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:-apple-system,Segoe UI,Roboto;
+    background: radial-gradient(circle at top,#1a1a2e,#0f0f1a);
+    color:#fff;
+}
+
+.container{
+    max-width:520px;
+    margin:auto;
+    padding:16px;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 10px 40px rgba(0,0,0,.6);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+h1{font-size:20px;margin-bottom:5px}
+p{font-size:13px;color:#aaa;margin-bottom:15px}
+
+.label{font-size:12px;margin-bottom:6px;display:block}
+
+.input,select{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:rgba(255,255,255,0.08);
+    color:#fff;
+    margin-bottom:12px;
+}
+
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+
+.options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.options label{
+    font-size:12px;
+    display:flex;
+    gap:5px;
+    align-items:center;
+}
+
+.button{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    background:linear-gradient(135deg,#4f7cff,#6f9cff);
+    color:#fff;
+    font-size:15px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.button.stop{
+    background:linear-gradient(135deg,#ff4d4d,#ff6b6b);
+}
+
+.button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.button:hover{
+    transform:scale(1.02);
+}
+
+.status{
+    margin-top:10px;
+    font-size:12px;
+    text-align:center;
+    color:#aaa;
+}
+
+.preview{
+    margin-top:15px;
+    max-height:200px;
+    overflow:auto;
+    font-size:12px;
+    background:rgba(0,0,0,0.3);
+    padding:10px;
+    border-radius:10px;
+}
+
+.switch{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.switch button{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    background:rgba(255,255,255,0.08);
+    color:white;
+}
+
+.switch .active{
+    background:linear-gradient(135deg,#4f7cff,#6f9cff);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1>API Key Generator</h1>
+<p>SaaS инструмент генерации ключей</p>
+
+<!-- режим длины -->
+<div class="switch">
+<button id="bitMode" class="active" onclick="setLengthMode('bits')">Биты</button>
+<button id="lenMode" onclick="setLengthMode('length')">Длина</button>
+</div>
+
+<input class="input" id="bits" value="256">
+<input class="input" id="length" value="32" style="display:none">
+
+<!-- количество -->
+<label class="label">Количество</label>
+<input class="input" id="count" value="1000">
+
+<!-- формат -->
+<label class="label">Формат</label>
+<select id="format">
+<option value="txt">TXT</option>
+<option value="csv">CSV</option>
+<option value="json">JSON</option>
+</select>
+
+<!-- символы -->
+<div class="options">
+<label><input type="checkbox" id="letters" checked>Буквы</label>
+<label><input type="checkbox" id="digits" checked>Цифры</label>
+<label><input type="checkbox" id="symbols">Символы</label>
+<label><input type="checkbox" id="exclude">Без похожих</label>
+</div>
+
+<!-- режим -->
+<div class="switch">
+<button id="cryptoBtn" class="active" onclick="setMode('crypto')">🔐 Crypto</button>
+<button id="fastBtn" onclick="setMode('fast')">⚡ Fast</button>
+</div>
+
+<!-- действия -->
+<button class="button" onclick="preview()">Preview</button>
+<button class="button" onclick="start()">Сгенерировать</button>
+<button class="button stop" onclick="stop()">Остановить</button>
+
+<div class="status" id="status"></div>
+<div class="preview" id="preview"></div>
+
+</div>
+</div>
+
+<script>
+/* =========================
+   ⚙️ STATE
+========================= */
+
+let mode = "crypto";
+let lengthMode = "bits";
+let stopFlag = false;
+
+/* =========================
+   🔄 РЕЖИМЫ
+========================= */
+
+function setMode(m){
+    mode = m;
+    cryptoBtn.classList.remove("active");
+    fastBtn.classList.remove("active");
+
+    if(m==="crypto") cryptoBtn.classList.add("active");
+    else {
+        fastBtn.classList.add("active");
+        alert("⚠️ Fast режим небезопасен");
+    }
+}
+
+function setLengthMode(m){
+    lengthMode = m;
+
+    bitMode.classList.remove("active");
+    lenMode.classList.remove("active");
+
+    if(m==="bits"){
+        bitMode.classList.add("active");
+        bits.style.display="block";
+        length.style.display="none";
+    } else {
+        lenMode.classList.add("active");
+        bits.style.display="none";
+        length.style.display="block";
+    }
+}
+
+/* =========================
+   🔢 ДЛИНА
+========================= */
+
+function getLength(){
+    if(lengthMode==="bits"){
+        let b = parseInt(bits.value)||256;
+        return Math.floor(b/6);
+    }
+    return parseInt(length.value)||32;
+}
+
+/* =========================
+   🔤 CHARSET
+========================= */
+
+function getCharset(){
+    let c = "";
+
+    if(letters.checked) c += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if(digits.checked) c += "0123456789";
+    if(symbols.checked) c += "!@#$%^&*";
+
+    if(!c) c="abcdefghijklmnopqrstuvwxyz0123456789";
+
+    if(exclude.checked){
+        c = c.replace(/[0Ool1I]/g,"");
+    }
+
+    return c;
+}
+
+/* =========================
+   🔐 CRYPTO (без bias)
+========================= */
+
+function cryptoRandom(max){
+    const array = new Uint32Array(1);
+    let limit = Math.floor(4294967296 / max) * max;
+
+    while(true){
+        crypto.getRandomValues(array);
+        if(array[0] < limit){
+            return array[0] % max;
+        }
+    }
+}
+
+/* =========================
+   ⚡ RANDOM
+========================= */
+
+function rand(max){
+    if(mode==="crypto" && window.crypto){
+        return cryptoRandom(max);
+    }
+    return Math.floor(Math.random()*max);
+}
+
+/* =========================
+   🔑 KEY GEN
+========================= */
+
+function genKey(len, charset){
+    let out="";
+    let max=charset.length;
+
+    for(let i=0;i<len;i++){
+        out += charset[rand(max)];
+    }
+
+    return out;
+}
+
+/* =========================
+   🔥 UUID v4
+========================= */
+
+function uuidv4(){
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{
+        let r = rand(16);
+        return (c==='x'?r:(r&0x3|0x8)).toString(16);
+    });
+}
+
+/* =========================
+   👀 PREVIEW
+========================= */
+
+function preview(){
+    const out = document.getElementById("preview");
+    const len = getLength();
+    const charset = getCharset();
+
+    let res=[];
+
+    for(let i=0;i<50;i++){
+        res.push(genKey(len, charset));
+    }
+
+    out.innerText = res.join("\n");
+}
+
+/* =========================
+   🛑 STOP
+========================= */
+
+function stop(){
+    stopFlag = true;
+}
+/* =========================
+   📊 ОЦЕНКА РАЗМЕРА
+========================= */
+
+function estimate(count, len){
+    let bytes = count * (len + 2);
+    return (bytes / (1024*1024)).toFixed(1);
+}
+
+/* =========================
+   🚀 СТАРТ
+========================= */
+
+async function start(){
+
+    stopFlag = false;
+
+    const status = document.getElementById("status");
+    const format = document.getElementById("format").value;
+
+    let count = parseInt(countInput());
+    let len = getLength();
+
+    if(count > 250000){
+        let size = estimate(count,len);
+        if(!confirm(`⚠️ Большой объём (~${size} MB)`)) return;
+    }
+
+    const charset = getCharset();
+
+    /* поток записи */
+    let stream = new WritableStream({
+        write(chunk){}
+    });
+
+    let encoder = new TextEncoder();
+
+    let chunks = [];
+
+    let startTime = performance.now();
+
+    let chunkSize = 10000;
+
+    for(let i=0;i<count;i++){
+
+        if(stopFlag){
+            status.innerText="Остановлено";
+            return;
+        }
+
+        let key = genKey(len, charset);
+
+        if(format==="json"){
+            chunks.push(JSON.stringify(key));
+        } else {
+            chunks.push(key);
+        }
+
+        if(chunks.length >= chunkSize){
+
+            let text;
+
+            if(format==="txt" || format==="csv"){
+                text = chunks.join("\n") + "\n";
+            } else {
+                text = chunks.join(",\n");
+            }
+
+            chunks = [];
+
+            partsPush(text);
+
+            let percent = ((i/count)*100).toFixed(1);
+            let speed = Math.floor(i / ((performance.now()-startTime)/1000));
+
+            status.innerText = `${percent}% • ${i}/${count} • ${speed}/sec`;
+
+            await new Promise(r=>setTimeout(r,0));
+        }
+    }
+
+    finalize(format, chunks);
+
+    status.innerText="Готово ✅";
+}
+
+/* =========================
+   📦 BUFFER (stream)
+========================= */
+
+let parts=[];
+
+function partsPush(t){
+    parts.push(t);
+}
+
+/* =========================
+   📁 FINAL FILE
+========================= */
+
+async function finalize(format, last){
+
+    if(last.length){
+        parts.push(last.join("\n"));
+    }
+
+    let content;
+
+    if(format==="json"){
+        content = "[\n"+parts.join(",\n")+"\n]";
+    } else {
+        content = parts.join("");
+    }
+
+    let blob = new Blob([content],{type:"text/plain"});
+
+    /* gzip */
+    if(window.CompressionStream){
+        const cs = new CompressionStream('gzip');
+        const compressed = blob.stream().pipeThrough(cs);
+        blob = await new Response(compressed).blob();
+    }
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href=url;
+    a.download="keys."+format+".gz";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* =========================
+   🧠 UTILS
+========================= */
+
+function countInput(){
+    return document.getElementById("count").value || 1000;
+}
+
+</script>
+</body>
+</html>
