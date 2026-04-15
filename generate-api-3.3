@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Key Generator PRO</title>
+
+<style>
+/* === тот же стиль, но чуть улучшен === */
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:-apple-system,Segoe UI,Roboto;
+    background: radial-gradient(circle at top,#1a1a2e,#0f0f1a);
+    color:#fff;
+}
+
+.container{max-width:520px;margin:auto;padding:16px}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 10px 40px rgba(0,0,0,.6);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.label{font-size:12px;margin-bottom:6px}
+.input,select{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:rgba(255,255,255,0.08);
+    color:#fff;
+    margin-bottom:12px;
+}
+
+.options{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.options label{font-size:12px;display:flex;gap:5px}
+
+.button{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    background:linear-gradient(135deg,#4f7cff,#6f9cff);
+    color:#fff;
+    margin-top:5px;
+}
+
+.button.stop{background:#ff4d4d}
+
+.status{margin-top:10px;font-size:12px;text-align:center;color:#aaa}
+.preview{margin-top:10px;font-size:12px;background:#000;padding:10px;border-radius:10px;max-height:150px;overflow:auto}
+</style>
+</head>
+
+<body>
+<div class="container">
+<div class="card">
+
+<h2 id="title">API Generator</h2>
+
+<!-- 🌍 LANGUAGE -->
+<div class="options">
+<button onclick="setLang('ru')">RU</button>
+<button onclick="setLang('en')">EN</button>
+</div>
+
+<label class="label">Count</label>
+<input class="input" id="count" value="1000">
+
+<label class="label">Length</label>
+<input class="input" id="length" value="32">
+
+<label class="label">Format</label>
+<select id="format">
+<option value="txt">TXT</option>
+<option value="csv">CSV</option>
+<option value="json">JSON</option>
+</select>
+
+<!-- gzip -->
+<label><input type="checkbox" id="gzip"> Enable gzip</label>
+
+<!-- charset -->
+<div class="options">
+<label><input type="checkbox" id="letters" checked>Letters</label>
+<label><input type="checkbox" id="digits" checked>Digits</label>
+<label><input type="checkbox" id="symbols">Symbols</label>
+</div>
+
+<button class="button" onclick="preview()">Preview</button>
+<button class="button" onclick="start()">Generate</button>
+<button class="button stop" onclick="stop()">STOP</button>
+
+<div class="status" id="status"></div>
+<div class="preview" id="preview"></div>
+
+</div>
+</div>
+
+<script>
+
+/* =========================
+   🌍 LANGUAGE SYSTEM
+========================= */
+
+const t = {
+ru:{title:"Генератор ключей"},
+en:{title:"Key Generator"}
+};
+
+let lang="ru";
+
+function setLang(l){
+    lang=l;
+    document.getElementById("title").innerText=t[l].title;
+}
+
+/* =========================
+   🔤 CHARSET
+========================= */
+
+function getCharset(){
+    let c="";
+    if(letters.checked) c+="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if(digits.checked) c+="0123456789";
+    if(symbols.checked) c+="!@#$%^&*";
+    return c||"abc123";
+}
+
+/* =========================
+   🔐 CRYPTO NO BIAS
+========================= */
+
+function rand(max){
+    const arr=new Uint32Array(1);
+    let limit=Math.floor(4294967296/max)*max;
+
+    while(true){
+        crypto.getRandomValues(arr);
+        if(arr[0]<limit) return arr[0]%max;
+    }
+}
+
+/* =========================
+   🔑 KEY
+========================= */
+
+function gen(len,charset){
+    let r="";
+    for(let i=0;i<len;i++){
+        r+=charset[rand(charset.length)];
+    }
+    return r;
+}
+/* =========================
+   🛑 STOP
+========================= */
+let stopFlag = false;
+function stop(){ stopFlag = true; }
+
+/* =========================
+   👀 PREVIEW
+========================= */
+function preview(){
+    const out = document.getElementById("preview");
+    const len = parseInt(length.value)||32;
+    const charset = getCharset();
+
+    let arr=[];
+    for(let i=0;i<80;i++){
+        arr.push(gen(len,charset));
+    }
+    out.innerText = arr.join("\n");
+}
+
+/* =========================
+   📊 STATS
+========================= */
+function estimate(count,len){
+    return ((count*(len+2))/1024/1024).toFixed(1);
+}
+
+/* =========================
+   📁 STREAM WRITER (REAL)
+========================= */
+
+async function createWriter(){
+
+    // 🔥 если браузер поддерживает File System API
+    if(window.showSaveFilePicker){
+
+        const handle = await showSaveFilePicker({
+            suggestedName:"keys.txt"
+        });
+
+        const writable = await handle.createWritable();
+
+        return {
+            write: chunk => writable.write(chunk),
+            close: () => writable.close()
+        };
+    }
+
+    // fallback
+    let parts=[];
+    return {
+        write: chunk => parts.push(chunk),
+        close: () => parts
+    };
+}
+
+/* =========================
+   🚀 GENERATION
+========================= */
+
+async function start(){
+
+    stopFlag=false;
+
+    const status = document.getElementById("status");
+
+    const count = parseInt(document.getElementById("count").value)||1000;
+    const len = parseInt(document.getElementById("length").value)||32;
+    const format = document.getElementById("format").value;
+    const gzip = document.getElementById("gzip").checked;
+
+    if(count>250000){
+        if(!confirm(`⚠️ ~${estimate(count,len)} MB`)) return;
+    }
+
+    const charset = getCharset();
+
+    const writer = await createWriter();
+
+    let startTime = performance.now();
+
+    // CSV header
+    if(format==="csv"){
+        await writer.write("key\n");
+    }
+
+    // JSON start
+    if(format==="json"){
+        await writer.write("[\n");
+    }
+
+    let chunkSize = 10000;
+    let buffer = [];
+    let first = true;
+
+    for(let i=0;i<count;i++){
+
+        if(stopFlag){
+            status.innerText="Stopped";
+            return;
+        }
+
+        let key = gen(len,charset);
+
+        if(format==="json"){
+            let item = JSON.stringify(key);
+            if(!first) item = ",\n"+item;
+            buffer.push(item);
+            first=false;
+        }else{
+            buffer.push(key+"\n");
+        }
+
+        if(buffer.length>=chunkSize){
+
+            await writer.write(buffer.join(""));
+            buffer=[];
+
+            let percent = ((i/count)*100).toFixed(1);
+            let speed = Math.floor(i / ((performance.now()-startTime)/1000));
+
+            status.innerText = `${percent}% • ${i}/${count} • ${speed}/s`;
+
+            await new Promise(r=>setTimeout(r,0));
+        }
+    }
+
+    // остаток
+    if(buffer.length){
+        await writer.write(buffer.join(""));
+    }
+
+    if(format==="json"){
+        await writer.write("\n]");
+    }
+
+    let result = await writer.close();
+
+    /* =========================
+       📦 FALLBACK BLOB
+    ========================= */
+
+    if(Array.isArray(result)){
+
+        let blob = new Blob(result,{type:"text/plain"});
+
+        // gzip только если включено
+        if(gzip && window.CompressionStream){
+            const cs = new CompressionStream("gzip");
+            const compressed = blob.stream().pipeThrough(cs);
+            blob = await new Response(compressed).blob();
+        }
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href=url;
+        a.download = gzip
+            ? `keys.${format}.gz`
+            : `keys.${format}`;
+
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    status.innerText="Done ✅";
+}
+/* =========================
+   ⚡ WORKER (ускорение x2–x4)
+========================= */
+
+let worker = null;
+
+function createWorker(){
+
+    const code = `
+    self.onmessage = function(e){
+
+        const {count,len,charset,format} = e.data;
+
+        function rand(max){
+            const arr = new Uint32Array(1);
+            let limit = Math.floor(4294967296/max)*max;
+
+            while(true){
+                crypto.getRandomValues(arr);
+                if(arr[0]<limit) return arr[0]%max;
+            }
+        }
+
+        function gen(len,charset){
+            let r="";
+            for(let i=0;i<len;i++){
+                r+=charset[rand(charset.length)];
+            }
+            return r;
+        }
+
+        let chunkSize = 10000;
+        let buffer = [];
+        let first = true;
+
+        for(let i=0;i<count;i++){
+
+            let key = gen(len,charset);
+
+            if(format==="json"){
+                let item = JSON.stringify(key);
+                if(!first) item = ",\\n"+item;
+                buffer.push(item);
+                first=false;
+            }else{
+                buffer.push(key+"\\n");
+            }
+
+            if(buffer.length>=chunkSize){
+                postMessage({
+                    type:"chunk",
+                    data:buffer.join(""),
+                    i
+                });
+                buffer=[];
+            }
+        }
+
+        if(buffer.length){
+            postMessage({
+                type:"chunk",
+                data:buffer.join(""),
+                i:count
+            });
+        }
+
+        postMessage({type:"done"});
+    }
+    `;
+
+    const blob = new Blob([code], { type: "application/javascript" });
+    return new Worker(URL.createObjectURL(blob));
+}
+
+/* =========================
+   🚀 ОБНОВЛЁННЫЙ START
+========================= */
+
+const originalStart = start;
+
+start = async function(){
+
+    stopFlag=false;
+
+    const status = document.getElementById("status");
+
+    const count = parseInt(document.getElementById("count").value)||1000;
+    const len = parseInt(document.getElementById("length").value)||32;
+    const format = document.getElementById("format").value;
+    const gzip = document.getElementById("gzip").checked;
+
+    const charset = getCharset();
+
+    if(count>250000){
+        if(!confirm(`⚠️ ~${estimate(count,len)} MB`)) return;
+    }
+
+    const writer = await createWriter();
+
+    let startTime = performance.now();
+
+    // CSV header
+    if(format==="csv"){
+        await writer.write("key\n");
+    }
+
+    if(format==="json"){
+        await writer.write("[\n");
+    }
+
+    worker = createWorker();
+
+    worker.onmessage = async (e)=>{
+
+        if(stopFlag){
+            worker.terminate();
+            status.innerText="Stopped";
+            return;
+        }
+
+        if(e.data.type==="chunk"){
+            await writer.write(e.data.data);
+
+            let i = e.data.i;
+            let percent = ((i/count)*100).toFixed(1);
+            let speed = Math.floor(i / ((performance.now()-startTime)/1000));
+
+            status.innerText = `${percent}% • ${i}/${count} • ${speed}/s`;
+        }
+
+        if(e.data.type==="done"){
+
+            if(format==="json"){
+                await writer.write("\n]");
+            }
+
+            let result = await writer.close();
+
+            if(Array.isArray(result)){
+
+                let blob = new Blob(result,{type:"text/plain"});
+
+                if(gzip && window.CompressionStream){
+                    const cs = new CompressionStream("gzip");
+                    const compressed = blob.stream().pipeThrough(cs);
+                    blob = await new Response(compressed).blob();
+                }
+
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href=url;
+                a.download = gzip
+                    ? \`keys.\${format}.gz\`
+                    : \`keys.\${format}\`;
+
+                a.click();
+
+                URL.revokeObjectURL(url);
+            }
+
+            status.innerText="Done 🚀";
+            worker.terminate();
+        }
+    };
+
+    worker.postMessage({
+        count,
+        len,
+        charset,
+        format
+    });
+};
+/* =========================
+   🔒 ЗАЩИТА ВВОДА
+========================= */
+
+function validateInputs(count, len){
+
+    if(count <= 0 || len <= 0){
+        alert("Некорректные значения");
+        return false;
+    }
+
+    if(count > 10000000){
+        alert("Слишком большое значение (макс 10M)");
+        return false;
+    }
+
+    if(len > 512){
+        alert("Слишком длинные ключи");
+        return false;
+    }
+
+    return true;
+}
+
+/* =========================
+   🔘 БЛОК КНОПОК
+========================= */
+
+function setUIState(running){
+
+    const buttons = document.querySelectorAll(".button");
+
+    buttons.forEach(b=>{
+        if(!b.classList.contains("stop")){
+            b.disabled = running;
+        }
+    });
+}
+
+/* =========================
+   📊 РАСШИРЕННАЯ СТАТИСТИКА
+========================= */
+
+function updateStats(i, count, startTime){
+
+    let percent = ((i/count)*100).toFixed(1);
+
+    let elapsed = (performance.now()-startTime)/1000;
+    let speed = Math.floor(i / elapsed);
+
+    let eta = speed > 0 ? Math.floor((count - i)/speed) : 0;
+
+    status.innerText =
+        `${percent}% • ${i}/${count} • ${speed}/s • ETA: ${eta}s`;
+}
+
+/* =========================
+   ⚠️ ПРЕДУПРЕЖДЕНИЯ
+========================= */
+
+function showWarning(count, len){
+
+    let size = estimate(count, len);
+
+    if(count > 250000){
+        return confirm(
+            `⚠️ Большая генерация\n\n` +
+            `Размер: ~${size} MB\n` +
+            `Может нагрузить устройство\n\nПродолжить?`
+        );
+    }
+
+    return true;
+}
+
+/* =========================
+   📋 COPY PREVIEW
+========================= */
+
+function copyPreview(){
+
+    const text = document.getElementById("preview").innerText;
+
+    if(!text) return alert("Нет данных");
+
+    navigator.clipboard.writeText(text);
+    alert("Скопировано");
+}
+
+/* =========================
+   🔁 ПЕРЕОПРЕДЕЛЕНИЕ START
+========================= */
+
+const startOld = start;
+
+start = async function(){
+
+    const status = document.getElementById("status");
+
+    const count = parseInt(document.getElementById("count").value)||1000;
+    const len = parseInt(document.getElementById("length").value)||32;
+
+    if(!validateInputs(count,len)) return;
+    if(!showWarning(count,len)) return;
+
+    setUIState(true);
+
+    try{
+        await startOld();
+    }catch(e){
+        console.error(e);
+        status.innerText="Ошибка";
+    }
+
+    setUIState(false);
+};
+
+/* =========================
+   🧠 DEV MODE
+========================= */
+
+let devMode = false;
+
+function toggleDev(){
+    devMode = !devMode;
+
+    if(devMode){
+        alert("Developer Mode ON\nОграничения сняты");
+    }else{
+        alert("Developer Mode OFF");
+    }
+}
+
+/* =========================
+   🔥 ЛОГ
+========================= */
+
+function log(msg){
+    console.log("[GEN]", msg);
+}
+
+/* =========================
+   ⚡ УЛУЧШЕНИЕ STOP
+========================= */
+
+const oldStop = stop;
+
+stop = function(){
+    stopFlag = true;
+
+    if(worker){
+        worker.terminate();
+    }
+
+    document.getElementById("status").innerText="Остановлено ❌";
+};
+
+/* =========================
+   📊 АВТО ОБНОВЛЕНИЕ СТАТОВ
+========================= */
+
+const oldWorkerHandler = worker?.onmessage;
+/* =========================
+   🧠 JOB QUEUE SYSTEM
+========================= */
+
+let jobQueue = [];
+let isProcessing = false;
+
+/* =========================
+   ➕ ДОБАВИТЬ ЗАДАЧУ
+========================= */
+
+function addJob(){
+
+    const job = {
+        id: Date.now(),
+        count: parseInt(count.value)||1000,
+        len: parseInt(length.value)||32,
+        format: format.value,
+        time: new Date().toLocaleTimeString()
+    };
+
+    jobQueue.push(job);
+    saveJobs();
+    renderJobs();
+
+    if(!isProcessing){
+        processQueue();
+    }
+}
+
+/* =========================
+   🔄 ОБРАБОТКА ОЧЕРЕДИ
+========================= */
+
+async function processQueue(){
+
+    if(jobQueue.length === 0){
+        isProcessing = false;
+        return;
+    }
+
+    isProcessing = true;
+
+    const job = jobQueue[0];
+
+    log("Start job: "+job.id);
+
+    // подставляем значения
+    count.value = job.count;
+    length.value = job.len;
+    format.value = job.format;
+
+    await start();
+
+    // удалить задачу
+    jobQueue.shift();
+    saveJobs();
+    renderJobs();
+
+    processQueue();
+}
+
+/* =========================
+   🗑 УДАЛИТЬ JOB
+========================= */
+
+function removeJob(id){
+    jobQueue = jobQueue.filter(j=>j.id!==id);
+    saveJobs();
+    renderJobs();
+}
+
+/* =========================
+   💾 LOCAL STORAGE
+========================= */
+
+function saveJobs(){
+    localStorage.setItem("jobs", JSON.stringify(jobQueue));
+}
+
+function loadJobs(){
+    const data = localStorage.getItem("jobs");
+    if(data){
+        jobQueue = JSON.parse(data);
+    }
+}
+
+/* =========================
+   🖥 RENDER UI
+========================= */
+
+function renderJobs(){
+
+    let box = document.getElementById("jobs");
+
+    if(!box){
+        box = document.createElement("div");
+        box.id="jobs";
+        box.style.marginTop="15px";
+        document.querySelector(".card").appendChild(box);
+    }
+
+    box.innerHTML = "<b>Очередь задач:</b><br>";
+
+    jobQueue.forEach(j=>{
+        box.innerHTML += `
+        <div style="margin:5px 0;padding:8px;background:#000;border-radius:8px">
+            ${j.count} × ${j.len} (${j.format})
+            <button onclick="removeJob(${j.id})">❌</button>
+        </div>`;
+    });
+}
+
+/* =========================
+   📜 HISTORY
+========================= */
+
+let historyLog = [];
+
+function addHistory(job){
+
+    historyLog.unshift({
+        ...job,
+        date: new Date().toLocaleString()
+    });
+
+    if(historyLog.length > 20){
+        historyLog.pop();
+    }
+
+    localStorage.setItem("history", JSON.stringify(historyLog));
+    renderHistory();
+}
+
+function loadHistory(){
+    const data = localStorage.getItem("history");
+    if(data){
+        historyLog = JSON.parse(data);
+    }
+}
+
+/* =========================
+   🖥 HISTORY UI
+========================= */
+
+function renderHistory(){
+
+    let box = document.getElementById("history");
+
+    if(!box){
+        box = document.createElement("div");
+        box.id="history";
+        box.style.marginTop="15px";
+        document.querySelector(".card").appendChild(box);
+    }
+
+    box.innerHTML = "<b>История:</b><br>";
+
+    historyLog.forEach(h=>{
+        box.innerHTML += `
+        <div style="margin:5px 0;padding:8px;background:#111;border-radius:8px">
+            ${h.count} × ${h.len} (${h.format})<br>
+            <small>${h.date}</small>
+        </div>`;
+    });
+}
+
+/* =========================
+   🔁 ИНИЦИАЛИЗАЦИЯ
+========================= */
+
+loadJobs();
+loadHistory();
+renderJobs();
+renderHistory();
+
+/* =========================
+   🔥 HOOK START (добавляем историю)
+========================= */
+
+const startBackup = start;
+
+start = async function(){
+
+    const job = {
+        count: parseInt(count.value)||1000,
+        len: parseInt(length.value)||32,
+        format: format.value
+    };
+
+    await startBackup();
+
+    addHistory(job);
+};
+
+/* =========================
+   ➕ КНОПКА ДОБАВЛЕНИЯ
+========================= */
+
+(function(){
+
+    const btn = document.createElement("button");
+    btn.className="button";
+    btn.innerText="Добавить в очередь";
+    btn.onclick=addJob;
+
+    document.querySelector(".card").appendChild(btn);
+
+})();
