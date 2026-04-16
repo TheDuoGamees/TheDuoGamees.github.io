@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Key Generator</title>
+
+<style>
+/* вставь часть 2 сюда */
+body{
+background:#0f0f1a;
+color:#fff;
+font-family:sans-serif;
+}
+
+.container{max-width:500px;margin:auto;padding:15px}
+
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+padding:20px;
+border-radius:20px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:5px 0;
+background:#111;
+color:#fff;
+border:none;
+border-radius:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:5px;
+border:none;
+border-radius:12px;
+background:#4f7cff;
+color:#fff;
+}
+
+.switch{display:flex;gap:5px}
+.options{display:flex;flex-wrap:wrap;gap:10px}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<div class="card">
+
+<h2 id="title">API Generator</h2>
+
+<div class="lang">
+<button onclick="setLang('ru')">RU</button>
+<button onclick="setLang('en')">EN</button>
+</div>
+
+<!-- LENGTH MODE -->
+<div class="switch">
+<button id="bitBtn" onclick="setModeLength('bits')">Bits</button>
+<button id="lenBtn" onclick="setModeLength('len')">Length</button>
+</div>
+
+<input id="bits" value="256">
+<input id="length" value="32" style="display:none">
+
+<input id="count" value="1000">
+
+<select id="format">
+<option value="txt">TXT</option>
+<option value="csv">CSV</option>
+<option value="json">JSON</option>
+</select>
+
+<label><input type="checkbox" id="gzip"> gzip</label>
+
+<div class="options">
+<label><input type="checkbox" id="letters" checked>Letters</label>
+<label><input type="checkbox" id="digits" checked>Digits</label>
+<label><input type="checkbox" id="symbols">Symbols</label>
+<label><input type="checkbox" id="exclude">Exclude similar</label>
+</div>
+
+<input id="customCharset" placeholder="Custom charset">
+
+<div class="switch">
+<button onclick="setModeGen('crypto')">Crypto</button>
+<button onclick="setModeGen('fast')">Fast</button>
+</div>
+
+<label><input type="checkbox" id="uuid"> UUID v4</label>
+
+<button onclick="preview()">Preview</button>
+<button onclick="copyPreview()">Copy</button>
+
+<button onclick="start()">Generate</button>
+<button onclick="stop()">STOP</button>
+
+<div id="stats"></div>
+<div id="status"></div>
+<div id="previewBox"></div>
+
+</div>
+</div>
+
+<script>
+/* вставь часть 3 сюда */
+let modeGen = "crypto";
+let modeLen = "bits";
+let stopFlag = false;
+
+/* LANG */
+const i18n = {
+ru:{title:"Генератор"},
+en:{title:"Generator"}
+};
+
+function setLang(l){
+document.getElementById("title").innerText = i18n[l].title;
+}
+
+/* MODES */
+function setModeGen(m){ modeGen = m; }
+function setModeLength(m){
+modeLen = m;
+bits.style.display = m==="bits"?"block":"none";
+length.style.display = m==="len"?"block":"none";
+}
+
+/* LENGTH */
+function getLength(){
+if(modeLen==="bits"){
+return Math.floor((parseInt(bits.value)||256)/6);
+}
+return parseInt(length.value)||32;
+}
+
+/* CHARSET */
+function getCharset(){
+if(customCharset.value) return customCharset.value;
+
+let c="";
+if(letters.checked) c+="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+if(digits.checked) c+="0123456789";
+if(symbols.checked) c+="!@#$%^&*";
+
+if(exclude.checked) c=c.replace(/[0Ool1I]/g,"");
+
+return c||"abc123";
+}
+
+/* CRYPTO */
+function rand(max){
+if(modeGen==="crypto"){
+const arr=new Uint32Array(1);
+let limit=Math.floor(4294967296/max)*max;
+while(true){
+crypto.getRandomValues(arr);
+if(arr[0]<limit) return arr[0]%max;
+}
+}
+return Math.floor(Math.random()*max);
+}
+
+/* GEN */
+function genKey(len, charset){
+let r="";
+for(let i=0;i<len;i++){
+r+=charset[rand(charset.length)];
+}
+return r;
+}
+
+/* UUID */
+function uuidv4(){
+return crypto.randomUUID();
+}
+
+/* PREVIEW */
+function preview(){
+let out=[];
+let len=getLength();
+let charset=getCharset();
+
+for(let i=0;i<80;i++){
+out.push(uuid.checked?uuidv4():genKey(len,charset));
+}
+
+previewBox.innerText=out.join("\n");
+}
+
+/* COPY */
+function copyPreview(){
+navigator.clipboard.writeText(previewBox.innerText);
+}
+
+/* WRITER */
+async function createWriter(format){
+
+if(window.showSaveFilePicker){
+const handle = await showSaveFilePicker({
+suggestedName:`keys.${format}`
+});
+const writable = await handle.createWritable();
+return {
+write:chunk=>writable.write(chunk),
+close:()=>writable.close()
+};
+}
+
+let parts=[];
+return {
+write:chunk=>parts.push(chunk),
+close:()=>parts
+};
+}
+
+/* MAIN PIPELINE */
+async function start(){
+
+stopFlag=false;
+
+let count=parseInt(countInput.value)||1000;
+let len=getLength();
+let format=formatSelect.value;
+let gzip=gzipCheckbox.checked;
+
+if(count>250000){
+if(!confirm("Большой объём")) return;
+}
+
+let charset=getCharset();
+
+let writer=await createWriter(format);
+
+if(format==="csv") await writer.write("key\n");
+if(format==="json") await writer.write("[\n");
+
+let buffer=[];
+let first=true;
+
+let startTime=performance.now();
+
+for(let i=0;i<count;i++){
+
+if(stopFlag) return;
+
+let key = uuid.checked ? uuidv4() : genKey(len,charset);
+
+if(format==="json"){
+let item=JSON.stringify(key);
+if(!first) item=",\n"+item;
+buffer.push(item);
+first=false;
+}else{
+buffer.push(key+"\n");
+}
+
+if(buffer.length>=10000){
+await writer.write(buffer.join(""));
+buffer=[];
+status.innerText = `${i}/${count}`;
+await new Promise(r=>setTimeout(r,0));
+}
+}
+
+if(buffer.length) await writer.write(buffer.join(""));
+
+if(format==="json") await writer.write("\n]");
+
+let result=await writer.close();
+
+if(Array.isArray(result)){
+let blob=new Blob(result);
+
+if(gzip && window.CompressionStream){
+const cs=new CompressionStream("gzip");
+blob=await new Response(blob.stream().pipeThrough(cs)).blob();
+}
+
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=gzip?`keys.${format}.gz`:`keys.${format}`;
+a.click();
+}
+
+status.innerText="Done";
+}
+
+function stop(){
+stopFlag=true;
+}
+</script>
+
+</body>
+</html>
