@@ -1,300 +1,1083 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Key Generator</title>
+<title>API Key Generator v3.3</title>
 
 <style>
-/* вставь часть 2 сюда */
-body{
-background:#0f0f1a;
-color:#fff;
-font-family:sans-serif;
+
+/* 🔥 RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container{max-width:500px;margin:auto;padding:15px}
-
-.card{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);
-padding:20px;
-border-radius:20px;
+/* 🌑 BODY */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at top, #1a1a2e, #0f0f1a);
+    color: #fff;
 }
 
-input,select{
-width:100%;
-padding:10px;
-margin:5px 0;
-background:#111;
-color:#fff;
-border:none;
-border-radius:10px;
+/* 📦 CONTAINER */
+.container {
+    max-width: 520px;
+    margin: auto;
+    padding: 16px;
 }
 
-button{
-width:100%;
-padding:12px;
-margin-top:5px;
-border:none;
-border-radius:12px;
-background:#4f7cff;
-color:#fff;
+/* 🧊 CARD */
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
 }
 
-.switch{display:flex;gap:5px}
-.options{display:flex;flex-wrap:wrap;gap:10px}
+/* 📝 TEXT */
+h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+p {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+/* 🧾 INPUT */
+.input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    margin-bottom: 12px;
+}
+
+/* 🔘 BUTTON */
+.button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #4f7cff, #6f9cff);
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.2s;
+}
+
+.button:hover {
+    transform: scale(1.02);
+}
+
+.button.stop {
+    background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
+}
+
+/* 🔄 SWITCH */
+.switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.switch button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+.switch .active {
+    background: linear-gradient(135deg, #4f7cff, #6f9cff);
+}
+
+/* ⚙️ OPTIONS */
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+/* 👀 PREVIEW */
+.preview {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.4);
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 180px;
+    overflow: auto;
+    font-size: 12px;
+}
+
+/* 📊 STATUS */
+.status {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: center;
+    color: #aaa;
+}
+/* ✨ SMOOTH UI */
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* 📱 MOBILE FIX */
+@media (max-width: 500px) {
+    .card {
+        padding: 15px;
+        border-radius: 16px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    .button {
+        padding: 16px;
+        font-size: 16px;
+    }
+}
+/* =========================
+   ✨ GLASS DEPTH
+========================= */
+
+.card {
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        rgba(255,255,255,0.08),
+        transparent 40%
+    );
+    pointer-events: none;
+}
+
+/* =========================
+   🌈 GLOW EFFECTS
+========================= */
+
+.button {
+    position: relative;
+    overflow: hidden;
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        rgba(120,160,255,0.4),
+        transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.button:hover::after {
+    opacity: 1;
+}
+
+/* =========================
+   ⚡ INPUT FOCUS
+========================= */
+
+.input:focus,
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(100,150,255,0.4);
+    background: rgba(255,255,255,0.12);
+}
+
+/* =========================
+   🎯 ACTIVE SWITCH
+========================= */
+
+.switch button.active {
+    box-shadow: 0 0 10px rgba(100,150,255,0.7);
+}
+
+/* =========================
+   📊 STATUS GLOW
+========================= */
+
+.status {
+    transition: all 0.2s;
+}
+
+.status:not(:empty) {
+    color: #8ab4ff;
+    text-shadow: 0 0 10px rgba(120,150,255,0.6);
+}
+
+/* =========================
+   👀 PREVIEW SCROLL STYLE
+========================= */
+
+.preview::-webkit-scrollbar {
+    width: 6px;
+}
+
+.preview::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+}
+
+/* =========================
+   🔥 MICRO INTERACTIONS
+========================= */
+
+button {
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* =========================
+   🌌 BACKGROUND ANIMATION
+========================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+        circle at 20% 20%,
+        rgba(80,120,255,0.15),
+        transparent 40%
+    ),
+    radial-gradient(
+        circle at 80% 80%,
+        rgba(120,80,255,0.15),
+        transparent 40%
+    );
+    animation: moveBg 10s infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes moveBg {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(-20px, -20px); }
+}
+
+/* =========================
+   📱 MOBILE TOUCH UX
+========================= */
+
+@media (hover: none) {
+    .button:hover::after {
+        opacity: 0;
+    }
+
+    button:hover {
+        transform: none;
+    }
+}
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 <div class="card">
 
-<h2 id="title">API Generator</h2>
+<h1>API Key Generator v3.3</h1>
+<p>Dev tool for secure key generation</p>
 
-<div class="lang">
-<button onclick="setLang('ru')">RU</button>
-<button onclick="setLang('en')">EN</button>
-</div>
-
-<!-- LENGTH MODE -->
+<!-- 🌍 LANGUAGE -->
 <div class="switch">
-<button id="bitBtn" onclick="setModeLength('bits')">Bits</button>
-<button id="lenBtn" onclick="setModeLength('len')">Length</button>
+<button class="active" id="langRU">RU</button>
+<button id="langEN">EN</button>
 </div>
 
-<input id="bits" value="256">
-<input id="length" value="32" style="display:none">
+<!-- 🔢 LENGTH MODE -->
+<div class="switch">
+<button class="active" id="modeBits">Bits</button>
+<button id="modeLength">Length</button>
+</div>
 
-<input id="count" value="1000">
+<input class="input" id="bitsInput" value="256">
+<input class="input" id="lengthInput" value="32" style="display:none">
 
-<select id="format">
+<!-- 📊 COUNT -->
+<input class="input" id="countInput" value="1000" placeholder="Count">
+
+<!-- 📁 FORMAT -->
+<select id="formatSelect">
 <option value="txt">TXT</option>
 <option value="csv">CSV</option>
 <option value="json">JSON</option>
 </select>
 
-<label><input type="checkbox" id="gzip"> gzip</label>
+<!-- 🗜️ GZIP -->
+<label>
+<input type="checkbox" id="gzipCheckbox"> GZIP
+</label>
 
+<!-- 🔤 CHARSET -->
 <div class="options">
-<label><input type="checkbox" id="letters" checked>Letters</label>
-<label><input type="checkbox" id="digits" checked>Digits</label>
-<label><input type="checkbox" id="symbols">Symbols</label>
-<label><input type="checkbox" id="exclude">Exclude similar</label>
+<label><input type="checkbox" id="letters" checked> Letters</label>
+<label><input type="checkbox" id="digits" checked> Digits</label>
+<label><input type="checkbox" id="symbols"> Symbols</label>
+<label><input type="checkbox" id="exclude"> Exclude similar</label>
 </div>
 
-<input id="customCharset" placeholder="Custom charset">
+<input class="input" id="customCharset" placeholder="Custom charset">
 
+<!-- 🔐 MODE -->
 <div class="switch">
-<button onclick="setModeGen('crypto')">Crypto</button>
-<button onclick="setModeGen('fast')">Fast</button>
+<button class="active" id="cryptoMode">Crypto</button>
+<button id="fastMode">Fast</button>
 </div>
 
-<label><input type="checkbox" id="uuid"> UUID v4</label>
+<!-- 🔥 UUID -->
+<label>
+<input type="checkbox" id="uuidCheckbox"> UUID v4
+</label>
 
-<button onclick="preview()">Preview</button>
-<button onclick="copyPreview()">Copy</button>
+<!-- 👀 PREVIEW -->
+<button class="button" id="previewBtn">Preview</button>
+<button class="button" id="copyBtn">Copy preview</button>
 
-<button onclick="start()">Generate</button>
-<button onclick="stop()">STOP</button>
+<!-- 🚀 ACTION -->
+<button class="button" id="generateBtn">Generate</button>
+<button class="button stop" id="stopBtn">STOP</button>
 
-<div id="stats"></div>
-<div id="status"></div>
-<div id="previewBox"></div>
+<div class="status" id="status"></div>
+<div class="preview" id="previewBox"></div>
 
 </div>
 </div>
 
+<!-- ⬇️ JS БУДЕТ НИЖЕ -->
 <script>
-/* вставь часть 3 сюда */
-let modeGen = "crypto";
-let modeLen = "bits";
-let stopFlag = false;
 
-/* LANG */
-const i18n = {
-ru:{title:"Генератор"},
-en:{title:"Generator"}
+/* =========================
+   ⚙️ STATE
+========================= */
+
+let mode = "crypto";
+let lengthMode = "bits";
+let stopRequested = false;
+
+/* =========================
+   🔘 UI ELEMENTS
+========================= */
+
+const bitsInput = document.getElementById("bitsInput");
+const lengthInput = document.getElementById("lengthInput");
+const countInput = document.getElementById("countInput");
+const previewBox = document.getElementById("previewBox");
+const status = document.getElementById("status");
+
+/* =========================
+   🔄 MODE SWITCHES
+========================= */
+
+document.getElementById("modeBits").onclick = () => {
+    lengthMode = "bits";
+    bitsInput.style.display = "block";
+    lengthInput.style.display = "none";
 };
 
-function setLang(l){
-document.getElementById("title").innerText = i18n[l].title;
-}
-
-/* MODES */
-function setModeGen(m){ modeGen = m; }
-function setModeLength(m){
-modeLen = m;
-bits.style.display = m==="bits"?"block":"none";
-length.style.display = m==="len"?"block":"none";
-}
-
-/* LENGTH */
-function getLength(){
-if(modeLen==="bits"){
-return Math.floor((parseInt(bits.value)||256)/6);
-}
-return parseInt(length.value)||32;
-}
-
-/* CHARSET */
-function getCharset(){
-if(customCharset.value) return customCharset.value;
-
-let c="";
-if(letters.checked) c+="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-if(digits.checked) c+="0123456789";
-if(symbols.checked) c+="!@#$%^&*";
-
-if(exclude.checked) c=c.replace(/[0Ool1I]/g,"");
-
-return c||"abc123";
-}
-
-/* CRYPTO */
-function rand(max){
-if(modeGen==="crypto"){
-const arr=new Uint32Array(1);
-let limit=Math.floor(4294967296/max)*max;
-while(true){
-crypto.getRandomValues(arr);
-if(arr[0]<limit) return arr[0]%max;
-}
-}
-return Math.floor(Math.random()*max);
-}
-
-/* GEN */
-function genKey(len, charset){
-let r="";
-for(let i=0;i<len;i++){
-r+=charset[rand(charset.length)];
-}
-return r;
-}
-
-/* UUID */
-function uuidv4(){
-return crypto.randomUUID();
-}
-
-/* PREVIEW */
-function preview(){
-let out=[];
-let len=getLength();
-let charset=getCharset();
-
-for(let i=0;i<80;i++){
-out.push(uuid.checked?uuidv4():genKey(len,charset));
-}
-
-previewBox.innerText=out.join("\n");
-}
-
-/* COPY */
-function copyPreview(){
-navigator.clipboard.writeText(previewBox.innerText);
-}
-
-/* WRITER */
-async function createWriter(format){
-
-if(window.showSaveFilePicker){
-const handle = await showSaveFilePicker({
-suggestedName:`keys.${format}`
-});
-const writable = await handle.createWritable();
-return {
-write:chunk=>writable.write(chunk),
-close:()=>writable.close()
+document.getElementById("modeLength").onclick = () => {
+    lengthMode = "length";
+    bitsInput.style.display = "none";
+    lengthInput.style.display = "block";
 };
-}
 
-let parts=[];
-return {
-write:chunk=>parts.push(chunk),
-close:()=>parts
+document.getElementById("cryptoMode").onclick = () => mode = "crypto";
+document.getElementById("fastMode").onclick = () => {
+    mode = "fast";
+    alert("Fast mode is NOT secure");
 };
+
+/* =========================
+   🔢 LENGTH
+========================= */
+
+function getLength() {
+    if (lengthMode === "bits") {
+        let bits = parseInt(bitsInput.value) || 256;
+        return Math.floor(bits / 6);
+    }
+    return parseInt(lengthInput.value) || 32;
 }
 
-/* MAIN PIPELINE */
-async function start(){
+/* =========================
+   🔤 CHARSET
+========================= */
 
-stopFlag=false;
+function getCharset() {
+    const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const digits = "0123456789";
+    const symbols = "!@#$%^&*";
 
-let count=parseInt(countInput.value)||1000;
-let len=getLength();
-let format=formatSelect.value;
-let gzip=gzipCheckbox.checked;
+    let charset = "";
 
-if(count>250000){
-if(!confirm("Большой объём")) return;
+    if (document.getElementById("letters").checked) charset += letters;
+    if (document.getElementById("digits").checked) charset += digits;
+    if (document.getElementById("symbols").checked) charset += symbols;
+
+    const custom = document.getElementById("customCharset").value;
+    if (custom) charset = custom;
+
+    if (!charset) charset = letters + digits;
+
+    if (document.getElementById("exclude").checked) {
+        charset = charset.replace(/[0Ool1I]/g, "");
+    }
+
+    return charset;
 }
 
-let charset=getCharset();
+/* =========================
+   🔐 RANDOM (NO BIAS)
+========================= */
 
-let writer=await createWriter(format);
+function secureRandom(max) {
+    const arr = new Uint32Array(1);
+    const limit = Math.floor(4294967296 / max) * max;
 
-if(format==="csv") await writer.write("key\n");
-if(format==="json") await writer.write("[\n");
-
-let buffer=[];
-let first=true;
-
-let startTime=performance.now();
-
-for(let i=0;i<count;i++){
-
-if(stopFlag) return;
-
-let key = uuid.checked ? uuidv4() : genKey(len,charset);
-
-if(format==="json"){
-let item=JSON.stringify(key);
-if(!first) item=",\n"+item;
-buffer.push(item);
-first=false;
-}else{
-buffer.push(key+"\n");
+    while (true) {
+        crypto.getRandomValues(arr);
+        if (arr[0] < limit) return arr[0] % max;
+    }
 }
 
-if(buffer.length>=10000){
-await writer.write(buffer.join(""));
-buffer=[];
-status.innerText = `${i}/${count}`;
-await new Promise(r=>setTimeout(r,0));
-}
-}
-
-if(buffer.length) await writer.write(buffer.join(""));
-
-if(format==="json") await writer.write("\n]");
-
-let result=await writer.close();
-
-if(Array.isArray(result)){
-let blob=new Blob(result);
-
-if(gzip && window.CompressionStream){
-const cs=new CompressionStream("gzip");
-blob=await new Response(blob.stream().pipeThrough(cs)).blob();
+function rand(max) {
+    if (mode === "crypto" && window.crypto) {
+        return secureRandom(max);
+    }
+    return Math.floor(Math.random() * max);
 }
 
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download=gzip?`keys.${format}.gz`:`keys.${format}`;
-a.click();
+/* =========================
+   🔑 KEY GENERATION
+========================= */
+
+function generateKey(length, charset) {
+    let result = "";
+    const max = charset.length;
+
+    for (let i = 0; i < length; i++) {
+        result += charset[rand(max)];
+    }
+
+    return result;
 }
 
-status.innerText="Done";
+/* =========================
+   🔥 UUID
+========================= */
+
+function generateUUID() {
+    return crypto.randomUUID();
 }
 
-function stop(){
-stopFlag=true;
-}
+/* =========================
+   👀 PREVIEW
+========================= */
+
+document.getElementById("previewBtn").onclick = () => {
+    const length = getLength();
+    const charset = getCharset();
+    const useUUID = document.getElementById("uuidCheckbox").checked;
+
+    let result = [];
+
+    for (let i = 0; i < 100; i++) {
+        result.push(
+            useUUID
+                ? generateUUID()
+                : generateKey(length, charset)
+        );
+    }
+
+    previewBox.innerText = result.join("\n");
+};
+
+/* =========================
+   📋 COPY
+========================= */
+
+document.getElementById("copyBtn").onclick = () => {
+    const text = previewBox.innerText;
+
+    if (!text) return alert("Nothing to copy");
+
+    navigator.clipboard.writeText(text);
+};
+
+/* =========================
+   ⛔ STOP
+========================= */
+
+document.getElementById("stopBtn").onclick = () => {
+    stopRequested = true;
+    status.innerText = "Stopped ❌";
+};
+
 </script>
+<script>
 
-</body>
-</html>
+/* =========================
+   📊 UTILS
+========================= */
+
+function estimateSize(count, length) {
+    let bytes = count * (length + 2);
+    return (bytes / (1024 * 1024)).toFixed(1);
+}
+
+/* =========================
+   📁 FILE WRITER
+========================= */
+
+async function createWriter(filename) {
+
+    // ✅ современный API (не работает на iPhone)
+    if (window.showSaveFilePicker) {
+        const handle = await showSaveFilePicker({
+            suggestedName: filename
+        });
+
+        const writable = await handle.createWritable();
+
+        return {
+            write: chunk => writable.write(chunk),
+            close: () => writable.close()
+        };
+    }
+
+    // 📱 fallback (iPhone)
+    let parts = [];
+
+    return {
+        write: chunk => parts.push(chunk),
+        close: () => parts
+    };
+}
+
+/* =========================
+   🚀 MAIN GENERATION
+========================= */
+
+document.getElementById("generateBtn").onclick = async () => {
+
+    stopRequested = false;
+
+    const count = parseInt(countInput.value) || 1000;
+    const length = getLength();
+    const format = document.getElementById("formatSelect").value;
+    const gzip = document.getElementById("gzipCheckbox").checked;
+    const charset = getCharset();
+    const useUUID = document.getElementById("uuidCheckbox").checked;
+
+    // ⚠️ предупреждение
+    if (count > 250000) {
+        const size = estimateSize(count, length);
+        if (!confirm(`Big file (~${size} MB). Continue?`)) return;
+    }
+
+    status.innerText = "Preparing...";
+
+    const writer = await createWriter(`keys.${format}`);
+
+    // формат
+    if (format === "csv") await writer.write("key\n");
+    if (format === "json") await writer.write("[\n");
+
+    let chunk = [];
+    let chunkSize = 10000;
+    let first = true;
+
+    let startTime = performance.now();
+
+    for (let i = 0; i < count; i++) {
+
+        if (stopRequested) return;
+
+        let key = useUUID
+            ? generateUUID()
+            : generateKey(length, charset);
+
+        if (format === "json") {
+            let item = JSON.stringify(key);
+            if (!first) item = ",\n" + item;
+            chunk.push(item);
+            first = false;
+        } else {
+            chunk.push(key + "\n");
+        }
+
+        if (chunk.length >= chunkSize) {
+
+            await writer.write(chunk.join(""));
+            chunk = [];
+
+            let elapsed = (performance.now() - startTime) / 1000;
+            let speed = Math.floor(i / elapsed);
+            let percent = ((i / count) * 100).toFixed(1);
+
+            status.innerText =
+                `${percent}% • ${i}/${count} • ${speed}/sec`;
+
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+
+    // остаток
+    if (chunk.length) {
+        await writer.write(chunk.join(""));
+    }
+
+    if (format === "json") {
+        await writer.write("\n]");
+    }
+
+    let result = await writer.close();
+
+    /* =========================
+       📦 FALLBACK DOWNLOAD
+    ========================= */
+
+    if (Array.isArray(result)) {
+
+        let blob = new Blob(result, { type: "text/plain" });
+
+        // 🗜️ gzip
+        if (gzip && window.CompressionStream) {
+            const cs = new CompressionStream("gzip");
+            const compressed = blob.stream().pipeThrough(cs);
+            blob = await new Response(compressed).blob();
+        }
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = gzip
+            ? `keys.${format}.gz`
+            : `keys.${format}`;
+
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    status.innerText = "Done ✅";
+};
+
+</script>
+<script>
+
+/* =========================
+   🌍 I18N (ПОЛНЫЙ)
+========================= */
+
+let currentLang = "ru";
+
+const i18n = {
+    ru: {
+        title: "Генератор API ключей",
+        preview: "Предпросмотр",
+        copy: "Скопировать",
+        generate: "Генерировать",
+        stop: "СТОП",
+        count: "Количество",
+        bits: "Биты",
+        length: "Длина",
+        done: "Готово",
+        stopped: "Остановлено",
+        warning: "Большой объём файла"
+    },
+    en: {
+        title: "API Key Generator",
+        preview: "Preview",
+        copy: "Copy",
+        generate: "Generate",
+        stop: "STOP",
+        count: "Count",
+        bits: "Bits",
+        length: "Length",
+        done: "Done",
+        stopped: "Stopped",
+        warning: "Large file warning"
+    }
+};
+
+function applyLang() {
+    const t = i18n[currentLang];
+
+    document.querySelector("h1").innerText = t.title;
+    document.getElementById("previewBtn").innerText = t.preview;
+    document.getElementById("copyBtn").innerText = t.copy;
+    document.getElementById("generateBtn").innerText = t.generate;
+    document.getElementById("stopBtn").innerText = t.stop;
+}
+
+document.getElementById("langRU").onclick = () => {
+    currentLang = "ru";
+    applyLang();
+};
+
+document.getElementById("langEN").onclick = () => {
+    currentLang = "en";
+    applyLang();
+};
+
+applyLang();
+
+/* =========================
+   🎨 BUTTON ANIMATION
+========================= */
+
+document.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        btn.style.transform = "scale(0.96)";
+        setTimeout(() => {
+            btn.style.transform = "";
+        }, 100);
+    });
+});
+
+/* =========================
+   ✨ HOVER EFFECTS
+========================= */
+
+document.querySelectorAll(".button").forEach(btn => {
+    btn.addEventListener("mouseenter", () => {
+        btn.style.boxShadow = "0 0 15px rgba(100,150,255,0.6)";
+    });
+
+    btn.addEventListener("mouseleave", () => {
+        btn.style.boxShadow = "none";
+    });
+});
+
+/* =========================
+   🚀 FAST GZIP (УЛУЧШЕННЫЙ)
+========================= */
+
+async function compressGzip(blob) {
+    if (!window.CompressionStream) return blob;
+
+    const cs = new CompressionStream("gzip");
+    const stream = blob.stream().pipeThrough(cs);
+    return await new Response(stream).blob();
+}
+
+/* =========================
+   📊 SIZE PREVIEW ДО СТАРТА
+========================= */
+
+countInput.addEventListener("input", updateEstimate);
+bitsInput.addEventListener("input", updateEstimate);
+lengthInput.addEventListener("input", updateEstimate);
+
+function updateEstimate() {
+    const count = parseInt(countInput.value) || 0;
+    const len = getLength();
+
+    if (!count || !len) return;
+
+    const size = estimateSize(count, len);
+    status.innerText = `~ ${size} MB`;
+}
+
+updateEstimate();
+
+</script>
+<script>
+
+/* =========================
+   🎨 THEMES
+========================= */
+
+let theme = "dark";
+
+const themes = {
+    dark: "radial-gradient(circle at top, #1a1a2e, #0f0f1a)",
+    neon: "radial-gradient(circle at top, #001a1a, #000)",
+    light: "#f5f5f5"
+};
+
+function setTheme(t){
+    theme = t;
+    document.body.style.background = themes[t];
+}
+
+/* Добавим кнопки тем */
+const themeContainer = document.createElement("div");
+themeContainer.innerHTML = `
+<button onclick="setTheme('dark')">Dark</button>
+<button onclick="setTheme('neon')">Neon</button>
+<button onclick="setTheme('light')">Light</button>
+`;
+document.querySelector(".card").prepend(themeContainer);
+
+/* =========================
+   🧲 DRAG UI
+========================= */
+
+let isDragging = false;
+let offsetX, offsetY;
+
+const card = document.querySelector(".card");
+
+card.addEventListener("mousedown", e=>{
+    isDragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+});
+
+document.addEventListener("mousemove", e=>{
+    if(!isDragging) return;
+    card.style.position = "absolute";
+    card.style.left = (e.pageX - offsetX) + "px";
+    card.style.top = (e.pageY - offsetY) + "px";
+});
+
+document.addEventListener("mouseup", ()=>{
+    isDragging = false;
+});
+
+/* =========================
+   ⚡ WEB WORKER
+========================= */
+
+let worker;
+
+function createWorker(){
+
+    const blob = new Blob([`
+        self.onmessage = function(e){
+            const { length, charset, count } = e.data;
+
+            function rand(max){
+                const arr = new Uint32Array(1);
+                const limit = Math.floor(4294967296 / max) * max;
+                while(true){
+                    crypto.getRandomValues(arr);
+                    if(arr[0] < limit) return arr[0] % max;
+                }
+            }
+
+            function gen(len, charset){
+                let r="";
+                for(let i=0;i<len;i++){
+                    r+=charset[rand(charset.length)];
+                }
+                return r;
+            }
+
+            for(let i=0;i<count;i++){
+                postMessage(gen(length, charset));
+            }
+        }
+    `], { type: "application/javascript" });
+
+    return new Worker(URL.createObjectURL(blob));
+}
+
+/* =========================
+   📁 REAL STREAMING (FS API)
+========================= */
+
+async function createRealWriter(filename){
+
+    if(window.showSaveFilePicker){
+        const handle = await showSaveFilePicker({
+            suggestedName: filename
+        });
+
+        const writable = await handle.createWritable();
+
+        return {
+            write: chunk => writable.write(chunk),
+            close: () => writable.close(),
+            real: true
+        };
+    }
+
+    return await createWriter(filename);
+}
+
+/* =========================
+   🚀 UPGRADED GENERATION
+========================= */
+
+async function generateUltra(){
+
+    stopRequested = false;
+
+    const count = parseInt(countInput.value) || 1000;
+    const length = getLength();
+    const format = document.getElementById("formatSelect").value;
+    const gzip = document.getElementById("gzipCheckbox").checked;
+    const charset = getCharset();
+
+    const writer = await createRealWriter(`keys.${format}`);
+
+    worker = createWorker();
+
+    let i = 0;
+    let startTime = performance.now();
+
+    worker.onmessage = async (e)=>{
+
+        if(stopRequested){
+            worker.terminate();
+            return;
+        }
+
+        let key = e.data;
+
+        await writer.write(key + "\n");
+
+        i++;
+
+        if(i % 1000 === 0){
+            let elapsed = (performance.now() - startTime)/1000;
+            let speed = Math.floor(i/elapsed);
+
+            status.innerText = `${i}/${count} • ${speed}/sec`;
+        }
+
+        if(i >= count){
+            await writer.close();
+            worker.terminate();
+            status.innerText = "Done 🚀";
+        }
+    };
+
+    worker.postMessage({
+        length,
+        charset,
+        count
+    });
+}
+
+/* заменяем кнопку */
+document.getElementById("generateBtn").onclick = generateUltra;
+
+</script>
+<script>
+
+/* =========================
+   💾 SAVE SETTINGS
+========================= */
+
+function saveSettings(){
+
+    const settings = {
+        bits: bitsInput.value,
+        length: lengthInput.value,
+        count: countInput.value,
+        format: formatSelect.value,
+        gzip: gzipCheckbox.checked,
+
+        letters: letters.checked,
+        digits: digits.checked,
+        symbols: symbols.checked,
+        exclude: exclude.checked,
+
+        customCharset: customCharset.value,
+        uuid: uuidCheckbox.checked,
+
+        mode,
+        lengthMode,
+        currentLang
+    };
+
+    localStorage.setItem("generatorSettings", JSON.stringify(settings));
+}
+
+/* =========================
+   📥 LOAD SETTINGS
+========================= */
+
+function loadSettings(){
+
+    const data = localStorage.getItem("generatorSettings");
+    if(!data) return;
+
+    const s = JSON.parse(data);
+
+    bitsInput.value = s.bits || 256;
+    lengthInput.value = s.length || 32;
+    countInput.value = s.count || 1000;
+
+    formatSelect.value = s.format || "txt";
+    gzipCheckbox.checked = s.gzip || false;
+
+    letters.checked = s.letters ?? true;
+    digits.checked = s.digits ?? true;
+    symbols.checked = s.symbols ?? false;
+    exclude.checked = s.exclude ?? false;
+
+    customCharset.value = s.customCharset || "";
+    uuidCheckbox.checked = s.uuid || false;
+
+    mode = s.mode || "crypto";
+    lengthMode = s.lengthMode || "bits";
+
+    currentLang = s.currentLang || "ru";
+
+    applyLang();
+
+    // восстановить UI режимов
+    if(lengthMode === "bits"){
+        bitsInput.style.display = "block";
+        lengthInput.style.display = "none";
+    } else {
+        bitsInput.style.display = "none";
+        lengthInput.style.display = "block";
+    }
+}
+
+/* =========================
+   🔄 AUTO SAVE
+========================= */
+
+document.querySelectorAll("input, select").forEach(el=>{
+    el.addEventListener("change", saveSettings);
+});
+
+/* =========================
+   🚀 INIT
+========================= */
+
+loadSettings();
+
+</script>
