@@ -1081,3 +1081,170 @@ document.querySelectorAll("input, select").forEach(el=>{
 loadSettings();
 
 </script>
+ <script>
+
+/* =========================
+   🌍 FULL I18N FIX
+========================= */
+
+const fullI18n = {
+    ru: {
+        title: "Генератор API ключей",
+        preview: "Предпросмотр",
+        copy: "Скопировать",
+        copied: "Скопировано",
+        generate: "Генерировать",
+        stop: "СТОП",
+        count: "Количество",
+        bits: "Биты",
+        length: "Длина",
+        gzip: "Сжатие (gzip)",
+        letters: "Буквы",
+        digits: "Цифры",
+        symbols: "Символы",
+        exclude: "Исключить похожие",
+        uuid: "UUID v4",
+        crypto: "Безопасный",
+        fast: "Быстрый",
+        warning: "Большой объём! Файл может быть тяжёлым",
+        empty: "Нет данных"
+    },
+    en: {
+        title: "API Key Generator",
+        preview: "Preview",
+        copy: "Copy",
+        copied: "Copied",
+        generate: "Generate",
+        stop: "STOP",
+        count: "Count",
+        bits: "Bits",
+        length: "Length",
+        gzip: "Compression (gzip)",
+        letters: "Letters",
+        digits: "Digits",
+        symbols: "Symbols",
+        exclude: "Exclude similar",
+        uuid: "UUID v4",
+        crypto: "Secure",
+        fast: "Fast",
+        warning: "Large amount! File may be heavy",
+        empty: "No data"
+    }
+};
+
+function applyFullLang(){
+    const t = fullI18n[currentLang];
+
+    document.querySelector("h1").innerText = t.title;
+    previewBtn.innerText = t.preview;
+    copyBtn.innerText = t.copy;
+    generateBtn.innerText = t.generate;
+    stopBtn.innerText = t.stop;
+
+    document.querySelector("label[for='gzipCheckbox']").innerText = t.gzip;
+}
+
+/* =========================
+   🔢 BIT BUTTONS (FIX)
+========================= */
+
+function setBits(val){
+    bitsInput.value = val;
+}
+
+const bitContainer = document.createElement("div");
+bitContainer.className = "switch";
+bitContainer.innerHTML = `
+<button onclick="setBits(128)">128</button>
+<button onclick="setBits(256)">256</button>
+<button onclick="setBits(512)">512</button>
+`;
+
+bitsInput.parentNode.insertBefore(bitContainer, bitsInput);
+
+/* =========================
+   ⚠️ VALIDATION
+========================= */
+
+function validateInputs(){
+    let count = parseInt(countInput.value);
+
+    if(isNaN(count) || count <= 0){
+        alert("Invalid count");
+        return false;
+    }
+
+    if(count > 10000000){
+        alert("Too large");
+        return false;
+    }
+
+    return true;
+}
+
+/* =========================
+   ⚠️ WARNING 250K
+========================= */
+
+function confirmLarge(count){
+    if(count > 250000){
+        return confirm(fullI18n[currentLang].warning);
+    }
+    return true;
+}
+
+/* =========================
+   📋 COPY FIX
+========================= */
+
+copyBtn.onclick = () => {
+    if(!previewBox.innerText){
+        alert(fullI18n[currentLang].empty);
+        return;
+    }
+
+    navigator.clipboard.writeText(previewBox.innerText);
+
+    copyBtn.innerText = fullI18n[currentLang].copied;
+
+    setTimeout(()=>{
+        copyBtn.innerText = fullI18n[currentLang].copy;
+    },1000);
+};
+
+/* =========================
+   📱 MOBILE UX FIX
+========================= */
+
+document.body.style.paddingBottom = "40px";
+
+/* =========================
+   🎨 THEME BUTTON FIX
+========================= */
+
+themeContainer.querySelectorAll("button").forEach(btn=>{
+    btn.style.padding = "8px 12px";
+    btn.style.borderRadius = "10px";
+    btn.style.marginRight = "5px";
+});
+
+/* =========================
+   🔥 FIX GENERATE FLOW
+========================= */
+
+const originalGenerate = document.getElementById("generateBtn").onclick;
+
+document.getElementById("generateBtn").onclick = async () => {
+
+    if(!validateInputs()) return;
+
+    const count = parseInt(countInput.value);
+
+    if(!confirmLarge(count)) return;
+
+    await originalGenerate();
+};
+
+</script>
+</body>
+</html>
