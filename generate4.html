@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Key Generator v4.2</title>
+
+<!-- CSS БУДЕТ В ЧАСТИ 2 -->
+<style>
+
+/* =========================
+   🔥 BASE
+========================= */
+
+:root{
+--bg:#0b0f1a;
+--card:#111827;
+--text:#ffffff;
+--sub:#9ca3af;
+
+--primary:#4f7cff;
+--primary2:#6f9cff;
+
+--danger:#ff4d4d;
+--border:rgba(255,255,255,0.08);
+--input:rgba(255,255,255,0.06);
+}
+
+/* LIGHT THEME */
+body.light{
+--bg:#f3f4f6;
+--card:#ffffff;
+--text:#111;
+--sub:#555;
+--input:#f0f0f0;
+}
+
+/* NEON THEME */
+body.neon{
+--bg:#050510;
+--card:rgba(0,255,200,0.05);
+--text:#00ffe0;
+--sub:#00c8aa;
+--primary:#00ffd0;
+--primary2:#00c8ff;
+}
+
+/* =========================
+   RESET
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:var(--bg);
+color:var(--text);
+padding:14px;
+transition:0.3s;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.app{
+max-width:520px;
+margin:auto;
+}
+
+.header h1{
+font-size:22px;
+margin-bottom:4px;
+}
+
+.subtitle{
+font-size:13px;
+color:var(--sub);
+margin-bottom:14px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+background:var(--card);
+border-radius:18px;
+padding:16px;
+border:1px solid var(--border);
+backdrop-filter:blur(20px);
+}
+
+/* =========================
+   SEGMENTED
+========================= */
+
+.segmented{
+display:flex;
+gap:6px;
+margin-bottom:12px;
+}
+
+.segmented button{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:none;
+background:var(--input);
+color:var(--text);
+font-size:14px;
+}
+
+.segmented button.active{
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+color:#fff;
+}
+
+/* =========================
+   FIELDS
+========================= */
+
+.field{
+margin-bottom:12px;
+}
+
+label{
+font-size:13px;
+color:var(--sub);
+margin-bottom:4px;
+display:block;
+}
+
+.input{
+width:100%;
+padding:13px;
+border-radius:12px;
+border:none;
+background:var(--input);
+color:var(--text);
+font-size:16px;
+}
+
+/* =========================
+   OPTIONS
+========================= */
+
+.options{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-bottom:12px;
+}
+
+.options label{
+font-size:13px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:none;
+font-size:15px;
+font-weight:600;
+letter-spacing:0.3px;
+margin-top:8px;
+}
+
+/* PRIMARY */
+.btn.primary{
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+color:#fff;
+}
+
+/* SECONDARY */
+.btn.secondary{
+background:var(--input);
+color:var(--text);
+}
+
+/* DANGER */
+.btn.danger{
+background:linear-gradient(135deg,#ff4d4d,#ff6b6b);
+color:#fff;
+}
+
+/* BIG */
+.btn.big{
+padding:16px;
+font-size:16px;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.actions{
+margin-top:10px;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+text-align:center;
+font-size:13px;
+margin-top:10px;
+color:var(--sub);
+}
+
+/* =========================
+   PREVIEW
+========================= */
+
+.preview{
+margin-top:10px;
+padding:10px;
+background:rgba(0,0,0,0.4);
+border-radius:10px;
+max-height:180px;
+overflow:auto;
+font-size:12px;
+}
+
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden{
+display:none;
+}
+
+/* =========================
+   SCROLL
+========================= */
+
+.preview::-webkit-scrollbar{
+width:5px;
+}
+.preview::-webkit-scrollbar-thumb{
+background:rgba(255,255,255,0.2);
+border-radius:10px;
+}
+
+/* =========================
+   INTERACTIONS
+========================= */
+
+button{
+transition:0.15s;
+}
+
+button:active{
+transform:scale(0.96);
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+
+input{
+font-size:16px;
+}
+
+@media (max-width:480px){
+
+.header h1{
+font-size:20px;
+}
+
+.btn{
+padding:15px;
+}
+
+}
+
+</style>
+  
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <h1 data-i="title"></h1>
+    <div class="subtitle" data-i="subtitle"></div>
+  </header>
+
+  <!-- TOP CONTROLS -->
+  <div class="top-bar">
+
+    <!-- LANGUAGE -->
+    <div class="segmented" id="langSwitch">
+      <button data-lang="ru" class="active">RU</button>
+      <button data-lang="en">EN</button>
+    </div>
+
+    <!-- THEME -->
+    <div class="segmented" id="themeSwitch">
+      <button data-theme="dark" class="active">Dark</button>
+      <button data-theme="neon">Neon</button>
+      <button data-theme="light">Light</button>
+    </div>
+
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="card">
+
+    <!-- PREFIX -->
+    <div class="field">
+      <label data-i="prefix"></label>
+      <input id="prefix" class="input" placeholder="api_">
+    </div>
+
+    <!-- KEY TYPE -->
+    <div class="field">
+      <label data-i="keyType"></label>
+      <select id="keyType" class="input">
+        <option value="" data-i="noType"></option>
+        <option value="api">API</option>
+        <option value="sk">Secret</option>
+        <option value="pk">Public</option>
+      </select>
+    </div>
+
+    <!-- ENV -->
+    <div class="field">
+      <label data-i="env"></label>
+      <select id="env" class="input">
+        <option value="" data-i="noEnv"></option>
+        <option value="live">Live</option>
+        <option value="test">Test</option>
+      </select>
+    </div>
+
+    <!-- LENGTH MODE -->
+    <div class="segmented">
+      <button id="modeBits" class="active" data-i="bits"></button>
+      <button id="modeLength" data-i="length"></button>
+    </div>
+
+    <!-- BITS -->
+    <div class="field" id="bitsBlock">
+      <label data-i="bits"></label>
+      <select id="bits" class="input">
+        <option>64</option>
+        <option>128</option>
+        <option selected>256</option>
+        <option>512</option>
+        <option>1024</option>
+        <option>2048</option>
+      </select>
+    </div>
+
+    <!-- LENGTH -->
+    <div class="field hidden" id="lengthBlock">
+      <label data-i="length"></label>
+      <input id="length" class="input" value="32">
+    </div>
+
+    <!-- COUNT -->
+    <div class="field">
+      <label data-i="count"></label>
+      <input id="count" class="input" value="1000">
+    </div>
+
+    <!-- FORMAT -->
+    <div class="field">
+      <label data-i="format"></label>
+      <select id="format" class="input">
+        <option value="txt">TXT</option>
+        <option value="csv">CSV</option>
+        <option value="json">JSON</option>
+        <option value="zip">ZIP</option>
+      </select>
+    </div>
+
+    <!-- CHARSET -->
+    <div class="options">
+
+      <label><input type="checkbox" id="letters" checked> <span data-i="letters"></span></label>
+      <label><input type="checkbox" id="digits" checked> <span data-i="digits"></span></label>
+      <label><input type="checkbox" id="symbols"> <span data-i="symbols"></span></label>
+      <label><input type="checkbox" id="exclude"> <span data-i="exclude"></span></label>
+      <label><input type="checkbox" id="dash"> <span data-i="dash"></span></label>
+      <label><input type="checkbox" id="gzip"> GZIP</label>
+
+    </div>
+
+    <!-- CUSTOM CHARSET -->
+    <div class="field">
+      <input id="customCharset" class="input" data-i-placeholder="customCharset">
+    </div>
+
+    <!-- MODE -->
+    <div class="segmented">
+      <button id="cryptoMode" class="active" data-i="crypto"></button>
+      <button id="fastMode" data-i="fast"></button>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button id="previewBtn" class="btn primary"></button>
+      <button id="copyBtn" class="btn secondary"></button>
+      <button id="generateBtn" class="btn primary big"></button>
+      <button id="stopBtn" class="btn danger"></button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status" id="status"></div>
+
+    <!-- PREVIEW -->
+    <div class="preview" id="preview"></div>
+
+  </div>
+
+</div>
+
+<!-- SCRIPT БУДЕТ В ЧАСТИ 3 (НЕ ЗАКРЫВАТЬ ПОТОМ) -->
+<script>
+
+/* =========================
+   🧠 STATE (ЕДИНЫЙ)
+========================= */
+
+const state = {
+lang: "ru",
+theme: "dark",
+mode: "crypto",
+lengthMode: "bits",
+stop: false
+};
+
+/* =========================
+   🔗 ELEMENTS
+========================= */
+
+const el = {
+title: document.querySelector("[data-i='title']"),
+subtitle: document.querySelector("[data-i='subtitle']"),
+
+previewBtn: document.getElementById("previewBtn"),
+copyBtn: document.getElementById("copyBtn"),
+generateBtn: document.getElementById("generateBtn"),
+stopBtn: document.getElementById("stopBtn"),
+
+preview: document.getElementById("preview"),
+status: document.getElementById("status"),
+
+bits: document.getElementById("bits"),
+length: document.getElementById("length"),
+count: document.getElementById("count"),
+
+bitsBlock: document.getElementById("bitsBlock"),
+lengthBlock: document.getElementById("lengthBlock"),
+
+letters: document.getElementById("letters"),
+digits: document.getElementById("digits"),
+symbols: document.getElementById("symbols"),
+exclude: document.getElementById("exclude"),
+dash: document.getElementById("dash"),
+gzip: document.getElementById("gzip"),
+
+prefix: document.getElementById("prefix"),
+type: document.getElementById("keyType"),
+env: document.getElementById("env"),
+custom: document.getElementById("customCharset"),
+
+format: document.getElementById("format"),
+
+langSwitch: document.getElementById("langSwitch"),
+themeSwitch: document.getElementById("themeSwitch"),
+
+cryptoBtn: document.getElementById("cryptoMode"),
+fastBtn: document.getElementById("fastMode"),
+
+modeBits: document.getElementById("modeBits"),
+modeLength: document.getElementById("modeLength")
+};
+
+/* =========================
+   🌍 I18N (ПОЛНЫЙ)
+========================= */
+
+const i18n = {
+ru:{
+title:"Генератор API ключей",
+subtitle:"Профессиональная генерация ключей",
+
+preview:"Предпросмотр",
+copy:"Скопировать",
+generate:"Сгенерировать",
+stop:"СТОП",
+
+bits:"Биты",
+length:"Длина",
+count:"Количество",
+format:"Формат",
+
+prefix:"Префикс",
+keyType:"Тип ключа",
+env:"Окружение",
+noType:"Без типа",
+noEnv:"Без окружения",
+
+letters:"Буквы",
+digits:"Цифры",
+symbols:"Символы",
+exclude:"Без похожих",
+dash:"Разделять -",
+
+crypto:"Безопасный",
+fast:"Быстрый",
+
+customCharset:"Свои символы",
+
+done:"Готово",
+stopped:"Остановлено",
+invalid:"Неверное значение",
+empty:"Нет данных"
+},
+
+en:{
+title:"API Key Generator",
+subtitle:"Professional key generation",
+
+preview:"Preview",
+copy:"Copy",
+generate:"Generate",
+stop:"STOP",
+
+bits:"Bits",
+length:"Length",
+count:"Count",
+format:"Format",
+
+prefix:"Prefix",
+keyType:"Key type",
+env:"Environment",
+noType:"No type",
+noEnv:"No env",
+
+letters:"Letters",
+digits:"Digits",
+symbols:"Symbols",
+exclude:"Exclude similar",
+dash:"Use dashes",
+
+crypto:"Secure",
+fast:"Fast",
+
+customCharset:"Custom charset",
+
+done:"Done",
+stopped:"Stopped",
+invalid:"Invalid value",
+empty:"No data"
+}
+};
+
+/* =========================
+   🔄 APPLY LANGUAGE
+========================= */
+
+function applyLang(){
+
+const t = i18n[state.lang];
+
+// заголовки
+document.querySelector("[data-i='title']").innerText = t.title;
+document.querySelector("[data-i='subtitle']").innerText = t.subtitle;
+
+// кнопки
+el.previewBtn.innerText = t.preview;
+el.copyBtn.innerText = t.copy;
+el.generateBtn.innerText = t.generate;
+el.stopBtn.innerText = t.stop;
+
+// labels
+document.querySelectorAll("[data-i]").forEach(node=>{
+const key = node.dataset.i;
+if(t[key]) node.innerText = t[key];
+});
+
+// placeholder
+el.custom.placeholder = t.customCharset;
+
+}
+
+/* =========================
+   🌗 THEMES
+========================= */
+
+function applyTheme(){
+document.body.classList.remove("dark","light","neon");
+document.body.classList.add(state.theme);
+}
+
+/* =========================
+   🔘 SWITCHES
+========================= */
+
+// язык
+el.langSwitch.addEventListener("click", (e)=>{
+if(e.target.tagName !== "BUTTON") return;
+
+state.lang = e.target.dataset.lang;
+
+el.langSwitch.querySelectorAll("button")
+.forEach(b=>b.classList.remove("active"));
+
+e.target.classList.add("active");
+
+applyLang();
+});
+
+// тема
+el.themeSwitch.addEventListener("click", (e)=>{
+if(e.target.tagName !== "BUTTON") return;
+
+state.theme = e.target.dataset.theme;
+
+el.themeSwitch.querySelectorAll("button")
+.forEach(b=>b.classList.remove("active"));
+
+e.target.classList.add("active");
+
+applyTheme();
+});
+
+/* =========================
+   🔢 LENGTH MODE
+========================= */
+
+el.modeBits.onclick = ()=>{
+state.lengthMode = "bits";
+el.bitsBlock.classList.remove("hidden");
+el.lengthBlock.classList.add("hidden");
+};
+
+el.modeLength.onclick = ()=>{
+state.lengthMode = "length";
+el.bitsBlock.classList.add("hidden");
+el.lengthBlock.classList.remove("hidden");
+};
+
+/* =========================
+   🔐 MODE (FAST/CRYPTO)
+========================= */
+
+let fastWarned = localStorage.getItem("fastWarned");
+
+el.fastBtn.onclick = ()=>{
+
+state.mode = "fast";
+
+el.fastBtn.classList.add("active");
+el.cryptoBtn.classList.remove("active");
+
+if(!fastWarned){
+showFastWarning();
+}
+};
+
+el.cryptoBtn.onclick = ()=>{
+state.mode = "crypto";
+
+el.cryptoBtn.classList.add("active");
+el.fastBtn.classList.remove("active");
+};
+
+/* =========================
+   ⚠️ FAST WARNING
+========================= */
+
+function showFastWarning(){
+
+const modal = document.createElement("div");
+
+modal.innerHTML = `
+<div style="
+position:fixed;inset:0;
+background:rgba(0,0,0,0.7);
+display:flex;align-items:center;justify-content:center;
+z-index:9999;">
+<div style="
+background:#111;
+padding:20px;
+border-radius:16px;
+max-width:320px;
+text-align:center;">
+<h2 style="color:red;font-weight:700;">ВАЖНО!!!</h2>
+<p style="font-size:13px;margin:10px 0;">
+Math.random НЕ является безопасным.
+Используйте только для тестов.
+</p>
+<button id="okFast" class="btn primary">OK</button>
+</div>
+</div>
+`;
+
+document.body.appendChild(modal);
+
+document.getElementById("okFast").onclick = ()=>{
+modal.remove();
+localStorage.setItem("fastWarned","1");
+};
+
+}
+
+/* =========================
+   🔔 NOTIFY
+========================= */
+
+function notify(text){
+
+const n = document.createElement("div");
+
+n.innerText = text;
+
+n.style = `
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+padding:12px 18px;
+border-radius:12px;
+font-size:13px;
+z-index:9999;
+`;
+
+document.body.appendChild(n);
+
+setTimeout(()=>n.remove(),2000);
+
+}
+
+/* =========================
+   🔢 VALIDATION
+========================= */
+
+el.count.oninput = ()=>{
+el.count.value = el.count.value.replace(/\D/g,"");
+};
+
+/* =========================
+   👀 PREVIEW
+========================= */
+
+el.previewBtn.onclick = ()=>{
+
+let len = getLength();
+let cs = getCharset();
+
+let out = [];
+
+for(let i=0;i<80;i++){
+out.push(buildKey(len, cs));
+}
+
+el.preview.innerText = out.join("\n");
+
+};
+
+/* =========================
+   📋 COPY
+========================= */
+
+el.copyBtn.onclick = ()=>{
+
+if(!el.preview.innerText){
+notify(i18n[state.lang].empty);
+return;
+}
+
+navigator.clipboard.writeText(el.preview.innerText);
+
+notify("✔");
+
+};
+
+/* =========================
+   🧮 HELPERS (ПОКА БЕЗ ГЕНЕРАЦИИ)
+========================= */
+
+function getLength(){
+return state.lengthMode === "bits"
+? Math.floor(parseInt(el.bits.value) / 6)
+: parseInt(el.length.value || 32);
+}
+
+function getCharset(){
+
+if(el.custom.value) return el.custom.value;
+
+let c = "";
+
+if(el.letters.checked) c += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+if(el.digits.checked) c += "0123456789";
+if(el.symbols.checked) c += "!@#$%^&*";
+
+if(el.exclude.checked){
+c = c.replace(/[0Ool1I]/g,"");
+}
+
+return c || "abc123";
+}
+
+/* =========================
+   🔑 BUILD KEY (без генерации)
+========================= */
+
+function buildKey(len, charset){
+
+// временно (заменим в части 4)
+let res = "";
+for(let i=0;i<len;i++){
+res += charset[Math.floor(Math.random()*charset.length)];
+}
+
+if(el.dash.checked){
+res = res.match(/.{1,4}/g).join("-");
+}
+
+let prefix = el.prefix.value || "";
+let type = el.type.value ? el.type.value + "_" : "";
+let env = el.env.value ? el.env.value + "_" : "";
+
+return prefix + type + env + res;
+}
+
+/* INIT */
+applyLang();
+applyTheme();
+
+/* =========================
+   🔐 CRYPTO RANDOM (без bias)
+========================= */
+
+function secureRandom(max){
+const arr = new Uint32Array(1);
+const limit = Math.floor(4294967296 / max) * max;
+
+while(true){
+crypto.getRandomValues(arr);
+if(arr[0] < limit) return arr[0] % max;
+}
+}
+
+/* =========================
+   🎲 RANDOM WRAPPER
+========================= */
+
+function rand(max){
+return state.mode === "crypto"
+? secureRandom(max)
+: Math.floor(Math.random() * max);
+}
+
+/* =========================
+   🔑 FINAL KEY GENERATION
+========================= */
+
+function buildKey(len, charset){
+
+let res = "";
+
+for(let i=0;i<len;i++){
+res += charset[rand(charset.length)];
+}
+
+if(el.dash.checked){
+res = res.match(/.{1,4}/g).join("-");
+}
+
+let prefix = el.prefix.value || "";
+let type = el.type.value ? el.type.value + "_" : "";
+let env = el.env.value ? el.env.value + "_" : "";
+
+return prefix + type + env + res;
+}
+
+/* =========================
+   ⚡ WEB WORKER
+========================= */
+
+function createWorker(){
+
+const code = `
+self.onmessage = function(e){
+
+const { length, charset, size, dash } = e.data;
+
+function secureRandom(max){
+const arr=new Uint32Array(1);
+const limit=Math.floor(4294967296/max)*max;
+while(true){
+crypto.getRandomValues(arr);
+if(arr[0]<limit)return arr[0]%max;
+}
+}
+
+let out=[];
+
+for(let i=0;i<size;i++){
+
+let r="";
+
+for(let j=0;j<length;j++){
+r+=charset[secureRandom(charset.length)];
+}
+
+if(dash){
+r=r.match(/.{1,4}/g).join("-");
+}
+
+out.push(r);
+}
+
+postMessage(out);
+}
+`;
+
+return new Worker(URL.createObjectURL(
+new Blob([code], {type:"application/javascript"})
+));
+}
+
+/* =========================
+   📁 STREAM WRITER
+========================= */
+
+async function createWriter(filename){
+
+if(window.showSaveFilePicker){
+
+const handle = await showSaveFilePicker({
+suggestedName: filename
+});
+
+const writable = await handle.createWritable();
+
+return {
+write: chunk => writable.write(chunk),
+close: () => writable.close(),
+real: true
+};
+}
+
+let parts = [];
+
+return {
+write: chunk => parts.push(chunk),
+close: () => parts
+};
+}
+
+/* =========================
+   🗜️ GZIP
+========================= */
+
+async function compress(blob){
+
+if(!el.gzip.checked) return blob;
+
+if(!window.CompressionStream) return blob;
+
+const cs = new CompressionStream("gzip");
+const stream = blob.stream().pipeThrough(cs);
+
+return await new Response(stream).blob();
+}
+
+/* =========================
+   📄 FILE NAME
+========================= */
+
+function getFileName(count, format){
+return "keys_" + count + "." + format;
+}
+
+/* =========================
+   🚀 MAIN GENERATE (ЕДИНСТВЕННЫЙ)
+========================= */
+
+el.generateBtn.onclick = async ()=>{
+
+state.stop = false;
+
+let count = parseInt(el.count.value);
+let len = getLength();
+let charset = getCharset();
+let format = el.format.value;
+
+if(!count || count <= 0){
+notify(i18n[state.lang].invalid);
+return;
+}
+
+// предупреждение
+if(count > 250000){
+let ok = confirm("~ Large file. Continue?");
+if(!ok) return;
+}
+
+el.generateBtn.disabled = true;
+el.generateBtn.innerText = "...";
+
+const writer = await createWriter(getFileName(count, format));
+
+let worker = createWorker();
+
+let produced = 0;
+let chunkSize = 2000;
+let start = performance.now();
+
+worker.onmessage = async (e)=>{
+
+if(state.stop){
+worker.terminate();
+el.generateBtn.disabled = false;
+applyLang();
+el.status.innerText = i18n[state.lang].stopped;
+return;
+}
+
+let chunk = e.data;
+
+let text = chunk.join("\n") + "\n";
+
+await writer.write(text);
+
+produced += chunk.length;
+
+let elapsed = (performance.now() - start)/1000;
+let speed = Math.floor(produced / elapsed);
+
+el.status.innerText = produced + "/" + count + " • " + speed + "/s";
+
+if(produced >= count){
+
+let result = await writer.close();
+
+// fallback download
+if(Array.isArray(result)){
+
+let blob = new Blob(result, {type:"text/plain"});
+
+blob = await compress(blob);
+
+let url = URL.createObjectURL(blob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = el.gzip.checked
+? getFileName(count, format) + ".gz"
+: getFileName(count, format);
+
+a.click();
+
+URL.revokeObjectURL(url);
+}
+
+worker.terminate();
+
+el.generateBtn.disabled = false;
+applyLang();
+
+el.status.innerText = i18n[state.lang].done;
+
+return;
+}
+
+worker.postMessage({
+length: len,
+charset: charset,
+size: chunkSize,
+dash: el.dash.checked
+});
+
+};
+
+worker.postMessage({
+length: len,
+charset: charset,
+size: chunkSize,
+dash: el.dash.checked
+});
+
+};
+
+/* =========================
+   ⛔ STOP
+========================= */
+
+el.stopBtn.onclick = ()=>{
+state.stop = true;
+};
+/* =========================
+   📦 REAL ZIP (без библиотек)
+========================= */
+/*
+⚠️ Честно:
+Полноценный zip без библиотеки = очень сложно.
+Поэтому делаем:
+- если выбран ZIP → создаём Blob + скачиваем как .zip
+- (для реального сжатия нужна JSZip — скажу ниже)
+*/
+
+async function makeZipBlob(text){
+return new Blob([text], {type:"application/zip"});
+}
+
+/* =========================
+   🔁 PATCH DOWNLOAD (без дубля)
+========================= */
+
+const originalWriter = createWriter;
+
+createWriter = async function(filename){
+
+const writer = await originalWriter(filename);
+
+return {
+...writer,
+
+close: async ()=>{
+
+const result = await writer.close();
+
+if(Array.isArray(result)){
+
+let text = result.join("");
+
+let count = parseInt(el.count.value);
+let format = el.format.value;
+
+// ZIP режим
+if(format === "zip"){
+
+let blob = await makeZipBlob(text);
+
+let url = URL.createObjectURL(blob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = "keys_" + count + ".zip";
+a.click();
+
+URL.revokeObjectURL(url);
+
+return;
+}
+
+// обычный режим
+let blob = new Blob([text], {type:"text/plain"});
+blob = await compress(blob);
+
+let url = URL.createObjectURL(blob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = el.gzip.checked
+? getFileName(count, format) + ".gz"
+: getFileName(count, format);
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+}
+};
+
+};
+
+/* =========================
+   💾 SAVE SETTINGS
+========================= */
+
+function saveSettings(){
+
+const s = {
+bits: el.bits.value,
+length: el.length.value,
+count: el.count.value,
+
+prefix: el.prefix.value,
+type: el.type.value,
+env: el.env.value,
+
+letters: el.letters.checked,
+digits: el.digits.checked,
+symbols: el.symbols.checked,
+exclude: el.exclude.checked,
+dash: el.dash.checked,
+gzip: el.gzip.checked,
+
+format: el.format.value,
+custom: el.custom.value,
+
+lang: state.lang,
+theme: state.theme,
+mode: state.mode
+};
+
+localStorage.setItem("v42_settings", JSON.stringify(s));
+}
+
+function loadSettings(){
+
+let raw = localStorage.getItem("v42_settings");
+if(!raw) return;
+
+let s = JSON.parse(raw);
+
+el.bits.value = s.bits || 256;
+el.length.value = s.length || 32;
+el.count.value = s.count || 1000;
+
+el.prefix.value = s.prefix || "";
+el.type.value = s.type || "";
+el.env.value = s.env || "";
+
+el.letters.checked = s.letters;
+el.digits.checked = s.digits;
+el.symbols.checked = s.symbols;
+el.exclude.checked = s.exclude;
+el.dash.checked = s.dash;
+el.gzip.checked = s.gzip;
+
+el.format.value = s.format || "txt";
+el.custom.value = s.custom || "";
+
+state.lang = s.lang || "ru";
+state.theme = s.theme || "dark";
+state.mode = s.mode || "crypto";
+
+applyLang();
+applyTheme();
+}
+
+document.querySelectorAll("input,select").forEach(elm=>{
+elm.addEventListener("change", saveSettings);
+});
+
+loadSettings();
+
+/* =========================
+   📊 SIZE ESTIMATE
+========================= */
+
+function updateEstimate(){
+
+let count = parseInt(el.count.value) || 0;
+let len = getLength();
+
+if(!count) return;
+
+let size = ((count * (len + 1)) / (1024*1024)).toFixed(1);
+
+el.status.innerText = "~ " + size + " MB";
+}
+
+el.count.addEventListener("input", updateEstimate);
+el.bits.addEventListener("change", updateEstimate);
+el.length.addEventListener("input", updateEstimate);
+
+/* =========================
+   🔥 GENERATE UX PATCH
+========================= */
+
+const originalGenerate = el.generateBtn.onclick;
+
+el.generateBtn.onclick = async ()=>{
+
+el.generateBtn.disabled = true;
+el.generateBtn.innerText = "...";
+
+await originalGenerate();
+
+el.generateBtn.disabled = false;
+applyLang();
+
+};
+
+/* =========================
+   ✨ EMPTY STATE
+========================= */
+
+if(!el.preview.innerText){
+el.preview.innerText = "—";
+}
+
+/* =========================
+   🧼 AUTO SCROLL PREVIEW
+========================= */
+
+const observer = new MutationObserver(()=>{
+el.preview.scrollTop = el.preview.scrollHeight;
+});
+
+observer.observe(el.preview, {childList:true});
+
+/* =========================
+   📱 MOBILE UX FIX
+========================= */
+
+document.body.style.paddingBottom = "40px";
+/* =========================
+   📦 REAL ZIP (JSZIP)
+========================= */
+
+async function createRealZip(text, filename){
+
+const zip = new JSZip();
+
+// добавляем файл внутрь архива
+zip.file(filename, text);
+
+// создаём настоящий zip
+const blob = await zip.generateAsync({
+type: "blob",
+compression: "DEFLATE",
+compressionOptions: { level: 6 }
+});
+
+return blob;
+
+}
+
+/* =========================
+   🔁 PATCH DOWNLOAD ZIP
+========================= */
+
+const oldCreateWriter = createWriter;
+
+createWriter = async function(filename){
+
+const writer = await oldCreateWriter(filename);
+
+return {
+...writer,
+
+close: async ()=>{
+
+const result = await writer.close();
+
+if(Array.isArray(result)){
+
+let text = result.join("");
+
+let count = parseInt(el.count.value);
+let format = el.format.value;
+
+// 🔥 РЕАЛЬНЫЙ ZIP
+if(format === "zip"){
+
+let zipBlob = await createRealZip(
+text,
+"keys_" + count + ".txt"
+);
+
+let url = URL.createObjectURL(zipBlob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = "keys_" + count + ".zip";
+a.click();
+
+URL.revokeObjectURL(url);
+
+return;
+}
+
+// остальные форматы
+let blob = new Blob([text], {type:"text/plain"});
+blob = await compress(blob);
+
+let url = URL.createObjectURL(blob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = el.gzip.checked
+? getFileName(count, format) + ".gz"
+: getFileName(count, format);
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+}
+};
+
+};
+</script>
+</body>
+</html>
