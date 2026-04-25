@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1c2333;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text2: #b0b8c4;
+            --text3: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #3fb950;
+            --danger: #f85149;
+            --warning: #d2991d;
+            --radius: 8px;
+            --radius-sm: 6px;
+            --transition: 0.18s ease;
+            --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .app-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 18px 0 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 28px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3fb950, #58a6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+        .lang-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+        .lang-btn {
+            padding: 7px 16px;
+            border-radius: 18px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text2);
+            letter-spacing: 0.2px;
+            font-family: var(--font);
+        }
+        .lang-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+        .lang-btn:hover:not(.active) {
+            color: var(--text);
+            background: var(--surface2);
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 20px;
+        }
+        .panel-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text3);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text2);
+            margin-bottom: 5px;
+            letter-spacing: 0.1px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: var(--font);
+            transition: var(--transition);
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.12);
+        }
+        .mode-toggle-row {
+            display: flex;
+            gap: 4px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text2);
+            font-family: var(--font);
+            text-align: center;
+            letter-spacing: 0.1px;
+        }
+        .mode-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+        .mode-btn:hover:not(.active) {
+            color: var(--text);
+            background: var(--surface2);
+        }
+        .bits-presets {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .preset-btn {
+            padding: 5px 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: var(--transition);
+            background: var(--bg);
+            color: var(--text2);
+            font-family: var(--font);
+            letter-spacing: 0.2px;
+        }
+        .preset-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .preset-btn.active-preset {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--accent);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .checkbox-row label {
+            cursor: pointer;
+            font-size: 0.84rem;
+            color: var(--text2);
+            user-select: none;
+        }
+        .inline-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .inline-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: var(--transition);
+            letter-spacing: 0.2px;
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--accent2);
+            color: #fff;
+            font-size: 1rem;
+            padding: 12px 28px;
+        }
+        .btn-primary:hover {
+            background: #35a044;
+            box-shadow: 0 4px 16px rgba(63, 185, 80, 0.25);
+        }
+        .btn-primary:disabled {
+            background: #2d5a34;
+            color: #8b949e;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #e04040;
+            box-shadow: 0 4px 16px rgba(248, 81, 73, 0.25);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--surface2);
+        }
+        .btn-sm {
+            padding: 6px 13px;
+            font-size: 0.78rem;
+            border-radius: 5px;
+        }
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .preview-panel {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .preview-count {
+            font-size: 0.8rem;
+            color: var(--text3);
+            font-weight: 500;
+        }
+        .preview-list {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: var(--text2);
+            max-height: 520px;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .preview-list .key-line {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+            transition: background 0.15s;
+        }
+        .preview-list .key-line:hover {
+            background: rgba(88, 166, 255, 0.04);
+        }
+        .progress-bar-wrap {
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            margin: 10px 0 6px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent2);
+            border-radius: 3px;
+            transition: width 0.2s ease;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--text3);
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #fff;
+            animation: slideIn 0.3s ease;
+            cursor: pointer;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.1px;
+        }
+        .toast.success {
+            background: #238636;
+        }
+        .toast.warning {
+            background: #9e6a03;
+        }
+        .toast.error {
+            background: #b62324;
+        }
+        .toast.info {
+            background: #1f6feb;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-dialog {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px 22px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .modal-dialog h3 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            letter-spacing: -0.2px;
+        }
+        .modal-dialog p {
+            color: var(--text2);
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .warning-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+            letter-spacing: 0.3px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        .download-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal-dialog">
+            <h3 id="modalTitle">Generation stopped</h3>
+            <p id="modalMessage">X keys generated. Download partial result?</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="modalYes">Yes, download</button>
+                <button class="btn btn-outline" id="modalNo">No, discard</button>
+            </div>
+        </div>
+    </div>
+    <div class="app-container">
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">🔑</div>
+                <span class="logo-text" data-i18n="appTitle">API Key Generator</span>
+            </div>
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ru">RU</button>
+            </div>
+        </header>
+        <div class="main-grid">
+            <div class="panel" id="configPanel">
+                <div class="panel-title" data-i18n="configTitle">Configuration</div>
+                <div class="form-group">
+                    <label data-i18n="modeLabel">Generation Mode</label>
+                    <div class="mode-toggle-row" id="modeToggle">
+                        <button class="mode-btn active" data-mode="length" data-i18n="modeLength">Length</button>
+                        <button class="mode-btn" data-mode="bits" data-i18n="modeBits">Bits</button>
+                    </div>
+                </div>
+                <div class="form-group" id="lengthGroup">
+                    <label data-i18n="lengthLabel">Key Length (chars)</label>
+                    <input type="number" id="lengthInput" value="32" min="4" max="512" step="1">
+                </div>
+                <div class="form-group hidden" id="bitsGroup">
+                    <label data-i18n="bitsLabel">Bits (64–2048)</label>
+                    <input type="number" id="bitsInput" value="256" min="64" max="2048" step="8">
+                    <div class="bits-presets" id="bitsPresets">
+                        <button class="preset-btn active-preset" data-bits="128">128</button>
+                        <button class="preset-btn" data-bits="256">256</button>
+                        <button class="preset-btn" data-bits="512">512</button>
+                        <button class="preset-btn" data-bits="1024">1024</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="charsetLabel">Charset</label>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="charsetLetters" checked>
+                        <label for="charsetLetters" data-i18n="charsetLetters">Letters (a-z, A-Z)</label>
+                    </div>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="charsetNumbers" checked>
+                        <label for="charsetNumbers" data-i18n="charsetNumbers">Numbers (0-9)</label>
+                    </div>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="charsetSymbols">
+                        <label for="charsetSymbols" data-i18n="charsetSymbols">Symbols (!@#$%^&*)</label>
+                    </div>
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="excludeSimilar">
+                        <label for="excludeSimilar" data-i18n="excludeSimilar">Exclude similar (0Ool1I)</label>
+                    </div>
+                    <label data-i18n="customCharsetLabel" style="margin-top:6px;">Custom Charset (overrides above)</label>
+                    <input type="text" id="customCharset" placeholder="e.g. ABCDEF12345" style="margin-top:3px;">
+                </div>
+                <div class="inline-row">
+                    <div class="form-group">
+                        <label data-i18n="separatorLabel">Separator</label>
+                        <input type="text" id="separatorChar" value="-" maxlength="3" placeholder="-">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="separatorIntervalLabel">Every N chars</label>
+                        <input type="number" id="separatorInterval" value="4" min="1" max="32">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="prefixLabel">Prefix</label>
+                    <input type="text" id="prefixInput" placeholder="e.g. myapp_" maxlength="20">
+                </div>
+                <div class="inline-row">
+                    <div class="form-group">
+                        <label data-i18n="keyTypeLabel">Key Type</label>
+                        <select id="keyTypeSelect">
+                            <option value="api" data-i18n="keyTypeApi">API Key</option>
+                            <option value="sk" data-i18n="keyTypeSk">Secret Key (sk_)</option>
+                            <option value="pk" data-i18n="keyTypePk">Public Key (pk_)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="envLabel">Environment</label>
+                        <select id="envSelect">
+                            <option value="live" data-i18n="envLive">Live</option>
+                            <option value="test" data-i18n="envTest">Test</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="randomModeLabel">Random Mode</label>
+                    <select id="randomModeSelect">
+                        <option value="crypto" data-i18n="randomCrypto">Cryptographic (secure)</option>
+                        <option value="fast" data-i18n="randomFast">Fast (Math.random)</option>
+                    </select>
+                    <span class="warning-badge hidden" id="fastWarning" data-i18n="fastWarning">Insecure</span>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="countLabel">Number of Keys</label>
+                    <input type="number" id="countInput" value="100" min="1" max="500000" step="1">
+                </div>
+                <div class="actions-row">
+                    <button class="btn btn-primary" id="generateBtn" data-i18n="generateBtn">⚡ Generate</button>
+                    <button class="btn btn-danger hidden" id="stopBtn" data-i18n="stopBtn">⏹ Stop</button>
+                </div>
+                <div class="progress-bar-wrap hidden" id="progressWrap">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
+                <div class="progress-text hidden" id="progressText"></div>
+            </div>
+            <div class="panel preview-panel" id="previewPanel">
+                <div class="preview-header">
+                    <span class="panel-title" style="margin-bottom:0;" data-i18n="previewTitle">Preview</span>
+                    <span class="preview-count" id="previewCount"></span>
+                </div>
+                <div class="preview-list" id="previewList">
+                    <span style="color:var(--text3);font-family:var(--font);" data-i18n="previewPlaceholder">Generated keys will appear here...</span>
+                </div>
+                <div class="download-group hidden" id="downloadGroup" style="margin-top:14px;">
+                    <button class="btn btn-sm btn-outline download-btn" data-format="txt" data-i18n="downloadTxt">📄 TXT</button>
+                    <button class="btn btn-sm btn-outline download-btn" data-format="csv" data-i18n="downloadCsv">📊 CSV</button>
+                    <button class="btn btn-sm btn-outline download-btn" data-format="json" data-i18n="downloadJson">📦 JSON</button>
+                    <button class="btn btn-sm btn-outline download-btn" data-format="zip" data-i18n="downloadZip">🗜 ZIP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ==================== 1. STATE ====================
+            const state = {
+                mode: 'length', // 'length' | 'bits'
+                length: 32,
+                bits: 256,
+                charsetLetters: true,
+                charsetNumbers: true,
+                charsetSymbols: false,
+                excludeSimilar: false,
+                customCharset: '',
+                separatorChar: '-',
+                separatorInterval: 4,
+                prefix: '',
+                keyType: 'api',
+                environment: 'live',
+                randomMode: 'crypto',
+                count: 100,
+                generatedKeys: [],
+                isGenerating: false,
+                stopRequested: false,
+                worker: null,
+                workerChunksReceived: 0,
+                workerTotalKeys: 0,
+                fastWarningShown: false,
+                lang: 'en',
+                modalResolve: null,
+            };
+
+            // ==================== 2. DOM CACHE ====================
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const dom = {
+                modeToggle: $('#modeToggle'),
+                lengthGroup: $('#lengthGroup'),
+                bitsGroup: $('#bitsGroup'),
+                lengthInput: $('#lengthInput'),
+                bitsInput: $('#bitsInput'),
+                bitsPresets: $('#bitsPresets'),
+                charsetLetters: $('#charsetLetters'),
+                charsetNumbers: $('#charsetNumbers'),
+                charsetSymbols: $('#charsetSymbols'),
+                excludeSimilar: $('#excludeSimilar'),
+                customCharset: $('#customCharset'),
+                separatorChar: $('#separatorChar'),
+                separatorInterval: $('#separatorInterval'),
+                prefixInput: $('#prefixInput'),
+                keyTypeSelect: $('#keyTypeSelect'),
+                envSelect: $('#envSelect'),
+                randomModeSelect: $('#randomModeSelect'),
+                countInput: $('#countInput'),
+                generateBtn: $('#generateBtn'),
+                stopBtn: $('#stopBtn'),
+                progressWrap: $('#progressWrap'),
+                progressBar: $('#progressBar'),
+                progressText: $('#progressText'),
+                previewList: $('#previewList'),
+                previewCount: $('#previewCount'),
+                downloadGroup: $('#downloadGroup'),
+                toastContainer: $('#toastContainer'),
+                modalOverlay: $('#modalOverlay'),
+                modalTitle: $('#modalTitle'),
+                modalMessage: $('#modalMessage'),
+                modalYes: $('#modalYes'),
+                modalNo: $('#modalNo'),
+                fastWarning: $('#fastWarning'),
+                langBtns: $$('.lang-btn'),
+                modeBtns: $$('#modeToggle .mode-btn'),
+                presetBtns: $$('#bitsPresets .preset-btn'),
+                downloadBtns: $$('.download-btn'),
+            };
+
+            // ==================== 3. i18n ====================
+            const i18nDict = {
+                en: {
+                    appTitle: 'API Key Generator',
+                    configTitle: 'Configuration',
+                    modeLabel: 'Generation Mode',
+                    modeLength: 'Length',
+                    modeBits: 'Bits',
+                    lengthLabel: 'Key Length (chars)',
+                    bitsLabel: 'Bits (64–2048)',
+                    charsetLabel: 'Charset',
+                    charsetLetters: 'Letters (a-z, A-Z)',
+                    charsetNumbers: 'Numbers (0-9)',
+                    charsetSymbols: 'Symbols (!@#$%^&*)',
+                    excludeSimilar: 'Exclude similar (0Ool1I)',
+                    customCharsetLabel: 'Custom Charset (overrides above)',
+                    separatorLabel: 'Separator',
+                    separatorIntervalLabel: 'Every N chars',
+                    prefixLabel: 'Prefix',
+                    keyTypeLabel: 'Key Type',
+                    keyTypeApi: 'API Key',
+                    keyTypeSk: 'Secret Key (sk_)',
+                    keyTypePk: 'Public Key (pk_)',
+                    envLabel: 'Environment',
+                    envLive: 'Live',
+                    envTest: 'Test',
+                    randomModeLabel: 'Random Mode',
+                    randomCrypto: 'Cryptographic (secure)',
+                    randomFast: 'Fast (Math.random)',
+                    fastWarning: 'Insecure',
+                    countLabel: 'Number of Keys',
+                    generateBtn: '⚡ Generate',
+                    stopBtn: '⏹ Stop',
+                    previewTitle: 'Preview',
+                    previewPlaceholder: 'Generated keys will appear here...',
+                    downloadTxt: '📄 TXT',
+                    downloadCsv: '📊 CSV',
+                    downloadJson: '📦 JSON',
+                    downloadZip: '🗜 ZIP',
+                    toastFastWarning: '⚠️ Fast mode uses Math.random — not suitable for production secrets.',
+                    toastGenerationComplete: '✅ Generated {count} keys successfully.',
+                    toastGenerationStopped: '⏹ Generation stopped at {count} keys.',
+                    toastSettingsSaved: '💾 Settings saved.',
+                    toastCopied: '📋 Copied!',
+                    modalStopTitle: 'Generation Stopped',
+                    modalStopMessage: '{count} keys generated. Download partial result?',
+                    modalYes: 'Yes, download',
+                    modalNo: 'No, discard',
+                    progressGenerating: 'Generating... {current} / {total} keys',
+                },
+                ru: {
+                    appTitle: 'Генератор API Ключей',
+                    configTitle: 'Настройки',
+                    modeLabel: 'Режим генерации',
+                    modeLength: 'Длина',
+                    modeBits: 'Биты',
+                    lengthLabel: 'Длина ключа (симв.)',
+                    bitsLabel: 'Биты (64–2048)',
+                    charsetLabel: 'Набор символов',
+                    charsetLetters: 'Буквы (a-z, A-Z)',
+                    charsetNumbers: 'Цифры (0-9)',
+                    charsetSymbols: 'Символы (!@#$%^&*)',
+                    excludeSimilar: 'Исключить похожие (0Ool1I)',
+                    customCharsetLabel: 'Свой набор (заменяет выбор выше)',
+                    separatorLabel: 'Разделитель',
+                    separatorIntervalLabel: 'Каждые N симв.',
+                    prefixLabel: 'Префикс',
+                    keyTypeLabel: 'Тип ключа',
+                    keyTypeApi: 'API Ключ',
+                    keyTypeSk: 'Секретный ключ (sk_)',
+                    keyTypePk: 'Публичный ключ (pk_)',
+                    envLabel: 'Среда',
+                    envLive: 'Live',
+                    envTest: 'Test',
+                    randomModeLabel: 'Режим случайности',
+                    randomCrypto: 'Криптографический (надёжный)',
+                    randomFast: 'Быстрый (Math.random)',
+                    fastWarning: 'Небезопасно',
+                    countLabel: 'Количество ключей',
+                    generateBtn: '⚡ Сгенерировать',
+                    stopBtn: '⏹ Остановить',
+                    previewTitle: 'Предпросмотр',
+                    previewPlaceholder: 'Сгенерированные ключи появятся здесь...',
+                    downloadTxt: '📄 TXT',
+                    downloadCsv: '📊 CSV',
+                    downloadJson: '📦 JSON',
+                    downloadZip: '🗜 ZIP',
+                    toastFastWarning: '⚠️ Быстрый режим использует Math.random — не подходит для production.',
+                    toastGenerationComplete: '✅ Сгенерировано ключей: {count}.',
+                    toastGenerationStopped: '⏹ Генерация остановлена на {count} ключах.',
+                    toastSettingsSaved: '💾 Настройки сохранены.',
+                    toastCopied: '📋 Скопировано!',
+                    modalStopTitle: 'Генерация остановлена',
+                    modalStopMessage: 'Сгенерировано ключей: {count}. Скачать частичный результат?',
+                    modalYes: 'Да, скачать',
+                    modalNo: 'Нет, отменить',
+                    progressGenerating: 'Генерация... {current} / {total} ключей',
+                },
+            };
+
+            function t(key, replacements = null) {
+                let text = i18nDict[state.lang][key] || i18nDict['en'][key] || key;
+                if (replacements) {
+                    for (const [k, v] of Object.entries(replacements)) {
+                        text = text.replace(`{${k}}`, v);
+                    }
+                }
+                return text;
+            }
+
+            function updateAllI18n() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = i18nDict[state.lang][key] || i18nDict['en'][key] || key;
+                    } else if (el.tagName === 'OPTION') {
+                        el.textContent = i18nDict[state.lang][key] || i18nDict['en'][key] || key;
+                    } else {
+                        el.textContent = i18nDict[state.lang][key] || i18nDict['en'][key] || key;
+                    }
+                });
+                if (state.isGenerating) {
+                    updateProgressText();
+                }
+                if (!state.isGenerating && state.generatedKeys.length === 0) {
+                    dom.previewList.innerHTML =
+                        `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                }
+                updateFastWarning();
+            }
+
+            // ==================== 4. HELPERS ====================
+            function clamp(val, min, max) {
+                return Math.max(min, Math.min(max, val));
+            }
+
+            function toast(message, type = 'info') {
+                const el = document.createElement('div');
+                el.className = `toast ${type}`;
+                el.textContent = message;
+                el.addEventListener('click', () => {
+                    el.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => el.remove(), 300);
+                });
+                dom.toastContainer.appendChild(el);
+                setTimeout(() => {
+                    if (el.parentNode) {
+                        el.style.animation = 'fadeOut 0.3s ease forwards';
+                        setTimeout(() => { if (el.parentNode) el.remove(); }, 300);
+                    }
+                }, 3800);
+            }
+
+            function showModal(title, message) {
+                return new Promise((resolve) => {
+                    state.modalResolve = resolve;
+                    dom.modalTitle.textContent = title;
+                    dom.modalMessage.textContent = message;
+                    dom.modalOverlay.classList.remove('hidden');
+                });
+            }
+
+            function hideModal() {
+                dom.modalOverlay.classList.add('hidden');
+                if (state.modalResolve) {
+                    state.modalResolve(false);
+                    state.modalResolve = null;
+                }
+            }
+
+            function updateProgressText() {
+                const total = state.workerTotalKeys || state.count;
+                const current = state.workerChunksReceived || 0;
+                dom.progressText.textContent = t('progressGenerating', { current, total });
+            }
+
+            function updateFastWarning() {
+                if (state.randomMode === 'fast') {
+                    dom.fastWarning.classList.remove('hidden');
+                } else {
+                    dom.fastWarning.classList.add('hidden');
+                }
+            }
+
+            // ==================== 5. GENERATOR (SINGLE LOGIC) ====================
+            function buildCharset() {
+                if (state.customCharset.trim().length > 0) {
+                    return state.customCharset.trim();
+                }
+                let chars = '';
+                if (state.charsetLetters) chars += 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                if (state.charsetNumbers) chars += '0123456789';
+                if (state.charsetSymbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?/~`';
+                if (state.excludeSimilar) {
+                    const excludeSet = new Set(['0', 'O', 'o', 'l', '1', 'I']);
+                    chars = chars.split('').filter(c => !excludeSet.has(c)).join('');
+                }
+                if (chars.length === 0) chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                return chars;
+            }
+
+            function getEffectiveLength() {
+                if (state.mode === 'bits') {
+                    return Math.ceil(state.bits / 8);
+                }
+                return state.length;
+            }
+
+            function buildGeneratorConfig() {
+                return {
+                    length: getEffectiveLength(),
+                    charset: buildCharset(),
+                    prefix: state.prefix,
+                    separator: state.separatorChar,
+                    separatorInterval: Math.max(1, state.separatorInterval),
+                    keyType: state.keyType,
+                    environment: state.environment,
+                    randomMode: state.randomMode,
+                };
+            }
+
+            // The SINGLE generateKey function — used everywhere
+            function generateKey(config) {
+                const { length, charset, prefix, separator, separatorInterval, keyType, environment, randomMode } =
+                config;
+                const charsetLen = charset.length;
+                if (charsetLen === 0) throw new Error('Charset is empty');
+                let randomChars = '';
+                if (randomMode === 'crypto') {
+                    const maxValid = 256 - (256 % charsetLen);
+                    let buffer = new Uint8Array(1024);
+                    let bufferIndex = buffer.length;
+                    for (let i = 0; i < length; i++) {
+                        let value;
+                        do {
+                            if (bufferIndex >= buffer.length) {
+                                crypto.getRandomValues(buffer);
+                                bufferIndex = 0;
+                            }
+                            value = buffer[bufferIndex++];
+                        } while (value >= maxValid);
+                        randomChars += charset[value % charsetLen];
+                    }
+                } else {
+                    for (let i = 0; i < length; i++) {
+                        randomChars += charset[Math.floor(Math.random() * charsetLen)];
+                    }
+                }
+                let formattedRandom = '';
+                for (let i = 0; i < randomChars.length; i++) {
+                    if (i > 0 && i % separatorInterval === 0 && separator) {
+                        formattedRandom += separator;
+                    }
+                    formattedRandom += randomChars[i];
+                }
+                let typePrefix = '';
+                if (keyType === 'sk') typePrefix = 'sk_';
+                else if (keyType === 'pk') typePrefix = 'pk_';
+                let envPrefix = '';
+                if (environment === 'live') envPrefix = 'live_';
+                else if (environment === 'test') envPrefix = 'test_';
+                return prefix + typePrefix + envPrefix + formattedRandom;
+            }
+
+            // For the worker — we pass the same function as a string
+            const generatorFunctionString = generateKey.toString();
+
+            // ==================== 6. WORKER ====================
+            function createWorkerBlob() {
+                const workerCode = `
+            const generatorFunctionString = ${JSON.stringify(generatorFunctionString)};
+            const generateKey = (new Function('return ' + generatorFunctionString))();
+            let stopFlag = false;
+            self.onmessage = function(e) {
+              const msg = e.data;
+              if (msg.action === 'stop') {
+                stopFlag = true;
+                return;
+              }
+              if (msg.action === 'generate') {
+                stopFlag = false;
+                const { config, count, chunkSize } = msg;
+                const keys = [];
+                let generated = 0;
+                const totalChunks = Math.ceil(count / chunkSize);
+                for (let chunk = 0; chunk < totalChunks; chunk++) {
+                  if (stopFlag) break;
+                  const chunkKeys = [];
+                  const end = Math.min((chunk + 1) * chunkSize, count);
+                  for (let i = generated; i < end; i++) {
+                    chunkKeys.push(generateKey(config));
+                  }
+                  generated = end;
+                  keys.push(...chunkKeys);
+                  self.postMessage({ type: 'chunk', keys: chunkKeys, total: generated, done: generated >= count });
+                }
+                if (stopFlag) {
+                  self.postMessage({ type: 'stopped', keys, total: generated });
+                } else {
+                  self.postMessage({ type: 'complete', keys, total: generated });
+                }
+              }
+            };
+            `;
+                return new Blob([workerCode], { type: 'application/javascript' });
+            }
+
+            function terminateWorker() {
+                if (state.worker) {
+                    try { state.worker.terminate(); } catch (e) { /* ignore */ }
+                    state.worker = null;
+                }
+            }
+
+            function startWorkerGeneration(config, count) {
+                terminateWorker();
+                const blob = createWorkerBlob();
+                state.worker = new Worker(URL.createObjectURL(blob));
+                state.workerChunksReceived = 0;
+                state.workerTotalKeys = count;
+                state.generatedKeys = [];
+                const chunkSize = Math.min(1000, Math.max(100, Math.floor(count / 20)));
+                state.worker.onmessage = function(e) {
+                    const msg = e.data;
+                    if (msg.type === 'chunk') {
+                        state.generatedKeys.push(...msg.keys);
+                        state.workerChunksReceived = msg.total;
+                        updateProgressUI(msg.total, count);
+                        updatePreview(state.generatedKeys.slice(0, 100));
+                    } else if (msg.type === 'complete') {
+                        state.generatedKeys = msg.keys;
+                        state.workerChunksReceived = msg.total;
+                        finishGeneration(msg.keys);
+                    } else if (msg.type === 'stopped') {
+                        state.generatedKeys = msg.keys;
+                        state.workerChunksReceived = msg.total;
+                        handleStopPartial(msg.keys, msg.total);
+                    }
+                };
+                state.worker.onerror = function(err) {
+                    console.error('Worker error:', err);
+                    terminateWorker();
+                    state.isGenerating = false;
+                    updateUIForIdle();
+                    toast('Worker error occurred.', 'error');
+                };
+                state.worker.postMessage({ action: 'generate', config, count, chunkSize });
+            }
+
+            function updateProgressUI(current, total) {
+                const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+                dom.progressBar.style.width = pct + '%';
+                dom.progressText.textContent = t('progressGenerating', { current, total });
+            }
+
+            function finishGeneration(keys) {
+                state.generatedKeys = keys;
+                state.isGenerating = false;
+                state.stopRequested = false;
+                terminateWorker();
+                updateUIForIdle();
+                updatePreview(keys.slice(0, 100));
+                dom.downloadGroup.classList.remove('hidden');
+                dom.progressBar.style.width = '100%';
+                dom.progressText.textContent = t('progressGenerating', { current: keys.length, total: keys.length });
+                toast(t('toastGenerationComplete', { count: keys.length }), 'success');
+                setTimeout(() => {
+                    dom.progressWrap.classList.add('hidden');
+                    dom.progressText.classList.add('hidden');
+                    dom.progressBar.style.width = '0%';
+                }, 2000);
+            }
+
+            function handleStopPartial(keys, total) {
+                state.generatedKeys = keys;
+                state.isGenerating = false;
+                state.stopRequested = false;
+                terminateWorker();
+                dom.progressWrap.classList.add('hidden');
+                dom.progressText.classList.add('hidden');
+                dom.progressBar.style.width = '0%';
+                updateUIForIdle();
+                updatePreview(keys.slice(0, 100));
+                if (keys.length > 0) {
+                    dom.downloadGroup.classList.remove('hidden');
+                }
+                showModal(t('modalStopTitle'), t('modalStopMessage', { count: total })).then((shouldDownload) => {
+                    if (shouldDownload && keys.length > 0) {
+                        downloadKeys('txt', keys);
+                    }
+                    if (!shouldDownload) {
+                        state.generatedKeys = [];
+                        updatePreview([]);
+                        dom.downloadGroup.classList.add('hidden');
+                        dom.previewList.innerHTML =
+                            `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                        dom.previewCount.textContent = '';
+                    }
+                });
+                toast(t('toastGenerationStopped', { count: total }), 'warning');
+            }
+
+            // ==================== 7. UI LOGIC ====================
+            function updatePreview(keys) {
+                if (!keys || keys.length === 0) {
+                    dom.previewList.innerHTML =
+                        `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                    dom.previewCount.textContent = '';
+                    return;
+                }
+                const displayKeys = keys.slice(0, 100);
+                dom.previewList.innerHTML = displayKeys.map(k => `<span class="key-line">${escapeHTML(k)}</span>`).join(
+                    '\n');
+                dom.previewCount.textContent = `(${displayKeys.length} ${state.lang === 'ru' ? 'показано' : 'shown'} / ${state.generatedKeys.length} ${state.lang === 'ru' ? 'всего' : 'total'})`;
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function updateUIForGenerating() {
+                state.isGenerating = true;
+                state.stopRequested = false;
+                dom.generateBtn.disabled = true;
+                dom.stopBtn.classList.remove('hidden');
+                dom.downloadGroup.classList.add('hidden');
+                dom.progressWrap.classList.remove('hidden');
+                dom.progressText.classList.remove('hidden');
+                dom.progressBar.style.width = '0%';
+                dom.progressText.textContent = t('progressGenerating', { current: 0, total: state.count });
+                state.generatedKeys = [];
+                dom.previewList.innerHTML =
+                    `<span style="color:var(--text3);font-family:var(--font);">${t('progressGenerating', { current: 0, total: state.count })}</span>`;
+                dom.previewCount.textContent = '';
+            }
+
+            function updateUIForIdle() {
+                state.isGenerating = false;
+                state.stopRequested = false;
+                dom.generateBtn.disabled = false;
+                dom.stopBtn.classList.add('hidden');
+            }
+
+            function doGenerate() {
+                if (state.isGenerating) return;
+                const count = clamp(parseInt(state.countInput.value) || 100, 1, 500000);
+                state.count = count;
+                state.countInput.value = count;
+                const config = buildGeneratorConfig();
+                if (config.charset.length === 0) {
+                    toast('Charset cannot be empty.', 'error');
+                    return;
+                }
+                if (config.length < 1) {
+                    toast('Key length must be at least 1.', 'error');
+                    return;
+                }
+                updateUIForGenerating();
+                saveSettings();
+                if (state.randomMode === 'fast' && !state.fastWarningShown) {
+                    state.fastWarningShown = true;
+                    toast(t('toastFastWarning'), 'warning');
+                }
+                if (count > 2000) {
+                    startWorkerGeneration(config, count);
+                } else {
+                    generateInMainThread(config, count);
+                }
+            }
+
+            function generateInMainThread(config, count) {
+                state.generatedKeys = [];
+                state.workerChunksReceived = 0;
+                state.workerTotalKeys = count;
+                const chunkSize = Math.min(500, Math.max(50, Math.floor(count / 10)));
+                let generated = 0;
+
+                function processChunk() {
+                    if (state.stopRequested) {
+                        handleStopPartial(state.generatedKeys, generated);
+                        return;
+                    }
+                    const end = Math.min(generated + chunkSize, count);
+                    for (let i = generated; i < end; i++) {
+                        state.generatedKeys.push(generateKey(config));
+                    }
+                    generated = end;
+                    state.workerChunksReceived = generated;
+                    updateProgressUI(generated, count);
+                    updatePreview(state.generatedKeys.slice(0, 100));
+                    if (generated >= count) {
+                        finishGeneration(state.generatedKeys);
+                    } else {
+                        requestAnimationFrame(() => setTimeout(processChunk, 0));
+                    }
+                }
+                requestAnimationFrame(() => setTimeout(processChunk, 0));
+            }
+
+            function stopGeneration() {
+                if (!state.isGenerating) return;
+                state.stopRequested = true;
+                if (state.worker) {
+                    state.worker.postMessage({ action: 'stop' });
+                }
+                dom.stopBtn.disabled = true;
+            }
+
+            function downloadKeys(format, keysOverride = null) {
+                const keys = keysOverride || state.generatedKeys;
+                if (!keys || keys.length === 0) {
+                    toast('No keys to download.', 'warning');
+                    return;
+                }
+                const count = keys.length;
+                const filenameBase = `keys_${count}`;
+                let blob, filename, mimeType;
+                switch (format) {
+                    case 'txt':
+                        blob = new Blob([keys.join('\n')], { type: 'text/plain' });
+                        filename = `${filenameBase}.txt`;
+                        mimeType = 'text/plain';
+                        break;
+                    case 'csv':
+                        blob = new Blob(['key\n' + keys.join('\n')], { type: 'text/csv' });
+                        filename = `${filenameBase}.csv`;
+                        mimeType = 'text/csv';
+                        break;
+                    case 'json':
+                        blob = new Blob([JSON.stringify(keys, null, 2)], { type: 'application/json' });
+                        filename = `${filenameBase}.json`;
+                        mimeType = 'application/json';
+                        break;
+                    case 'zip':
+                        if (typeof JSZip === 'undefined') {
+                            toast('JSZip library not loaded. Check your internet connection.', 'error');
+                            return;
+                        }
+                        const zip = new JSZip();
+                        zip.file(`${filenameBase}.txt`, keys.join('\n'));
+                        zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } })
+                            .then((zipBlob) => {
+                                triggerDownload(zipBlob, `${filenameBase}.zip`, 'application/zip');
+                            }).catch(() => {
+                                toast('Failed to create ZIP archive.', 'error');
+                            });
+                        return;
+                    default:
+                        return;
+                }
+                triggerDownload(blob, filename, mimeType);
+            }
+
+            function triggerDownload(blob, filename, mimeType) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }
+
+            function updateModeUI() {
+                if (state.mode === 'bits') {
+                    dom.lengthGroup.classList.add('hidden');
+                    dom.bitsGroup.classList.remove('hidden');
+                    dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'bits'));
+                } else {
+                    dom.lengthGroup.classList.remove('hidden');
+                    dom.bitsGroup.classList.add('hidden');
+                    dom.modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'length'));
+                }
+                updatePresetHighlight();
+            }
+
+            function updatePresetHighlight() {
+                if (state.mode !== 'bits') return;
+                dom.presetBtns.forEach(b => {
+                    b.classList.toggle('active-preset', parseInt(b.dataset.bits) === state.bits);
+                });
+            }
+
+            // ==================== 8. STORAGE ====================
+            const STORAGE_KEY = 'apikeygen_settings_v2';
+
+            function saveSettings() {
+                const settings = {
+                    mode: state.mode,
+                    length: state.length,
+                    bits: state.bits,
+                    charsetLetters: state.charsetLetters,
+                    charsetNumbers: state.charsetNumbers,
+                    charsetSymbols: state.charsetSymbols,
+                    excludeSimilar: state.excludeSimilar,
+                    customCharset: state.customCharset,
+                    separatorChar: state.separatorChar,
+                    separatorInterval: state.separatorInterval,
+                    prefix: state.prefix,
+                    keyType: state.keyType,
+                    environment: state.environment,
+                    randomMode: state.randomMode,
+                    count: state.count,
+                    lang: state.lang,
+                    fastWarningShown: state.fastWarningShown,
+                };
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+                } catch (e) { /* ignore */ }
+            }
+
+            function loadSettings() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const settings = JSON.parse(raw);
+                        state.mode = settings.mode || 'length';
+                        state.length = settings.length || 32;
+                        state.bits = settings.bits || 256;
+                        state.charsetLetters = settings.charsetLetters !== undefined ? settings.charsetLetters : true;
+                        state.charsetNumbers = settings.charsetNumbers !== undefined ? settings.charsetNumbers : true;
+                        state.charsetSymbols = settings.charsetSymbols || false;
+                        state.excludeSimilar = settings.excludeSimilar || false;
+                        state.customCharset = settings.customCharset || '';
+                        state.separatorChar = settings.separatorChar || '-';
+                        state.separatorInterval = settings.separatorInterval || 4;
+                        state.prefix = settings.prefix || '';
+                        state.keyType = settings.keyType || 'api';
+                        state.environment = settings.environment || 'live';
+                        state.randomMode = settings.randomMode || 'crypto';
+                        state.count = settings.count || 100;
+                        state.lang = settings.lang || 'en';
+                        state.fastWarningShown = settings.fastWarningShown || false;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            function applySettingsToDOM() {
+                dom.lengthInput.value = state.length;
+                dom.bitsInput.value = state.bits;
+                dom.charsetLetters.checked = state.charsetLetters;
+                dom.charsetNumbers.checked = state.charsetNumbers;
+                dom.charsetSymbols.checked = state.charsetSymbols;
+                dom.excludeSimilar.checked = state.excludeSimilar;
+                dom.customCharset.value = state.customCharset;
+                dom.separatorChar.value = state.separatorChar;
+                dom.separatorInterval.value = state.separatorInterval;
+                dom.prefixInput.value = state.prefix;
+                dom.keyTypeSelect.value = state.keyType;
+                dom.envSelect.value = state.environment;
+                dom.randomModeSelect.value = state.randomMode;
+                dom.countInput.value = state.count;
+                updateModeUI();
+                updateFastWarning();
+                updateLangButtons();
+                updateAllI18n();
+                if (state.randomMode === 'fast' && state.fastWarningShown) {
+                    dom.fastWarning.classList.remove('hidden');
+                }
+            }
+
+            function updateLangButtons() {
+                dom.langBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === state.lang));
+            }
+
+            // ==================== EVENT BINDINGS ====================
+            dom.generateBtn.addEventListener('click', doGenerate);
+            dom.stopBtn.addEventListener('click', stopGeneration);
+
+            dom.modeToggle.addEventListener('click', (e) => {
+                const btn = e.target.closest('.mode-btn');
+                if (!btn || state.isGenerating) return;
+                state.mode = btn.dataset.mode;
+                updateModeUI();
+                saveSettings();
+            });
+
+            dom.bitsPresets.addEventListener('click', (e) => {
+                const btn = e.target.closest('.preset-btn');
+                if (!btn || state.isGenerating) return;
+                state.bits = parseInt(btn.dataset.bits);
+                dom.bitsInput.value = state.bits;
+                updatePresetHighlight();
+                saveSettings();
+            });
+
+            dom.lengthInput.addEventListener('input', () => {
+                state.length = clamp(parseInt(dom.lengthInput.value) || 32, 4, 512);
+                dom.lengthInput.value = state.length;
+                saveSettings();
+            });
+
+            dom.bitsInput.addEventListener('input', () => {
+                state.bits = clamp(parseInt(dom.bitsInput.value) || 256, 64, 2048);
+                dom.bitsInput.value = state.bits;
+                updatePresetHighlight();
+                saveSettings();
+            });
+
+            dom.charsetLetters.addEventListener('change', () => {
+                state.charsetLetters = dom.charsetLetters.checked;
+                saveSettings();
+            });
+            dom.charsetNumbers.addEventListener('change', () => {
+                state.charsetNumbers = dom.charsetNumbers.checked;
+                saveSettings();
+            });
+            dom.charsetSymbols.addEventListener('change', () => {
+                state.charsetSymbols = dom.charsetSymbols.checked;
+                saveSettings();
+            });
+            dom.excludeSimilar.addEventListener('change', () => {
+                state.excludeSimilar = dom.excludeSimilar.checked;
+                saveSettings();
+            });
+            dom.customCharset.addEventListener('input', () => {
+                state.customCharset = dom.customCharset.value;
+                saveSettings();
+            });
+            dom.separatorChar.addEventListener('input', () => {
+                state.separatorChar = dom.separatorChar.value;
+                saveSettings();
+            });
+            dom.separatorInterval.addEventListener('input', () => {
+                state.separatorInterval = clamp(parseInt(dom.separatorInterval.value) || 4, 1, 32);
+                dom.separatorInterval.value = state.separatorInterval;
+                saveSettings();
+            });
+            dom.prefixInput.addEventListener('input', () => {
+                state.prefix = dom.prefixInput.value;
+                saveSettings();
+            });
+            dom.keyTypeSelect.addEventListener('change', () => {
+                state.keyType = dom.keyTypeSelect.value;
+                saveSettings();
+            });
+            dom.envSelect.addEventListener('change', () => {
+                state.environment = dom.envSelect.value;
+                saveSettings();
+            });
+            dom.randomModeSelect.addEventListener('change', () => {
+                state.randomMode = dom.randomModeSelect.value;
+                updateFastWarning();
+                saveSettings();
+                if (state.randomMode === 'fast' && !state.fastWarningShown) {
+                    state.fastWarningShown = true;
+                    saveSettings();
+                    toast(t('toastFastWarning'), 'warning');
+                }
+            });
+            dom.countInput.addEventListener('input', () => {
+                state.count = clamp(parseInt(dom.countInput.value) || 100, 1, 500000);
+                dom.countInput.value = state.count;
+                saveSettings();
+            });
+
+            dom.langBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (state.isGenerating) return;
+                    state.lang = btn.dataset.lang;
+                    updateLangButtons();
+                    updateAllI18n();
+                    saveSettings();
+                });
+            });
+
+            dom.downloadBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const format = btn.dataset.format;
+                    downloadKeys(format);
+                });
+            });
+
+            dom.modalYes.addEventListener('click', () => {
+                if (state.modalResolve) {
+                    state.modalResolve(true);
+                    state.modalResolve = null;
+                }
+                hideModal();
+                if (state.generatedKeys.length > 0) {
+                    downloadKeys('txt', state.generatedKeys);
+                }
+            });
+
+            dom.modalNo.addEventListener('click', () => {
+                if (state.modalResolve) {
+                    state.modalResolve(false);
+                    state.modalResolve = null;
+                }
+                hideModal();
+                state.generatedKeys = [];
+                updatePreview([]);
+                dom.downloadGroup.classList.add('hidden');
+                dom.previewList.innerHTML =
+                    `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                dom.previewCount.textContent = '';
+            });
+
+            dom.modalOverlay.addEventListener('click', (e) => {
+                if (e.target === dom.modalOverlay) {
+                    if (state.modalResolve) {
+                        state.modalResolve(false);
+                        state.modalResolve = null;
+                    }
+                    hideModal();
+                    state.generatedKeys = [];
+                    updatePreview([]);
+                    dom.downloadGroup.classList.add('hidden');
+                    dom.previewList.innerHTML =
+                        `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                    dom.previewCount.textContent = '';
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !dom.modalOverlay.classList.contains('hidden')) {
+                    if (state.modalResolve) {
+                        state.modalResolve(false);
+                        state.modalResolve = null;
+                    }
+                    hideModal();
+                    state.generatedKeys = [];
+                    updatePreview([]);
+                    dom.downloadGroup.classList.add('hidden');
+                    dom.previewList.innerHTML =
+                        `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                    dom.previewCount.textContent = '';
+                }
+            });
+
+            // ==================== INITIALIZATION ====================
+            function init() {
+                loadSettings();
+                applySettingsToDOM();
+                updateAllI18n();
+                dom.previewList.innerHTML =
+                    `<span style="color:var(--text3);font-family:var(--font);">${t('previewPlaceholder')}</span>`;
+                dom.downloadGroup.classList.add('hidden');
+                dom.progressWrap.classList.add('hidden');
+                dom.progressText.classList.add('hidden');
+                dom.stopBtn.classList.add('hidden');
+                dom.generateBtn.disabled = false;
+                updateFastWarning();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
