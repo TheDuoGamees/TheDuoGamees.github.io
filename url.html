@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Toolbox Pro</title>
+    <style>
+        :root {
+            --bg: #0f1119;
+            --bg-card: #1a1d2b;
+            --bg-input: #141720;
+            --text: #e2e4e9;
+            --text-secondary: #9498a3;
+            --text-muted: #6b6f7a;
+            --border: #2a2d3a;
+            --accent: #6c8cff;
+            --accent-hover: #8aa3ff;
+            --accent-subtle: rgba(108, 140, 255, 0.1);
+            --danger: #f5576c;
+            --danger-hover: #ff7b8d;
+            --warning: #f2a33c;
+            --warning-bg: rgba(242, 163, 60, 0.12);
+            --success: #4caf7d;
+            --success-bg: rgba(76, 175, 125, 0.1);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+            --radius: 8px;
+            --radius-sm: 5px;
+            --transition: 0.18s ease;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            --tag-bg: #232738;
+            --tag-text: #b0b8d0;
+            --diff-added: rgba(76, 175, 125, 0.18);
+            --diff-removed: rgba(245, 87, 108, 0.18);
+            --diff-changed: rgba(242, 163, 60, 0.18);
+            --badge-bg: #2a2d3b;
+            --scrollbar-thumb: #3a3d4d;
+            --scrollbar-track: #1a1d2b;
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f6f8;
+            --bg-card: #ffffff;
+            --bg-input: #f0f1f4;
+            --text: #1c1e26;
+            --text-secondary: #555a68;
+            --text-muted: #8b8f9a;
+            --border: #e3e5ea;
+            --accent: #4a6cf7;
+            --accent-hover: #3b5de7;
+            --accent-subtle: rgba(74, 108, 247, 0.08);
+            --danger: #e0455b;
+            --danger-hover: #c93a4f;
+            --warning: #d4891a;
+            --warning-bg: rgba(212, 137, 26, 0.08);
+            --success: #2d9d5f;
+            --success-bg: rgba(45, 157, 95, 0.08);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
+            --tag-bg: #eef0f5;
+            --tag-text: #4a4f5c;
+            --diff-added: rgba(45, 157, 95, 0.12);
+            --diff-removed: rgba(224, 69, 91, 0.12);
+            --diff-changed: rgba(212, 137, 26, 0.12);
+            --badge-bg: #eef0f5;
+            --scrollbar-thumb: #ccced6;
+            --scrollbar-track: #f0f1f4;
+        }
+
+        [data-theme="neon"] {
+            --bg: #0a0a0f;
+            --bg-card: #111119;
+            --bg-input: #0d0d16;
+            --text: #e0e0f0;
+            --text-secondary: #b0b0cc;
+            --text-muted: #707090;
+            --border: #2a1a3a;
+            --accent: #e040fb;
+            --accent-hover: #f060ff;
+            --accent-subtle: rgba(224, 64, 251, 0.1);
+            --danger: #ff3366;
+            --danger-hover: #ff5577;
+            --warning: #ffaa00;
+            --warning-bg: rgba(255, 170, 0, 0.1);
+            --success: #00e676;
+            --success-bg: rgba(0, 230, 118, 0.1);
+            --shadow: 0 0 20px rgba(180, 50, 220, 0.15), 0 4px 16px rgba(0, 0, 0, 0.5);
+            --radius: 6px;
+            --radius-sm: 4px;
+            --tag-bg: #1a1028;
+            --tag-text: #c0a0e0;
+            --diff-added: rgba(0, 230, 118, 0.15);
+            --diff-removed: rgba(255, 51, 102, 0.15);
+            --diff-changed: rgba(255, 170, 0, 0.15);
+            --badge-bg: #1a1028;
+            --scrollbar-thumb: #3a2050;
+            --scrollbar-track: #111119;
+        }
+
+        [data-theme="soft"] {
+            --bg: #faf8f5;
+            --bg-card: #fefdfb;
+            --bg-input: #f7f4ef;
+            --text: #3d3830;
+            --text-secondary: #6b6358;
+            --text-muted: #9b9285;
+            --border: #e8e2d8;
+            --accent: #b8926a;
+            --accent-hover: #a07850;
+            --accent-subtle: rgba(184, 146, 106, 0.1);
+            --danger: #d4756b;
+            --danger-hover: #c06055;
+            --warning: #c8963e;
+            --warning-bg: rgba(200, 150, 62, 0.1);
+            --success: #7da87b;
+            --success-bg: rgba(125, 168, 123, 0.1);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --tag-bg: #f3efe8;
+            --tag-text: #5c5346;
+            --diff-added: rgba(125, 168, 123, 0.12);
+            --diff-removed: rgba(212, 117, 107, 0.12);
+            --diff-changed: rgba(200, 150, 62, 0.12);
+            --badge-bg: #f3efe8;
+            --scrollbar-thumb: #d8d2c6;
+            --scrollbar-track: #f7f4ef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 15px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 3px;
+        }
+
+        .app-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
+
+        /* Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.3px;
+            color: var(--text);
+            user-select: none;
+        }
+        .app-logo .icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .theme-switcher {
+            display: flex;
+            gap: 3px;
+            background: var(--bg-input);
+            border-radius: 20px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            outline: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .theme-btn.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .theme-btn:hover:not(.active) {
+            color: var(--text-secondary);
+            background: var(--border);
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            margin-bottom: 14px;
+        }
+        .card-header {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+        .card-header .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* Inputs */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            outline: none;
+            transition: all var(--transition);
+            resize: vertical;
+        }
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+        input[type="text"].param-key,
+        input[type="text"].param-value {
+            font-size: 0.85rem;
+            padding: 7px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            min-width: 80px;
+        }
+        input.param-key {
+            flex: 0 0 140px;
+            max-width: 180px;
+        }
+        input.param-value {
+            flex: 1 1 auto;
+            min-width: 120px;
+        }
+        textarea {
+            min-height: 90px;
+            font-size: 0.85rem;
+        }
+
+        /* Buttons */
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 8px 14px;
+            transition: all var(--transition);
+            outline: none;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            user-select: none;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 14px var(--accent-subtle);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-subtle);
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            border-radius: 4px;
+        }
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            gap: 2px;
+        }
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid transparent;
+        }
+        .btn-danger:hover {
+            background: rgba(245, 87, 108, 0.1);
+            border-color: var(--danger);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border: none;
+        }
+        .btn-ghost:hover {
+            color: var(--text);
+            background: var(--bg-input);
+        }
+        .btn-icon {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .btn-icon:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-subtle);
+        }
+        .btn-copied {
+            background: var(--success) !important;
+            color: #fff !important;
+            border-color: var(--success) !important;
+            animation: popFlash 0.4s ease;
+        }
+        @keyframes popFlash {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 9px 18px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all var(--transition);
+            flex: 1;
+            min-width: 70px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+        }
+        .tab-btn:hover:not(.active) {
+            color: var(--text-secondary);
+            background: rgba(128, 128, 160, 0.06);
+        }
+
+        /* Param list */
+        .param-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            transition: all var(--transition);
+            animation: fadeSlideIn 0.25s ease;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .param-row:hover {
+            border-color: var(--border);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+        .param-row.warning-row {
+            border-color: var(--warning);
+            background: var(--warning-bg);
+            box-shadow: 0 0 0 2px rgba(242, 163, 60, 0.08);
+        }
+        .param-row .equals {
+            color: var(--text-muted);
+            font-weight: 600;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .sensitive-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: rgba(245, 87, 108, 0.15);
+            color: var(--danger);
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+            letter-spacing: 0.2px;
+        }
+        .param-index {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            width: 18px;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* URL display */
+        .url-display {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            word-break: break-all;
+            color: var(--text);
+            line-height: 1.6;
+            position: relative;
+            transition: all var(--transition);
+        }
+        .url-display .protocol {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .url-display .host {
+            color: var(--text);
+            font-weight: 500;
+        }
+        .url-display .path {
+            color: var(--text-secondary);
+        }
+        .url-display .query {
+            color: var(--success);
+        }
+        .url-display .hash-part {
+            color: var(--warning);
+        }
+
+        /* Diff */
+        .diff-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 700px) {
+            .diff-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .diff-result-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .diff-item {
+            padding: 7px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition);
+        }
+        .diff-item.added {
+            background: var(--diff-added);
+            border-left: 3px solid var(--success);
+        }
+        .diff-item.removed {
+            background: var(--diff-removed);
+            border-left: 3px solid var(--danger);
+        }
+        .diff-item.changed {
+            background: var(--diff-changed);
+            border-left: 3px solid var(--warning);
+        }
+        .diff-item.unchanged {
+            opacity: 0.55;
+            border-left: 3px solid transparent;
+        }
+        .diff-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .diff-tag.added {
+            background: var(--success);
+            color: #fff;
+        }
+        .diff-tag.removed {
+            background: var(--danger);
+            color: #fff;
+        }
+        .diff-tag.changed {
+            background: var(--warning);
+            color: #1c1e26;
+        }
+
+        /* History */
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 100px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .history-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-size: 0.78rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all var(--transition);
+            max-width: 320px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            user-select: none;
+        }
+        .history-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-subtle);
+        }
+        .history-chip .remove-chip {
+            cursor: pointer;
+            opacity: 0.5;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-left: 2px;
+            color: var(--text-muted);
+            transition: all var(--transition);
+        }
+        .history-chip .remove-chip:hover {
+            opacity: 1;
+            color: var(--danger);
+        }
+
+        /* Grid layouts */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 700px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        @media (max-width: 700px) {
+            .three-col {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 420px) {
+            .three-col {
+                grid-template-columns: 1fr;
+            }
+            input.param-key {
+                flex: 0 0 90px;
+                max-width: 110px;
+            }
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 7px 10px;
+            }
+            .app-header {
+                gap: 8px;
+            }
+        }
+
+        /* Stats row */
+        .stat-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 14px;
+            background: var(--badge-bg);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border: 1px solid var(--border);
+        }
+        .stat-chip .val {
+            font-weight: 700;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+        }
+
+        /* Tools */
+        .tool-section {
+            margin-bottom: 10px;
+        }
+        .tool-section label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            color: var(--text);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            z-index: 999;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 1.2s forwards;
+            pointer-events: none;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .app-container {
+                padding: 10px 8px 24px;
+            }
+            .card {
+                padding: 12px 10px;
+            }
+            .param-row {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            input.param-key {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            input.param-value {
+                flex: 1 1 60%;
+                min-width: 80px;
+            }
+            .param-row .btn-xs {
+                font-size: 0.65rem;
+                padding: 2px 6px;
+            }
+            .btn-sm {
+                padding: 4px 8px;
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-logo">
+                <div class="icon-box">🔗</div>
+                <span>URL Toolbox</span>
+            </div>
+            <div class="header-actions">
+                <div class="theme-switcher" id="themeSwitcher">
+                    <button class="theme-btn active" data-theme-val="dark" title="Dark">🌙</button>
+                    <button class="theme-btn" data-theme-val="light" title="Light">☀️</button>
+                    <button class="theme-btn" data-theme-val="neon" title="Neon">💜</button>
+                    <button class="theme-btn" data-theme-val="soft" title="Soft">🌸</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main URL Input -->
+        <div class="card">
+            <div class="card-header"><span class="dot"></span> URL Input</div>
+            <input type="text" id="mainUrlInput" placeholder="Paste or type a URL here…" autocomplete="off" spellcheck="false">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;" id="statsRow">
+                <span class="stat-chip">Params: <span class="val" id="statParamCount">0</span></span>
+                <span class="stat-chip">Length: <span class="val" id="statUrlLength">0</span></span>
+                <span class="stat-chip" id="statWarningChip" style="display:none;border-color:var(--warning);color:var(--warning);">⚠ Sensitive data detected</span>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav" id="tabNav">
+            <button class="tab-btn active" data-tab="parser">🔍 Parser</button>
+            <button class="tab-btn" data-tab="builder">🏗️ Builder</button>
+            <button class="tab-btn" data-tab="diff">🔄 Diff</button>
+            <button class="tab-btn" data-tab="tools">🧰 Tools</button>
+        </div>
+
+        <!-- Tab: Parser -->
+        <div class="tab-content" id="tab-parser">
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> URL Breakdown</div>
+                    <div class="url-display" id="urlBreakdown" style="min-height:60px;">
+                        <span class="empty-state">Enter a URL above to see breakdown</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> Query String</div>
+                    <div class="url-display" id="queryStringDisplay" style="min-height:40px;font-size:0.8rem;">
+                        <span class="empty-state">—</span>
+                    </div>
+                    <button class="btn-outline btn-sm" style="margin-top:8px;" id="copyQueryBtn">📋 Copy Query String</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                    <span><span class="dot"></span> Query Parameters</span>
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                        <input type="text" id="paramSearchInput" placeholder="Search params…" style="width:160px;padding:6px 10px;font-size:0.78rem;" autocomplete="off">
+                        <button class="btn-outline btn-xs" id="addParamBtn" title="Add parameter">+ Add</button>
+                        <button class="btn-outline btn-xs" id="cleanUrlBtn" title="Clean URL">🧹 Clean</button>
+                    </div>
+                </div>
+                <div class="param-list" id="paramList">
+                    <div class="empty-state">No query parameters found</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Builder -->
+        <div class="tab-content" id="tab-builder" style="display:none;">
+            <div class="card">
+                <div class="card-header"><span class="dot"></span> Base URL</div>
+                <input type="text" id="builderBaseInput" placeholder="https://example.com/path" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="card">
+                <div class="card-header" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                    <span><span class="dot"></span> Builder Parameters</span>
+                    <button class="btn-outline btn-xs" id="builderAddParamBtn">+ Add Param</button>
+                </div>
+                <div class="param-list" id="builderParamList">
+                    <div class="empty-state">No parameters yet. Add one to start building.</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="dot"></span> Built URL</div>
+                <div class="url-display" id="builtUrlDisplay" style="min-height:40px;">
+                    <span class="empty-state">Enter a base URL and add parameters</span>
+                </div>
+                <button class="btn-primary btn-sm" style="margin-top:8px;" id="copyBuiltUrlBtn">📋 Copy Built URL</button>
+                <button class="btn-outline btn-sm" style="margin-top:8px;margin-left:6px;" id="useBuiltUrlBtn">⬆ Use as Main URL</button>
+            </div>
+        </div>
+
+        <!-- Tab: Diff -->
+        <div class="tab-content" id="tab-diff" style="display:none;">
+            <div class="diff-grid">
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> URL A</div>
+                    <input type="text" id="diffUrlA" placeholder="First URL…" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> URL B</div>
+                    <input type="text" id="diffUrlB" placeholder="Second URL…" autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+            <button class="btn-primary btn-sm" style="margin-bottom:10px;" id="runDiffBtn">🔍 Compare URLs</button>
+            <div class="card" id="diffResultCard" style="display:none;">
+                <div class="card-header"><span class="dot"></span> Diff Results</div>
+                <div class="diff-result-list" id="diffResultList"></div>
+                <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;font-size:0.75rem;color:var(--text-muted);">
+                    <span>🟢 Added</span><span>🔴 Removed</span><span>🟡 Changed</span><span>⚪ Unchanged</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Tools -->
+        <div class="tab-content" id="tab-tools" style="display:none;">
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> Encode / Decode</div>
+                    <div class="tool-section">
+                        <label>Encode (encodeURIComponent)</label>
+                        <input type="text" id="encodeInput" placeholder="Text to encode…" autocomplete="off">
+                        <input type="text" id="encodeOutput" placeholder="Encoded result" readonly style="margin-top:4px;opacity:0.8;">
+                        <button class="btn-outline btn-xs copy-trigger" data-source="encodeOutput" style="margin-top:4px;">📋 Copy</button>
+                    </div>
+                    <div class="tool-section" style="margin-top:10px;">
+                        <label>Decode (decodeURIComponent)</label>
+                        <input type="text" id="decodeInput" placeholder="Encoded text to decode…" autocomplete="off">
+                        <input type="text" id="decodeOutput" placeholder="Decoded result" readonly style="margin-top:4px;opacity:0.8;">
+                        <button class="btn-outline btn-xs copy-trigger" data-source="decodeOutput" style="margin-top:4px;">📋 Copy</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="dot"></span> JSON Converter</div>
+                    <div class="tool-section">
+                        <label>URL → JSON (query params)</label>
+                        <input type="text" id="jsonUrlInput" placeholder="URL with query string…" autocomplete="off">
+                        <textarea id="jsonOutput" placeholder="JSON output" readonly style="margin-top:4px;opacity:0.85;min-height:60px;"></textarea>
+                        <button class="btn-outline btn-xs copy-trigger" data-source="jsonOutput" style="margin-top:4px;">📋 Copy JSON</button>
+                    </div>
+                    <div class="tool-section" style="margin-top:10px;">
+                        <label>JSON → URL Query String</label>
+                        <textarea id="jsonInput" placeholder='{"key":"value"}' style="min-height:60px;"></textarea>
+                        <input type="text" id="jsonUrlOutput" placeholder="Generated query string" readonly style="margin-top:4px;opacity:0.8;">
+                        <button class="btn-outline btn-xs copy-trigger" data-source="jsonUrlOutput" style="margin-top:4px;">📋 Copy</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="dot"></span> Bulk Edit & Clean</div>
+                <div class="two-col">
+                    <div class="tool-section">
+                        <label>Bulk Param Input (key=value per line)</label>
+                        <textarea id="bulkInput" placeholder="key1=value1&#10;key2=value2&#10;key3=value3"></textarea>
+                        <button class="btn-primary btn-sm" id="applyBulkBtn" style="margin-top:6px;">⚡ Apply to Main URL</button>
+                    </div>
+                    <div class="tool-section">
+                        <label>Clean URL (remove tracking, empty, duplicates)</label>
+                        <input type="text" id="cleanUrlInput" placeholder="URL to clean…" autocomplete="off">
+                        <input type="text" id="cleanUrlOutput" placeholder="Cleaned URL" readonly style="margin-top:4px;opacity:0.8;">
+                        <button class="btn-outline btn-xs copy-trigger" data-source="cleanUrlOutput" style="margin-top:4px;">📋 Copy Cleaned</button>
+                        <button class="btn-outline btn-xs" id="useCleanedUrlBtn" style="margin-top:4px;margin-left:4px;">⬆ Use</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="card">
+            <div class="card-header" style="justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                <span><span class="dot"></span> History (last 10)</span>
+                <button class="btn-ghost btn-xs" id="clearHistoryBtn">Clear All</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <span class="empty-state" style="padding:8px;">No history yet</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 1. STATE (single source of truth)
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            const TRACKING_PARAMS = new Set([
+                'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_id',
+                'fbclid', 'gclid', 'msclkid', 'ref', 'ref_src', 'mc_cid', 'mc_eid',
+                '_ga', '_gl', '_gcl_aw', '_gcl_dc', '_gcl_au', '_gid', '_hsenc', '_hsmi',
+                '__hstc', '__hssc', '__hsfp', 'hsCtaTracking', '_hsq', '_hsc', 'hubspot_utk',
+                'igshid', 'si', 's_kwcid', 'gbraid', 'wbraid', 'yclid', '_openstat',
+                'vero_id', 'mk_tok', 'oly_anon_id', 'oly_enc_id', 'trk_contact', 'trk_msg'
+            ]);
+            const SENSITIVE_KEYWORDS = [
+                'token', 'api_key', 'apikey', 'password', 'passwd', 'secret', 'auth',
+                'access_token', 'refresh_token', 'bearer', 'credential', 'pwd', 'jwt',
+                'session', 'sid', 'xsrf', 'csrf', 'private', 'signature', 'sig'
+            ];
+            const MAX_HISTORY = 10;
+            let paramIdCounter = 0;
+
+            function genParamId() { return 'p_' + (++paramIdCounter); }
+
+            const state = {
+                theme: 'dark',
+                activeTab: 'parser',
+                mainUrl: '',
+                parsedParams: [], // [{id, key, value}]
+                parsedProtocol: '',
+                parsedHost: '',
+                parsedPath: '',
+                parsedHash: '',
+                paramSearch: '',
+                builderBase: '',
+                builderParams: [], // [{id, key, value}]
+                diffUrlA: '',
+                diffUrlB: '',
+                diffResult: null, // {added, removed, changed, unchanged}
+                history: [],
+                warnings: [], // [{paramKey, reason}]
+                isInternalUpdate: false, // prevent circular updates
+            };
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 2. DOM CACHE
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            const dom = {};
+            function cacheDom() {
+                dom.body = document.body;
+                dom.mainUrlInput = document.getElementById('mainUrlInput');
+                dom.statsRow = document.getElementById('statsRow');
+                dom.statParamCount = document.getElementById('statParamCount');
+                dom.statUrlLength = document.getElementById('statUrlLength');
+                dom.statWarningChip = document.getElementById('statWarningChip');
+                dom.tabNav = document.getElementById('tabNav');
+                dom.tabContents = {
+                    parser: document.getElementById('tab-parser'),
+                    builder: document.getElementById('tab-builder'),
+                    diff: document.getElementById('tab-diff'),
+                    tools: document.getElementById('tab-tools'),
+                };
+                dom.urlBreakdown = document.getElementById('urlBreakdown');
+                dom.queryStringDisplay = document.getElementById('queryStringDisplay');
+                dom.copyQueryBtn = document.getElementById('copyQueryBtn');
+                dom.paramList = document.getElementById('paramList');
+                dom.paramSearchInput = document.getElementById('paramSearchInput');
+                dom.addParamBtn = document.getElementById('addParamBtn');
+                dom.cleanUrlBtn = document.getElementById('cleanUrlBtn');
+                dom.builderBaseInput = document.getElementById('builderBaseInput');
+                dom.builderParamList = document.getElementById('builderParamList');
+                dom.builderAddParamBtn = document.getElementById('builderAddParamBtn');
+                dom.builtUrlDisplay = document.getElementById('builtUrlDisplay');
+                dom.copyBuiltUrlBtn = document.getElementById('copyBuiltUrlBtn');
+                dom.useBuiltUrlBtn = document.getElementById('useBuiltUrlBtn');
+                dom.diffUrlA = document.getElementById('diffUrlA');
+                dom.diffUrlB = document.getElementById('diffUrlB');
+                dom.runDiffBtn = document.getElementById('runDiffBtn');
+                dom.diffResultCard = document.getElementById('diffResultCard');
+                dom.diffResultList = document.getElementById('diffResultList');
+                dom.encodeInput = document.getElementById('encodeInput');
+                dom.encodeOutput = document.getElementById('encodeOutput');
+                dom.decodeInput = document.getElementById('decodeInput');
+                dom.decodeOutput = document.getElementById('decodeOutput');
+                dom.jsonUrlInput = document.getElementById('jsonUrlInput');
+                dom.jsonOutput = document.getElementById('jsonOutput');
+                dom.jsonInput = document.getElementById('jsonInput');
+                dom.jsonUrlOutput = document.getElementById('jsonUrlOutput');
+                dom.bulkInput = document.getElementById('bulkInput');
+                dom.applyBulkBtn = document.getElementById('applyBulkBtn');
+                dom.cleanUrlInput = document.getElementById('cleanUrlInput');
+                dom.cleanUrlOutput = document.getElementById('cleanUrlOutput');
+                dom.useCleanedUrlBtn = document.getElementById('useCleanedUrlBtn');
+                dom.historyList = document.getElementById('historyList');
+                dom.clearHistoryBtn = document.getElementById('clearHistoryBtn');
+                dom.themeSwitcher = document.getElementById('themeSwitcher');
+                dom.toastContainer = document.getElementById('toastContainer');
+                // Cache all copy-trigger buttons (they're static enough)
+                dom.allCopyTriggers = document.querySelectorAll('.copy-trigger');
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 3. HELPERS
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function showToast(msg) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = msg;
+                dom.toastContainer.appendChild(toast);
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 1600);
+            }
+
+            async function copyToClipboard(text) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    const ok = document.execCommand('copy');
+                    ta.remove();
+                    return ok;
+                }
+            }
+
+            function flashButton(btn) {
+                btn.classList.add('btn-copied');
+                setTimeout(() => btn.classList.remove('btn-copied'), 900);
+            }
+
+            function isSensitiveKey(key) {
+                const lower = key.toLowerCase().replace(/[^a-z0-9_]/g, '');
+                return SENSITIVE_KEYWORDS.some(kw => lower.includes(kw) || lower === kw);
+            }
+
+            function isBase64Like(str) {
+                if (!str || str.length < 4) return false;
+                const b64Re = /^[A-Za-z0-9+/]*={0,2}$/;
+                if (!b64Re.test(str)) return false;
+                if (str.length % 4 !== 0) return false;
+                try {
+                    const decoded = atob(str);
+                    if (decoded.length === 0 && str.length > 0) return false;
+                    const printable = decoded.split('').filter(c => c.charCodeAt(0) >= 32 && c.charCodeAt(0) <= 126)
+                        .length;
+                    return printable / Math.max(decoded.length, 1) > 0.7;
+                } catch {
+                    return false;
+                }
+            }
+
+            function toggleBase64(val) {
+                if (isBase64Like(val)) {
+                    try { return atob(val); } catch { return val; }
+                }
+                try { return btoa(val); } catch { return val; }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 4. PARSER ENGINE
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function parseUrl(urlStr) {
+                if (!urlStr || !urlStr.trim()) {
+                    return { protocol: '', host: '', path: '', params: [], hash: '', queryString: '' };
+                }
+                let s = urlStr.trim();
+                let protocol = '';
+                let host = '';
+                let path = '';
+                let hash = '';
+                let queryString = '';
+
+                // Extract hash
+                const hashIdx = s.indexOf('#');
+                if (hashIdx >= 0) {
+                    hash = s.slice(hashIdx + 1);
+                    s = s.slice(0, hashIdx);
+                }
+
+                // Extract protocol
+                const protoMatch = s.match(/^([a-zA-Z][a-zA-Z0-9+\-.]*):\/\//);
+                if (protoMatch) {
+                    protocol = protoMatch[1];
+                    s = s.slice(protoMatch[0].length);
+                }
+
+                // Extract query string
+                const qIdx = s.indexOf('?');
+                if (qIdx >= 0) {
+                    queryString = s.slice(qIdx + 1);
+                    s = s.slice(0, qIdx);
+                }
+
+                // Remaining is host + path
+                const pathIdx = s.indexOf('/');
+                if (pathIdx >= 0) {
+                    host = s.slice(0, pathIdx);
+                    path = s.slice(pathIdx);
+                } else {
+                    host = s;
+                    path = '';
+                }
+
+                // Parse query params
+                const params = [];
+                if (queryString) {
+                    const pairs = queryString.split('&');
+                    for (const pair of pairs) {
+                        const eqIdx = pair.indexOf('=');
+                        let key, value;
+                        if (eqIdx >= 0) {
+                            key = decodeURIComponentSafe(pair.slice(0, eqIdx));
+                            value = decodeURIComponentSafe(pair.slice(eqIdx + 1));
+                        } else {
+                            key = decodeURIComponentSafe(pair);
+                            value = '';
+                        }
+                        params.push({ id: genParamId(), key, value });
+                    }
+                }
+
+                return { protocol, host, path, params, hash, queryString };
+            }
+
+            function decodeURIComponentSafe(str) {
+                try { return decodeURIComponent(str); } catch { return str; }
+            }
+
+            function encodeURIComponentSafe(str) {
+                try { return encodeURIComponent(str); } catch { return str; }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 5. URL BUILDER
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function buildQueryString(params) {
+                if (!params || params.length === 0) return '';
+                return params
+                    .map(p => encodeURIComponentSafe(p.key) + '=' + encodeURIComponentSafe(p.value))
+                    .join('&');
+            }
+
+            function buildFullUrl(base, params) {
+                let url = (base || '').trim();
+                if (!url) return buildQueryString(params);
+                // Remove existing query string from base
+                const qIdx = url.indexOf('?');
+                if (qIdx >= 0) url = url.slice(0, qIdx);
+                const hIdx = url.indexOf('#');
+                if (hIdx >= 0) url = url.slice(0, hIdx);
+                const qs = buildQueryString(params);
+                return qs ? url + '?' + qs : url;
+            }
+
+            function buildFullUrlWithHash(base, params, hash) {
+                let url = buildFullUrl(base, params);
+                if (hash) url += '#' + hash;
+                return url;
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 6. TOOLS
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function urlToJson(urlStr) {
+                const parsed = parseUrl(urlStr);
+                const obj = {};
+                for (const p of parsed.params) {
+                    if (p.key in obj) {
+                        if (Array.isArray(obj[p.key])) {
+                            obj[p.key].push(p.value);
+                        } else {
+                            obj[p.key] = [obj[p.key], p.value];
+                        }
+                    } else {
+                        obj[p.key] = p.value;
+                    }
+                }
+                return JSON.stringify(obj, null, 2);
+            }
+
+            function jsonToQueryString(jsonStr) {
+                try {
+                    const obj = JSON.parse(jsonStr);
+                    if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+                        return '';
+                    }
+                    const parts = [];
+                    for (const [key, value] of Object.entries(obj)) {
+                        if (Array.isArray(value)) {
+                            for (const v of value) {
+                                parts.push(encodeURIComponentSafe(String(key)) + '=' + encodeURIComponentSafe(
+                                    String(v)));
+                            }
+                        } else {
+                            parts.push(encodeURIComponentSafe(String(key)) + '=' + encodeURIComponentSafe(String(
+                                value ?? '')));
+                        }
+                    }
+                    return parts.join('&');
+                } catch {
+                    return '';
+                }
+            }
+
+            function cleanUrl(urlStr) {
+                const parsed = parseUrl(urlStr);
+                const seen = new Set();
+                const cleanedParams = [];
+                for (const p of parsed.params) {
+                    const lowerKey = p.key.toLowerCase().trim();
+                    // Skip empty keys
+                    if (!p.key.trim()) continue;
+                    // Skip tracking params
+                    if (TRACKING_PARAMS.has(lowerKey)) continue;
+                    // Skip duplicates (keep first)
+                    if (seen.has(lowerKey)) continue;
+                    seen.add(lowerKey);
+                    cleanedParams.push({ ...p });
+                }
+                // Rebuild
+                const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                return buildFullUrlWithHash(base, cleanedParams, parsed.hash);
+            }
+
+            function detectWarnings(params) {
+                const warnings = [];
+                for (const p of params) {
+                    if (isSensitiveKey(p.key)) {
+                        warnings.push({ paramKey: p.key, reason: 'sensitive_key' });
+                    }
+                    if (isSensitiveKey(p.value) && p.value.length > 3) {
+                        warnings.push({ paramKey: p.key, reason: 'sensitive_value' });
+                    }
+                }
+                return warnings;
+            }
+
+            function diffUrls(urlA, urlB) {
+                const parsedA = parseUrl(urlA);
+                const parsedB = parseUrl(urlB);
+                const mapA = new Map();
+                const mapB = new Map();
+                for (const p of parsedA.params) mapA.set(p.key, p.value);
+                for (const p of parsedB.params) mapB.set(p.key, p.value);
+
+                const added = [];
+                const removed = [];
+                const changed = [];
+                const unchanged = [];
+
+                const allKeys = new Set([...mapA.keys(), ...mapB.keys()]);
+                for (const key of allKeys) {
+                    const inA = mapA.has(key);
+                    const inB = mapB.has(key);
+                    if (inA && !inB) {
+                        removed.push({ key, value: mapA.get(key) });
+                    } else if (!inA && inB) {
+                        added.push({ key, value: mapB.get(key) });
+                    } else if (inA && inB) {
+                        if (mapA.get(key) !== mapB.get(key)) {
+                            changed.push({ key, oldValue: mapA.get(key), newValue: mapB.get(key) });
+                        } else {
+                            unchanged.push({ key, value: mapA.get(key) });
+                        }
+                    }
+                }
+                return { added, removed, changed, unchanged };
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 7. UI LOGIC
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function renderAll() {
+                renderMainUrl();
+                renderStats();
+                renderBreakdown();
+                renderQueryString();
+                renderParamList();
+                renderBuilder();
+                renderDiffResults();
+                renderToolsLive();
+                renderHistory();
+            }
+
+            function renderMainUrl() {
+                if (!state.isInternalUpdate) {
+                    dom.mainUrlInput.value = state.mainUrl;
+                }
+            }
+
+            function renderStats() {
+                const parsed = parseUrl(state.mainUrl);
+                dom.statParamCount.textContent = parsed.params.length;
+                dom.statUrlLength.textContent = state.mainUrl.length;
+                const warnings = detectWarnings(parsed.params);
+                state.warnings = warnings;
+                if (warnings.length > 0) {
+                    dom.statWarningChip.style.display = 'inline-flex';
+                    dom.statWarningChip.textContent = '⚠ ' + warnings.length + ' sensitive field(s)';
+                } else {
+                    dom.statWarningChip.style.display = 'none';
+                }
+            }
+
+            function renderBreakdown() {
+                const parsed = parseUrl(state.mainUrl);
+                if (!state.mainUrl.trim()) {
+                    dom.urlBreakdown.innerHTML = '<span class="empty-state">Enter a URL above to see breakdown</span>';
+                    return;
+                }
+                let html = '';
+                if (parsed.protocol) html +=
+                    '<span class="protocol">' + escapeHTML(parsed.protocol) + '://</span>';
+                if (parsed.host) html += '<span class="host">' + escapeHTML(parsed.host) + '</span>';
+                if (parsed.path) html += '<span class="path">' + escapeHTML(parsed.path) + '</span>';
+                if (parsed.queryString) html += '<span class="query">?' + escapeHTML(parsed.queryString) +
+                    '</span>';
+                if (parsed.hash) html += '<span class="hash-part">#' + escapeHTML(parsed.hash) + '</span>';
+                if (!html) html = '<span class="empty-state">Could not parse URL</span>';
+                dom.urlBreakdown.innerHTML = html;
+            }
+
+            function renderQueryString() {
+                const parsed = parseUrl(state.mainUrl);
+                if (parsed.queryString) {
+                    dom.queryStringDisplay.innerHTML = '<span class="query">' + escapeHTML(parsed.queryString) +
+                        '</span>';
+                } else {
+                    dom.queryStringDisplay.innerHTML = '<span class="empty-state">—</span>';
+                }
+            }
+
+            function renderParamList() {
+                const parsed = parseUrl(state.mainUrl);
+                state.parsedParams = parsed.params;
+                const searchQuery = state.paramSearch.toLowerCase().trim();
+                let filteredParams = parsed.params;
+                if (searchQuery) {
+                    filteredParams = parsed.params.filter(p =>
+                        p.key.toLowerCase().includes(searchQuery) || p.value.toLowerCase().includes(searchQuery)
+                    );
+                }
+                const warnings = detectWarnings(parsed.params);
+                const warningKeys = new Set(warnings.map(w => w.paramKey));
+
+                if (filteredParams.length === 0) {
+                    dom.paramList.innerHTML =
+                        '<div class="empty-state">' + (searchQuery ? 'No params match search' :
+                            'No query parameters found') + '</div>';
+                    return;
+                }
+                let html = '';
+                filteredParams.forEach((p, idx) => {
+                    const isWarning = warningKeys.has(p.key);
+                    const rowClass = isWarning ? 'param-row warning-row' : 'param-row';
+                    const globalIdx = parsed.params.indexOf(p);
+                    html += `
+                <div class="${rowClass}" data-param-id="${p.id}">
+                  <span class="param-index">${globalIdx + 1}</span>
+                  <input type="text" class="param-key" value="${escapeHTML(p.key)}" data-param-id="${p.id}" data-field="key" autocomplete="off" spellcheck="false">
+                  <span class="equals">=</span>
+                  <input type="text" class="param-value" value="${escapeHTML(p.value)}" data-param-id="${p.id}" data-field="value" autocomplete="off" spellcheck="false">
+                  ${isWarning ? '<span class="sensitive-badge">🔒</span>' : ''}
+                  <button class="btn-icon btn-xs" data-param-id="${p.id}" data-action="base64" title="Toggle Base64">🔀</button>
+                  <button class="btn-icon btn-xs copy-param-value" data-param-id="${p.id}" title="Copy value">📋</button>
+                  <button class="btn-icon btn-xs remove-param" data-param-id="${p.id}" title="Remove">✕</button>
+                </div>`;
+                });
+                dom.paramList.innerHTML = html;
+
+                // Attach event listeners to param inputs
+                dom.paramList.querySelectorAll('.param-key, .param-value').forEach(input => {
+                    input.addEventListener('input', handleParamInputChange);
+                    input.addEventListener('focus', () => { state.isInternalUpdate = true; });
+                    input.addEventListener('blur', () => { state.isInternalUpdate = false; });
+                });
+                dom.paramList.querySelectorAll('[data-action="base64"]').forEach(btn => {
+                    btn.addEventListener('click', handleParamBase64Toggle);
+                });
+                dom.paramList.querySelectorAll('.copy-param-value').forEach(btn => {
+                    btn.addEventListener('click', handleCopyParamValue);
+                });
+                dom.paramList.querySelectorAll('.remove-param').forEach(btn => {
+                    btn.addEventListener('click', handleRemoveParam);
+                });
+            }
+
+            function renderBuilder() {
+                const qs = buildQueryString(state.builderParams);
+                const full = buildFullUrl(state.builderBase, state.builderParams);
+                dom.builtUrlDisplay.textContent = full || '';
+                if (!full && !state.builderBase) {
+                    dom.builtUrlDisplay.innerHTML =
+                        '<span class="empty-state">Enter a base URL and add parameters</span>';
+                }
+                dom.builderBaseInput.value = state.builderBase;
+
+                if (state.builderParams.length === 0) {
+                    dom.builderParamList.innerHTML =
+                        '<div class="empty-state">No parameters yet. Add one to start building.</div>';
+                } else {
+                    let html = '';
+                    state.builderParams.forEach((p, idx) => {
+                        html += `
+                  <div class="param-row" data-bparam-id="${p.id}">
+                    <span class="param-index">${idx + 1}</span>
+                    <input type="text" class="param-key" value="${escapeHTML(p.key)}" data-bparam-id="${p.id}" data-field="key" autocomplete="off" spellcheck="false">
+                    <span class="equals">=</span>
+                    <input type="text" class="param-value" value="${escapeHTML(p.value)}" data-bparam-id="${p.id}" data-field="value" autocomplete="off" spellcheck="false">
+                    <button class="btn-icon btn-xs" data-bparam-id="${p.id}" data-action="base64-b" title="Toggle Base64">🔀</button>
+                    <button class="btn-icon btn-xs copy-bparam-value" data-bparam-id="${p.id}" title="Copy value">📋</button>
+                    <button class="btn-icon btn-xs remove-bparam" data-bparam-id="${p.id}" title="Remove">✕</button>
+                  </div>`;
+                    });
+                    dom.builderParamList.innerHTML = html;
+
+                    dom.builderParamList.querySelectorAll('.param-key, .param-value').forEach(input => {
+                        input.addEventListener('input', handleBuilderParamChange);
+                    });
+                    dom.builderParamList.querySelectorAll('[data-action="base64-b"]').forEach(btn => {
+                        btn.addEventListener('click', handleBuilderBase64Toggle);
+                    });
+                    dom.builderParamList.querySelectorAll('.copy-bparam-value').forEach(btn => {
+                        btn.addEventListener('click', handleCopyBuilderParamValue);
+                    });
+                    dom.builderParamList.querySelectorAll('.remove-bparam').forEach(btn => {
+                        btn.addEventListener('click', handleRemoveBuilderParam);
+                    });
+                }
+            }
+
+            function renderDiffResults() {
+                if (!state.diffResult) {
+                    dom.diffResultCard.style.display = 'none';
+                    return;
+                }
+                dom.diffResultCard.style.display = 'block';
+                const { added, removed, changed, unchanged } = state.diffResult;
+                let html = '';
+                for (const item of added) {
+                    html +=
+                        `<div class="diff-item added"><span class="diff-tag added">+ ADDED</span> <strong>${escapeHTML(item.key)}</strong> = ${escapeHTML(item.value)}</div>`;
+                }
+                for (const item of removed) {
+                    html +=
+                        `<div class="diff-item removed"><span class="diff-tag removed">− REMOVED</span> <strong>${escapeHTML(item.key)}</strong> = ${escapeHTML(item.value)}</div>`;
+                }
+                for (const item of changed) {
+                    html +=
+                        `<div class="diff-item changed"><span class="diff-tag changed">~ CHANGED</span> <strong>${escapeHTML(item.key)}</strong>: <s>${escapeHTML(item.oldValue)}</s> → ${escapeHTML(item.newValue)}</div>`;
+                }
+                for (const item of unchanged) {
+                    html +=
+                        `<div class="diff-item unchanged"><span class="diff-tag">=</span> ${escapeHTML(item.key)} = ${escapeHTML(item.value)}</div>`;
+                }
+                if (!html) html = '<div class="empty-state">No differences or both URLs have no params</div>';
+                dom.diffResultList.innerHTML = html;
+            }
+
+            function renderToolsLive() {
+                // Encode
+                const encInput = dom.encodeInput.value;
+                dom.encodeOutput.value = encInput ? encodeURIComponentSafe(encInput) : '';
+                // Decode
+                const decInput = dom.decodeInput.value;
+                dom.decodeOutput.value = decInput ? decodeURIComponentSafe(decInput) : '';
+                // JSON URL → JSON
+                const jsonUrlVal = dom.jsonUrlInput.value;
+                dom.jsonOutput.value = jsonUrlVal ? urlToJson(jsonUrlVal) : '';
+                // JSON → URL
+                const jsonInputVal = dom.jsonInput.value;
+                dom.jsonUrlOutput.value = jsonInputVal ? jsonToQueryString(jsonInputVal) : '';
+                // Clean URL
+                const cleanInput = dom.cleanUrlInput.value;
+                dom.cleanUrlOutput.value = cleanInput ? cleanUrl(cleanInput) : '';
+            }
+
+            function renderHistory() {
+                if (state.history.length === 0) {
+                    dom.historyList.innerHTML = '<span class="empty-state" style="padding:8px;">No history yet</span>';
+                    return;
+                }
+                let html = '';
+                state.history.forEach((url, idx) => {
+                    const display = url.length > 55 ? url.slice(0, 55) + '…' : url;
+                    html += `
+                <span class="history-chip" data-history-index="${idx}" title="${escapeHTML(url)}">
+                  ${escapeHTML(display)}
+                  <span class="remove-chip" data-history-index="${idx}" data-action="remove-history">×</span>
+                </span>`;
+                });
+                dom.historyList.innerHTML = html;
+
+                dom.historyList.querySelectorAll('.history-chip').forEach(chip => {
+                    chip.addEventListener('click', function(e) {
+                        if (e.target.dataset.action === 'remove-history') {
+                            const idx = parseInt(e.target.dataset.historyIndex);
+                            state.history.splice(idx, 1);
+                            saveState();
+                            renderHistory();
+                            return;
+                        }
+                        const idx = parseInt(this.dataset.historyIndex);
+                        if (!isNaN(idx) && state.history[idx]) {
+                            state.mainUrl = state.history[idx];
+                            state.isInternalUpdate = false;
+                            saveState();
+                            renderAll();
+                            switchTab('parser');
+                            showToast('Loaded from history');
+                        }
+                    });
+                });
+                dom.historyList.querySelectorAll('.remove-chip').forEach(span => {
+                    span.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const idx = parseInt(this.dataset.historyIndex);
+                        if (!isNaN(idx)) {
+                            state.history.splice(idx, 1);
+                            saveState();
+                            renderHistory();
+                        }
+                    });
+                });
+            }
+
+            function switchTab(tabName) {
+                state.activeTab = tabName;
+                Object.keys(dom.tabContents).forEach(k => {
+                    dom.tabContents[k].style.display = k === tabName ? 'block' : 'none';
+                });
+                dom.tabNav.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabName);
+                });
+                if (tabName === 'parser') renderAll();
+                if (tabName === 'builder') renderBuilder();
+                if (tabName === 'diff') {
+                    dom.diffUrlA.value = state.diffUrlA;
+                    dom.diffUrlB.value = state.diffUrlB;
+                    renderDiffResults();
+                }
+                if (tabName === 'tools') renderToolsLive();
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // EVENT HANDLERS
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function handleMainUrlInput(e) {
+                if (state.isInternalUpdate) return;
+                state.mainUrl = e.target.value;
+                state.paramSearch = '';
+                dom.paramSearchInput.value = '';
+                addToHistory(state.mainUrl);
+                saveState();
+                renderAll();
+            }
+
+            function handleParamInputChange(e) {
+                const paramId = e.target.dataset.paramId;
+                const field = e.target.dataset.field;
+                const newVal = e.target.value;
+                const parsed = parseUrl(state.mainUrl);
+                const param = parsed.params.find(p => p.id === paramId);
+                if (param) {
+                    if (field === 'key') param.key = newVal;
+                    if (field === 'value') param.value = newVal;
+                }
+                // Rebuild URL from parsed structure
+                const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                state.mainUrl = buildFullUrlWithHash(base, parsed.params, parsed.hash);
+                state.isInternalUpdate = true;
+                dom.mainUrlInput.value = state.mainUrl;
+                state.parsedParams = parsed.params;
+                addToHistory(state.mainUrl);
+                saveState();
+                // Update other views
+                renderBreakdown();
+                renderQueryString();
+                renderStats();
+                // Don't re-render param list to avoid input cursor jumping
+                // But update param IDs in state
+                state.parsedParams = parsed.params;
+                setTimeout(() => { state.isInternalUpdate = false; }, 50);
+            }
+
+            function handleParamBase64Toggle(e) {
+                const paramId = e.target.dataset.paramId;
+                const parsed = parseUrl(state.mainUrl);
+                const param = parsed.params.find(p => p.id === paramId);
+                if (param) {
+                    param.value = toggleBase64(param.value);
+                    const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                    state.mainUrl = buildFullUrlWithHash(base, parsed.params, parsed.hash);
+                    state.isInternalUpdate = true;
+                    dom.mainUrlInput.value = state.mainUrl;
+                    state.parsedParams = parsed.params;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    setTimeout(() => { state.isInternalUpdate = false; }, 50);
+                }
+            }
+
+            function handleCopyParamValue(e) {
+                const paramId = e.target.dataset.paramId;
+                const parsed = parseUrl(state.mainUrl);
+                const param = parsed.params.find(p => p.id === paramId);
+                if (param) {
+                    copyToClipboard(param.value).then(ok => {
+                        if (ok) {
+                            flashButton(e.target);
+                            showToast('Copied: ' + (param.value.length > 30 ? param.value.slice(0,
+                                30) + '…' : param.value));
+                        }
+                    });
+                }
+            }
+
+            function handleRemoveParam(e) {
+                const paramId = e.target.dataset.paramId;
+                const parsed = parseUrl(state.mainUrl);
+                const idx = parsed.params.findIndex(p => p.id === paramId);
+                if (idx >= 0) {
+                    parsed.params.splice(idx, 1);
+                    const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                    state.mainUrl = buildFullUrlWithHash(base, parsed.params, parsed.hash);
+                    state.isInternalUpdate = true;
+                    dom.mainUrlInput.value = state.mainUrl;
+                    state.parsedParams = parsed.params;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    setTimeout(() => { state.isInternalUpdate = false; }, 50);
+                }
+            }
+
+            function handleAddParam() {
+                const parsed = parseUrl(state.mainUrl);
+                parsed.params.push({ id: genParamId(), key: '', value: '' });
+                const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                state.mainUrl = buildFullUrlWithHash(base, parsed.params, parsed.hash);
+                state.isInternalUpdate = true;
+                dom.mainUrlInput.value = state.mainUrl;
+                state.parsedParams = parsed.params;
+                addToHistory(state.mainUrl);
+                saveState();
+                renderAll();
+                // Focus the new param key input
+                setTimeout(() => {
+                    const lastInput = dom.paramList.querySelector('.param-key:last-of-type');
+                    if (lastInput) lastInput.focus();
+                    state.isInternalUpdate = false;
+                }, 80);
+            }
+
+            function handleCleanUrl() {
+                const cleaned = cleanUrl(state.mainUrl);
+                if (cleaned !== state.mainUrl) {
+                    state.mainUrl = cleaned;
+                    state.isInternalUpdate = true;
+                    dom.mainUrlInput.value = state.mainUrl;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    showToast('URL cleaned');
+                    setTimeout(() => { state.isInternalUpdate = false; }, 50);
+                } else {
+                    showToast('URL is already clean');
+                }
+            }
+
+            function handleParamSearch() {
+                state.paramSearch = dom.paramSearchInput.value;
+                renderParamList();
+            }
+
+            // Builder handlers
+            function handleBuilderBaseInput(e) {
+                state.builderBase = e.target.value;
+                saveState();
+                renderBuilder();
+            }
+
+            function handleBuilderParamChange(e) {
+                const paramId = e.target.dataset.bparamId;
+                const field = e.target.dataset.field;
+                const newVal = e.target.value;
+                const param = state.builderParams.find(p => p.id === paramId);
+                if (param) {
+                    if (field === 'key') param.key = newVal;
+                    if (field === 'value') param.value = newVal;
+                }
+                saveState();
+                renderBuilder();
+            }
+
+            function handleBuilderBase64Toggle(e) {
+                const paramId = e.target.dataset.bparamId;
+                const param = state.builderParams.find(p => p.id === paramId);
+                if (param) {
+                    param.value = toggleBase64(param.value);
+                    saveState();
+                    renderBuilder();
+                }
+            }
+
+            function handleCopyBuilderParamValue(e) {
+                const paramId = e.target.dataset.bparamId;
+                const param = state.builderParams.find(p => p.id === paramId);
+                if (param) {
+                    copyToClipboard(param.value).then(ok => {
+                        if (ok) {
+                            flashButton(e.target);
+                            showToast('Copied: ' + (param.value.length > 30 ? param.value.slice(0,
+                                30) + '…' : param.value));
+                        }
+                    });
+                }
+            }
+
+            function handleRemoveBuilderParam(e) {
+                const paramId = e.target.dataset.bparamId;
+                const idx = state.builderParams.findIndex(p => p.id === paramId);
+                if (idx >= 0) {
+                    state.builderParams.splice(idx, 1);
+                    saveState();
+                    renderBuilder();
+                }
+            }
+
+            function handleBuilderAddParam() {
+                state.builderParams.push({ id: genParamId(), key: '', value: '' });
+                saveState();
+                renderBuilder();
+                setTimeout(() => {
+                    const lastInput = dom.builderParamList.querySelector('.param-key:last-of-type');
+                    if (lastInput) lastInput.focus();
+                }, 50);
+            }
+
+            function handleCopyBuiltUrl() {
+                const full = buildFullUrl(state.builderBase, state.builderParams);
+                copyToClipboard(full).then(ok => {
+                    if (ok) {
+                        flashButton(dom.copyBuiltUrlBtn);
+                        showToast('Built URL copied');
+                    }
+                });
+            }
+
+            function handleUseBuiltUrl() {
+                const full = buildFullUrl(state.builderBase, state.builderParams);
+                if (full) {
+                    state.mainUrl = full;
+                    state.isInternalUpdate = false;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    switchTab('parser');
+                    showToast('Now using built URL');
+                }
+            }
+
+            function handleRunDiff() {
+                state.diffUrlA = dom.diffUrlA.value;
+                state.diffUrlB = dom.diffUrlB.value;
+                state.diffResult = diffUrls(state.diffUrlA, state.diffUrlB);
+                saveState();
+                renderDiffResults();
+                if (!state.diffResult || (state.diffResult.added.length === 0 && state.diffResult.removed.length ===
+                        0 && state.diffResult.changed.length === 0 && state.diffResult.unchanged.length === 0)) {
+                    showToast('No params to compare');
+                }
+            }
+
+            function handleApplyBulk() {
+                const text = dom.bulkInput.value.trim();
+                if (!text) return;
+                const lines = text.split('\n').filter(l => l.trim());
+                const newParams = [];
+                for (const line of lines) {
+                    const eqIdx = line.indexOf('=');
+                    if (eqIdx >= 0) {
+                        newParams.push({
+                            id: genParamId(),
+                            key: line.slice(0, eqIdx).trim(),
+                            value: line.slice(eqIdx + 1).trim()
+                        });
+                    } else if (line.trim()) {
+                        newParams.push({ id: genParamId(), key: line.trim(), value: '' });
+                    }
+                }
+                if (newParams.length > 0) {
+                    const parsed = parseUrl(state.mainUrl);
+                    // Replace all params
+                    parsed.params = newParams;
+                    const base = (parsed.protocol ? parsed.protocol + '://' : '') + parsed.host + parsed.path;
+                    state.mainUrl = buildFullUrlWithHash(base, parsed.params, parsed.hash);
+                    state.isInternalUpdate = true;
+                    dom.mainUrlInput.value = state.mainUrl;
+                    state.parsedParams = parsed.params;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    showToast('Bulk applied: ' + newParams.length + ' params');
+                    setTimeout(() => { state.isInternalUpdate = false; }, 50);
+                }
+            }
+
+            function handleUseCleanedUrl() {
+                const cleaned = dom.cleanUrlOutput.value;
+                if (cleaned) {
+                    state.mainUrl = cleaned;
+                    state.isInternalUpdate = false;
+                    addToHistory(state.mainUrl);
+                    saveState();
+                    renderAll();
+                    switchTab('parser');
+                    showToast('Cleaned URL applied');
+                }
+            }
+
+            function handleCopyQueryString() {
+                const parsed = parseUrl(state.mainUrl);
+                copyToClipboard(parsed.queryString || '').then(ok => {
+                    if (ok) {
+                        flashButton(dom.copyQueryBtn);
+                        showToast('Query string copied');
+                    }
+                });
+            }
+
+            function handleGenericCopy(e) {
+                const btn = e.target.closest('.copy-trigger');
+                if (!btn) return;
+                const sourceId = btn.dataset.source;
+                const sourceEl = document.getElementById(sourceId);
+                if (sourceEl) {
+                    const text = sourceEl.value || sourceEl.textContent || '';
+                    copyToClipboard(text).then(ok => {
+                        if (ok) {
+                            flashButton(btn);
+                            showToast('Copied to clipboard');
+                        }
+                    });
+                }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // 8. STORAGE
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            const STORAGE_KEY = 'url_toolbox_pro_state';
+
+            function saveState() {
+                try {
+                    const toSave = {
+                        theme: state.theme,
+                        mainUrl: state.mainUrl,
+                        builderBase: state.builderBase,
+                        builderParams: state.builderParams,
+                        diffUrlA: state.diffUrlA,
+                        diffUrlB: state.diffUrlB,
+                        history: state.history,
+                    };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+                } catch { /* storage full or unavailable */ }
+            }
+
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const saved = JSON.parse(raw);
+                        if (saved.theme) state.theme = saved.theme;
+                        if (saved.mainUrl !== undefined) state.mainUrl = saved.mainUrl;
+                        if (saved.builderBase !== undefined) state.builderBase = saved.builderBase;
+                        if (saved.builderParams) state.builderParams = saved.builderParams.map(p => ({ ...p,
+                            id: p.id || genParamId() }));
+                        if (saved.diffUrlA !== undefined) state.diffUrlA = saved.diffUrlA;
+                        if (saved.diffUrlB !== undefined) state.diffUrlB = saved.diffUrlB;
+                        if (saved.history && Array.isArray(saved.history)) state.history = saved.history.slice(0,
+                            MAX_HISTORY);
+                    }
+                } catch { /* ignore corrupt data */ }
+            }
+
+            function addToHistory(url) {
+                if (!url || !url.trim()) return;
+                const trimmed = url.trim();
+                // Remove duplicates
+                state.history = state.history.filter(h => h !== trimmed);
+                state.history.unshift(trimmed);
+                if (state.history.length > MAX_HISTORY) state.history = state.history.slice(0, MAX_HISTORY);
+            }
+
+            function applyTheme(themeName) {
+                state.theme = themeName;
+                dom.body.setAttribute('data-theme', themeName);
+                dom.themeSwitcher.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.themeVal === themeName);
+                });
+                saveState();
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // INITIALIZATION
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function init() {
+                cacheDom();
+                loadState();
+                applyTheme(state.theme);
+
+                // Set initial values
+                dom.mainUrlInput.value = state.mainUrl;
+                dom.builderBaseInput.value = state.builderBase;
+                dom.paramSearchInput.value = state.paramSearch;
+                dom.diffUrlA.value = state.diffUrlA;
+                dom.diffUrlB.value = state.diffUrlB;
+
+                // Attach event listeners
+                dom.mainUrlInput.addEventListener('input', handleMainUrlInput);
+                dom.mainUrlInput.addEventListener('paste', () => {
+                    setTimeout(() => {
+                        state.isInternalUpdate = false;
+                        state.mainUrl = dom.mainUrlInput.value;
+                        addToHistory(state.mainUrl);
+                        saveState();
+                        renderAll();
+                    }, 30);
+                });
+                dom.paramSearchInput.addEventListener('input', handleParamSearch);
+                dom.addParamBtn.addEventListener('click', handleAddParam);
+                dom.cleanUrlBtn.addEventListener('click', handleCleanUrl);
+                dom.copyQueryBtn.addEventListener('click', handleCopyQueryString);
+
+                dom.builderBaseInput.addEventListener('input', handleBuilderBaseInput);
+                dom.builderAddParamBtn.addEventListener('click', handleBuilderAddParam);
+                dom.copyBuiltUrlBtn.addEventListener('click', handleCopyBuiltUrl);
+                dom.useBuiltUrlBtn.addEventListener('click', handleUseBuiltUrl);
+
+                dom.runDiffBtn.addEventListener('click', handleRunDiff);
+                dom.diffUrlA.addEventListener('input', (e) => { state.diffUrlA = e.target.value;
+                    saveState(); });
+                dom.diffUrlB.addEventListener('input', (e) => { state.diffUrlB = e.target.value;
+                    saveState(); });
+
+                dom.encodeInput.addEventListener('input', renderToolsLive);
+                dom.decodeInput.addEventListener('input', renderToolsLive);
+                dom.jsonUrlInput.addEventListener('input', renderToolsLive);
+                dom.jsonInput.addEventListener('input', renderToolsLive);
+                dom.cleanUrlInput.addEventListener('input', renderToolsLive);
+                dom.applyBulkBtn.addEventListener('click', handleApplyBulk);
+                dom.useCleanedUrlBtn.addEventListener('click', handleUseCleanedUrl);
+
+                dom.clearHistoryBtn.addEventListener('click', () => {
+                    state.history = [];
+                    saveState();
+                    renderHistory();
+                    showToast('History cleared');
+                });
+
+                // Tab navigation
+                dom.tabNav.addEventListener('click', (e) => {
+                    const tabBtn = e.target.closest('.tab-btn');
+                    if (!tabBtn) return;
+                    const tabName = tabBtn.dataset.tab;
+                    if (tabName) switchTab(tabName);
+                });
+
+                // Theme switcher
+                dom.themeSwitcher.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.theme-btn');
+                    if (!btn) return;
+                    const themeVal = btn.dataset.themeVal;
+                    if (themeVal) applyTheme(themeVal);
+                });
+
+                // Generic copy triggers
+                document.addEventListener('click', handleGenericCopy);
+
+                // Initial render
+                renderAll();
+                switchTab(state.activeTab);
+
+                // Set up tools live rendering for the tools tab
+                if (state.activeTab === 'tools') renderToolsLive();
+
+                console.log('🔗 URL Toolbox Pro initialized —', state.theme, 'theme');
+            }
+
+            // Boot
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
