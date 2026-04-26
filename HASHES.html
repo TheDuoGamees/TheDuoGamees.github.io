@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashForge — Hash Generator & Analyzer</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-card: #161b22;
+            --bg-input: #0d1117;
+            --bg-hover: #1c2333;
+            --text: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --accent-glow: rgba(88, 166, 255, 0.3);
+            --border: #30363d;
+            --border-focus: #58a6ff;
+            --success: #3fb950;
+            --warning: #d2991d;
+            --danger: #f85149;
+            --badge-secure: #1a7f37;
+            --badge-legacy: #9a6700;
+            --badge-unsafe: #cf222e;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.15);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --toast-bg: #24292f;
+            --btn-bg: #21262d;
+            --btn-hover: #30363d;
+            --drag-border: #30363d;
+            --diff-highlight: rgba(248, 81, 73, 0.35);
+            --diff-match: rgba(63, 185, 80, 0.2);
+        }
+
+        [data-theme="light"] {
+            --bg: #f6f8fa;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --bg-hover: #f0f2f5;
+            --text: #1f2328;
+            --text-secondary: #656d76;
+            --text-muted: #8b949e;
+            --accent: #0969da;
+            --accent-hover: #0550ae;
+            --accent-glow: rgba(9, 105, 218, 0.15);
+            --border: #d0d7de;
+            --border-focus: #0969da;
+            --success: #1a7f37;
+            --warning: #9a6700;
+            --danger: #cf222e;
+            --badge-secure: #dafbe1;
+            --badge-legacy: #fff8c5;
+            --badge-unsafe: #ffebe9;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 20px rgba(9, 105, 218, 0.08);
+            --toast-bg: #ffffff;
+            --btn-bg: #f6f8fa;
+            --btn-hover: #eef1f5;
+            --drag-border: #d0d7de;
+            --diff-highlight: rgba(207, 34, 46, 0.25);
+            --diff-match: rgba(26, 127, 55, 0.15);
+        }
+
+        [data-theme="neon"] {
+            --bg: #050510;
+            --bg-card: #0a0a1a;
+            --bg-input: #0d0d20;
+            --bg-hover: #12122a;
+            --text: #e0f7fa;
+            --text-secondary: #80cbc4;
+            --text-muted: #4db6ac;
+            --accent: #ff2d95;
+            --accent-hover: #ff5eb3;
+            --accent-glow: rgba(255, 45, 149, 0.5);
+            --border: #1a1a3e;
+            --border-focus: #ff2d95;
+            --success: #00e676;
+            --warning: #ffea00;
+            --danger: #ff1744;
+            --badge-secure: #003320;
+            --badge-legacy: #332b00;
+            --badge-unsafe: #330010;
+            --shadow: 0 4px 30px rgba(255, 45, 149, 0.2);
+            --shadow-glow: 0 0 30px rgba(255, 45, 149, 0.3), 0 0 60px rgba(0, 229, 255, 0.1);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --toast-bg: #0a0a1a;
+            --btn-bg: #12122a;
+            --btn-hover: #1a1a35;
+            --drag-border: #ff2d9544;
+            --diff-highlight: rgba(255, 23, 68, 0.45);
+            --diff-match: rgba(0, 230, 118, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background-color 0.35s ease, color 0.35s ease;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 16px 20px 40px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: background-color 0.35s, border-color 0.35s, box-shadow 0.35s;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+        .header-brand .logo-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--btn-bg);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-family: var(--font-sans);
+            transition: all var(--transition);
+            white-space: nowrap;
+            user-select: none;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: var(--btn-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: scale(0.96);
+            transition: transform 0.08s;
+        }
+        .btn.active-btn {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 600;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            border-radius: 4px;
+        }
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .btn-copy {
+            position: relative;
+            min-width: 32px;
+        }
+        .btn-copy.copied {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+            animation: pulse-copy 0.4s ease;
+        }
+        @keyframes pulse-copy {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 18px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 4px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: background-color 0.35s, border-color 0.35s;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: var(--font-sans);
+            transition: all var(--transition);
+            text-align: center;
+        }
+        .tab-btn:hover {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
+        .tab-btn.active-tab {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.35s;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-glow);
+            border-color: var(--border-focus);
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 640px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-row {
+                flex-direction: column;
+            }
+        }
+
+        /* Textarea & Inputs */
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            resize: vertical;
+            transition: all var(--transition);
+            line-height: 1.5;
+            min-height: 90px;
+        }
+        textarea:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        textarea.single-line {
+            min-height: 44px;
+            height: 44px;
+            resize: none;
+            font-size: 0.85rem;
+        }
+        .hash-output {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            word-break: break-all;
+            background: var(--bg-input);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            color: var(--text);
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            transition: all 0.35s;
+            line-height: 1.4;
+        }
+        .hash-output .hash-text {
+            flex: 1;
+            overflow-wrap: anywhere;
+        }
+        .hash-label-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .badge-secure {
+            background: var(--badge-secure);
+            color: var(--success);
+        }
+        .badge-legacy {
+            background: var(--badge-legacy);
+            color: var(--warning);
+        }
+        .badge-unsafe {
+            background: var(--badge-unsafe);
+            color: var(--danger);
+        }
+
+        /* Drag & Drop */
+        .drop-zone {
+            border: 2px dashed var(--drag-border);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-card);
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+            box-shadow: 0 0 24px var(--accent-glow);
+            transform: scale(1.01);
+        }
+        .drop-zone .drop-icon {
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+        .drop-zone .drop-text {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .drop-zone .drop-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .progress-bar-wrap {
+            background: var(--border);
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 20px;
+            transition: width 0.2s ease;
+            width: 0%;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Compare */
+        .compare-row {
+            display: flex;
+            gap: 14px;
+        }
+        .compare-row>* {
+            flex: 1;
+        }
+        .diff-char {
+            display: inline;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+        .diff-char.diff-mismatch {
+            background: var(--diff-highlight);
+            font-weight: bold;
+        }
+        .match-indicator {
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            margin-top: 8px;
+        }
+        .match-yes {
+            background: var(--diff-match);
+            color: var(--success);
+        }
+        .match-no {
+            background: var(--diff-highlight);
+            color: var(--danger);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            background: var(--toast-bg);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            font-size: 0.85rem;
+            font-weight: 500;
+            animation: toast-in 0.35s ease, toast-out 0.35s ease 2.2s forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 360px;
+        }
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes toast-out {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+        }
+
+        /* History */
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1px solid transparent;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .history-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border);
+        }
+        .history-item .hi-algo {
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            min-width: 55px;
+        }
+        .history-item .hi-input {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+        .history-item .hi-hash {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .history-item .hi-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* Section divider */
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin: 16px 0 8px;
+            font-weight: 600;
+        }
+        .info-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 4px;
+        }
+        .warning-note {
+            color: var(--warning);
+            font-weight: 600;
+            font-size: 0.78rem;
+        }
+
+        /* Batch results */
+        .batch-results {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .batch-result-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .batch-result-item .bri-line {
+            color: var(--text-secondary);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .batch-result-item .bri-hash {
+            color: var(--text);
+            flex: 1;
+            overflow-wrap: anywhere;
+            font-size: 0.7rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .mt-2 {
+            margin-top: 8px;
+        }
+        .mt-3 {
+            margin-top: 14px;
+        }
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .gap-2 {
+            gap: 8px;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="logo-icon">#</div>
+                <span>HashForge</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-sm" id="btnLang" title="Switch language">🌐 EN</button>
+                <button class="btn btn-sm" id="btnTheme" title="Switch theme">🎨 Dark</button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" role="tablist">
+            <button class="tab-btn active-tab" data-tab="text" role="tab">📝 Text</button>
+            <button class="tab-btn" data-tab="file" role="tab">📁 File</button>
+            <button class="tab-btn" data-tab="compare" role="tab">🔍 Compare</button>
+        </nav>
+
+        <!-- TAB: Text -->
+        <section id="tab-text" class="tab-content">
+            <div class="card">
+                <div class="card-title">📝 Input Text</div>
+                <textarea id="inputText" placeholder="Type or paste text here…" rows="4"></textarea>
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;">
+                        <input type="checkbox" id="chkBatch"> Batch mode (one hash per line)
+                    </label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;">
+                        Encoding:
+                        <select id="selEncoding" style="padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);font-family:var(--font-sans);">
+                            <option value="hex">HEX</option>
+                            <option value="base64">Base64</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Multi-hash results -->
+            <div class="card-grid" id="hashResultsGrid">
+                <!-- SHA-256 -->
+                <div class="card" id="card-sha256">
+                    <div class="hash-label-row">
+                        <span>🔒 SHA-256</span><span class="badge badge-secure">Secure</span>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">256 bit</span>
+                    </div>
+                    <div class="hash-output">
+                        <span class="hash-text" id="hash-sha256">—</span>
+                        <button class="btn btn-sm btn-copy" data-target="hash-sha256" title="Copy">📋</button>
+                    </div>
+                </div>
+                <!-- SHA-512 -->
+                <div class="card" id="card-sha512">
+                    <div class="hash-label-row">
+                        <span>🔒 SHA-512</span><span class="badge badge-secure">Secure</span>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">512 bit</span>
+                    </div>
+                    <div class="hash-output">
+                        <span class="hash-text" id="hash-sha512">—</span>
+                        <button class="btn btn-sm btn-copy" data-target="hash-sha512" title="Copy">📋</button>
+                    </div>
+                </div>
+                <!-- MD5 -->
+                <div class="card" id="card-md5">
+                    <div class="hash-label-row">
+                        <span>⚠️ MD5</span><span class="badge badge-unsafe">Insecure</span>
+                        <span style="font-size:0.7rem;color:var(--text-muted);">128 bit</span>
+                    </div>
+                    <div class="hash-output">
+                        <span class="hash-text" id="hash-md5">—</span>
+                        <button class="btn btn-sm btn-copy" data-target="hash-md5" title="Copy">📋</button>
+                    </div>
+                    <div class="warning-note mt-2">⚠️ MD5 is insecure and should not be used for security purposes.</div>
+                </div>
+            </div>
+
+            <!-- Batch results -->
+            <div class="card hidden" id="batchResultsCard">
+                <div class="card-title">📋 Batch Results (SHA-256)</div>
+                <div class="batch-results" id="batchResults"></div>
+            </div>
+        </section>
+
+        <!-- TAB: File -->
+        <section id="tab-file" class="tab-content hidden">
+            <div class="card">
+                <div class="card-title">📁 File Hashing</div>
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-icon">📂</div>
+                    <div class="drop-text">Drag & drop a file here</div>
+                    <div class="drop-subtext">or click to browse</div>
+                    <input type="file" id="fileInput" style="display:none;">
+                    <div class="progress-bar-wrap hidden" id="fileProgressWrap">
+                        <div class="progress-bar-fill" id="fileProgressBar"></div>
+                    </div>
+                </div>
+                <div id="fileInfo" class="hidden mt-3">
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                        <span id="fileInfoName" style="font-weight:600;"></span>
+                        <span id="fileInfoSize" style="color:var(--text-secondary);font-size:0.85rem;"></span>
+                    </div>
+                    <div class="hash-output mt-2" style="margin-top:10px;">
+                        <span class="hash-text" id="hash-file">—</span>
+                        <button class="btn btn-sm btn-copy" data-target="hash-file" title="Copy">📋</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: Compare -->
+        <section id="tab-compare" class="tab-content hidden">
+            <div class="card">
+                <div class="card-title">🔍 Compare Two Texts</div>
+                <div class="compare-row">
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);">Text A</label>
+                        <textarea id="compareTextA" rows="3" placeholder="Enter first text…" class="single-line"></textarea>
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);">Text B</label>
+                        <textarea id="compareTextB" rows="3" placeholder="Enter second text…" class="single-line"></textarea>
+                    </div>
+                </div>
+                <div id="compareResult" class="mt-3">
+                    <div class="card-title">Comparison (SHA-256)</div>
+                    <div id="compareMatchIndicator" style="margin-bottom:8px;"></div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:200px;">
+                            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:2px;">Hash A</div>
+                            <div class="hash-output" id="compareHashADisplay" style="font-size:0.72rem;"></div>
+                        </div>
+                        <div style="flex:1;min-width:200px;">
+                            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:2px;">Hash B</div>
+                            <div class="hash-output" id="compareHashBDisplay" style="font-size:0.72rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History -->
+        <div class="card" id="historyCard">
+            <div class="card-title" style="justify-content:space-between;">
+                <span>🕓 History</span>
+                <button class="btn btn-sm" id="btnClearHistory">Clear</button>
+            </div>
+            <div id="historyList" style="max-height:260px;overflow-y:auto;">
+                <div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px;">No history yet</div>
+            </div>
+        </div>
+
+        <!-- Security notice -->
+        <div class="info-note text-center mt-3">
+            🔒 All hashing is done locally in your browser. No data is ever sent to any server.
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ==================== I18N DICTIONARY ====================
+            const i18n = {
+                EN: {
+                    title: 'HashForge — Hash Generator & Analyzer',
+                    brand: 'HashForge',
+                    textTab: '📝 Text',
+                    fileTab: '📁 File',
+                    compareTab: '🔍 Compare',
+                    inputText: 'Input Text',
+                    placeholder: 'Type or paste text here…',
+                    batchMode: 'Batch mode (one hash per line)',
+                    encoding: 'Encoding:',
+                    secure: 'Secure',
+                    insecure: 'Insecure',
+                    legacy: 'Legacy',
+                    bit256: '256 bit',
+                    bit512: '512 bit',
+                    bit128: '128 bit',
+                    sha256: 'SHA-256',
+                    sha512: 'SHA-512',
+                    md5: 'MD5',
+                    md5Warning: '⚠️ MD5 is insecure and should not be used for security purposes.',
+                    copy: 'Copy',
+                    copied: '✓ Copied!',
+                    fileHashing: 'File Hashing',
+                    dropHere: 'Drag & drop a file here',
+                    dropSubtext: 'or click to browse',
+                    fileName: 'Filename',
+                    fileSize: 'Size',
+                    compareTitle: 'Compare Two Texts',
+                    textA: 'Text A',
+                    textB: 'Text B',
+                    placeholderA: 'Enter first text…',
+                    placeholderB: 'Enter second text…',
+                    comparison: 'Comparison (SHA-256)',
+                    hashA: 'Hash A',
+                    hashB: 'Hash B',
+                    match: '✅ Match — identical hashes',
+                    noMatch: '❌ No Match — hashes differ',
+                    history: '🕓 History',
+                    clearHistory: 'Clear',
+                    noHistory: 'No history yet',
+                    securityNotice: '🔒 All hashing is done locally in your browser. No data is ever sent to any server.',
+                    batchResults: '📋 Batch Results (SHA-256)',
+                    themeDark: 'Dark',
+                    themeLight: 'Light',
+                    themeNeon: 'Neon',
+                    langLabel: 'EN',
+                },
+                RU: {
+                    title: 'HashForge — Генератор и анализатор хешей',
+                    brand: 'HashForge',
+                    textTab: '📝 Текст',
+                    fileTab: '📁 Файл',
+                    compareTab: '🔍 Сравнение',
+                    inputText: 'Входной текст',
+                    placeholder: 'Введите или вставьте текст…',
+                    batchMode: 'Пакетный режим (по хешу на строку)',
+                    encoding: 'Кодировка:',
+                    secure: 'Надёжный',
+                    insecure: 'Небезопасный',
+                    legacy: 'Устаревший',
+                    bit256: '256 бит',
+                    bit512: '512 бит',
+                    bit128: '128 бит',
+                    sha256: 'SHA-256',
+                    sha512: 'SHA-512',
+                    md5: 'MD5',
+                    md5Warning: '⚠️ MD5 небезопасен и не должен использоваться для защиты.',
+                    copy: 'Копировать',
+                    copied: '✓ Скопировано!',
+                    fileHashing: 'Хеширование файла',
+                    dropHere: 'Перетащите файл сюда',
+                    dropSubtext: 'или нажмите для выбора',
+                    fileName: 'Имя файла',
+                    fileSize: 'Размер',
+                    compareTitle: 'Сравнение двух текстов',
+                    textA: 'Текст A',
+                    textB: 'Текст B',
+                    placeholderA: 'Введите первый текст…',
+                    placeholderB: 'Введите второй текст…',
+                    comparison: 'Сравнение (SHA-256)',
+                    hashA: 'Хеш A',
+                    hashB: 'Хеш B',
+                    match: '✅ Совпадение — хеши идентичны',
+                    noMatch: '❌ Не совпадают — хеши различаются',
+                    history: '🕓 История',
+                    clearHistory: 'Очистить',
+                    noHistory: 'История пуста',
+                    securityNotice: '🔒 Всё хеширование выполняется локально в вашем браузере. Данные не отправляются на сервер.',
+                    batchResults: '📋 Пакетные результаты (SHA-256)',
+                    themeDark: 'Тёмная',
+                    themeLight: 'Светлая',
+                    themeNeon: 'Неон',
+                    langLabel: 'RU',
+                }
+            };
+
+            // ==================== STATE ====================
+            const state = {
+                lang: 'EN',
+                theme: 'dark',
+                currentTab: 'text',
+                inputText: '',
+                batchMode: false,
+                encoding: 'hex',
+                compareTextA: '',
+                compareTextB: '',
+                selectedFile: null,
+                fileHash: null,
+                fileProgress: 0,
+                history: [],
+                workerBusy: false,
+                pendingTaskId: 0,
+            };
+
+            // ==================== DOM REFS ====================
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const dom = {
+                body: document.body,
+                btnLang: $('#btnLang'),
+                btnTheme: $('#btnTheme'),
+                tabBtns: $$('.tab-btn'),
+                tabContents: $$('.tab-content'),
+                inputText: $('#inputText'),
+                chkBatch: $('#chkBatch'),
+                selEncoding: $('#selEncoding'),
+                hashSha256: $('#hash-sha256'),
+                hashSha512: $('#hash-sha512'),
+                hashMd5: $('#hash-md5'),
+                hashResultsGrid: $('#hashResultsGrid'),
+                batchResultsCard: $('#batchResultsCard'),
+                batchResults: $('#batchResults'),
+                dropZone: $('#dropZone'),
+                fileInput: $('#fileInput'),
+                fileProgressWrap: $('#fileProgressWrap'),
+                fileProgressBar: $('#fileProgressBar'),
+                fileInfo: $('#fileInfo'),
+                fileInfoName: $('#fileInfoName'),
+                fileInfoSize: $('#fileInfoSize'),
+                hashFile: $('#hash-file'),
+                compareTextA: $('#compareTextA'),
+                compareTextB: $('#compareTextB'),
+                compareResult: $('#compareResult'),
+                compareMatchIndicator: $('#compareMatchIndicator'),
+                compareHashADisplay: $('#compareHashADisplay'),
+                compareHashBDisplay: $('#compareHashBDisplay'),
+                historyList: $('#historyList'),
+                btnClearHistory: $('#btnClearHistory'),
+                toastContainer: $('#toastContainer'),
+                cardSha256: $('#card-sha256'),
+                cardSha512: $('#card-sha512'),
+                cardMd5: $('#card-md5'),
+                historyCard: $('#historyCard'),
+            };
+
+            // ==================== HELPERS ====================
+            const debounce = (fn, delay) => {
+                let timer;
+                return function(...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
+            };
+
+            const formatBytes = (bytes) => {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            };
+
+            const formatTime = (ts) => {
+                const d = new Date(ts);
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            };
+
+            const t = (key) => i18n[state.lang][key] || key;
+
+            // ==================== WORKER ====================
+            const workerCode = `
+            // Pure JS MD5 implementation
+            function md5(str) {
+                function rotateLeft(x, n) { return (x << n) | (x >>> (32 - n)); }
+                function addUnsigned(x, y) { var lsw = (x & 0xFFFF) + (y & 0xFFFF); var msw = (x >> 16) + (y >> 16) + (lsw >> 16); return (msw << 16) | (lsw & 0xFFFF); }
+                function F(x,y,z) { return (x & y) | (~x & z); }
+                function G(x,y,z) { return (x & z) | (y & ~z); }
+                function H(x,y,z) { return x ^ y ^ z; }
+                function I(x,y,z) { return y ^ (x | ~z); }
+                function FF(a,b,c,d,x,s,ac) { a = addUnsigned(a, addUnsigned(addUnsigned(F(b,c,d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+                function GG(a,b,c,d,x,s,ac) { a = addUnsigned(a, addUnsigned(addUnsigned(G(b,c,d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+                function HH(a,b,c,d,x,s,ac) { a = addUnsigned(a, addUnsigned(addUnsigned(H(b,c,d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+                function II(a,b,c,d,x,s,ac) { a = addUnsigned(a, addUnsigned(addUnsigned(I(b,c,d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+                function stringToUtf8Bytes(s) { var bytes = []; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); if (c < 128) bytes.push(c); else if (c < 2048) { bytes.push((c >> 6) | 192); bytes.push((c & 63) | 128); } else { bytes.push((c >> 12) | 224); bytes.push(((c >> 6) & 63) | 128); bytes.push((c & 63) | 128); } } return bytes; }
+                var msgBytes = typeof str === 'string' ? stringToUtf8Bytes(str) : Array.from(new Uint8Array(str));
+                var msgLen = msgBytes.length;
+                var numBlocks = ((msgLen + 8) >> 6) + 1;
+                var totalLen = numBlocks << 6;
+                var padding = new Array(totalLen - msgLen);
+                padding[0] = 0x80;
+                for (var i = 1; i < padding.length - 8; i++) padding[i] = 0;
+                var bitLen = msgLen * 8;
+                for (var i = 0; i < 8; i++) { padding[padding.length - 8 + i] = (bitLen >>> (i * 8)) & 0xFF; }
+                var fullMsg = msgBytes.concat(padding);
+                var a = 0x67452301, b = 0xEFCDAB89, c = 0x98BADCFE, d = 0x10325476;
+                for (var i = 0; i < numBlocks; i++) {
+                    var block = fullMsg.slice(i * 64, (i + 1) * 64);
+                    var M = [];
+                    for (var j = 0; j < 16; j++) M[j] = block[j*4] | (block[j*4+1]<<8) | (block[j*4+2]<<16) | (block[j*4+3]<<24);
+                    var A = a, B = b, C = c, D = d;
+                    a=FF(a,b,c,d,M[0],7,0xD76AA478);d=FF(d,a,b,c,M[1],12,0xE8C7B756);c=FF(c,d,a,b,M[2],17,0x242070DB);b=FF(b,c,d,a,M[3],22,0xC1BDCEEE);
+                    a=FF(a,b,c,d,M[4],7,0xF57C0FAF);d=FF(d,a,b,c,M[5],12,0x4787C62A);c=FF(c,d,a,b,M[6],17,0xA8304613);b=FF(b,c,d,a,M[7],22,0xFD469501);
+                    a=FF(a,b,c,d,M[8],7,0x698098D8);d=FF(d,a,b,c,M[9],12,0x8B44F7AF);c=FF(c,d,a,b,M[10],17,0xFFFF5BB1);b=FF(b,c,d,a,M[11],22,0x895CD7BE);
+                    a=FF(a,b,c,d,M[12],7,0x6B901122);d=FF(d,a,b,c,M[13],12,0xFD987193);c=FF(c,d,a,b,M[14],17,0xA679438E);b=FF(b,c,d,a,M[15],22,0x49B40821);
+                    a=GG(a,b,c,d,M[1],5,0xF61E2562);d=GG(d,a,b,c,M[6],9,0xC040B340);c=GG(c,d,a,b,M[11],14,0x265E5A51);b=GG(b,c,d,a,M[0],20,0xE9B6C7AA);
+                    a=GG(a,b,c,d,M[5],5,0xD62F105D);d=GG(d,a,b,c,M[10],9,0x02441453);c=GG(c,d,a,b,M[15],14,0xD8A1E681);b=GG(b,c,d,a,M[4],20,0xE7D3FBC8);
+                    a=GG(a,b,c,d,M[9],5,0x21E1CDE6);d=GG(d,a,b,c,M[14],9,0xC33707D6);c=GG(c,d,a,b,M[3],14,0xF4D50D87);b=GG(b,c,d,a,M[8],20,0x455A14ED);
+                    a=GG(a,b,c,d,M[13],5,0xA9E3E905);d=GG(d,a,b,c,M[2],9,0xFCEFA3F8);c=GG(c,d,a,b,M[7],14,0x676F02D9);b=GG(b,c,d,a,M[12],20,0x8D2A4C8A);
+                    a=HH(a,b,c,d,M[5],4,0xFFFA3942);d=HH(d,a,b,c,M[8],11,0x8771F681);c=HH(c,d,a,b,M[11],16,0x6D9D6122);b=HH(b,c,d,a,M[14],23,0xFDE5380C);
+                    a=HH(a,b,c,d,M[1],4,0xA4BEEA44);d=HH(d,a,b,c,M[4],11,0x4BDECFA9);c=HH(c,d,a,b,M[7],16,0xF6BB4B60);b=HH(b,c,d,a,M[10],23,0xBEBFBC70);
+                    a=HH(a,b,c,d,M[13],4,0x289B7EC6);d=HH(d,a,b,c,M[0],11,0xEAA127FA);c=HH(c,d,a,b,M[3],16,0xD4EF3085);b=HH(b,c,d,a,M[6],23,0x04881D05);
+                    a=HH(a,b,c,d,M[9],4,0xD9D4D039);d=HH(d,a,b,c,M[12],11,0xE6DB99E5);c=HH(c,d,a,b,M[15],16,0x1FA27CF8);b=HH(b,c,d,a,M[2],23,0xC4AC5665);
+                    a=II(a,b,c,d,M[0],6,0xF4292244);d=II(d,a,b,c,M[7],10,0x432AFF97);c=II(c,d,a,b,M[14],15,0xAB9423A7);b=II(b,c,d,a,M[5],21,0xFC93A039);
+                    a=II(a,b,c,d,M[12],6,0x655B59C3);d=II(d,a,b,c,M[3],10,0x8F0CCC92);c=II(c,d,a,b,M[10],15,0xFFEFF47D);b=II(b,c,d,a,M[1],21,0x85845DD1);
+                    a=II(a,b,c,d,M[8],6,0x6FA87E4F);d=II(d,a,b,c,M[15],10,0xFE2CE6E0);c=II(c,d,a,b,M[6],15,0xA3014314);b=II(b,c,d,a,M[13],21,0x4E0811A1);
+                    a=II(a,b,c,d,M[4],6,0xF7537E82);d=II(d,a,b,c,M[11],10,0xBD3AF235);c=II(c,d,a,b,M[2],15,0x2AD7D2BB);b=II(b,c,d,a,M[9],21,0xEB86D391);
+                    a=addUnsigned(a,A);b=addUnsigned(b,B);c=addUnsigned(c,C);d=addUnsigned(d,D);
+                }
+                function toHex(v) { var h=''; for(var i=0;i<4;i++) h+=((v>>(i*8))&0xFF).toString(16).padStart(2,'0'); return h; }
+                return (toHex(a)+toHex(b)+toHex(c)+toHex(d)).toLowerCase();
+            }
+
+            function arrayBufferToHex(buffer) {
+                var bytes = new Uint8Array(buffer);
+                var hex = '';
+                for (var i = 0; i < bytes.length; i++) {
+                    hex += bytes[i].toString(16).padStart(2, '0');
+                }
+                return hex;
+            }
+
+            function arrayBufferToBase64(buffer) {
+                var bytes = new Uint8Array(buffer);
+                var binary = '';
+                for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+                return btoa(binary);
+            }
+
+            async function computeHash(data, algorithm, encoding) {
+                if (algorithm === 'MD5') {
+                    var hex = md5(data);
+                    if (encoding === 'base64') {
+                        var bytes = new Uint8Array(hex.match(/.{2}/g).map(function(b){return parseInt(b,16);}));
+                        var bin = '';
+                        for (var i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+                        return btoa(bin);
+                    }
+                    return hex;
+                }
+                var algoMap = { 'SHA-256': 'SHA-256', 'SHA-512': 'SHA-512' };
+                var buffer = typeof data === 'string' ? new TextEncoder().encode(data).buffer : data;
+                var hashBuffer = await crypto.subtle.digest(algoMap[algorithm], buffer);
+                if (encoding === 'base64') return arrayBufferToBase64(hashBuffer);
+                return arrayBufferToHex(hashBuffer);
+            }
+
+            self.onmessage = async function(e) {
+                var msg = e.data;
+                try {
+                    var results = {};
+                    for (var i = 0; i < msg.algorithms.length; i++) {
+                        var algo = msg.algorithms[i];
+                        results[algo] = await computeHash(msg.data, algo, msg.encoding);
+                    }
+                    self.postMessage({ id: msg.id, results: results, error: null });
+                } catch(err) {
+                    self.postMessage({ id: msg.id, results: null, error: err.message });
+                }
+            };
+            `;
+
+            const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+            const workerUrl = URL.createObjectURL(workerBlob);
+            const worker = new Worker(workerUrl);
+            const workerCallbacks = new Map();
+            let workerTaskId = 0;
+
+            worker.onmessage = function(e) {
+                const { id, results, error } = e.data;
+                const cb = workerCallbacks.get(id);
+                if (cb) {
+                    workerCallbacks.delete(id);
+                    cb(error, results);
+                }
+            };
+
+            function postToWorker(data, algorithms, encoding) {
+                return new Promise((resolve, reject) => {
+                    const id = ++workerTaskId;
+                    workerCallbacks.set(id, (err, results) => {
+                        if (err) reject(new Error(err));
+                        else resolve(results);
+                    });
+                    worker.postMessage({ id, data, algorithms, encoding });
+                });
+            }
+
+            // ==================== TOAST ====================
+            function showToast(message, duration = 2500) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                dom.toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, duration + 400);
+            }
+
+            // ==================== STORAGE ====================
+            function loadHistory() {
+                try {
+                    const raw = localStorage.getItem('hashforge_history');
+                    state.history = raw ? JSON.parse(raw) : [];
+                } catch {
+                    state.history = [];
+                }
+                if (!Array.isArray(state.history)) state.history = [];
+                state.history = state.history.slice(0, 20);
+            }
+
+            function saveHistory() {
+                try {
+                    localStorage.setItem('hashforge_history', JSON.stringify(state.history.slice(0, 20)));
+                } catch { /* quota exceeded, silently ignore */ }
+            }
+
+            function addHistoryEntry(inputPreview, hash, algorithm) {
+                const entry = {
+                    input: inputPreview.substring(0, 80),
+                    hash: hash,
+                    algorithm: algorithm,
+                    timestamp: Date.now(),
+                    encoding: state.encoding,
+                };
+                state.history.unshift(entry);
+                if (state.history.length > 20) state.history.pop();
+                saveHistory();
+                renderHistory();
+            }
+
+            function loadTheme() {
+                try {
+                    const saved = localStorage.getItem('hashforge_theme');
+                    if (saved && ['dark', 'light', 'neon'].includes(saved)) {
+                        state.theme = saved;
+                    }
+                } catch { /* ignore */ }
+                applyTheme();
+            }
+
+            function saveTheme() {
+                try {
+                    localStorage.setItem('hashforge_theme', state.theme);
+                } catch { /* ignore */ }
+            }
+
+            function loadLang() {
+                try {
+                    const saved = localStorage.getItem('hashforge_lang');
+                    if (saved && ['EN', 'RU'].includes(saved)) {
+                        state.lang = saved;
+                    }
+                } catch { /* ignore */ }
+                updateLangUI();
+            }
+
+            function saveLang() {
+                try {
+                    localStorage.setItem('hashforge_lang', state.lang);
+                } catch { /* ignore */ }
+            }
+
+            // ==================== THEME ====================
+            function applyTheme() {
+                dom.body.setAttribute('data-theme', state.theme);
+                const themeNames = { dark: 'Dark', light: 'Light', neon: 'Neon' };
+                const translated = {
+                    dark: t('themeDark'),
+                    light: t('themeLight'),
+                    neon: t('themeNeon')
+                };
+                dom.btnTheme.textContent = '🎨 ' + translated[state.theme];
+            }
+
+            function cycleTheme() {
+                const themes = ['dark', 'light', 'neon'];
+                const idx = themes.indexOf(state.theme);
+                state.theme = themes[(idx + 1) % themes.length];
+                applyTheme();
+                saveTheme();
+            }
+
+            // ==================== LANGUAGE ====================
+            function updateLangUI() {
+                dom.btnLang.textContent = '🌐 ' + t('langLabel');
+                // Update all UI text
+                document.title = t('title');
+                dom.tabBtns[0].textContent = t('textTab');
+                dom.tabBtns[1].textContent = t('fileTab');
+                dom.tabBtns[2].textContent = t('compareTab');
+                dom.inputText.placeholder = t('placeholder');
+                dom.chkBatch.nextSibling.textContent = ' ' + t('batchMode');
+                const encodingLabel = dom.selEncoding.parentElement;
+                if (encodingLabel && encodingLabel.firstChild) {
+                    encodingLabel.firstChild.textContent = t('encoding') + ' ';
+                }
+                dom.compareTextA.placeholder = t('placeholderA');
+                dom.compareTextB.placeholder = t('placeholderB');
+                dom.btnClearHistory.textContent = t('clearHistory');
+                // Update card labels
+                updateCardLabels();
+                // Update theme button
+                applyTheme();
+                // Update drop zone
+                updateDropZoneText();
+                // Update batch card title
+                const batchTitle = dom.batchResultsCard.querySelector('.card-title');
+                if (batchTitle) batchTitle.textContent = t('batchResults');
+                // Update compare section
+                const compareCardTitle = dom.compareResult.querySelector('.card-title');
+                if (compareCardTitle) compareCardTitle.textContent = t('comparison');
+                // Update md5 warning
+                const md5Warning = dom.cardMd5.querySelector('.warning-note');
+                if (md5Warning) md5Warning.textContent = t('md5Warning');
+                // Update history title
+                const histTitle = dom.historyCard.querySelector('.card-title');
+                if (histTitle && histTitle.firstChild) histTitle.firstChild.textContent = t('history');
+                // Update security notice
+                const secNotice = document.querySelector('.info-note.text-center.mt-3');
+                if (secNotice) secNotice.textContent = t('securityNotice');
+                // Re-render history with new language
+                renderHistory();
+                // Update compare status if visible
+                updateCompareDisplay();
+            }
+
+            function updateCardLabels() {
+                const sha256Label = dom.cardSha256.querySelector('.hash-label-row span:first-child');
+                const sha512Label = dom.cardSha512.querySelector('.hash-label-row span:first-child');
+                const md5Label = dom.cardMd5.querySelector('.hash-label-row span:first-child');
+                if (sha256Label) sha256Label.textContent = '🔒 ' + t('sha256');
+                if (sha512Label) sha512Label.textContent = '🔒 ' + t('sha512');
+                if (md5Label) md5Label.textContent = '⚠️ ' + t('md5');
+                // Badges
+                const badges = dom.cardSha256.querySelectorAll('.badge');
+                if (badges[0]) badges[0].textContent = t('secure');
+                const badges512 = dom.cardSha512.querySelectorAll('.badge');
+                if (badges512[0]) badges512[0].textContent = t('secure');
+                const badgesMd5 = dom.cardMd5.querySelectorAll('.badge');
+                if (badgesMd5[0]) badgesMd5[0].textContent = t('insecure');
+            }
+
+            function updateDropZoneText() {
+                const dropText = dom.dropZone.querySelector('.drop-text');
+                const dropSubtext = dom.dropZone.querySelector('.drop-subtext');
+                if (dropText) dropText.textContent = t('dropHere');
+                if (dropSubtext) dropSubtext.textContent = t('dropSubtext');
+            }
+
+            // ==================== RENDER HISTORY ====================
+            function renderHistory() {
+                if (state.history.length === 0) {
+                    dom.historyList.innerHTML =
+                        `<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px;">${t('noHistory')}</div>`;
+                } else {
+                    dom.historyList.innerHTML = state.history.map((entry, idx) => `
+                <div class="history-item" data-idx="${idx}" title="Click to restore">
+                  <span class="hi-algo">${entry.algorithm}</span>
+                  <span class="hi-input">${escapeHTML(entry.input)}</span>
+                  <span class="hi-hash">${entry.hash.substring(0, 24)}…</span>
+                  <span class="hi-time">${formatTime(entry.timestamp)}</span>
+                </div>
+              `).join('');
+                }
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // Restore history entry
+            dom.historyList.addEventListener('click', (e) => {
+                const item = e.target.closest('.history-item');
+                if (!item) return;
+                const idx = parseInt(item.dataset.idx);
+                if (isNaN(idx) || !state.history[idx]) return;
+                const entry = state.history[idx];
+                state.inputText = entry.input;
+                dom.inputText.value = entry.input;
+                state.encoding = entry.encoding || 'hex';
+                dom.selEncoding.value = state.encoding;
+                state.batchMode = false;
+                dom.chkBatch.checked = false;
+                switchTab('text');
+                hashTextInput();
+                showToast(t('copied') === '✓ Copied!' ? 'Restored from history' : 'Восстановлено из истории');
+            });
+
+            dom.btnClearHistory.addEventListener('click', () => {
+                state.history = [];
+                saveHistory();
+                renderHistory();
+                showToast(t('clearHistory') === 'Clear' ? 'History cleared' : 'История очищена');
+            });
+
+            // ==================== HASHING ENGINE ====================
+            async function hashData(data, algorithms, encoding) {
+                return await postToWorker(data, algorithms, encoding);
+            }
+
+            const hashTextInput = debounce(async function() {
+                const text = dom.inputText.value;
+                state.inputText = text;
+
+                if (state.batchMode) {
+                    // Batch mode: hash each non-empty line with SHA-256
+                    dom.hashResultsGrid.classList.add('hidden');
+                    dom.batchResultsCard.classList.remove('hidden');
+                    const lines = text.split('\n').filter(line => line.trim().length > 0);
+                    if (lines.length === 0) {
+                        dom.batchResults.innerHTML =
+                            '<div style="color:var(--text-muted);text-align:center;padding:16px;">No lines to hash</div>';
+                        return;
+                    }
+                    // Show loading
+                    dom.batchResults.innerHTML =
+                        '<div style="color:var(--text-muted);text-align:center;padding:16px;">Hashing…</div>';
+                    try {
+                        const results = [];
+                        for (const line of lines) {
+                            const r = await hashData(line, ['SHA-256'], state.encoding);
+                            results.push({ line, hash: r['SHA-256'] });
+                        }
+                        dom.batchResults.innerHTML = results.map(r => `
+                  <div class="batch-result-item">
+                    <span class="bri-line">${escapeHTML(r.line.substring(0, 60))}${r.line.length>60?'…':''}</span>
+                    <span class="bri-hash">${r.hash}</span>
+                    <button class="btn btn-sm btn-copy" data-copy="${escapeHTML(r.hash)}" title="${t('copy')}">📋</button>
+                  </div>
+                `).join('');
+                        // Add to history (first batch item)
+                        if (results.length > 0) {
+                            addHistoryEntry(results[0].line, results[0].hash, 'SHA-256');
+                        }
+                    } catch (err) {
+                        dom.batchResults.innerHTML =
+                            `<div style="color:var(--danger);text-align:center;padding:16px;">Error: ${escapeHTML(err.message)}</div>`;
+                    }
+                    return;
+                }
+
+                // Normal mode
+                dom.hashResultsGrid.classList.remove('hidden');
+                dom.batchResultsCard.classList.add('hidden');
+
+                if (!text.trim()) {
+                    dom.hashSha256.textContent = '—';
+                    dom.hashSha512.textContent = '—';
+                    dom.hashMd5.textContent = '—';
+                    return;
+                }
+
+                // Show loading state
+                dom.hashSha256.textContent = 'Computing…';
+                dom.hashSha512.textContent = 'Computing…';
+                dom.hashMd5.textContent = 'Computing…';
+
+                try {
+                    const results = await hashData(text, ['SHA-256', 'SHA-512', 'MD5'], state.encoding);
+                    dom.hashSha256.textContent = results['SHA-256'];
+                    dom.hashSha512.textContent = results['SHA-512'];
+                    dom.hashMd5.textContent = results['MD5'];
+                    addHistoryEntry(text, results['SHA-256'], 'SHA-256');
+                } catch (err) {
+                    dom.hashSha256.textContent = 'Error';
+                    dom.hashSha512.textContent = 'Error';
+                    dom.hashMd5.textContent = 'Error';
+                    showToast('Hashing error: ' + err.message);
+                }
+            }, 300);
+
+            // ==================== COPY ====================
+            document.addEventListener('click', async (e) => {
+                const btn = e.target.closest('.btn-copy');
+                if (!btn) return;
+
+                let textToCopy = '';
+                if (btn.dataset.target) {
+                    const targetEl = document.getElementById(btn.dataset.target);
+                    if (targetEl) textToCopy = targetEl.textContent.trim();
+                } else if (btn.dataset.copy) {
+                    textToCopy = btn.dataset.copy;
+                }
+
+                if (!textToCopy || textToCopy === '—' || textToCopy === 'Computing…' || textToCopy === 'Error')
+                    return;
+
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    btn.classList.add('copied');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '✓';
+                    showToast(t('copied'));
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalHTML;
+                    }, 1800);
+                } catch {
+                    showToast('Failed to copy');
+                }
+            });
+
+            // ==================== TAB SWITCHING ====================
+            function switchTab(tabName) {
+                state.currentTab = tabName;
+                dom.tabBtns.forEach(b => b.classList.toggle('active-tab', b.dataset.tab === tabName));
+                dom.tabContents.forEach(s => s.classList.toggle('hidden', s.id !== 'tab-' + tabName));
+                if (tabName === 'text') {
+                    hashTextInput();
+                }
+                if (tabName === 'compare') {
+                    hashCompareInputs();
+                }
+            }
+
+            dom.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+
+            // ==================== TEXT INPUT ====================
+            dom.inputText.addEventListener('input', hashTextInput);
+            dom.chkBatch.addEventListener('change', () => {
+                state.batchMode = dom.chkBatch.checked;
+                hashTextInput();
+            });
+            dom.selEncoding.addEventListener('change', () => {
+                state.encoding = dom.selEncoding.value;
+                hashTextInput();
+                if (state.currentTab === 'compare') hashCompareInputs();
+            });
+
+            // ==================== FILE HASHING ====================
+            async function handleFile(file) {
+                if (!file) return;
+                state.selectedFile = file;
+                state.fileHash = null;
+                state.fileProgress = 0;
+                dom.fileInfo.classList.add('hidden');
+                dom.fileProgressWrap.classList.remove('hidden');
+                dom.fileProgressBar.style.width = '0%';
+                dom.hashFile.textContent = 'Reading…';
+
+                const chunkSize = 1024 * 1024; // 1MB chunks
+                const totalChunks = Math.ceil(file.size / chunkSize);
+                const chunks = [];
+                let offset = 0;
+                let chunkIndex = 0;
+
+                function updateProgress() {
+                    const pct = Math.round((chunkIndex / totalChunks) * 100);
+                    state.fileProgress = pct;
+                    dom.fileProgressBar.style.width = pct + '%';
+                }
+
+                // Read file in chunks
+                for (let i = 0; i < totalChunks; i++) {
+                    const end = Math.min(offset + chunkSize, file.size);
+                    const slice = file.slice(offset, end);
+                    const buffer = await slice.arrayBuffer();
+                    chunks.push(buffer);
+                    offset = end;
+                    chunkIndex++;
+                    updateProgress();
+                }
+
+                // Combine chunks
+                const totalLength = chunks.reduce((sum, c) => sum + c.byteLength, 0);
+                const combined = new Uint8Array(totalLength);
+                let pos = 0;
+                for (const chunk of chunks) {
+                    combined.set(new Uint8Array(chunk), pos);
+                    pos += chunk.byteLength;
+                }
+
+                dom.fileProgressBar.style.width = '100%';
+                dom.hashFile.textContent = 'Hashing…';
+
+                try {
+                    const results = await hashData(combined.buffer, ['SHA-256', 'SHA-512', 'MD5'], state.encoding);
+                    state.fileHash = results['SHA-256'];
+                    dom.hashFile.textContent = results['SHA-256'];
+                    dom.fileInfoName.textContent = file.name;
+                    dom.fileInfoSize.textContent = formatBytes(file.size);
+                    dom.fileInfo.classList.remove('hidden');
+                    dom.fileProgressWrap.classList.add('hidden');
+                    addHistoryEntry('[File] ' + file.name, results['SHA-256'], 'SHA-256');
+                    showToast('File hashed successfully');
+                } catch (err) {
+                    dom.hashFile.textContent = 'Error: ' + err.message;
+                    dom.fileProgressWrap.classList.add('hidden');
+                    showToast('File hashing error: ' + err.message);
+                }
+            }
+
+            // Drag & Drop
+            dom.dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dom.dropZone.classList.add('drag-over');
+            });
+            dom.dropZone.addEventListener('dragleave', () => {
+                dom.dropZone.classList.remove('drag-over');
+            });
+            dom.dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dom.dropZone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleFile(files[0]);
+            });
+            dom.dropZone.addEventListener('click', () => {
+                dom.fileInput.click();
+            });
+            dom.fileInput.addEventListener('change', () => {
+                if (dom.fileInput.files.length > 0) handleFile(dom.fileInput.files[0]);
+            });
+
+            // ==================== COMPARE MODE ====================
+            const hashCompareInputs = debounce(async function() {
+                const textA = dom.compareTextA.value;
+                const textB = dom.compareTextB.value;
+                state.compareTextA = textA;
+                state.compareTextB = textB;
+
+                if (!textA.trim() && !textB.trim()) {
+                    dom.compareHashADisplay.innerHTML = '—';
+                    dom.compareHashBDisplay.innerHTML = '—';
+                    dom.compareMatchIndicator.innerHTML = '';
+                    return;
+                }
+
+                dom.compareHashADisplay.innerHTML = 'Computing…';
+                dom.compareHashBDisplay.innerHTML = 'Computing…';
+
+                try {
+                    const [resultsA, resultsB] = await Promise.all([
+                        textA.trim() ? hashData(textA, ['SHA-256'], state.encoding) : Promise.resolve({
+                            'SHA-256': ''
+                        }),
+                        textB.trim() ? hashData(textB, ['SHA-256'], state.encoding) : Promise.resolve({
+                            'SHA-256': ''
+                        }),
+                    ]);
+                    const hashA = resultsA['SHA-256'] || '';
+                    const hashB = resultsB['SHA-256'] || '';
+                    state._compareHashA = hashA;
+                    state._compareHashB = hashB;
+                    updateCompareDisplay();
+                } catch (err) {
+                    dom.compareHashADisplay.innerHTML = 'Error';
+                    dom.compareHashBDisplay.innerHTML = 'Error';
+                }
+            }, 400);
+
+            function updateCompareDisplay() {
+                const hashA = state._compareHashA || '';
+                const hashB = state._compareHashB || '';
+                const isMatch = hashA === hashB && hashA !== '';
+
+                if (!hashA && !hashB) {
+                    dom.compareMatchIndicator.innerHTML = '';
+                    dom.compareHashADisplay.innerHTML = '—';
+                    dom.compareHashBDisplay.innerHTML = '—';
+                    return;
+                }
+
+                dom.compareMatchIndicator.innerHTML = isMatch ?
+                    `<span class="match-indicator match-yes">${t('match')}</span>` :
+                    `<span class="match-indicator match-no">${t('noMatch')}</span>`;
+
+                // Highlight differences
+                if (isMatch) {
+                    dom.compareHashADisplay.innerHTML = escapeHTML(hashA);
+                    dom.compareHashBDisplay.innerHTML = escapeHTML(hashB);
+                } else {
+                    const maxLen = Math.max(hashA.length, hashB.length);
+                    let htmlA = '';
+                    let htmlB = '';
+                    for (let i = 0; i < maxLen; i++) {
+                        const ca = hashA[i] || '';
+                        const cb = hashB[i] || '';
+                        const matchClass = (ca === cb) ? '' : ' diff-mismatch';
+                        htmlA += `<span class="diff-char${matchClass}">${escapeHTML(ca)}</span>`;
+                        htmlB += `<span class="diff-char${matchClass}">${escapeHTML(cb)}</span>`;
+                    }
+                    dom.compareHashADisplay.innerHTML = htmlA;
+                    dom.compareHashBDisplay.innerHTML = htmlB;
+                }
+
+                if (hashA) addHistoryEntry('[Compare A] ' + state.compareTextA.substring(0, 40), hashA, 'SHA-256');
+            }
+
+            dom.compareTextA.addEventListener('input', hashCompareInputs);
+            dom.compareTextB.addEventListener('input', hashCompareInputs);
+
+            // ==================== INIT ====================
+            function init() {
+                loadTheme();
+                loadLang();
+                loadHistory();
+                renderHistory();
+                applyTheme();
+                updateLangUI();
+                updateDropZoneText();
+                updateCardLabels();
+                switchTab('text');
+
+                // Initial hash of empty state
+                dom.hashSha256.textContent = '—';
+                dom.hashSha512.textContent = '—';
+                dom.hashMd5.textContent = '—';
+            }
+
+            // Theme switch
+            dom.btnTheme.addEventListener('click', cycleTheme);
+
+            // Language switch
+            dom.btnLang.addEventListener('click', () => {
+                state.lang = state.lang === 'EN' ? 'RU' : 'EN';
+                saveLang();
+                updateLangUI();
+            });
+
+            // Keyboard shortcut for theme
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 't') {
+                    e.preventDefault();
+                    cycleTheme();
+                }
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    state.lang = state.lang === 'EN' ? 'RU' : 'EN';
+                    saveLang();
+                    updateLangUI();
+                }
+            });
+
+            init();
+
+            console.log('HashForge initialized — all hashing is local. Theme:', state.theme, 'Lang:', state.lang);
+        })();
+    </script>
+</body>
+</html>
