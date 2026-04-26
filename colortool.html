@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorForge Pro</title>
+    <style>
+        :root {
+            --bg: #0f1119;
+            --surface: #1a1d2b;
+            --surface2: #212433;
+            --surface3: #282c3d;
+            --border: #2a2e3f;
+            --text: #e2e4f0;
+            --text2: #a8adc4;
+            --text3: #6b7094;
+            --accent: #6366f1;
+            --accent2: #8183f4;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --radius-lg: 14px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            --preview-bg: #fff;
+            --preview-text: #1a1a2e;
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f6fa;
+            --surface: #ffffff;
+            --surface2: #f0f1f7;
+            --surface3: #e4e5ef;
+            --border: #d8dae6;
+            --text: #1a1a2e;
+            --text2: #4a4d62;
+            --text3: #7b7f9a;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --preview-bg: #1a1a2e;
+            --preview-text: #fff;
+        }
+
+        [data-theme="neon"] {
+            --bg: #0a0a0a;
+            --surface: #111118;
+            --surface2: #181820;
+            --surface3: #1e1e2a;
+            --border: #2a2a3a;
+            --text: #e8e8f8;
+            --text2: #b8b8d0;
+            --text3: #7878a0;
+            --accent: #00f5d4;
+            --accent2: #00bbf9;
+            --danger: #ff3366;
+            --success: #00f5d4;
+            --warning: #fee440;
+            --shadow: 0 0 20px rgba(0, 245, 212, 0.15);
+            --shadow-lg: 0 0 40px rgba(0, 245, 212, 0.2);
+            --preview-bg: #00f5d4;
+            --preview-text: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 15px;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text3);
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
+            transition: background var(--transition), border var(--transition);
+        }
+        .header-logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            user-select: none;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all var(--transition);
+            white-space: nowrap;
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .btn:hover {
+            background: var(--surface3);
+            border-color: var(--text3);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        .btn:active {
+            transform: scale(0.97);
+            transition: 0.08s;
+        }
+        .btn-accent {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-accent:hover {
+            background: var(--accent2);
+            border-color: var(--accent2);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            border-radius: 4px;
+        }
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1rem;
+        }
+        .btn-ghost {
+            background: transparent;
+            border-color: transparent;
+        }
+        .btn-ghost:hover {
+            background: var(--surface3);
+            border-color: transparent;
+        }
+        .btn-group {
+            display: flex;
+            gap: 0;
+        }
+        .btn-group .btn {
+            border-radius: 0;
+            margin-left: -1px;
+        }
+        .btn-group .btn:first-child {
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            margin-left: 0;
+        }
+        .btn-group .btn:last-child {
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: calc(100vh - 56px);
+            max-width: 1440px;
+            margin: 0 auto;
+            transition: all var(--transition);
+        }
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all var(--transition);
+            overflow-y: auto;
+            max-height: calc(100vh - 56px);
+            position: sticky;
+            top: 56px;
+        }
+        .sidebar-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--surface3);
+            color: var(--text);
+        }
+        .sidebar-nav a.active {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .sidebar-nav .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 8px 0;
+        }
+        .sidebar-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text3);
+            padding: 8px 14px 4px;
+            font-weight: 700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            max-height: calc(100vh - 56px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all var(--transition);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .card-header {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        .card-header .icon {
+            font-size: 1.1rem;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .card-grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 768px) {
+            .card-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Color Preview */
+        .color-preview-block {
+            width: 100%;
+            height: 140px;
+            border-radius: var(--radius-lg);
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 16px 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+        }
+        .color-preview-block .preview-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
+        }
+        .color-preview-block .preview-value {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .color-preview-block .preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: flex-end;
+        }
+
+        /* Input fields */
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 80px;
+        }
+        .input-group label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text3);
+        }
+        .input-group input {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: all var(--transition);
+            outline: none;
+            width: 100%;
+        }
+        .input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 44px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            background: transparent;
+            padding: 2px;
+            transition: all var(--transition);
+        }
+        input[type="color"]:hover {
+            border-color: var(--accent);
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 3px;
+            border: none;
+        }
+
+        /* Sliders */
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-row label {
+            width: 24px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text3);
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--surface3);
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 3px solid var(--surface);
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 16px rgba(99, 102, 241, 0.4);
+        }
+        .slider-value {
+            width: 40px;
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            flex-shrink: 0;
+        }
+        .hue-slider {
+            background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00) !important;
+            background-size: 200% 100% !important;
+        }
+
+        /* Palette swatches */
+        .palette-row {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .palette-swatch {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            border: 2px solid transparent;
+            flex-shrink: 0;
+            box-shadow: var(--shadow);
+        }
+        .palette-swatch:hover {
+            transform: scale(1.12);
+            z-index: 5;
+            border-color: var(--text);
+            box-shadow: var(--shadow-lg);
+        }
+        .palette-swatch.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+        .palette-swatch .swatch-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            font-family: var(--font-mono);
+            color: var(--text3);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity var(--transition);
+            pointer-events: none;
+        }
+        .palette-swatch:hover .swatch-label {
+            opacity: 1;
+        }
+        .palette-section {
+            margin-bottom: 6px;
+        }
+        .palette-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text3);
+            margin-bottom: 8px;
+        }
+
+        /* Contrast checker */
+        .contrast-result {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .contrast-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .contrast-badge.pass {
+            background: #16653433;
+            color: #22c55e;
+            border: 1px solid #22c55e44;
+        }
+        .contrast-badge.fail {
+            background: #991b1b33;
+            color: #ef4444;
+            border: 1px solid #ef444444;
+        }
+        .contrast-ratio-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            font-family: var(--font-mono);
+        }
+
+        /* UI Preview */
+        .ui-preview-area {
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all var(--transition);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+        }
+        .ui-preview-btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+            font-family: var(--font);
+            display: inline-block;
+            width: fit-content;
+        }
+        .ui-preview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .ui-preview-nav {
+            display: flex;
+            gap: 16px;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all var(--transition);
+        }
+
+        /* Gradient */
+        .gradient-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+        .gradient-stops {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .gradient-stop {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .gradient-stop input[type="color"] {
+            width: 36px;
+            height: 32px;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.82rem;
+            animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: all;
+            box-shadow: var(--shadow-lg);
+            letter-spacing: 0.2px;
+            transition: all 0.3s;
+            cursor: default;
+            max-width: 360px;
+        }
+        .toast.success {
+            background: #166534;
+            color: #bbf7d0;
+            border: 1px solid #22c55e55;
+        }
+        .toast.error {
+            background: #991b1b;
+            color: #fecaca;
+            border: 1px solid #ef444455;
+        }
+        .toast.info {
+            background: #1e3a5f;
+            color: #bfdbfe;
+            border: 1px solid #3b82f655;
+        }
+        .toast.fade-out {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Image dropzone */
+        .dropzone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--surface2);
+        }
+        .dropzone:hover,
+        .dropzone.drag-over {
+            border-color: var(--accent);
+            background: var(--surface3);
+        }
+        .dropzone input[type="file"] {
+            display: none;
+        }
+
+        /* Export code block */
+        .code-block {
+            background: var(--surface3);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: var(--text2);
+            position: relative;
+            border: 1px solid var(--border);
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+                min-width: 220px;
+            }
+            .main-content {
+                padding: 14px 16px;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 8px 10px;
+                max-height: none;
+                position: static;
+                gap: 2px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .sidebar-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 2px;
+            }
+            .sidebar-nav a {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+                gap: 4px;
+            }
+            .sidebar-divider,
+            .sidebar-label {
+                display: none;
+            }
+            .main-content {
+                max-height: none;
+                padding: 12px;
+                gap: 12px;
+            }
+            .header {
+                padding: 0 12px;
+                height: 48px;
+            }
+            .header-logo {
+                font-size: 1rem;
+            }
+            .color-preview-block {
+                height: 100px;
+                padding: 10px 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            .input-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .input-group {
+                min-width: 100%;
+            }
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+            .palette-swatch {
+                width: 36px;
+                height: 36px;
+            }
+            .contrast-ratio-display {
+                font-size: 1.8rem;
+            }
+            .toast {
+                max-width: 280px;
+                font-size: 0.72rem;
+                padding: 10px 14px;
+            }
+            .toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                align-items: stretch;
+            }
+        }
+
+        /* Utility */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+        .text-muted {
+            color: var(--text3);
+            font-size: 0.78rem;
+        }
+        .text-mono {
+            font-family: var(--font-mono);
+        }
+        .w-full {
+            width: 100%;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            background: var(--surface3);
+            color: var(--text2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <span class="header-logo" title="ColorForge Pro">🎨 ColorForge Pro</span>
+        <div class="header-actions">
+            <button class="btn btn-sm btn-ghost" id="btn-lang" title="Switch language">🌐 <span id="lang-label">RU</span></button>
+            <button class="btn btn-sm btn-ghost" id="btn-theme-cycle" title="Cycle theme">🎨 <span id="theme-label">Dark</span></button>
+            <button class="btn btn-sm btn-ghost" id="btn-share" title="Share">🔗</button>
+            <button class="btn btn-sm btn-accent" id="btn-save-project">💾 <span data-i18n="saveProject">Save Project</span></button>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="#section-color" class="active" data-nav="color"><span class="nav-icon">🎯</span> <span data-i18n="navColor">Color Picker</span></a></li>
+                <li><a href="#section-palettes" data-nav="palettes"><span class="nav-icon">🎨</span> <span data-i18n="navPalettes">Palettes</span></a></li>
+                <li><a href="#section-contrast" data-nav="contrast"><span class="nav-icon">🔍</span> <span data-i18n="navContrast">Contrast</span></a></li>
+                <li><a href="#section-uipreview" data-nav="uipreview"><span class="nav-icon">🖼️</span> <span data-i18n="navUIPreview">UI Preview</span></a></li>
+                <li><a href="#section-gradient" data-nav="gradient"><span class="nav-icon">🌈</span> <span data-i18n="navGradient">Gradient</span></a></li>
+                <li><a href="#section-image" data-nav="image"><span class="nav-icon">📷</span> <span data-i18n="navImage">Image Extract</span></a></li>
+                <li><a href="#section-export" data-nav="export"><span class="nav-icon">📤</span> <span data-i18n="navExport">Export</span></a></li>
+            </ul>
+            <hr class="sidebar-divider">
+            <span class="sidebar-label" data-i18n="savedLabel">Saved</span>
+            <ul class="sidebar-nav" id="saved-palettes-nav">
+                <li><a style="color:var(--text3);font-style:italic;font-size:0.78rem;" data-i18n="noSaved">No saved palettes</a></li>
+            </ul>
+            <hr class="sidebar-divider">
+            <span class="sidebar-label" data-i18n="historyLabel">History</span>
+            <ul class="sidebar-nav" id="history-nav">
+                <li><a style="color:var(--text3);font-style:italic;font-size:0.78rem;" data-i18n="noHistory">No history yet</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+
+            <!-- Section: Color Picker -->
+            <section id="section-color" class="card fade-in">
+                <div class="card-header"><span class="icon">🎯</span> <span data-i18n="colorPicker">Color Picker</span></div>
+                <div class="color-preview-block" id="color-preview-block" style="background-color:#6366f1;">
+                    <span class="preview-label" style="color:#fff;">Preview</span>
+                    <div class="preview-info" style="color:#fff;">
+                        <span class="preview-value" id="preview-hex">#6366F1</span>
+                    </div>
+                </div>
+                <div class="input-row mt-12">
+                    <div class="input-group">
+                        <label>HEX</label>
+                        <input type="text" id="input-hex" value="#6366F1" maxlength="9" placeholder="#RRGGBB">
+                    </div>
+                    <div class="input-group">
+                        <label>R</label>
+                        <input type="number" id="input-r" value="99" min="0" max="255">
+                    </div>
+                    <div class="input-group">
+                        <label>G</label>
+                        <input type="number" id="input-g" value="102" min="0" max="255">
+                    </div>
+                    <div class="input-group">
+                        <label>B</label>
+                        <input type="number" id="input-b" value="241" min="0" max="255">
+                    </div>
+                    <div class="input-group">
+                        <label>Alpha</label>
+                        <input type="number" id="input-alpha" value="1" min="0" max="1" step="0.01">
+                    </div>
+                    <input type="color" id="input-color-picker" value="#6366f1" title="Color Picker">
+                    <button class="btn btn-sm" id="btn-eyedropper" title="EyeDropper" style="display:none;">💉</button>
+                </div>
+                <div class="input-row mt-8">
+                    <div class="input-group">
+                        <label>H</label>
+                        <input type="number" id="input-hsl-h" value="239" min="0" max="360">
+                    </div>
+                    <div class="input-group">
+                        <label>S (HSL)</label>
+                        <input type="number" id="input-hsl-s" value="84" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label>L</label>
+                        <input type="number" id="input-hsl-l" value="67" min="0" max="100">
+                    </div>
+                    <button class="btn btn-sm" id="btn-copy-hex">📋 HEX</button>
+                    <button class="btn btn-sm" id="btn-copy-rgb">📋 RGB</button>
+                    <button class="btn btn-sm" id="btn-copy-hsl">📋 HSL</button>
+                    <button class="btn btn-sm btn-accent" id="btn-copy-all">📋 <span data-i18n="copyAll">Copy All</span></button>
+                </div>
+                <div class="slider-group mt-12">
+                    <div class="slider-row">
+                        <label>H</label>
+                        <input type="range" id="slider-hue" class="hue-slider" min="0" max="360" value="239">
+                        <span class="slider-value" id="val-hue">239°</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>S</label>
+                        <input type="range" id="slider-sat" min="0" max="100" value="84" style="background:linear-gradient(to right,#888,var(--accent));">
+                        <span class="slider-value" id="val-sat">84%</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>L</label>
+                        <input type="range" id="slider-lit" min="0" max="100" value="67" style="background:linear-gradient(to right,#000,var(--accent),#fff);">
+                        <span class="slider-value" id="val-lit">67%</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>α</label>
+                        <input type="range" id="slider-alpha" min="0" max="100" value="100" style="background:linear-gradient(to right,transparent,var(--accent));">
+                        <span class="slider-value" id="val-alpha">1.00</span>
+                    </div>
+                </div>
+                <div class="mt-8 text-muted" id="color-psychology"></div>
+            </section>
+
+            <!-- Section: Palettes -->
+            <section id="section-palettes" class="card fade-in">
+                <div class="card-header"><span class="icon">🎨</span> <span data-i18n="palettes">Palettes</span></div>
+                <div class="btn-group mb-12" id="palette-type-buttons">
+                    <button class="btn btn-sm active" data-palette="monochrome">Monochrome</button>
+                    <button class="btn btn-sm" data-palette="lighter">Lighter</button>
+                    <button class="btn btn-sm" data-palette="darker">Darker</button>
+                    <button class="btn btn-sm" data-palette="complementary">Complementary</button>
+                    <button class="btn btn-sm" data-palette="analogous">Analogous</button>
+                    <button class="btn btn-sm" data-palette="triadic">Triadic</button>
+                    <button class="btn btn-sm" data-palette="tailwind">Tailwind</button>
+                    <button class="btn btn-sm" data-palette="random">🎲 Smart</button>
+                </div>
+                <div id="palette-container">
+                    <div class="palette-section">
+                        <div class="palette-section-title" data-i18n="generatedPalette">Generated Palette</div>
+                        <div class="palette-row" id="palette-row"></div>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-accent mt-8" id="btn-save-palette">💾 <span data-i18n="savePalette">Save Palette</span></button>
+            </section>
+
+            <!-- Section: Contrast -->
+            <section id="section-contrast" class="card fade-in">
+                <div class="card-header"><span class="icon">🔍</span> <span data-i18n="contrastChecker">Contrast Checker (WCAG)</span></div>
+                <div class="card-grid card-grid-2">
+                    <div>
+                        <div class="input-row gap-8 mb-8">
+                            <div class="input-group"><label data-i18n="foreground">Foreground</label><input type="text" id="contrast-fg" value="#6366F1" class="text-mono"></div>
+                            <div class="input-group"><label data-i18n="background">Background</label><input type="text" id="contrast-bg" value="#FFFFFF" class="text-mono"></div>
+                        </div>
+                        <div class="contrast-ratio-display" id="contrast-ratio">4.53</div>
+                        <span class="text-muted" data-i18n="contrastRatio">Contrast Ratio</span>
+                        <div class="contrast-result mt-8" id="contrast-badges"></div>
+                    </div>
+                    <div style="padding:20px;border-radius:var(--radius);text-align:center;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;" id="contrast-preview">
+                        <span data-i18n="contrastSample">Sample Text</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: UI Preview -->
+            <section id="section-uipreview" class="card fade-in">
+                <div class="card-header"><span class="icon">🖼️</span> <span data-i18n="uiPreview">UI Component Preview</span></div>
+                <div class="btn-group mb-12">
+                    <button class="btn btn-sm active" data-uimode="buttons"><span data-i18n="uimodeButtons">Buttons</span></button>
+                    <button class="btn btn-sm" data-uimode="cards"><span data-i18n="uimodeCards">Cards</span></button>
+                    <button class="btn btn-sm" data-uimode="text"><span data-i18n="uimodeText">Text</span></button>
+                    <button class="btn btn-sm" data-uimode="navbar"><span data-i18n="uimodeNavbar">Navbar</span></button>
+                </div>
+                <div class="ui-preview-area" id="ui-preview-area"></div>
+            </section>
+
+            <!-- Section: Gradient -->
+            <section id="section-gradient" class="card fade-in">
+                <div class="card-header"><span class="icon">🌈</span> <span data-i18n="gradientGenerator">Gradient Generator</span></div>
+                <div class="gradient-preview" id="gradient-preview" style="background:linear-gradient(135deg,#6366f1,#ec4899);"></div>
+                <div class="input-row mt-12 gap-8">
+                    <div class="input-group" style="max-width:100px;"><label data-i18n="angle">Angle</label><input type="number" id="gradient-angle" value="135" min="0" max="360"></div>
+                    <div class="gradient-stops" id="gradient-stops">
+                        <div class="gradient-stop"><input type="color" value="#6366f1" class="gradient-color-input"><button class="btn btn-sm btn-ghost remove-stop-btn">✕</button></div>
+                        <div class="gradient-stop"><input type="color" value="#ec4899" class="gradient-color-input"><button class="btn btn-sm btn-ghost remove-stop-btn">✕</button></div>
+                    </div>
+                    <button class="btn btn-sm" id="btn-add-stop">+ <span data-i18n="addStop">Stop</span></button>
+                </div>
+                <div class="mt-8">
+                    <span class="text-muted mb-4" data-i18n="cssExport">CSS Export:</span>
+                    <div class="code-block" id="gradient-css">background: linear-gradient(135deg, #6366f1, #ec4899);</div>
+                </div>
+            </section>
+
+            <!-- Section: Image Extract -->
+            <section id="section-image" class="card fade-in">
+                <div class="card-header"><span class="icon">📷</span> <span data-i18n="imageExtract">Image Color Extraction</span></div>
+                <div class="dropzone" id="image-dropzone">
+                    <span data-i18n="dropzoneText">Click or drag & drop an image here</span>
+                    <input type="file" id="image-input" accept="image/*">
+                </div>
+                <canvas id="image-canvas" class="hidden"></canvas>
+                <div class="mt-12" id="image-results" style="display:none;">
+                    <div class="palette-section-title" data-i18n="extractedPalette">Extracted Palette</div>
+                    <div class="palette-row" id="image-palette-row"></div>
+                    <div class="mt-8"><span class="text-muted" data-i18n="dominantColor">Dominant Color:</span> <span class="tag" id="dominant-color-tag">—</span></div>
+                </div>
+            </section>
+
+            <!-- Section: Export -->
+            <section id="section-export" class="card fade-in">
+                <div class="card-header"><span class="icon">📤</span> <span data-i18n="exportFormats">Export Formats</span></div>
+                <div class="btn-group mb-12">
+                    <button class="btn btn-sm active" data-export="css">CSS Variables</button>
+                    <button class="btn btn-sm" data-export="json">JSON</button>
+                    <button class="btn btn-sm" data-export="scss">SCSS</button>
+                    <button class="btn btn-sm" data-export="tailwind">Tailwind</button>
+                </div>
+                <div class="code-block" id="export-code-block">—</div>
+                <button class="btn btn-sm mt-8" id="btn-copy-export">📋 <span data-i18n="copyExport">Copy Export</span></button>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+    // ============================================================
+    // PART 1 END — DO NOT CLOSE SCRIPT TAG
+    // ============================================================
+    // Continue with JavaScript in Part 3+
+    // ============================================================
+    // PART 2: JAVASCRIPT — FULL APPLICATION LOGIC
+    // ============================================================
+
+    (function() {
+        // ---------- STATE (single source of truth) ----------
+        const state = {
+            color: { r: 99, g: 102, b: 241, a: 1 }, // default #6366F1
+            hsl: { h: 239, s: 84, l: 67 },
+            paletteType: 'monochrome',
+            uiMode: 'buttons',
+            exportFormat: 'css',
+            gradient: {
+                angle: 135,
+                stops: ['#6366f1', '#ec4899']
+            },
+            contrastFg: '#6366F1',
+            contrastBg: '#FFFFFF',
+            lang: 'en',
+            theme: 'dark',
+            history: [],
+            savedPalettes: [],
+            savedProjects: []
+        };
+
+        // ---------- DOM Cache ----------
+        const DOM = {};
+        function cacheDOM() {
+            const ids = [
+                'color-preview-block', 'preview-hex', 'input-hex', 'input-r', 'input-g', 'input-b',
+                'input-alpha', 'input-color-picker', 'btn-eyedropper', 'input-hsl-h', 'input-hsl-s',
+                'input-hsl-l', 'btn-copy-hex', 'btn-copy-rgb', 'btn-copy-hsl', 'btn-copy-all',
+                'slider-hue', 'slider-sat', 'slider-lit', 'slider-alpha', 'val-hue', 'val-sat',
+                'val-lit', 'val-alpha', 'color-psychology', 'palette-row', 'palette-type-buttons',
+                'btn-save-palette', 'contrast-fg', 'contrast-bg', 'contrast-ratio', 'contrast-badges',
+                'contrast-preview', 'ui-preview-area', 'gradient-preview', 'gradient-angle',
+                'gradient-stops', 'gradient-css', 'btn-add-stop', 'image-dropzone', 'image-input',
+                'image-canvas', 'image-results', 'image-palette-row', 'dominant-color-tag',
+                'export-code-block', 'btn-copy-export', 'toast-container', 'btn-lang', 'lang-label',
+                'btn-theme-cycle', 'theme-label', 'btn-share', 'btn-save-project', 'sidebar',
+                'saved-palettes-nav', 'history-nav', 'main-content'
+            ];
+            ids.forEach(id => { DOM[id] = document.getElementById(id); });
+            // Also cache dynamic containers
+            DOM.uiPreviewArea = document.getElementById('ui-preview-area');
+            DOM.paletteRow = document.getElementById('palette-row');
+            DOM.gradientStops = document.getElementById('gradient-stops');
+            DOM.exportCodeBlock = document.getElementById('export-code-block');
+            DOM.imagePaletteRow = document.getElementById('image-palette-row');
+            DOM.contrastBadges = document.getElementById('contrast-badges');
+            DOM.contrastPreview = document.getElementById('contrast-preview');
+            DOM.savedPalettesNav = document.getElementById('saved-palettes-nav');
+            DOM.historyNav = document.getElementById('history-nav');
+            DOM.colorPsychology = document.getElementById('color-psychology');
+        }
+        cacheDOM();
+
+        // ---------- i18n ----------
+        const translations = {
+            en: {
+                saveProject: 'Save Project', navColor: 'Color Picker', navPalettes: 'Palettes',
+                navContrast: 'Contrast', navUIPreview: 'UI Preview', navGradient: 'Gradient',
+                navImage: 'Image Extract', navExport: 'Export', savedLabel: 'Saved',
+                noSaved: 'No saved palettes', historyLabel: 'History', noHistory: 'No history yet',
+                colorPicker: 'Color Picker', copyAll: 'Copy All', palettes: 'Palettes',
+                generatedPalette: 'Generated Palette', savePalette: 'Save Palette',
+                contrastChecker: 'Contrast Checker (WCAG)', foreground: 'Foreground',
+                background: 'Background', contrastRatio: 'Contrast Ratio',
+                contrastSample: 'Sample Text', uiPreview: 'UI Component Preview',
+                uimodeButtons: 'Buttons', uimodeCards: 'Cards', uimodeText: 'Text',
+                uimodeNavbar: 'Navbar', gradientGenerator: 'Gradient Generator',
+                angle: 'Angle', cssExport: 'CSS Export:', addStop: 'Stop',
+                imageExtract: 'Image Color Extraction', dropzoneText: 'Click or drag & drop an image here',
+                extractedPalette: 'Extracted Palette', dominantColor: 'Dominant Color:',
+                exportFormats: 'Export Formats', copyExport: 'Copy Export',
+                toastCopied: 'Copied!', toastSaved: 'Saved!', toastError: 'Error'
+            },
+            ru: {
+                saveProject: 'Сохранить проект', navColor: 'Выбор цвета', navPalettes: 'Палитры',
+                navContrast: 'Контраст', navUIPreview: 'Предпросмотр UI', navGradient: 'Градиент',
+                navImage: 'Извлечение из изображения', navExport: 'Экспорт', savedLabel: 'Сохранённые',
+                noSaved: 'Нет сохранённых палитр', historyLabel: 'История', noHistory: 'Истории пока нет',
+                colorPicker: 'Выбор цвета', copyAll: 'Копировать всё', palettes: 'Палитры',
+                generatedPalette: 'Сгенерированная палитра', savePalette: 'Сохранить палитру',
+                contrastChecker: 'Проверка контраста (WCAG)', foreground: 'Передний план',
+                background: 'Фон', contrastRatio: 'Коэффициент контраста',
+                contrastSample: 'Образец текста', uiPreview: 'Предпросмотр компонентов UI',
+                uimodeButtons: 'Кнопки', uimodeCards: 'Карточки', uimodeText: 'Текст',
+                uimodeNavbar: 'Навигация', gradientGenerator: 'Генератор градиентов',
+                angle: 'Угол', cssExport: 'CSS экспорт:', addStop: 'Точка',
+                imageExtract: 'Извлечение цвета из изображения', dropzoneText: 'Кликните или перетащите изображение',
+                extractedPalette: 'Извлечённая палитра', dominantColor: 'Доминирующий цвет:',
+                exportFormats: 'Форматы экспорта', copyExport: 'Копировать экспорт',
+                toastCopied: 'Скопировано!', toastSaved: 'Сохранено!', toastError: 'Ошибка'
+            }
+        };
+
+        function t(key) {
+            return translations[state.lang]?.[key] || key;
+        }
+
+        function applyI18n() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+            // Update dynamic text that may not use data-i18n
+            DOM.langLabel.textContent = state.lang === 'en' ? 'RU' : 'EN';
+            // Update saved/history lists
+            updateSavedPalettesList();
+            updateHistoryList();
+        }
+
+        // ---------- Helpers: Color Conversions ----------
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(c => {
+                const hex = Math.round(c).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('').toUpperCase();
+        }
+
+        function hexToRgb(hex) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            if (hex.length === 8) {
+                const r = parseInt(hex.substring(0,2), 16);
+                const g = parseInt(hex.substring(2,4), 16);
+                const b = parseInt(hex.substring(4,6), 16);
+                const a = parseInt(hex.substring(6,8), 16) / 255;
+                return { r, g, b, a };
+            }
+            const r = parseInt(hex.substring(0,2), 16);
+            const g = parseInt(hex.substring(2,4), 16);
+            const b = parseInt(hex.substring(4,6), 16);
+            return { r, g, b, a: 1 };
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max === min) h = s = 0;
+            else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            let r, g, b;
+            if (s === 0) r = g = b = l;
+            else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+        }
+
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            const d = max - min;
+            let h, s, v = max;
+            s = max === 0 ? 0 : d / max;
+            if (max === min) h = 0;
+            else {
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) };
+        }
+
+        function hsvToRgb(h, s, v) {
+            h /= 360; s /= 100; v /= 100;
+            let r, g, b;
+            const i = Math.floor(h * 6);
+            const f = h * 6 - i;
+            const p = v * (1 - s);
+            const q = v * (1 - f * s);
+            const t = v * (1 - (1 - f) * s);
+            switch (i % 6) {
+                case 0: r = v; g = t; b = p; break;
+                case 1: r = q; g = v; b = p; break;
+                case 2: r = p; g = v; b = t; break;
+                case 3: r = p; g = q; b = v; break;
+                case 4: r = t; g = p; b = v; break;
+                case 5: r = v; g = p; b = q; break;
+            }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+        }
+
+        function hexToHsl(hex) {
+            const rgb = hexToRgb(hex);
+            return rgbToHsl(rgb.r, rgb.g, rgb.b);
+        }
+
+        function hslToHex(h, s, l) {
+            const rgb = hslToRgb(h, s, l);
+            return rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+
+        function getContrastRatio(hex1, hex2) {
+            const lum1 = getLuminance(hex1);
+            const lum2 = getLuminance(hex2);
+            const brightest = Math.max(lum1, lum2);
+            const darkest = Math.min(lum1, lum2);
+            return (brightest + 0.05) / (darkest + 0.05);
+        }
+
+        function getLuminance(hex) {
+            const {r, g, b} = hexToRgb(hex);
+            const a = [r, g, b].map(v => {
+                v /= 255;
+                return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+        }
+
+        // ---------- Palette Generators ----------
+        function generatePalette(type, baseHex, alpha = 1) {
+            const {h, s, l} = hexToHsl(baseHex);
+            const colors = [];
+            switch(type) {
+                case 'monochrome':
+                    for (let i = -4; i <= 4; i++) {
+                        const newL = Math.min(100, Math.max(0, l + i * 8));
+                        colors.push(hslToHex(h, s, newL));
+                    }
+                    break;
+                case 'lighter':
+                    for (let i = 0; i <= 8; i++) {
+                        const newL = Math.min(100, l + i * 6);
+                        colors.push(hslToHex(h, s, newL));
+                    }
+                    break;
+                case 'darker':
+                    for (let i = 0; i <= 8; i++) {
+                        const newL = Math.max(0, l - i * 6);
+                        colors.push(hslToHex(h, s, newL));
+                    }
+                    break;
+                case 'complementary':
+                    colors.push(baseHex);
+                    colors.push(hslToHex((h + 180) % 360, s, l));
+                    break;
+                case 'analogous':
+                    colors.push(hslToHex((h - 30 + 360) % 360, s, l));
+                    colors.push(baseHex);
+                    colors.push(hslToHex((h + 30) % 360, s, l));
+                    break;
+                case 'triadic':
+                    colors.push(baseHex);
+                    colors.push(hslToHex((h + 120) % 360, s, l));
+                    colors.push(hslToHex((h + 240) % 360, s, l));
+                    break;
+                case 'tailwind':
+                    // Tailwind-like scale 50-900 based on lightness
+                    const tailwindShades = [50,100,200,300,400,500,600,700,800,900];
+                    tailwindShades.forEach((shade, i) => {
+                        const factor = (i - 4) * 0.08; // center at 500
+                        const newL = Math.min(95, Math.max(5, l + factor * (l > 50 ? -40 : 40)));
+                        colors.push(hslToHex(h, s, newL));
+                    });
+                    break;
+                case 'random':
+                    // Smart harmonic random: use golden ratio
+                    const golden = 0.618033988749895;
+                    let hue = (h + Math.random() * 360) % 360;
+                    for (let i = 0; i < 6; i++) {
+                        const sat = Math.min(100, Math.max(30, s + (Math.random() - 0.5) * 30));
+                        const lit = Math.min(90, Math.max(10, l + (Math.random() - 0.5) * 25));
+                        colors.push(hslToHex(hue % 360, sat, lit));
+                        hue = (hue + golden * 360) % 360;
+                    }
+                    break;
+                default: colors.push(baseHex);
+            }
+            return colors.map(hex => ({ hex, alpha }));
+        }
+
+        // ---------- Closest Color (Tailwind & Material) ----------
+        const tailwindColors = {
+            'slate': ['#f8fafc','#f1f5f9','#e2e8f0','#cbd5e1','#94a3b8','#64748b','#475569','#334155','#1e293b','#0f172a'],
+            'gray': ['#f9fafb','#f3f4f6','#e5e7eb','#d1d5db','#9ca3af','#6b7280','#4b5563','#374151','#1f2937','#111827'],
+            'red': ['#fef2f2','#fee2e2','#fecaca','#fca5a5','#f87171','#ef4444','#dc2626','#b91c1c','#991b1b','#7f1d1d'],
+            'orange': ['#fff7ed','#ffedd5','#fed7aa','#fdba74','#fb923c','#f97316','#ea580c','#c2410c','#9a3412','#7c2d12'],
+            'amber': ['#fffbeb','#fef3c7','#fde68a','#fcd34d','#fbbf24','#f59e0b','#d97706','#b45309','#92400e','#78350f'],
+            'yellow': ['#fefce8','#fef9c3','#fef08a','#fde047','#facc15','#eab308','#ca8a04','#a16207','#854d0e','#713f12'],
+            'lime': ['#f7fee7','#ecfccb','#d9f99d','#bef264','#a3e635','#84cc16','#65a30d','#4d7c0f','#3f6212','#365314'],
+            'green': ['#f0fdf4','#dcfce7','#bbf7d0','#86efac','#4ade80','#22c55e','#16a34a','#15803d','#166534','#14532d'],
+            'emerald': ['#ecfdf5','#d1fae5','#a7f3d0','#6ee7b7','#34d399','#10b981','#059669','#047857','#065f46','#064e3b'],
+            'teal': ['#f0fdfa','#ccfbf1','#99f6e4','#5eead4','#2dd4bf','#14b8a6','#0d9488','#0f766e','#115e59','#134e4a'],
+            'cyan': ['#ecfeff','#cffafe','#a5f3fc','#67e8f9','#22d3ee','#06b6d4','#0891b2','#0e7490','#155e75','#164e63'],
+            'sky': ['#f0f9ff','#e0f2fe','#bae6fd','#7dd3fc','#38bdf8','#0ea5e9','#0284c7','#0369a1','#075985','#0c4a6e'],
+            'blue': ['#eff6ff','#dbeafe','#bfdbfe','#93c5fd','#60a5fa','#3b82f6','#2563eb','#1d4ed8','#1e40af','#1e3a8a'],
+            'indigo': ['#eef2ff','#e0e7ff','#c7d2fe','#a5b4fc','#818cf8','#6366f1','#4f46e5','#4338ca','#3730a3','#312e81'],
+            'violet': ['#f5f3ff','#ede9fe','#ddd6fe','#c4b5fd','#a78bfa','#8b5cf6','#7c3aed','#6d28d9','#5b21b6','#4c1d95'],
+            'purple': ['#faf5ff','#f3e8ff','#e9d5ff','#d8b4fe','#c084fc','#a855f7','#9333ea','#7e22ce','#6b21a8','#581c87'],
+            'fuchsia': ['#fdf4ff','#fae8ff','#f5d0fe','#f0abfc','#e879f9','#d946ef','#c026d3','#a21caf','#86198f','#701a75'],
+            'pink': ['#fdf2f8','#fce7f3','#fbcfe8','#f9a8d4','#f472b6','#ec4899','#db2777','#be185d','#9d174d','#831843'],
+            'rose': ['#fff1f2','#ffe4e6','#fecdd3','#fda4af','#fb7185','#f43f5e','#e11d48','#be123c','#9f1239','#881337']
+        };
+
+        function colorDistance(c1, c2) {
+            const dr = c1.r - c2.r, dg = c1.g - c2.g, db = c1.b - c2.b;
+            return dr * dr + dg * dg + db * db;
+        }
+
+        function findClosestTailwind(hex) {
+            const target = hexToRgb(hex);
+            let minDist = Infinity, closestName = '', closestHex = '';
+            for (const [name, shades] of Object.entries(tailwindColors)) {
+                shades.forEach((shadeHex, idx) => {
+                    const c = hexToRgb(shadeHex);
+                    const dist = colorDistance(target, c);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestName = `${name}-${(idx+1)*100}`;
+                        closestHex = shadeHex;
+                    }
+                });
+            }
+            return { name: closestName, hex: closestHex };
+        }
+
+        // Material colors (simplified)
+        const materialColors = [
+            '#F44336','#E91E63','#9C27B0','#673AB7','#3F51B5','#2196F3','#03A9F4','#00BCD4',
+            '#009688','#4CAF50','#8BC34A','#CDDC39','#FFEB3B','#FFC107','#FF9800','#FF5722',
+            '#795548','#9E9E9E','#607D8B'
+        ];
+
+        function findClosestMaterial(hex) {
+            const target = hexToRgb(hex);
+            let minDist = Infinity, closest = '';
+            materialColors.forEach(mHex => {
+                const c = hexToRgb(mHex);
+                const dist = colorDistance(target, c);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = mHex;
+                }
+            });
+            return closest;
+        }
+
+        // ---------- Color Psychology ----------
+        function getColorPsychology(hex) {
+            const {h, s, l} = hexToHsl(hex);
+            if (s < 15) return l > 70 ? 'White/light gray: purity, simplicity, minimalism.' : l < 30 ? 'Black/dark: power, elegance, mystery.' : 'Gray: neutrality, balance, calm.';
+            if (h < 15 || h >= 345) return 'Red: passion, energy, urgency, love.';
+            if (h < 45) return 'Orange: creativity, enthusiasm, warmth.';
+            if (h < 75) return 'Yellow: optimism, happiness, attention.';
+            if (h < 165) return 'Green: nature, growth, harmony, health.';
+            if (h < 195) return 'Cyan: clarity, freshness, technology.';
+            if (h < 255) return 'Blue: trust, stability, calm, professionalism.';
+            if (h < 285) return 'Purple: luxury, creativity, mystery.';
+            if (h < 345) return 'Pink: romance, compassion, playfulness.';
+            return '';
+        }
+
+        // ---------- UI Renderer ----------
+        function updateUI() {
+            const { color, hsl } = state;
+            const hex = rgbToHex(color.r, color.g, color.b);
+            const hexWithAlpha = hex + (color.a < 1 ? Math.round(color.a * 255).toString(16).padStart(2,'0') : '');
+            const rgbStr = `rgb(${color.r},${color.g},${color.b}${color.a < 1 ? `,${color.a}` : ''})`;
+            const hslStr = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%${color.a < 1 ? `, ${color.a}` : ''})`;
+
+            // Update inputs
+            DOM['input-hex'].value = hex;
+            DOM['input-r'].value = color.r;
+            DOM['input-g'].value = color.g;
+            DOM['input-b'].value = color.b;
+            DOM['input-alpha'].value = Math.round(color.a * 100) / 100;
+            DOM['input-color-picker'].value = hex;
+            DOM['input-hsl-h'].value = hsl.h;
+            DOM['input-hsl-s'].value = hsl.s;
+            DOM['input-hsl-l'].value = hsl.l;
+
+            // Sliders
+            DOM['slider-hue'].value = hsl.h;
+            DOM['slider-sat'].value = hsl.s;
+            DOM['slider-lit'].value = hsl.l;
+            DOM['slider-alpha'].value = Math.round(color.a * 100);
+            DOM['val-hue'].textContent = hsl.h + '°';
+            DOM['val-sat'].textContent = hsl.s + '%';
+            DOM['val-lit'].textContent = hsl.l + '%';
+            DOM['val-alpha'].textContent = color.a.toFixed(2);
+
+            // Preview block
+            const preview = DOM['color-preview-block'];
+            preview.style.backgroundColor = rgbStr;
+            // Auto text color
+            const contrastWhite = getContrastRatio(hex, '#FFFFFF');
+            const contrastBlack = getContrastRatio(hex, '#000000');
+            const textColor = contrastWhite > contrastBlack ? '#FFFFFF' : '#000000';
+            preview.style.color = textColor;
+            DOM['preview-hex'].textContent = hexWithAlpha;
+            DOM['preview-hex'].style.color = textColor;
+            preview.querySelector('.preview-label').style.color = textColor;
+
+            // Update contrast section if active
+            updateContrastPreview();
+
+            // Update palettes
+            updatePaletteDisplay();
+
+            // Update UI preview
+            updateUIPreview();
+
+            // Update gradient
+            updateGradient();
+
+            // Update psychology
+            DOM.colorPsychology.textContent = getColorPsychology(hex);
+
+            // Update export code block if needed (but not automatically, only when section visible)
+            if (document.querySelector('#section-export')?.offsetParent !== null) {
+                updateExport();
+            }
+
+            // Update share URL
+            updateShareURL();
+        }
+
+        function updatePaletteDisplay() {
+            const colors = generatePalette(state.paletteType, rgbToHex(state.color.r, state.color.g, state.color.b), state.color.a);
+            DOM.paletteRow.innerHTML = colors.map((c, i) => {
+                const bg = c.hex + (c.alpha < 1 ? Math.round(c.alpha * 255).toString(16).padStart(2,'0') : '');
+                return `<div class="palette-swatch" style="background:${bg};" data-hex="${c.hex}" data-alpha="${c.alpha}" title="${bg}"><span class="swatch-label">${c.hex}</span></div>`;
+            }).join('');
+            // Attach click to swatches
+            DOM.paletteRow.querySelectorAll('.palette-swatch').forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    const hex = swatch.dataset.hex;
+                    const alpha = parseFloat(swatch.dataset.alpha);
+                    setColorFromHex(hex, alpha);
+                });
+            });
+        }
+
+        function updateContrastPreview() {
+            const fgHex = DOM['contrast-fg'].value.trim() || '#000';
+            const bgHex = DOM['contrast-bg'].value.trim() || '#FFF';
+            const ratio = getContrastRatio(fgHex, bgHex);
+            DOM['contrast-ratio'].textContent = ratio.toFixed(2);
+            DOM.contrastPreview.style.backgroundColor = bgHex;
+            DOM.contrastPreview.style.color = fgHex;
+            DOM.contrastPreview.querySelector('span').textContent = t('contrastSample');
+
+            const badges = DOM.contrastBadges;
+            const aaSmall = ratio >= 4.5;
+            const aaLarge = ratio >= 3;
+            const aaaSmall = ratio >= 7;
+            const aaaLarge = ratio >= 4.5;
+            badges.innerHTML = `
+                <span class="contrast-badge ${aaSmall?'pass':'fail'}">AA small ${aaSmall?'✓':'✗'}</span>
+                <span class="contrast-badge ${aaLarge?'pass':'fail'}">AA large ${aaLarge?'✓':'✗'}</span>
+                <span class="contrast-badge ${aaaSmall?'pass':'fail'}">AAA small ${aaaSmall?'✓':'✗'}</span>
+                <span class="contrast-badge ${aaaLarge?'pass':'fail'}">AAA large ${aaaLarge?'✓':'✗'}</span>
+            `;
+        }
+
+        function updateUIPreview() {
+            const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+            const contrastColor = getContrastRatio(hex, '#FFFFFF') > getContrastRatio(hex, '#000000') ? '#FFFFFF' : '#000000';
+            const mode = state.uiMode;
+            let html = '';
+            if (mode === 'buttons') {
+                html = `
+                    <button class="ui-preview-btn" style="background:${hex};color:${contrastColor};">Normal</button>
+                    <button class="ui-preview-btn" style="background:${hex};color:${contrastColor};opacity:0.85;">Hover</button>
+                    <button class="ui-preview-btn" style="background:${hex};color:${contrastColor};filter:brightness(0.9);">Active</button>
+                `;
+            } else if (mode === 'cards') {
+                html = `<div class="ui-preview-card" style="background:${hex}20;border-color:${hex}60;"><strong style="color:${hex};">Card Title</strong><p style="color:${contrastColor};">Card content with accent color.</p></div>`;
+            } else if (mode === 'text') {
+                html = `<p style="color:${hex};font-weight:700;">Heading Text</p><p style="color:${hex}CC;">Body text with transparency.</p>`;
+            } else if (mode === 'navbar') {
+                html = `<div class="ui-preview-nav" style="background:${hex};color:${contrastColor};">🏠 Home &nbsp; 📄 About &nbsp; 📧 Contact</div>`;
+            }
+            DOM.uiPreviewArea.innerHTML = html;
+        }
+
+        function updateGradient() {
+            const angle = state.gradient.angle;
+            const stops = state.gradient.stops;
+            const gradientCSS = `linear-gradient(${angle}deg, ${stops.join(', ')})`;
+            DOM['gradient-preview'].style.background = gradientCSS;
+            DOM['gradient-css'].textContent = `background: ${gradientCSS};`;
+            // Update stop inputs
+            renderGradientStops();
+        }
+
+        function renderGradientStops() {
+            const stops = state.gradient.stops;
+            DOM.gradientStops.innerHTML = stops.map((stop, i) => `
+                <div class="gradient-stop">
+                    <input type="color" value="${stop}" class="gradient-color-input" data-index="${i}">
+                    <button class="btn btn-sm btn-ghost remove-stop-btn" data-index="${i}" ${stops.length<=2?'disabled':''}>✕</button>
+                </div>
+            `).join('');
+            // Add event listeners will be handled in global event delegation
+        }
+
+        function updateExport() {
+            const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+            const format = state.exportFormat;
+            let code = '';
+            switch(format) {
+                case 'css':
+                    code = `:root {\n  --color-primary: ${hex};\n  --color-primary-rgb: ${state.color.r}, ${state.color.g}, ${state.color.b};\n}`;
+                    break;
+                case 'json':
+                    code = JSON.stringify({ primary: hex, rgb: { r: state.color.r, g: state.color.g, b: state.color.b }, alpha: state.color.a }, null, 2);
+                    break;
+                case 'scss':
+                    code = `$primary: ${hex};\n$primary-rgb: ${state.color.r}, ${state.color.g}, ${state.color.b};`;
+                    break;
+                case 'tailwind':
+                    code = `module.exports = {\n  theme: {\n    extend: {\n      colors: {\n        'primary': '${hex}',\n      }\n    }\n  }\n}`;
+                    break;
+            }
+            DOM.exportCodeBlock.textContent = code;
+        }
+
+        // ---------- State setters ----------
+        function setColorFromHex(hex, alpha = null) {
+            const rgb = hexToRgb(hex);
+            setColorFromRgb(rgb.r, rgb.g, rgb.b, alpha !== null ? alpha : rgb.a);
+        }
+
+        function setColorFromRgb(r, g, b, a = 1) {
+            state.color = { r, g, b, a };
+            state.hsl = rgbToHsl(r, g, b);
+            updateUI();
+            addToHistory();
+        }
+
+        function setColorFromHsl(h, s, l, a = state.color.a) {
+            const rgb = hslToRgb(h, s, l);
+            state.color = { r: rgb.r, g: rgb.g, b: rgb.b, a };
+            state.hsl = { h, s, l };
+            updateUI();
+            addToHistory();
+        }
+
+        function addToHistory() {
+            const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+            if (state.history.length === 0 || state.history[0].hex !== hex || state.history[0].a !== state.color.a) {
+                state.history.unshift({ hex, a: state.color.a, hsl: {...state.hsl}, rgb: {...state.color} });
+                if (state.history.length > 20) state.history.pop();
+                updateHistoryList();
+                saveState();
+            }
+        }
+
+        function updateHistoryList() {
+            const nav = DOM.historyNav;
+            if (state.history.length === 0) {
+                nav.innerHTML = `<li><a style="color:var(--text3);font-style:italic;font-size:0.78rem;">${t('noHistory')}</a></li>`;
+                return;
+            }
+            nav.innerHTML = state.history.slice(0,10).map((item, i) => `
+                <li><a class="history-item" data-index="${i}" title="${item.hex}">🎨 ${item.hex}</a></li>
+            `).join('');
+            nav.querySelectorAll('.history-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.index);
+                    const item = state.history[idx];
+                    setColorFromHex(item.hex, item.a);
+                });
+            });
+        }
+
+        function updateSavedPalettesList() {
+            const nav = DOM.savedPalettesNav;
+            if (state.savedPalettes.length === 0) {
+                nav.innerHTML = `<li><a style="color:var(--text3);font-style:italic;font-size:0.78rem;">${t('noSaved')}</a></li>`;
+                return;
+            }
+            nav.innerHTML = state.savedPalettes.map((p, i) => `
+                <li><a class="saved-palette-item" data-index="${i}">📌 ${p.name || 'Palette '+(i+1)}</a></li>
+            `).join('');
+            nav.querySelectorAll('.saved-palette-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.index);
+                    const palette = state.savedPalettes[idx];
+                    if (palette.colors && palette.colors.length > 0) {
+                        setColorFromHex(palette.colors[0].hex, palette.colors[0].alpha);
+                    }
+                });
+            });
+        }
+
+        // ---------- Storage ----------
+        function saveState() {
+            const toSave = {
+                color: state.color,
+                paletteType: state.paletteType,
+                uiMode: state.uiMode,
+                exportFormat: state.exportFormat,
+                gradient: state.gradient,
+                contrastFg: state.contrastFg,
+                contrastBg: state.contrastBg,
+                lang: state.lang,
+                theme: state.theme,
+                history: state.history.slice(0,30),
+                savedPalettes: state.savedPalettes,
+                savedProjects: state.savedProjects
+            };
+            localStorage.setItem('colorforge-state', JSON.stringify(toSave));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('colorforge-state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    Object.assign(state, parsed);
+                    // Ensure color is valid
+                    if (!state.color || !state.color.r) state.color = { r:99,g:102,b:241,a:1 };
+                    if (!state.hsl) state.hsl = rgbToHsl(state.color.r, state.color.g, state.color.b);
+                    if (!state.gradient) state.gradient = { angle:135, stops:['#6366f1','#ec4899'] };
+                    if (!state.history) state.history = [];
+                    if (!state.savedPalettes) state.savedPalettes = [];
+                    if (!state.savedProjects) state.savedProjects = [];
+                    state.lang = state.lang || 'en';
+                    state.theme = state.theme || 'dark';
+                } catch(e) {}
+            }
+            // Apply theme
+            document.documentElement.setAttribute('data-theme', state.theme);
+            updateThemeLabel();
+            applyI18n();
+            updateUI();
+            updateContrastPreview();
+            updateHistoryList();
+            updateSavedPalettesList();
+        }
+
+        // ---------- Share URL ----------
+        function updateShareURL() {
+            const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+            const params = new URLSearchParams();
+            params.set('hex', hex.replace('#',''));
+            params.set('a', state.color.a);
+            params.set('theme', state.theme);
+            params.set('lang', state.lang);
+            window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(location.search);
+            const hex = params.get('hex');
+            const a = parseFloat(params.get('a'));
+            const theme = params.get('theme');
+            const lang = params.get('lang');
+            if (hex) {
+                const alpha = !isNaN(a) ? a : 1;
+                setColorFromHex('#'+hex, alpha);
+            }
+            if (theme && ['dark','light','neon'].includes(theme)) {
+                state.theme = theme;
+                document.documentElement.setAttribute('data-theme', theme);
+                updateThemeLabel();
+            }
+            if (lang && ['en','ru'].includes(lang)) {
+                state.lang = lang;
+                applyI18n();
+            }
+        }
+
+        // ---------- Toast System ----------
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            DOM['toast-container'].appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 400);
+            }, 2500);
+        }
+
+        // ---------- Event Listeners (delegated) ----------
+        function setupEventListeners() {
+            // Color inputs
+            DOM['input-hex'].addEventListener('input', (e) => {
+                let hex = e.target.value.trim();
+                if (/^#[0-9a-fA-F]{6}$/.test(hex) || /^#[0-9a-fA-F]{8}$/.test(hex)) {
+                    setColorFromHex(hex, state.color.a);
+                }
+            });
+            DOM['input-r'].addEventListener('input', () => {
+                const r = clamp(parseInt(DOM['input-r'].value) || 0, 0, 255);
+                const g = clamp(parseInt(DOM['input-g'].value) || 0, 0, 255);
+                const b = clamp(parseInt(DOM['input-b'].value) || 0, 0, 255);
+                const a = clamp(parseFloat(DOM['input-alpha'].value) || 1, 0, 1);
+                setColorFromRgb(r, g, b, a);
+            });
+            DOM['input-g'].addEventListener('input', () => DOM['input-r'].dispatchEvent(new Event('input')));
+            DOM['input-b'].addEventListener('input', () => DOM['input-r'].dispatchEvent(new Event('input')));
+            DOM['input-alpha'].addEventListener('input', () => {
+                const a = clamp(parseFloat(DOM['input-alpha'].value) || 1, 0, 1);
+                state.color.a = a;
+                updateUI();
+                addToHistory();
+            });
+            DOM['input-color-picker'].addEventListener('input', (e) => {
+                setColorFromHex(e.target.value, state.color.a);
+            });
+            // HSL inputs
+            DOM['input-hsl-h'].addEventListener('input', () => {
+                const h = clamp(parseInt(DOM['input-hsl-h'].value) || 0, 0, 360);
+                const s = clamp(parseInt(DOM['input-hsl-s'].value) || 0, 0, 100);
+                const l = clamp(parseInt(DOM['input-hsl-l'].value) || 0, 0, 100);
+                setColorFromHsl(h, s, l, state.color.a);
+            });
+            DOM['input-hsl-s'].addEventListener('input', () => DOM['input-hsl-h'].dispatchEvent(new Event('input')));
+            DOM['input-hsl-l'].addEventListener('input', () => DOM['input-hsl-h'].dispatchEvent(new Event('input')));
+
+            // Sliders
+            DOM['slider-hue'].addEventListener('input', (e) => {
+                const h = parseInt(e.target.value);
+                setColorFromHsl(h, state.hsl.s, state.hsl.l, state.color.a);
+            });
+            DOM['slider-sat'].addEventListener('input', (e) => {
+                const s = parseInt(e.target.value);
+                setColorFromHsl(state.hsl.h, s, state.hsl.l, state.color.a);
+            });
+            DOM['slider-lit'].addEventListener('input', (e) => {
+                const l = parseInt(e.target.value);
+                setColorFromHsl(state.hsl.h, state.hsl.s, l, state.color.a);
+            });
+            DOM['slider-alpha'].addEventListener('input', (e) => {
+                state.color.a = parseInt(e.target.value) / 100;
+                updateUI();
+                addToHistory();
+            });
+
+            // Copy buttons
+            DOM['btn-copy-hex'].addEventListener('click', () => {
+                const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+                copyToClipboard(state.color.a < 1 ? hex + Math.round(state.color.a*255).toString(16).padStart(2,'0') : hex);
+            });
+            DOM['btn-copy-rgb'].addEventListener('click', () => {
+                const rgb = `rgb(${state.color.r},${state.color.g},${state.color.b}${state.color.a<1?`,${state.color.a}`:''})`;
+                copyToClipboard(rgb);
+            });
+            DOM['btn-copy-hsl'].addEventListener('click', () => {
+                const hsl = `hsl(${state.hsl.h},${state.hsl.s}%,${state.hsl.l}%${state.color.a<1?`,${state.color.a}`:''})`;
+                copyToClipboard(hsl);
+            });
+            DOM['btn-copy-all'].addEventListener('click', () => {
+                const hex = rgbToHex(state.color.r, state.color.g, state.color.b);
+                const hexA = state.color.a < 1 ? hex + Math.round(state.color.a*255).toString(16).padStart(2,'0') : hex;
+                const rgb = `rgb(${state.color.r},${state.color.g},${state.color.b}${state.color.a<1?`,${state.color.a}`:''})`;
+                const hsl = `hsl(${state.hsl.h},${state.hsl.s}%,${state.hsl.l}%${state.color.a<1?`,${state.color.a}`:''})`;
+                copyToClipboard(`${hexA}\n${rgb}\n${hsl}`);
+            });
+
+            // Eyedropper
+            if (window.EyeDropper) {
+                DOM['btn-eyedropper'].style.display = 'inline-flex';
+                DOM['btn-eyedropper'].addEventListener('click', async () => {
+                    try {
+                        const eyeDropper = new EyeDropper();
+                        const result = await eyeDropper.open();
+                        setColorFromHex(result.sRGBHex, state.color.a);
+                    } catch (e) {}
+                });
+            }
+
+            // Palette type buttons
+            DOM['palette-type-buttons'].addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    DOM['palette-type-buttons'].querySelectorAll('.active').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    state.paletteType = e.target.dataset.palette;
+                    updateUI();
+                    saveState();
+                }
+            });
+
+            // Save palette
+            DOM['btn-save-palette'].addEventListener('click', () => {
+                const colors = generatePalette(state.paletteType, rgbToHex(state.color.r, state.color.g, state.color.b), state.color.a);
+                state.savedPalettes.push({ name: `Palette ${state.savedPalettes.length+1}`, colors, type: state.paletteType });
+                updateSavedPalettesList();
+                saveState();
+                showToast(t('toastSaved'), 'success');
+            });
+
+            // Contrast inputs
+            DOM['contrast-fg'].addEventListener('input', updateContrastPreview);
+            DOM['contrast-bg'].addEventListener('input', updateContrastPreview);
+
+            // UI mode
+            document.querySelectorAll('[data-uimode]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('[data-uimode]').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    state.uiMode = e.target.dataset.uimode;
+                    updateUI();
+                    saveState();
+                });
+            });
+
+            // Gradient
+            DOM['gradient-angle'].addEventListener('input', (e) => {
+                state.gradient.angle = parseInt(e.target.value) || 0;
+                updateGradient();
+                saveState();
+            });
+            DOM['btn-add-stop'].addEventListener('click', () => {
+                state.gradient.stops.push('#888888');
+                updateGradient();
+                saveState();
+            });
+            // Delegate gradient stop changes
+            DOM.gradientStops.addEventListener('input', (e) => {
+                if (e.target.classList.contains('gradient-color-input')) {
+                    const idx = parseInt(e.target.dataset.index);
+                    state.gradient.stops[idx] = e.target.value;
+                    updateGradient();
+                    saveState();
+                }
+            });
+            DOM.gradientStops.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-stop-btn') && !e.target.disabled) {
+                    const idx = parseInt(e.target.dataset.index);
+                    state.gradient.stops.splice(idx, 1);
+                    updateGradient();
+                    saveState();
+                }
+            });
+
+            // Image upload
+            const dropzone = DOM['image-dropzone'];
+            dropzone.addEventListener('click', () => DOM['image-input'].click());
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) processImage(file);
+            });
+            DOM['image-input'].addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) processImage(file);
+            });
+
+            // Export format buttons
+            document.querySelectorAll('[data-export]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('[data-export]').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    state.exportFormat = e.target.dataset.export;
+                    updateExport();
+                    saveState();
+                });
+            });
+            DOM['btn-copy-export'].addEventListener('click', () => {
+                copyToClipboard(DOM.exportCodeBlock.textContent);
+            });
+
+            // Language toggle
+            DOM['btn-lang'].addEventListener('click', () => {
+                state.lang = state.lang === 'en' ? 'ru' : 'en';
+                applyI18n();
+                saveState();
+                updateShareURL();
+            });
+
+            // Theme cycle
+            DOM['btn-theme-cycle'].addEventListener('click', () => {
+                const themes = ['dark', 'light', 'neon'];
+                const idx = themes.indexOf(state.theme);
+                state.theme = themes[(idx + 1) % themes.length];
+                document.documentElement.setAttribute('data-theme', state.theme);
+                updateThemeLabel();
+                saveState();
+                updateShareURL();
+            });
+
+            // Share button
+            DOM['btn-share'].addEventListener('click', () => {
+                const url = window.location.href;
+                copyToClipboard(url);
+                showToast('Share URL copied!', 'info');
+            });
+
+            // Save project
+            DOM['btn-save-project'].addEventListener('click', () => {
+                state.savedProjects.push({
+                    color: {...state.color},
+                    hsl: {...state.hsl},
+                    paletteType: state.paletteType,
+                    gradient: {...state.gradient},
+                    timestamp: Date.now()
+                });
+                saveState();
+                showToast(t('toastSaved'), 'success');
+            });
+
+            // Sidebar navigation highlighting
+            document.querySelectorAll('.sidebar-nav a[data-nav]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.sidebar-nav a[data-nav]').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    const target = document.getElementById(link.getAttribute('href').substring(1));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Palette swatch click is handled in updatePaletteDisplay via event delegation
+
+            // Window scroll for active nav update
+            window.addEventListener('scroll', () => {
+                const sections = ['section-color','section-palettes','section-contrast','section-uipreview','section-gradient','section-image','section-export'];
+                let current = 'color';
+                sections.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top <= 150) current = id.replace('section-','');
+                    }
+                });
+                document.querySelectorAll('.sidebar-nav a[data-nav]').forEach(link => {
+                    link.classList.toggle('active', link.dataset.nav === current);
+                });
+            });
+        }
+
+        function clamp(val, min, max) {
+            return Math.min(max, Math.max(min, val));
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(t('toastCopied'), 'success');
+            }).catch(() => {
+                // fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast(t('toastCopied'), 'success');
+            });
+        }
+
+        function updateThemeLabel() {
+            DOM['theme-label'].textContent = state.theme.charAt(0).toUpperCase() + state.theme.slice(1);
+        }
+
+        // Image processing using canvas
+        function processImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = DOM['image-canvas'];
+                    const ctx = canvas.getContext('2d');
+                    const maxDim = 200;
+                    let width = img.width, height = img.height;
+                    if (width > height) {
+                        if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+                    } else {
+                        if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const imageData = ctx.getImageData(0, 0, width, height);
+                    const pixels = imageData.data;
+                    // Simple quantization: bucket size 32
+                    const colorMap = new Map();
+                    for (let i = 0; i < pixels.length; i += 4) {
+                        const r = Math.floor(pixels[i] / 32) * 32;
+                        const g = Math.floor(pixels[i+1] / 32) * 32;
+                        const b = Math.floor(pixels[i+2] / 32) * 32;
+                        const key = `${r},${g},${b}`;
+                        colorMap.set(key, (colorMap.get(key) || 0) + 1);
+                    }
+                    const sorted = [...colorMap.entries()].sort((a,b) => b[1] - a[1]).slice(0, 8);
+                    const palette = sorted.map(([key]) => {
+                        const [r,g,b] = key.split(',').map(Number);
+                        return rgbToHex(r,g,b);
+                    });
+                    // Display
+                    DOM['image-results'].style.display = 'block';
+                    DOM.imagePaletteRow.innerHTML = palette.map(hex => `
+                        <div class="palette-swatch" style="background:${hex};" title="${hex}"><span class="swatch-label">${hex}</span></div>
+                    `).join('');
+                    DOM['dominant-color-tag'].textContent = palette[0] || '—';
+                    DOM['dominant-color-tag'].style.background = palette[0];
+                    // Attach click to image swatches
+                    DOM.imagePaletteRow.querySelectorAll('.palette-swatch').forEach(swatch => {
+                        swatch.addEventListener('click', () => {
+                            setColorFromHex(swatch.title, state.color.a);
+                        });
+                    });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ---------- Initialization ----------
+        function init() {
+            loadFromURL(); // may override some state
+            loadState();   // localStorage may override URL if no params
+            setupEventListeners();
+            // Force initial UI update
+            updateUI();
+            updateContrastPreview();
+            updateGradient();
+            updateExport();
+        }
+
+        init();
+    })();
+    // ============================================================
+    // END OF JAVASCRIPT — CLOSE SCRIPT TAG
+    // ============================================================
+</script>
+</body>
+</html>
+    
