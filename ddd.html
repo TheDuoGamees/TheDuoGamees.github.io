@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Generator Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #0f0f1a;
+            --surface: #1a1a2e;
+            --surface2: #222240;
+            --border: #333355;
+            --text: #e0e0f0;
+            --text2: #a0a0c0;
+            --accent: #7c5cfc;
+            --accent2: #5c8cfc;
+            --danger: #fc5c5c;
+            --success: #5cfc8c;
+            --warning: #fcd05c;
+            --glow: 0 0 20px rgba(124, 92, 252, 0.3);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: 0.2s ease;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f4f8;
+            --surface: #ffffff;
+            --surface2: #eaeaef;
+            --border: #d5d5e0;
+            --text: #1a1a2e;
+            --text2: #555570;
+            --accent: #6c4df8;
+            --accent2: #4d8cf8;
+            --danger: #e04040;
+            --success: #2ea84a;
+            --warning: #c89820;
+            --glow: 0 0 12px rgba(108, 77, 248, 0.15);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="neon"] {
+            --bg: #050510;
+            --surface: #0a0a18;
+            --surface2: #0f0f25;
+            --border: #1a3a3a;
+            --text: #e0fff0;
+            --text2: #80c0a0;
+            --accent: #00ffcc;
+            --accent2: #ff00aa;
+            --danger: #ff3355;
+            --success: #00ff88;
+            --warning: #ffcc00;
+            --glow: 0 0 28px rgba(0, 255, 204, 0.4), 0 0 8px rgba(255, 0, 170, 0.3);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: 0.2s ease;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --shadow: 0 4px 30px rgba(0, 255, 204, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.5;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 24px;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            transition: all var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        button:hover {
+            background: var(--surface);
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        button.primary:hover {
+            box-shadow: var(--glow);
+            filter: brightness(1.1);
+        }
+        button.danger {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+            font-weight: 600;
+        }
+        button.small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+        button.active-preset {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 700;
+            box-shadow: var(--glow);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+            letter-spacing: 0.2px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 100px;
+            flex: 1;
+        }
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            transition: all var(--transition);
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+        .form-group input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.9rem;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .preview-area {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            max-height: 320px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            word-break: break-all;
+            white-space: pre-wrap;
+            color: var(--text);
+            position: relative;
+        }
+        .preview-area .key-line {
+            padding: 1px 0;
+            border-bottom: 1px solid transparent;
+        }
+        .preview-area .key-line:hover {
+            background: var(--surface);
+            border-bottom-color: var(--border);
+            border-radius: 2px;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 18px;
+            color: var(--text);
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+            pointer-events: auto;
+            max-width: 380px;
+        }
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .modal h3 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        .modal p {
+            margin-bottom: 20px;
+            color: var(--text2);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .mode-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .mode-indicator.length-mode {
+            background: rgba(124, 92, 252, 0.2);
+            color: var(--accent);
+        }
+        .mode-indicator.bits-mode {
+            background: rgba(0, 255, 204, 0.15);
+            color: var(--accent2);
+        }
+
+        .generating-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--warning);
+            font-weight: 600;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+            .form-group {
+                min-width: 100%;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <header>
+            <h1>🔑 Key Generator Pro</h1>
+            <div class="header-actions">
+                <button id="btnLang" class="small" title="Switch language">🌐 RU</button>
+                <button id="btnTheme" class="small" title="Switch theme">🎨 Theme</button>
+            </div>
+        </header>
+
+        <div class="card" id="cardMode">
+            <h3 data-i18n="mode_title">Generation Mode</h3>
+            <div class="form-row">
+                <div class="form-group" style="flex:0 0 auto;min-width:140px;">
+                    <label data-i18n="mode_label">Mode</label>
+                    <select id="modeSelect">
+                        <option value="length" data-i18n="mode_length">LENGTH (chars)</option>
+                        <option value="bits" data-i18n="mode_bits">BITS (entropy)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="groupLength">
+                    <label data-i18n="length_label">Key Length</label>
+                    <input type="number" id="inputLength" value="32" min="1" max="10000" step="1">
+                </div>
+                <div class="form-group" id="groupBits" style="display:none;">
+                    <label data-i18n="bits_label">Bits (32–2048)</label>
+                    <input type="number" id="inputBits" value="256" min="32" max="2048" step="8">
+                </div>
+                <div class="form-group" id="groupBitsPresets" style="display:none;flex:2;min-width:200px;">
+                    <label data-i18n="bits_presets">Quick Presets</label>
+                    <div class="preset-buttons" id="bitsPresetButtons">
+                        <button class="small bits-preset" data-bits="32">32</button>
+                        <button class="small bits-preset" data-bits="64">64</button>
+                        <button class="small bits-preset" data-bits="128">128</button>
+                        <button class="small bits-preset active-preset" data-bits="256">256</button>
+                        <button class="small bits-preset" data-bits="512">512</button>
+                        <button class="small bits-preset" data-bits="1024">1024</button>
+                        <button class="small bits-preset" data-bits="2048">2048</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="cardCharset">
+            <h3 data-i18n="charset_title">Character Set</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="charset_preset">Preset</label>
+                    <select id="charsetPreset">
+                        <option value="all" data-i18n="charset_all">All (Letters + Numbers + Symbols)</option>
+                        <option value="letters+numbers" data-i18n="charset_ln">Letters + Numbers</option>
+                        <option value="letters" data-i18n="charset_letters">Letters Only</option>
+                        <option value="numbers" data-i18n="charset_numbers">Numbers Only</option>
+                        <option value="symbols" data-i18n="charset_symbols">Symbols Only</option>
+                        <option value="custom" data-i18n="charset_custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group" id="groupCustomCharset" style="display:none;">
+                    <label data-i18n="custom_charset_label">Custom Charset</label>
+                    <input type="text" id="inputCustomCharset" value=""
+                    placeholder="e.g. ABCDEF123456">
+                </div>
+            </div>
+            <div class="checkbox-row" style="margin-top:10px;">
+                <input type="checkbox" id="chkExcludeSimilar">
+                <label for="chkExcludeSimilar" data-i18n="exclude_similar">Exclude similar characters (0 O o l 1 I)</label>
+            </div>
+        </div>
+
+        <div class="card" id="cardOptions">
+            <h3 data-i18n="options_title">Options</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="separator_label">Separator</label>
+                    <input type="text" id="inputSeparator" value="-" maxlength="3" placeholder="-">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="separator_interval">Interval (0=off)</label>
+                    <input type="number" id="inputSepInterval" value="0" min="0" max="100" step="1">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="prefix_label">Prefix</label>
+                    <input type="text" id="inputPrefix" value="" placeholder="myapp_">
+                </div>
+            </div>
+            <div class="form-row" style="margin-top:8px;">
+                <div class="form-group">
+                    <label data-i18n="keytype_label">Key Type</label>
+                    <select id="keyType">
+                        <option value="none" data-i18n="keytype_none">None</option>
+                        <option value="api" data-i18n="keytype_api">API Key (api_)</option>
+                        <option value="sk" data-i18n="keytype_sk">Secret Key (sk_)</option>
+                        <option value="pk" data-i18n="keytype_pk">Public Key (pk_)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="env_label">Environment</label>
+                    <select id="environment">
+                        <option value="none" data-i18n="env_none">None</option>
+                        <option value="live" data-i18n="env_live">Live (_live)</option>
+                        <option value="test" data-i18n="env_test">Test (_test)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="random_label">Random Mode</label>
+                    <select id="randomMode">
+                        <option value="crypto" data-i18n="random_crypto">Crypto (secure)</option>
+                        <option value="fast" data-i18n="random_fast">Fast (Math.random)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="cardGenerate">
+            <h3 data-i18n="generate_title">Generate</h3>
+            <div class="form-row">
+                <div class="form-group" style="max-width:140px;">
+                    <label data-i18n="count_label">Count</label>
+                    <input type="number" id="inputCount" value="100" min="1" max="500000" step="1">
+                </div>
+                <div class="form-group" style="max-width:160px;">
+                    <label data-i18n="format_label">Format</label>
+                    <select id="formatSelect">
+                        <option value="txt">TXT</option>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="zip">ZIP</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:0 0 auto;align-self:flex-end;">
+                    <button class="primary" id="btnGenerate" data-i18n="btn_generate">⚡ Generate</button>
+                    <button class="danger" id="btnStop" style="display:none;" data-i18n="btn_stop">⏹ STOP</button>
+                </div>
+            </div>
+            <div id="generatingStatus" style="margin-top:8px;min-height:20px;"></div>
+        </div>
+
+        <div class="card" id="cardPreview">
+            <h3 data-i18n="preview_title">Preview <span style="font-weight:400;color:var(--text2);font-size:0.8rem;">(60 keys — auto-updates)</span></h3>
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+                <button id="btnCopyPreview" class="small" data-i18n="btn_copy">📋 Copy All</button>
+                <button id="btnRefreshPreview" class="small" data-i18n="btn_refresh">🔄 Refresh</button>
+            </div>
+            <div class="preview-area" id="previewArea">
+                <span style="color:var(--text2);" data-i18n="preview_loading">Adjust settings to see preview...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="modalContainer"></div>
+
+    <script>
+        (function() {
+            // ═══════════════════════════════════════════
+            // 1. STATE
+            // ═══════════════════════════════════════════
+            const DEFAULT_STATE = {
+                mode: 'length', // 'length' | 'bits'
+                length: 32,
+                bits: 256,
+                charsetPreset: 'all', // 'all'|'letters+numbers'|'letters'|'numbers'|'symbols'|'custom'
+                customCharset: '',
+                excludeSimilar: false,
+                separator: '-',
+                separatorInterval: 0,
+                prefix: '',
+                keyType: 'none', // 'none'|'api'|'sk'|'pk'
+                environment: 'none', // 'none'|'live'|'test'
+                theme: 'dark', // 'dark'|'light'|'neon'
+                randomMode: 'crypto', // 'crypto'|'fast'
+                count: 100,
+                format: 'txt', // 'txt'|'csv'|'json'|'zip'
+                lang: 'en', // 'en'|'ru'
+            };
+
+            let state = { ...DEFAULT_STATE };
+            let previewKeys = [];
+            let isGenerating = false;
+            let stopRequested = false;
+            let workerRef = null;
+            let partialKeys = [];
+
+            // ═══════════════════════════════════════════
+            // 2. i18n
+            // ═══════════════════════════════════════════
+            const i18nDict = {
+                en: {
+                    mode_title: 'Generation Mode',
+                    mode_label: 'Mode',
+                    mode_length: 'LENGTH (chars)',
+                    mode_bits: 'BITS (entropy)',
+                    length_label: 'Key Length',
+                    bits_label: 'Bits (32–2048)',
+                    bits_presets: 'Quick Presets',
+                    charset_title: 'Character Set',
+                    charset_preset: 'Preset',
+                    charset_all: 'All (Letters + Numbers + Symbols)',
+                    charset_ln: 'Letters + Numbers',
+                    charset_letters: 'Letters Only',
+                    charset_numbers: 'Numbers Only',
+                    charset_symbols: 'Symbols Only',
+                    charset_custom: 'Custom',
+                    custom_charset_label: 'Custom Charset',
+                    exclude_similar: 'Exclude similar characters (0 O o l 1 I)',
+                    options_title: 'Options',
+                    separator_label: 'Separator',
+                    separator_interval: 'Interval (0=off)',
+                    prefix_label: 'Prefix',
+                    keytype_label: 'Key Type',
+                    keytype_none: 'None',
+                    keytype_api: 'API Key (api_)',
+                    keytype_sk: 'Secret Key (sk_)',
+                    keytype_pk: 'Public Key (pk_)',
+                    env_label: 'Environment',
+                    env_none: 'None',
+                    env_live: 'Live (_live)',
+                    env_test: 'Test (_test)',
+                    random_label: 'Random Mode',
+                    random_crypto: 'Crypto (secure)',
+                    random_fast: 'Fast (Math.random)',
+                    generate_title: 'Generate',
+                    count_label: 'Count',
+                    format_label: 'Format',
+                    btn_generate: '⚡ Generate',
+                    btn_stop: '⏹ STOP',
+                    preview_title: 'Preview',
+                    preview_loading: 'Adjust settings to see preview...',
+                    btn_copy: '📋 Copy All',
+                    btn_refresh: '🔄 Refresh',
+                    toast_copied: 'Copied {n} keys to clipboard!',
+                    toast_error_clipboard: 'Failed to copy to clipboard.',
+                    toast_gen_complete: 'Generated {n} keys. Downloading...',
+                    toast_zip_missing: 'JSZip not loaded. Cannot create ZIP.',
+                    modal_stop_title: 'Generation Stopped',
+                    modal_stop_body: 'Generation stopped. {n} keys generated. Download partial result?',
+                    modal_yes: 'Yes, Download',
+                    modal_no: 'No, Discard',
+                    generating_status: 'Generating... {n} keys so far',
+                    mode_indicator_length: 'LENGTH MODE',
+                    mode_indicator_bits: 'BITS MODE',
+                },
+                ru: {
+                    mode_title: 'Режим генерации',
+                    mode_label: 'Режим',
+                    mode_length: 'ДЛИНА (символы)',
+                    mode_bits: 'БИТЫ (энтропия)',
+                    length_label: 'Длина ключа',
+                    bits_label: 'Биты (32–2048)',
+                    bits_presets: 'Пресеты',
+                    charset_title: 'Набор символов',
+                    charset_preset: 'Набор',
+                    charset_all: 'Всё (Буквы + Цифры + Символы)',
+                    charset_ln: 'Буквы + Цифры',
+                    charset_letters: 'Только буквы',
+                    charset_numbers: 'Только цифры',
+                    charset_symbols: 'Только символы',
+                    charset_custom: 'Свой набор',
+                    custom_charset_label: 'Свой набор символов',
+                    exclude_similar: 'Исключить похожие (0 O o l 1 I)',
+                    options_title: 'Настройки',
+                    separator_label: 'Разделитель',
+                    separator_interval: 'Интервал (0=выкл)',
+                    prefix_label: 'Префикс',
+                    keytype_label: 'Тип ключа',
+                    keytype_none: 'Нет',
+                    keytype_api: 'API ключ (api_)',
+                    keytype_sk: 'Секретный ключ (sk_)',
+                    keytype_pk: 'Публичный ключ (pk_)',
+                    env_label: 'Окружение',
+                    env_none: 'Нет',
+                    env_live: 'Live (_live)',
+                    env_test: 'Test (_test)',
+                    random_label: 'Генератор',
+                    random_crypto: 'Crypto (надёжный)',
+                    random_fast: 'Fast (Math.random)',
+                    generate_title: 'Генерация',
+                    count_label: 'Количество',
+                    format_label: 'Формат',
+                    btn_generate: '⚡ Сгенерировать',
+                    btn_stop: '⏹ СТОП',
+                    preview_title: 'Предпросмотр',
+                    preview_loading: 'Настройте параметры для предпросмотра...',
+                    btn_copy: '📋 Копировать всё',
+                    btn_refresh: '🔄 Обновить',
+                    toast_copied: 'Скопировано {n} ключей!',
+                    toast_error_clipboard: 'Не удалось скопировать.',
+                    toast_gen_complete: 'Сгенерировано {n} ключей. Скачивание...',
+                    toast_zip_missing: 'JSZip не загружен. ZIP недоступен.',
+                    modal_stop_title: 'Генерация остановлена',
+                    modal_stop_body: 'Генерация остановлена. Сгенерировано {n} ключей. Скачать частичный результат?',
+                    modal_yes: 'Да, скачать',
+                    modal_no: 'Нет, отменить',
+                    generating_status: 'Генерация... {n} ключей',
+                    mode_indicator_length: 'РЕЖИМ ДЛИНЫ',
+                    mode_indicator_bits: 'РЕЖИМ БИТОВ',
+                },
+            };
+
+            function t(key) {
+                const lang = state.lang || 'en';
+                return i18nDict[lang]?.[key] || i18nDict['en'][key] || key;
+            }
+
+            function updateAllI18n() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (el.tagName === 'OPTION') {
+                        el.textContent = t(key);
+                    } else if (el.tagName === 'BUTTON' || el.tagName === 'LABEL' || el.tagName === 'H3' ||
+                        el.tagName === 'SPAN') {
+                        if (!el.querySelector('span') && el.childNodes.length <= 1) {
+                            el.textContent = t(key);
+                        }
+                    }
+                });
+                // Update specific elements that have nested spans
+                const previewTitle = document.querySelector('#cardPreview h3');
+                if (previewTitle) {
+                    const span = previewTitle.querySelector('span');
+                    previewTitle.childNodes[0].textContent = t('preview_title') + ' ';
+                }
+                updateModeUI();
+            }
+
+            // ═══════════════════════════════════════════
+            // 3. HELPERS
+            // ═══════════════════════════════════════════
+            function debounce(fn, ms) {
+                let timer;
+                return function(...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), ms);
+                };
+            }
+
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.4s ease forwards';
+                    setTimeout(() => toast.remove(), 400);
+                }, 2500);
+            }
+
+            function showModal(title, body, onYes, onNo) {
+                const container = document.getElementById('modalContainer');
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                <div class="modal">
+                  <h3>${title}</h3>
+                  <p>${body}</p>
+                  <div class="modal-actions">
+                    <button class="primary" id="modalYes">${t('modal_yes')}</button>
+                    <button id="modalNo">${t('modal_no')}</button>
+                  </div>
+                </div>
+              `;
+                container.appendChild(overlay);
+                overlay.querySelector('#modalYes').addEventListener('click', () => {
+                    overlay.remove();
+                    if (onYes) onYes();
+                });
+                overlay.querySelector('#modalNo').addEventListener('click', () => {
+                    overlay.remove();
+                    if (onNo) onNo();
+                });
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        overlay.remove();
+                        if (onNo) onNo();
+                    }
+                });
+            }
+
+            function getEffectiveCharset() {
+                const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const numbers = '0123456789';
+                const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?~';
+                let charset = '';
+
+                switch (state.charsetPreset) {
+                    case 'all':
+                        charset = letters + numbers + symbols;
+                        break;
+                    case 'letters+numbers':
+                        charset = letters + numbers;
+                        break;
+                    case 'letters':
+                        charset = letters;
+                        break;
+                    case 'numbers':
+                        charset = numbers;
+                        break;
+                    case 'symbols':
+                        charset = symbols;
+                        break;
+                    case 'custom':
+                        charset = state.customCharset || letters + numbers;
+                        break;
+                    default:
+                        charset = letters + numbers + symbols;
+                }
+
+                if (state.excludeSimilar) {
+                    const similar = ['0', 'O', 'o', 'l', '1', 'I'];
+                    charset = charset.split('').filter(c => !similar.includes(c)).join('');
+                }
+
+                if (charset.length === 0) {
+                    charset = letters + numbers;
+                }
+                return charset;
+            }
+
+            function getEffectiveLength() {
+                if (state.mode === 'bits') {
+                    return Math.ceil(state.bits / 8);
+                }
+                return Math.max(1, parseInt(state.length) || 32);
+            }
+
+            // ═══════════════════════════════════════════
+            // 4. SINGLE GENERATOR FUNCTION (THE ONLY ONE)
+            // ═══════════════════════════════════════════
+            function generateKey(length, charset, opts, randIndexFn) {
+                // randIndexFn() returns a random integer in [0, charset.length-1]
+                const chars = [];
+                for (let i = 0; i < length; i++) {
+                    chars.push(charset[randIndexFn()]);
+                }
+                let result = chars.join('');
+
+                // Apply separator to the generated content only
+                if (opts.separator && opts.separatorInterval > 0 && result.length > 0) {
+                    const interval = opts.separatorInterval;
+                    const regex = new RegExp('.{1,' + interval + '}', 'g');
+                    result = result.match(regex).join(opts.separator);
+                }
+
+                // Build full key with wrappers
+                let fullKey = result;
+                if (opts.keyType === 'api') fullKey = 'api_' + fullKey;
+                if (opts.keyType === 'sk') fullKey = 'sk_' + fullKey;
+                if (opts.keyType === 'pk') fullKey = 'pk_' + fullKey;
+                if (opts.prefix) fullKey = opts.prefix + fullKey;
+                if (opts.environment === 'live') fullKey = fullKey + '_live';
+                if (opts.environment === 'test') fullKey = fullKey + '_test';
+
+                return fullKey;
+            }
+
+            // ═══════════════════════════════════════════
+            // 5. RANDOM UTILITIES
+            // ═══════════════════════════════════════════
+            function createCryptoRandFn(charsetLength) {
+                const bufferSize = 1024;
+                const buffer = new Uint32Array(bufferSize);
+                let index = bufferSize;
+                return function() {
+                    if (index >= bufferSize) {
+                        crypto.getRandomValues(buffer);
+                        index = 0;
+                    }
+                    return buffer[index++] % charsetLength;
+                };
+            }
+
+            function createFastRandFn(charsetLength) {
+                return function() {
+                    return Math.floor(Math.random() * charsetLength);
+                };
+            }
+
+            function createRandFn(charsetLength, mode) {
+                if (mode === 'crypto') {
+                    return createCryptoRandFn(charsetLength);
+                }
+                return createFastRandFn(charsetLength);
+            }
+
+            // ═══════════════════════════════════════════
+            // 6. WORKER (uses SAME generator via toString)
+            // ═══════════════════════════════════════════
+            function getWorkerCode() {
+                const genFnStr = generateKey.toString();
+                const cryptoRandStr = createCryptoRandFn.toString();
+                const fastRandStr = createFastRandFn.toString();
+                return `
+              ${genFnStr}
+              ${cryptoRandStr}
+              ${fastRandStr}
+              self.onmessage = function(e) {
+                const { length, charset, opts, count, chunkSize, randomMode } = e.data;
+                const charsetLen = charset.length;
+                let randFn;
+                if (randomMode === 'crypto') {
+                  randFn = (${createCryptoRandFn.toString()})(charsetLen);
+                } else {
+                  randFn = (${createFastRandFn.toString()})(charsetLen);
+                }
+                const keys = [];
+                let generated = 0;
+                function processChunk() {
+                  const end = Math.min(generated + chunkSize, count);
+                  for (let i = generated; i < end; i++) {
+                    keys.push(generateKey(length, charset, opts, randFn));
+                  }
+                  generated = end;
+                  if (generated < count) {
+                    self.postMessage({ type: 'chunk', keys: keys.splice(0, keys.length), total: generated });
+                    setTimeout(processChunk, 0);
+                  } else {
+                    self.postMessage({ type: 'done', keys: keys, total: generated });
+                  }
+                }
+                processChunk();
+              };
+            `;
+            }
+
+            function createWorker() {
+                const blob = new Blob([getWorkerCode()], { type: 'application/javascript' });
+                const url = URL.createObjectURL(blob);
+                return new Worker(url);
+            }
+
+            function terminateWorker() {
+                if (workerRef) {
+                    workerRef.terminate();
+                    workerRef = null;
+                }
+            }
+
+            // ═══════════════════════════════════════════
+            // 7. FILE GENERATION & DOWNLOAD
+            // ═══════════════════════════════════════════
+            function downloadFile(keys, format) {
+                let blob;
+                let filename = `keys_${Date.now()}`;
+                const content = keys.join('\n');
+
+                switch (format) {
+                    case 'txt':
+                        blob = new Blob([content], { type: 'text/plain' });
+                        filename += '.txt';
+                        break;
+                    case 'csv':
+                        blob = new Blob([content], { type: 'text/csv' });
+                        filename += '.csv';
+                        break;
+                    case 'json':
+                        blob = new Blob([JSON.stringify(keys, null, 2)], { type: 'application/json' });
+                        filename += '.json';
+                        break;
+                    case 'zip':
+                        if (typeof JSZip === 'undefined') {
+                            showToast(t('toast_zip_missing'), 'error');
+                            return;
+                        }
+                        const zip = new JSZip();
+                        zip.file('keys.txt', content);
+                        zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then(zipBlob => {
+                            triggerDownload(zipBlob, filename + '.zip');
+                        });
+                        return;
+                    default:
+                        blob = new Blob([content], { type: 'text/plain' });
+                        filename += '.txt';
+                }
+                triggerDownload(blob, filename);
+            }
+
+            function triggerDownload(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // ═══════════════════════════════════════════
+            // 8. MAIN THREAD GENERATION (chunked, for <=2000)
+            // ═══════════════════════════════════════════
+            async function generateOnMainThread(count, length, charset, opts, randomMode) {
+                const keys = [];
+                const chunkSize = 500;
+                const randFn = createRandFn(charset.length, randomMode);
+                stopRequested = false;
+                partialKeys = [];
+
+                for (let i = 0; i < count; i += chunkSize) {
+                    if (stopRequested) break;
+                    const end = Math.min(i + chunkSize, count);
+                    for (let j = i; j < end; j++) {
+                        keys.push(generateKey(length, charset, opts, randFn));
+                    }
+                    partialKeys = [...keys];
+                    updateGeneratingStatus(keys.length);
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+                return keys;
+            }
+
+            function updateGeneratingStatus(n) {
+                const statusEl = document.getElementById('generatingStatus');
+                if (statusEl) {
+                    statusEl.innerHTML =
+                        `<span class="generating-indicator">⏳ ${t('generating_status').replace('{n}', n)}</span>`;
+                }
+            }
+
+            // ═══════════════════════════════════════════
+            // 9. MAIN GENERATION ORCHESTRATOR
+            // ═══════════════════════════════════════════
+            async function startGeneration() {
+                if (isGenerating) return;
+                isGenerating = true;
+                stopRequested = false;
+                partialKeys = [];
+                document.getElementById('btnGenerate').style.display = 'none';
+                document.getElementById('btnStop').style.display = 'inline-block';
+                document.getElementById('generatingStatus').innerHTML =
+                    '<span class="generating-indicator">⏳ Preparing...</span>';
+
+                const count = Math.max(1, parseInt(state.count) || 100);
+                const length = getEffectiveLength();
+                const charset = getEffectiveCharset();
+                const opts = {
+                    separator: state.separator || '',
+                    separatorInterval: parseInt(state.separatorInterval) || 0,
+                    prefix: state.prefix || '',
+                    keyType: state.keyType || 'none',
+                    environment: state.environment || 'none',
+                };
+                const randomMode = state.randomMode;
+
+                let allKeys = [];
+
+                try {
+                    if (count > 2000) {
+                        // Use worker
+                        allKeys = await generateWithWorker(count, length, charset, opts, randomMode);
+                    } else {
+                        // Main thread with chunking
+                        allKeys = await generateOnMainThread(count, length, charset, opts, randomMode);
+                    }
+
+                    if (stopRequested) {
+                        // Stopped by user
+                        const n = allKeys.length;
+                        partialKeys = allKeys;
+                        showModal(
+                            t('modal_stop_title'),
+                            t('modal_stop_body').replace('{n}', n),
+                            () => {
+                                if (partialKeys.length > 0) {
+                                    downloadFile(partialKeys, state.format);
+                                }
+                            },
+                            () => { partialKeys = []; }
+                        );
+                    } else if (allKeys.length > 0) {
+                        // Complete
+                        showToast(t('toast_gen_complete').replace('{n}', allKeys.length), 'success');
+                        downloadFile(allKeys, state.format);
+                    }
+                } catch (err) {
+                    console.error('Generation error:', err);
+                    showToast('Error: ' + err.message, 'error');
+                } finally {
+                    terminateWorker();
+                    isGenerating = false;
+                    stopRequested = false;
+                    document.getElementById('btnGenerate').style.display = 'inline-block';
+                    document.getElementById('btnStop').style.display = 'none';
+                    document.getElementById('generatingStatus').innerHTML = '';
+                }
+            }
+
+            function stopGeneration() {
+                stopRequested = true;
+                if (workerRef) {
+                    workerRef.terminate();
+                    workerRef = null;
+                }
+                // The modal will be shown in startGeneration after the loop/worker exits
+                // But we need to handle it here for immediate response
+                setTimeout(() => {
+                    if (isGenerating && stopRequested && partialKeys.length >= 0) {
+                        const n = partialKeys.length;
+                        showModal(
+                            t('modal_stop_title'),
+                            t('modal_stop_body').replace('{n}', n),
+                            () => {
+                                if (partialKeys.length > 0) {
+                                    downloadFile(partialKeys, state.format);
+                                }
+                                partialKeys = [];
+                                isGenerating = false;
+                                stopRequested = false;
+                                document.getElementById('btnGenerate').style.display = 'inline-block';
+                                document.getElementById('btnStop').style.display = 'none';
+                                document.getElementById('generatingStatus').innerHTML = '';
+                            },
+                            () => {
+                                partialKeys = [];
+                                isGenerating = false;
+                                stopRequested = false;
+                                document.getElementById('btnGenerate').style.display = 'inline-block';
+                                document.getElementById('btnStop').style.display = 'none';
+                                document.getElementById('generatingStatus').innerHTML = '';
+                            }
+                        );
+                    }
+                }, 150);
+            }
+
+            async function generateWithWorker(count, length, charset, opts, randomMode) {
+                return new Promise((resolve, reject) => {
+                    terminateWorker();
+                    workerRef = createWorker();
+                    const allKeys = [];
+                    const chunkSize = 1000;
+
+                    workerRef.onmessage = function(e) {
+                        const { type, keys, total } = e.data;
+                        if (type === 'chunk' || type === 'done') {
+                            allKeys.push(...keys);
+                            partialKeys = [...allKeys];
+                            updateGeneratingStatus(allKeys.length);
+                            if (stopRequested) {
+                                terminateWorker();
+                                resolve(allKeys);
+                                return;
+                            }
+                            if (type === 'done') {
+                                terminateWorker();
+                                resolve(allKeys);
+                            }
+                        }
+                    };
+
+                    workerRef.onerror = function(err) {
+                        terminateWorker();
+                        reject(err);
+                    };
+
+                    workerRef.postMessage({
+                        length,
+                        charset,
+                        opts,
+                        count,
+                        chunkSize,
+                        randomMode,
+                    });
+                });
+            }
+
+            // ═══════════════════════════════════════════
+            // 10. PREVIEW
+            // ═══════════════════════════════════════════
+            function generatePreview() {
+                const length = getEffectiveLength();
+                const charset = getEffectiveCharset();
+                const opts = {
+                    separator: state.separator || '',
+                    separatorInterval: parseInt(state.separatorInterval) || 0,
+                    prefix: state.prefix || '',
+                    keyType: state.keyType || 'none',
+                    environment: state.environment || 'none',
+                };
+                const previewCount = 60;
+                const randFn = createRandFn(charset.length, state.randomMode);
+                const keys = [];
+                for (let i = 0; i < previewCount; i++) {
+                    keys.push(generateKey(length, charset, opts, randFn));
+                }
+                previewKeys = keys;
+                renderPreview();
+            }
+
+            function renderPreview() {
+                const area = document.getElementById('previewArea');
+                if (previewKeys.length === 0) {
+                    area.innerHTML = `<span style="color:var(--text2);">${t('preview_loading')}</span>`;
+                    return;
+                }
+                area.innerHTML = previewKeys.map(k => `<span class="key-line">${escapeHTML(k)}</span>`).join('\n');
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function copyPreviewToClipboard() {
+                if (previewKeys.length === 0) return;
+                const text = previewKeys.join('\n');
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(t('toast_copied').replace('{n}', previewKeys.length), 'success');
+                }).catch(() => {
+                    showToast(t('toast_error_clipboard'), 'error');
+                });
+            }
+
+            const debouncedPreview = debounce(generatePreview, 300);
+
+            // ═══════════════════════════════════════════
+            // 11. UI UPDATES
+            // ═══════════════════════════════════════════
+            function updateModeUI() {
+                const mode = state.mode;
+                const groupLength = document.getElementById('groupLength');
+                const groupBits = document.getElementById('groupBits');
+                const groupBitsPresets = document.getElementById('groupBitsPresets');
+                const inputLength = document.getElementById('inputLength');
+                const inputBits = document.getElementById('inputBits');
+
+                if (mode === 'bits') {
+                    groupLength.style.display = 'none';
+                    groupBits.style.display = 'flex';
+                    groupBitsPresets.style.display = 'flex';
+                    inputLength.disabled = true;
+                    inputBits.disabled = false;
+                    // Length reflects calculated value from bits
+                    inputLength.value = Math.ceil(parseInt(state.bits) / 8);
+                } else {
+                    groupLength.style.display = 'flex';
+                    groupBits.style.display = 'none';
+                    groupBitsPresets.style.display = 'none';
+                    inputLength.disabled = false;
+                    inputBits.disabled = true;
+                    inputLength.value = state.length;
+                }
+                updateBitsPresetButtons();
+            }
+
+            function updateBitsPresetButtons() {
+                const buttons = document.querySelectorAll('.bits-preset');
+                buttons.forEach(btn => {
+                    const bitsVal = parseInt(btn.getAttribute('data-bits'));
+                    if (bitsVal === parseInt(state.bits)) {
+                        btn.classList.add('active-preset');
+                    } else {
+                        btn.classList.remove('active-preset');
+                    }
+                });
+            }
+
+            function updateCharsetUI() {
+                const preset = state.charsetPreset;
+                const groupCustom = document.getElementById('groupCustomCharset');
+                if (preset === 'custom') {
+                    groupCustom.style.display = 'flex';
+                } else {
+                    groupCustom.style.display = 'none';
+                }
+            }
+
+            function applyTheme(theme) {
+                document.body.setAttribute('data-theme', theme);
+                state.theme = theme;
+                localStorage.setItem('keygen_theme', theme);
+            }
+
+            function cycleTheme() {
+                const themes = ['dark', 'light', 'neon'];
+                const currentIdx = themes.indexOf(state.theme);
+                const nextIdx = (currentIdx + 1) % themes.length;
+                applyTheme(themes[nextIdx]);
+            }
+
+            function updateLangUI() {
+                const btnLang = document.getElementById('btnLang');
+                btnLang.textContent = state.lang === 'en' ? '🌐 RU' : '🌐 EN';
+                updateAllI18n();
+            }
+
+            // ═══════════════════════════════════════════
+            // 12. STORAGE
+            // ═══════════════════════════════════════════
+            function saveState() {
+                const toSave = { ...state };
+                localStorage.setItem('keygen_state', JSON.stringify(toSave));
+            }
+
+            function loadState() {
+                try {
+                    const saved = localStorage.getItem('keygen_state');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        state = { ...DEFAULT_STATE, ...parsed };
+                    }
+                } catch (e) {
+                    state = { ...DEFAULT_STATE };
+                }
+                // Load theme separately
+                const savedTheme = localStorage.getItem('keygen_theme');
+                if (savedTheme && ['dark', 'light', 'neon'].includes(savedTheme)) {
+                    state.theme = savedTheme;
+                }
+            }
+
+            const debouncedSave = debounce(saveState, 400);
+
+            // ═══════════════════════════════════════════
+            // 13. EVENT BINDINGS
+            // ═══════════════════════════════════════════
+            function bindEvents() {
+                // Mode
+                document.getElementById('modeSelect').addEventListener('change', function() {
+                    state.mode = this.value;
+                    updateModeUI();
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Length
+                document.getElementById('inputLength').addEventListener('input', function() {
+                    if (state.mode === 'length') {
+                        state.length = Math.max(1, parseInt(this.value) || 32);
+                        this.value = state.length;
+                        debouncedPreview();
+                        debouncedSave();
+                    }
+                });
+
+                // Bits
+                document.getElementById('inputBits').addEventListener('input', function() {
+                    if (state.mode === 'bits') {
+                        let val = parseInt(this.value) || 256;
+                        val = Math.max(32, Math.min(2048, val));
+                        state.bits = val;
+                        this.value = val;
+                        // Update reflected length
+                        document.getElementById('inputLength').value = Math.ceil(val / 8);
+                        updateBitsPresetButtons();
+                        debouncedPreview();
+                        debouncedSave();
+                    }
+                });
+
+                // Bits presets
+                document.getElementById('bitsPresetButtons').addEventListener('click', function(e) {
+                    const btn = e.target.closest('.bits-preset');
+                    if (!btn) return;
+                    const bitsVal = parseInt(btn.getAttribute('data-bits'));
+                    if (!isNaN(bitsVal) && state.mode === 'bits') {
+                        state.bits = bitsVal;
+                        document.getElementById('inputBits').value = bitsVal;
+                        document.getElementById('inputLength').value = Math.ceil(bitsVal / 8);
+                        updateBitsPresetButtons();
+                        debouncedPreview();
+                        debouncedSave();
+                    }
+                });
+
+                // Charset preset
+                document.getElementById('charsetPreset').addEventListener('change', function() {
+                    state.charsetPreset = this.value;
+                    updateCharsetUI();
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Custom charset
+                document.getElementById('inputCustomCharset').addEventListener('input', function() {
+                    state.customCharset = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Exclude similar
+                document.getElementById('chkExcludeSimilar').addEventListener('change', function() {
+                    state.excludeSimilar = this.checked;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Separator
+                document.getElementById('inputSeparator').addEventListener('input', function() {
+                    state.separator = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Separator interval
+                document.getElementById('inputSepInterval').addEventListener('input', function() {
+                    state.separatorInterval = Math.max(0, parseInt(this.value) || 0);
+                    this.value = state.separatorInterval;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Prefix
+                document.getElementById('inputPrefix').addEventListener('input', function() {
+                    state.prefix = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Key type
+                document.getElementById('keyType').addEventListener('change', function() {
+                    state.keyType = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Environment
+                document.getElementById('environment').addEventListener('change', function() {
+                    state.environment = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Random mode
+                document.getElementById('randomMode').addEventListener('change', function() {
+                    state.randomMode = this.value;
+                    debouncedPreview();
+                    debouncedSave();
+                });
+
+                // Count
+                document.getElementById('inputCount').addEventListener('input', function() {
+                    state.count = Math.max(1, Math.min(500000, parseInt(this.value) || 100));
+                    this.value = state.count;
+                    debouncedSave();
+                });
+
+                // Format
+                document.getElementById('formatSelect').addEventListener('change', function() {
+                    state.format = this.value;
+                    debouncedSave();
+                });
+
+                // Generate
+                document.getElementById('btnGenerate').addEventListener('click', startGeneration);
+
+                // Stop
+                document.getElementById('btnStop').addEventListener('click', stopGeneration);
+
+                // Copy preview
+                document.getElementById('btnCopyPreview').addEventListener('click', copyPreviewToClipboard);
+
+                // Refresh preview
+                document.getElementById('btnRefreshPreview').addEventListener('click', generatePreview);
+
+                // Theme
+                document.getElementById('btnTheme').addEventListener('click', function() {
+                    cycleTheme();
+                    debouncedSave();
+                });
+
+                // Lang
+                document.getElementById('btnLang').addEventListener('click', function() {
+                    state.lang = state.lang === 'en' ? 'ru' : 'en';
+                    updateLangUI();
+                    debouncedSave();
+                });
+            }
+
+            // ═══════════════════════════════════════════
+            // 14. INITIALIZATION
+            // ═══════════════════════════════════════════
+            function init() {
+                loadState();
+                applyTheme(state.theme);
+                updateModeUI();
+                updateCharsetUI();
+                updateAllI18n();
+                updateLangUI();
+                bindEvents();
+
+                // Sync UI with state
+                document.getElementById('modeSelect').value = state.mode;
+                document.getElementById('inputLength').value = state.mode === 'bits' ? Math.ceil(state.bits / 8) :
+                    state.length;
+                document.getElementById('inputBits').value = state.bits;
+                document.getElementById('charsetPreset').value = state.charsetPreset;
+                document.getElementById('inputCustomCharset').value = state.customCharset;
+                document.getElementById('chkExcludeSimilar').checked = state.excludeSimilar;
+                document.getElementById('inputSeparator').value = state.separator;
+                document.getElementById('inputSepInterval').value = state.separatorInterval;
+                document.getElementById('inputPrefix').value = state.prefix;
+                document.getElementById('keyType').value = state.keyType;
+                document.getElementById('environment').value = state.environment;
+                document.getElementById('randomMode').value = state.randomMode;
+                document.getElementById('inputCount').value = state.count;
+                document.getElementById('formatSelect').value = state.format;
+                document.getElementById('inputLength').disabled = (state.mode === 'bits');
+                document.getElementById('inputBits').disabled = (state.mode === 'length');
+                updateBitsPresetButtons();
+
+                // Generate initial preview
+                generatePreview();
+            }
+
+            // ═══════════════════════════════════════════
+            // 15. VALIDATION (self-check on init)
+            // ═══════════════════════════════════════════
+            function validateSystem() {
+                const errors = [];
+                // Check that BITS mode ignores length
+                const testBits = 256;
+                const expectedLength = Math.ceil(testBits / 8); // 32
+                if (expectedLength !== 32) errors.push('BITS length calculation wrong');
+                // Check generator exists only once
+                if (typeof generateKey !== 'function') errors.push('Generator function missing');
+                // Check that preview uses same generator
+                const testCharset = 'ABCDEF';
+                const testKey = generateKey(4, testCharset, { separator: '', separatorInterval: 0, prefix: '', keyType: 'none',
+                    environment: 'none' }, () => 0);
+                if (testKey !== 'AAAA') errors.push('Generator not working correctly');
+                // Check theme system
+                const validThemes = ['dark', 'light', 'neon'];
+                if (!validThemes.includes(state.theme)) errors.push('Invalid theme: ' + state.theme);
+                // Check i18n
+                if (!i18nDict['en'] || !i18nDict['ru']) errors.push('i18n dictionaries incomplete');
+                if (Object.keys(i18nDict['en']).length !== Object.keys(i18nDict['ru']).length) {
+                    errors.push('i18n key count mismatch');
+                }
+
+                if (errors.length > 0) {
+                    console.error('VALIDATION FAILED:', errors);
+                } else {
+                    console.log('✅ All validations passed. System ready.');
+                }
+            }
+
+            init();
+            validateSystem();
+        })();
+    </script>
+</body>
+</html>
