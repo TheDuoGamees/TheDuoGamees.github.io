@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyForge Pro — API Key Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f0f1a;
+            --surface: #1a1a2e;
+            --surface2: #222240;
+            --border: #333355;
+            --text: #e0e0f0;
+            --text2: #a0a0c0;
+            --text3: #7a7aa0;
+            --accent: #7c5cfc;
+            --accent2: #5c8cfc;
+            --danger: #fc5c5c;
+            --success: #5cfc8c;
+            --warning: #fcd05c;
+            --glow: 0 0 20px rgba(124, 92, 252, 0.3);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: 0.2s ease;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+        [data-theme="light"] {
+            --bg: #f4f4f8;
+            --surface: #ffffff;
+            --surface2: #eaeaef;
+            --border: #d5d5e0;
+            --text: #1a1a2e;
+            --text2: #555570;
+            --text3: #8c8ca0;
+            --accent: #6c4df8;
+            --accent2: #4d8cf8;
+            --danger: #e04040;
+            --success: #2ea84a;
+            --warning: #c89820;
+            --glow: 0 0 12px rgba(108, 77, 248, 0.15);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        [data-theme="neon"] {
+            --bg: #050510;
+            --surface: #0a0a18;
+            --surface2: #0f0f25;
+            --border: #1a3a3a;
+            --text: #e0fff0;
+            --text2: #80c0a0;
+            --text3: #5a8a6a;
+            --accent: #00ffcc;
+            --accent2: #ff00aa;
+            --danger: #ff3355;
+            --success: #00ff88;
+            --warning: #ffcc00;
+            --glow: 0 0 28px rgba(0, 255, 204, 0.4), 0 0 8px rgba(255, 0, 170, 0.3);
+            --shadow: 0 4px 30px rgba(0, 255, 204, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.5;
+        }
+        .app-container { max-width: 900px; margin: 0 auto; padding: 20px 16px 40px; }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 24px;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        button, .btn {
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            transition: all var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        button:hover, .btn:hover:not(:disabled) {
+            background: var(--surface);
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+        button:active, .btn:active:not(:disabled) { transform: scale(0.97); }
+        button:disabled, .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+        button.primary, .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        button.primary:hover, .btn-primary:hover:not(:disabled) { box-shadow: var(--glow); filter: brightness(1.1); }
+        button.danger, .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); font-weight: 600; }
+        button.small, .btn-sm { padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+            letter-spacing: 0.2px;
+        }
+        .form-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; min-width: 100px; flex: 1; }
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group select {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            transition: all var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+        .form-group input:disabled { opacity: 0.4; cursor: not-allowed; }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.84rem;
+        }
+        .toggle-row input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; cursor: pointer; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            cursor: pointer;
+            transition: all var(--transition);
+            user-select: none;
+        }
+        .badge.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: var(--glow); }
+        .preview-area {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            max-height: 320px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            word-break: break-all;
+            white-space: pre-wrap;
+            color: var(--text);
+        }
+        .preview-stat { font-size: 0.8rem; color: var(--text3); margin-top: 6px; }
+        .progress-wrap {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 12px 0;
+            display: none;
+        }
+        .progress-wrap.visible { display: block; }
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 10px;
+            transition: width 0.2s ease;
+            box-shadow: var(--glow);
+            width: 0%;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.visible { display: flex; }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .modal h3 { margin-bottom: 12px; font-size: 1.2rem; }
+        .modal p { color: var(--text2); margin-bottom: 20px; }
+        .modal .btn-row { display: flex; gap: 10px; justify-content: center; }
+        .preset-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+        .active-preset { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; }
+            .form-group { min-width: 100%; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <header>
+            <h1>🔑 KeyForge Pro</h1>
+            <div class="header-actions">
+                <div class="preset-buttons" id="themeBtns">
+                    <button class="small" data-theme-val="dark">🌙 Dark</button>
+                    <button class="small" data-theme-val="light">☀️ Light</button>
+                    <button class="small" data-theme-val="neon">💜 Neon</button>
+                </div>
+                <button id="langToggle" class="small">🌐 RU</button>
+            </div>
+        </header>
+
+        <!-- Mode switching -->
+        <div class="card" style="padding:12px 16px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <span class="badge active" data-mode="standard" id="modeBadgeStandard">🔐 Standard Mode</span>
+                <span class="badge" data-mode="custom" id="modeBadgeCustom">⚙️ Custom Mode</span>
+            </div>
+        </div>
+
+        <!-- Standard settings -->
+        <div class="card" id="standardSettings">
+            <h3 data-i18n="standard_title">Standard Mode Settings</h3>
+            <div class="form-row">
+                <div class="form-group" style="flex:0 0 auto;">
+                    <label data-i18n="bits_label">Bits</label>
+                    <div class="preset-buttons">
+                        <button class="small bits-preset-std active-preset" data-bits="256">256</button>
+                        <button class="small bits-preset-std" data-bits="128">128</button>
+                        <button class="small bits-preset-std" data-bits="512">512</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="prefix_label">Prefix</label>
+                    <input type="text" id="stdPrefix" placeholder="myapp_" maxlength="32">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="keytype_label">Key Type</label>
+                    <input type="text" id="stdKeyType" placeholder="sk" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="env_label">Environment</label>
+                    <input type="text" id="stdEnv" placeholder="prod" maxlength="16">
+                </div>
+            </div>
+            <div class="stat" data-i18n="std_info">Crypto random bytes → URL-safe Base64. No separator.</div>
+        </div>
+
+        <!-- Custom settings -->
+        <div class="card" id="customSettings" style="display:none;">
+            <h3 data-i18n="custom_title">Custom Mode Settings</h3>
+            <div class="form-row">
+                <div class="form-group" style="flex:0 0 auto;min-width:140px;">
+                    <label data-i18n="mode_label">Mode</label>
+                    <select id="customModeSelect">
+                        <option value="length" data-i18n="mode_length">LENGTH (chars)</option>
+                        <option value="bits" data-i18n="mode_bits">BITS (entropy)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="lengthGroup">
+                    <label data-i18n="length_label">Length</label>
+                    <input type="number" id="customLength" value="32" min="4" max="256" step="1">
+                </div>
+                <div class="form-group" id="bitsGroup" style="display:none;">
+                    <label data-i18n="bits_label_custom">Bits</label>
+                    <input type="number" id="customBits" value="256" min="32" max="2048" step="8">
+                </div>
+                <div class="form-group" id="bitsPresetGroup" style="display:none;min-width:200px;">
+                    <label data-i18n="bits_presets">Presets</label>
+                    <div class="preset-buttons">
+                        <button class="small bits-preset-cust" data-bits="32">32</button>
+                        <button class="small bits-preset-cust" data-bits="64">64</button>
+                        <button class="small bits-preset-cust" data-bits="128">128</button>
+                        <button class="small bits-preset-cust active-preset" data-bits="256">256</button>
+                        <button class="small bits-preset-cust" data-bits="512">512</button>
+                        <button class="small bits-preset-cust" data-bits="1024">1024</button>
+                        <button class="small bits-preset-cust" data-bits="2048">2048</button>
+                    </div>
+                </div>
+                <div class="form-group" id="equivDisplay" style="min-width:100px;">
+                    <span class="stat" id="equivText"></span>
+                </div>
+            </div>
+            <div class="form-row" style="margin-top:8px;">
+                <label data-i18n="charset_label" style="min-width:70px;">Charset</label>
+                <div class="toggle-row"><input type="checkbox" id="chkLetters" checked><span data-i18n="letters">Letters</span></div>
+                <div class="toggle-row"><input type="checkbox" id="chkNumbers" checked><span data-i18n="numbers">Numbers</span></div>
+                <div class="toggle-row"><input type="checkbox" id="chkSymbols"><span data-i18n="symbols">Symbols</span></div>
+                <div class="toggle-row"><input type="checkbox" id="chkExcludeSimilar"><span data-i18n="exclude_similar">Exclude similar</span></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="custom_charset_label">Custom chars</label>
+                    <input type="text" id="customCharset" placeholder="e.g. ABCDEF" maxlength="64">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="max-width:120px;">
+                    <label data-i18n="separator_label">Separator</label>
+                    <input type="text" id="separator" value="-" maxlength="4">
+                </div>
+                <div class="form-group" style="max-width:120px;">
+                    <label data-i18n="interval_label">Interval</label>
+                    <input type="number" id="interval" value="8" min="1" max="64">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="prefix_label">Prefix</label>
+                    <input type="text" id="custPrefix" placeholder="key_" maxlength="32">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="keytype_label">Type</label>
+                    <input type="text" id="custKeyType" placeholder="api" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="env_label">Env</label>
+                    <input type="text" id="custEnv" placeholder="prod" maxlength="16">
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="card">
+            <h3>
+                <span data-i18n="preview_title">👁️ Live Preview</span>
+                <span style="font-weight:400;color:var(--text2);font-size:0.8rem;">(auto‑updates)</span>
+            </h3>
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;">
+                <button id="copyAllPreview" class="small" data-i18n="copy_all">📋 Copy All</button>
+                <span class="stat" data-i18n="preview_count_label">Show:</span>
+                <input type="number" id="previewCount" value="60" min="10" max="100" step="10" style="width:70px;">
+            </div>
+            <div class="preview-area" id="previewArea"></div>
+            <div class="preview-stat" id="previewStat"></div>
+        </div>
+
+        <!-- Generate -->
+        <div class="card">
+            <h3 data-i18n="generate_title">📦 Batch Generation</h3>
+            <div class="form-row">
+                <div class="form-group" style="max-width:140px;">
+                    <label data-i18n="count_label">Count</label>
+                    <input type="number" id="genCount" value="100" min="1" max="1000000" step="1">
+                </div>
+                <div class="form-group" style="max-width:160px;">
+                    <label data-i18n="format_label">Format</label>
+                    <select id="genFormat">
+                        <option value="txt">TXT</option>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="zip">ZIP</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:0 0 auto;align-self:flex-end;">
+                    <button class="primary" id="btnGenerate" data-i18n="generate_btn">⚡ Generate</button>
+                    <button class="danger" id="btnStop" disabled data-i18n="stop_btn">⛔ Stop</button>
+                </div>
+            </div>
+            <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="stat" id="progressText"></div>
+        </div>
+    </div>
+
+    <!-- Stop modal -->
+    <div class="modal-overlay" id="stopModalOverlay">
+        <div class="modal">
+            <h3 data-i18n="stop_modal_title">⛔ Generation Stopped</h3>
+            <p data-i18n="stop_modal_desc">Download partial results?</p>
+            <div class="btn-row">
+                <button class="primary" id="btnDownloadPartial" data-i18n="download_partial_btn">📥 Download Partial</button>
+                <button id="btnDiscardPartial" data-i18n="discard_btn">🗑️ Discard</button>
+            </div>
+        </div>
+    </div>
+  <script>
+(function() {
+    // ═══════════════════════════════════════
+    // 1. I18N
+    // ═══════════════════════════════════════
+    const i18n = {
+        en: {
+            standard_title: 'Standard Mode Settings',
+            custom_title: 'Custom Mode Settings',
+            bits_label: 'Bits',
+            bits_label_custom: 'Bits',
+            bits_presets: 'Presets',
+            prefix_label: 'Prefix',
+            keytype_label: 'Key Type',
+            env_label: 'Environment',
+            std_info: 'Crypto random bytes → URL-safe Base64. No separator.',
+            mode_label: 'Mode',
+            mode_length: 'LENGTH (chars)',
+            mode_bits: 'BITS (entropy)',
+            length_label: 'Length',
+            charset_label: 'Charset',
+            letters: 'Letters',
+            numbers: 'Numbers',
+            symbols: 'Symbols',
+            exclude_similar: 'Exclude similar',
+            custom_charset_label: 'Custom chars',
+            separator_label: 'Separator',
+            interval_label: 'Interval',
+            preview_title: '👁️ Live Preview',
+            copy_all: '📋 Copy All',
+            preview_count_label: 'Show:',
+            generate_title: '📦 Batch Generation',
+            count_label: 'Count',
+            format_label: 'Format',
+            generate_btn: '⚡ Generate',
+            stop_btn: '⛔ Stop',
+            stop_modal_title: '⛔ Generation Stopped',
+            stop_modal_desc: 'Download partial results?',
+            download_partial_btn: '📥 Download Partial',
+            discard_btn: '🗑️ Discard',
+            copied: 'Copied!',
+            generating: 'Generating…',
+            completed: 'Done: {count} keys.',
+            stopped_early: 'Stopped: {count} keys.',
+            preview_keys: '{count} preview keys',
+            random_label: 'Random Mode',
+            random_crypto: 'Crypto (secure)',
+            random_fast: 'Fast (Math.random)',
+        },
+        ru: {
+            standard_title: 'Стандартный режим',
+            custom_title: 'Пользовательский режим',
+            bits_label: 'Биты',
+            bits_label_custom: 'Биты',
+            bits_presets: 'Пресеты',
+            prefix_label: 'Префикс',
+            keytype_label: 'Тип ключа',
+            env_label: 'Окружение',
+            std_info: 'Криптостойкие случайные байты → Base64 URL-safe. Без разделителей.',
+            mode_label: 'Режим',
+            mode_length: 'ДЛИНА (символы)',
+            mode_bits: 'БИТЫ (энтропия)',
+            length_label: 'Длина',
+            charset_label: 'Алфавит',
+            letters: 'Буквы',
+            numbers: 'Цифры',
+            symbols: 'Символы',
+            exclude_similar: 'Исключить похожие',
+            custom_charset_label: 'Свой набор',
+            separator_label: 'Разделитель',
+            interval_label: 'Интервал',
+            preview_title: '👁️ Предпросмотр',
+            copy_all: '📋 Копировать',
+            preview_count_label: 'Показать:',
+            generate_title: '📦 Генерация',
+            count_label: 'Количество',
+            format_label: 'Формат',
+            generate_btn: '⚡ Сгенерировать',
+            stop_btn: '⛔ Стоп',
+            stop_modal_title: '⛔ Остановлено',
+            stop_modal_desc: 'Скачать частичный результат?',
+            download_partial_btn: '📥 Скачать',
+            discard_btn: '🗑️ Отмена',
+            copied: 'Скопировано!',
+            generating: 'Генерация…',
+            completed: 'Готово: {count} ключей.',
+            stopped_early: 'Остановлено: {count} ключей.',
+            preview_keys: '{count} ключей',
+            random_label: 'Генератор',
+            random_crypto: 'Crypto (стойкий)',
+            random_fast: 'Быстрый (Math.random)',
+        }
+    };
+
+    function t(key, opts) {
+        const lang = (state && state.language) || 'en';
+        let str = (i18n[lang] && i18n[lang][key]) || i18n['en'][key] || key;
+        if (opts) for (const [k, v] of Object.entries(opts)) str = str.replace(`{${k}}`, v);
+        return str;
+    }
+
+    // ═══════════════════════════════════════
+    // 2. STATE
+    // ═══════════════════════════════════════
+    const state = {
+        mode: 'standard',            // 'standard'|'custom'
+        standardBits: 256,
+        standardPrefix: '',
+        standardKeyType: '',
+        standardEnv: '',
+        customMode: 'length',        // 'length'|'bits'
+        customLength: 32,
+        customBits: 256,
+        customCharsetLetters: true,
+        customCharsetNumbers: true,
+        customCharsetSymbols: false,
+        customCharsetCustom: '',
+        customExcludeSimilar: false,
+        customSeparator: '-',
+        customInterval: 8,
+        customPrefix: '',
+        customKeyType: '',
+        customEnv: '',
+        randomMode: 'crypto',        // 'crypto'|'fast'
+        genCount: 100,
+        genFormat: 'txt',
+        previewCount: 60,
+        theme: 'dark',
+        language: 'en',
+        // runtime
+        isGenerating: false,
+        worker: null,
+        stopRequested: false,
+        partialKeys: [],
+    };
+
+    // ═══════════════════════════════════════
+    // 3. DOM CACHE
+    // ═══════════════════════════════════════
+    const $ = {};
+    function cacheDom() {
+        $.standardSettings = document.getElementById('standardSettings');
+        $.customSettings = document.getElementById('customSettings');
+        $.modeBadgeStandard = document.getElementById('modeBadgeStandard');
+        $.modeBadgeCustom = document.getElementById('modeBadgeCustom');
+        $.stdPrefix = document.getElementById('stdPrefix');
+        $.stdKeyType = document.getElementById('stdKeyType');
+        $.stdEnv = document.getElementById('stdEnv');
+        $.customModeSelect = document.getElementById('customModeSelect');
+        $.customLength = document.getElementById('customLength');
+        $.customBits = document.getElementById('customBits');
+        $.lengthGroup = document.getElementById('lengthGroup');
+        $.bitsGroup = document.getElementById('bitsGroup');
+        $.bitsPresetGroup = document.getElementById('bitsPresetGroup');
+        $.equivText = document.getElementById('equivText');
+        $.chkLetters = document.getElementById('chkLetters');
+        $.chkNumbers = document.getElementById('chkNumbers');
+        $.chkSymbols = document.getElementById('chkSymbols');
+        $.chkExcludeSimilar = document.getElementById('chkExcludeSimilar');
+        $.customCharset = document.getElementById('customCharset');
+        $.separator = document.getElementById('separator');
+        $.interval = document.getElementById('interval');
+        $.custPrefix = document.getElementById('custPrefix');
+        $.custKeyType = document.getElementById('custKeyType');
+        $.custEnv = document.getElementById('custEnv');
+        $.previewCount = document.getElementById('previewCount');
+        $.previewArea = document.getElementById('previewArea');
+        $.previewStat = document.getElementById('previewStat');
+        $.genCount = document.getElementById('genCount');
+        $.genFormat = document.getElementById('genFormat');
+        $.btnGenerate = document.getElementById('btnGenerate');
+        $.btnStop = document.getElementById('btnStop');
+        $.progressWrap = document.getElementById('progressWrap');
+        $.progressBar = document.getElementById('progressBar');
+        $.progressText = document.getElementById('progressText');
+        $.stopModalOverlay = document.getElementById('stopModalOverlay');
+        $.btnDownloadPartial = document.getElementById('btnDownloadPartial');
+        $.btnDiscardPartial = document.getElementById('btnDiscardPartial');
+        $.copyAllPreview = document.getElementById('copyAllPreview');
+        $.langToggle = document.getElementById('langToggle');
+        $.themeBtns = document.getElementById('themeBtns');
+    }
+
+    // ═══════════════════════════════════════
+    // 4. HELPERS
+    // ═══════════════════════════════════════
+    const SIMILAR_CHARS = new Set(['0','O','o','I','l','1']);
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const NUMBERS = '0123456789';
+    const SYMBOLS = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`';
+
+    function buildCharset(settings) {
+        let chars = '';
+        if (settings.customCharsetLetters) chars += LETTERS;
+        if (settings.customCharsetNumbers) chars += NUMBERS;
+        if (settings.customCharsetSymbols) chars += SYMBOLS;
+        if (settings.customCharsetCustom) chars += settings.customCharsetCustom;
+        if (settings.customExcludeSimilar) {
+            chars = [...new Set(chars)].filter(c => !SIMILAR_CHARS.has(c)).join('');
+        } else {
+            chars = [...new Set(chars)].join('');
+        }
+        if (!chars) throw new Error('Charset is empty');
+        return chars;
+    }
+
+    function getRandomBytes(n) {
+        const arr = new Uint8Array(n);
+        crypto.getRandomValues(arr);
+        return arr;
+    }
+
+    function urlSafeBase64(bytes) {
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+    // Unbiased crypto rand index
+    function createCryptoRandIndex(charsetLength) {
+        const max = Math.floor(0xFFFFFFFF / charsetLength) * charsetLength;
+        const buffer = new Uint32Array(1024);
+        let index = 1024;
+        return function() {
+            let rand;
+            do {
+                if (index >= 1024) {
+                    crypto.getRandomValues(buffer);
+                    index = 0;
+                }
+                rand = buffer[index++];
+            } while (rand >= max);
+            return rand % charsetLength;
+        };
+    }
+
+    function createFastRandIndex(charsetLength) {
+        return () => Math.floor(Math.random() * charsetLength);
+    }
+
+    // ═══════════════════════════════════════
+    // 5. SINGLE GENERATOR
+    // ═══════════════════════════════════════
+    function generateKey(config, randIndexFn) {
+        if (config.mode === 'standard') {
+            const byteLen = config.standardBits / 8;
+            const bytes = getRandomBytes(byteLen);
+            const encoded = urlSafeBase64(bytes);
+            const parts = [];
+            if (config.standardPrefix) parts.push(config.standardPrefix);
+            if (config.standardKeyType) parts.push(config.standardKeyType);
+            if (config.standardEnv) parts.push(config.standardEnv);
+            parts.push(encoded);
+            return parts.join('');
+        } else {
+            // Custom mode
+            const charset = buildCharset(config);
+            const charsetLength = charset.length;
+            let length;
+            if (config.customMode === 'bits') {
+                // entropy: length = ceil(bits / log2(charsetLength))
+                length = Math.ceil(config.customBits / Math.log2(charsetLength));
+            } else {
+                length = config.customLength;
+            }
+const chars = [];
+            for (let i = 0; i < length; i++) {
+                chars.push(charset[randIndexFn()]);
+            }
+            let raw = chars.join('');
+            // Separator only in LENGTH mode
+            if (config.customMode === 'length') {
+                const sep = config.customSeparator || '';
+                const interval = (config.customInterval > 0) ? config.customInterval : length + 1;
+                if (sep && interval < raw.length) {
+                    const chunks = [];
+                    for (let i = 0; i < raw.length; i += interval) {
+                        chunks.push(raw.slice(i, i + interval));
+                    }
+                    raw = chunks.join(sep);
+                }
+            }
+            const parts = [];
+            if (config.customPrefix) parts.push(config.customPrefix);
+            if (config.customKeyType) parts.push(config.customKeyType);
+            if (config.customEnv) parts.push(config.customEnv);
+            parts.push(raw);
+            return parts.join('');
+        }
+    }
+
+    function getRandIndexFn(charsetLength, mode) {
+        return mode === 'crypto' ? createCryptoRandIndex(charsetLength) : createFastRandIndex(charsetLength);
+    }
+
+    function getSettingsSnapshot() {
+        return {
+            mode: state.mode,
+            standardBits: state.standardBits,
+            standardPrefix: state.standardPrefix,
+            standardKeyType: state.standardKeyType,
+            standardEnv: state.standardEnv,
+            customMode: state.customMode,
+            customLength: state.customLength,
+            customBits: state.customBits,
+            customCharsetLetters: state.customCharsetLetters,
+            customCharsetNumbers: state.customCharsetNumbers,
+            customCharsetSymbols: state.customCharsetSymbols,
+            customCharsetCustom: state.customCharsetCustom,
+            customExcludeSimilar: state.customExcludeSimilar,
+            customSeparator: state.customSeparator,
+            customInterval: state.customInterval,
+            customPrefix: state.customPrefix,
+            customKeyType: state.customKeyType,
+            customEnv: state.customEnv,
+            randomMode: state.randomMode,
+        };
+    }
+
+    // ═══════════════════════════════════════
+    // 6. WORKER (shared generator string)
+    // ═══════════════════════════════════════
+    function buildWorkerScript() {
+        const genFnStr = generateKey.toString();
+        const buildCharsetFnStr = buildCharset.toString();
+        const similarArr = JSON.stringify([...SIMILAR_CHARS]);
+        const lettersStr = JSON.stringify(LETTERS);
+        const numbersStr = JSON.stringify(NUMBERS);
+        const symbolsStr = JSON.stringify(SYMBOLS);
+        return `
+const SIMILAR_CHARS = new Set(${similarArr});
+const LETTERS = ${lettersStr};
+const NUMBERS = ${numbersStr};
+const SYMBOLS = ${symbolsStr};
+const buildCharset = ${buildCharsetFnStr};
+const getRandomBytes = (n) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return a; };
+const urlSafeBase64 = (b) => { let s=''; for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]); return btoa(s).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=/g,''); };
+const createUnbiasedRandIndex = (len) => {
+    const max = Math.floor(0xFFFFFFFF / len) * len;
+    const buf = new Uint32Array(1024); let idx = 1024;
+    return () => { let r; do { if (idx >= 1024) { crypto.getRandomValues(buf); idx = 0; } r = buf[idx++]; } while (r >= max); return r % len; };
+};
+const createFastRandIndex = (len) => () => Math.floor(Math.random() * len);
+const generateKey = ${genFnStr};
+let stopFlag = false;
+self.onmessage = function(e) {
+    if (e.data.type === 'stop') { stopFlag = true; return; }
+    if (e.data.type === 'generate') {
+        stopFlag = false;
+        const cfg = e.data.config;
+        const total = e.data.count;
+        const chunkSize = 1000;
+        const allKeys = [];
+        let randFn = null;
+        if (cfg.mode === 'custom') {
+            const charset = buildCharset(cfg);
+            const charsetLen = charset.length;
+            randFn = cfg.randomMode === 'crypto' ? createUnbiasedRandIndex(charsetLen) : createFastRandIndex(charsetLen);
+        }
+        for (let i = 0; i < total; i += chunkSize) {
+            if (stopFlag) {
+                self.postMessage({ type: 'stopped', keys: allKeys, progress: Math.round((i / total) * 100) });
+                return;
+            }
+            const batch = Math.min(chunkSize, total - i);
+            for (let j = 0; j < batch; j++) {
+                allKeys.push(generateKey(cfg, randFn));
+            }
+            self.postMessage({ type: 'progress', progress: Math.round(((i + batch) / total) * 100), count: allKeys.length });
+        }
+        self.postMessage({ type: 'complete', keys: allKeys, progress: 100 });
+    }
+};`;
+    }
+
+    function createWorker() {
+        const blob = new Blob([buildWorkerScript()], { type: 'application/javascript' });
+        return new Worker(URL.createObjectURL(blob));
+    }
+
+    // ═══════════════════════════════════════
+    // 7. FILE OUTPUT
+    // ═══════════════════════════════════════
+    function downloadKeys(keys, format, count) {
+        const baseName = `keys${count}`;
+        const content = keys.join('\n') + '\n';
+        let blob, filename;
+        switch (format) {
+            case 'txt':
+                blob = new Blob([content], { type: 'text/plain' });
+                filename = `${baseName}.txt`;
+                break;
+            case 'csv':
+                blob = new Blob([content], { type: 'text/csv' });
+                filename = `${baseName}.csv`;
+                break;
+            case 'json':
+                blob = new Blob([JSON.stringify(keys, null, 2)], { type: 'application/json' });
+                filename = `${baseName}.json`;
+                break;
+            case 'zip':
+                if (typeof JSZip !== 'undefined') {
+                    const zip = new JSZip();
+                    zip.file(`${baseName}.txt`, content);
+                    zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then(zipBlob => {
+                        triggerDownload(zipBlob, `${baseName}.zip`);
+                    });
+                    return;
+                }
+                // fallback to TXT
+                blob = new Blob([content], { type: 'text/plain' });
+                filename = `${baseName}.txt`;
+                break;
+            default:
+                blob = new Blob([content], { type: 'text/plain' });
+                filename = `${baseName}.txt`;
+        }
+        triggerDownload(blob, filename);
+    }
+
+    function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ═══════════════════════════════════════
+    // 8. UI LOGIC
+    // ═══════════════════════════════════════
+    function setMode(mode) {
+        state.mode = mode;
+        $.modeBadgeStandard.classList.toggle('active', mode === 'standard');
+        $.modeBadgeCustom.classList.toggle('active', mode === 'custom');
+        $.standardSettings.style.display = mode === 'standard' ? '' : 'none';
+        $.customSettings.style.display = mode === 'custom' ? '' : 'none';
+        schedulePreview();
+        saveState();
+    }
+
+    function setCustomMode(cmode) {
+        state.customMode = cmode;
+        const isLength = cmode === 'length';
+        $.lengthGroup.style.display = isLength ? '' : 'none';
+        $.bitsGroup.style.display = isLength ? 'none' : '';
+        $.bitsPresetGroup.style.display = isLength ? 'none' : '';
+        updateEquivalents();
+        schedulePreview();
+        saveState();
+    }
+
+    function updateEquivalents() {
+        if (state.customMode === 'bits') {
+            const charset = buildCharset(state);
+            const length = Math.ceil(state.customBits / Math.log2(charset.length));
+            $.equivText.textContent = `≈ ${length} chars`;
+        } else {
+            $.equivText.textContent = '';
+        }
+    }
+
+    function setStandardBits(bits) {
+        state.standardBits = bits;
+        document.querySelectorAll('.bits-preset-std').forEach(b => {
+            b.classList.toggle('active-preset', parseInt(b.dataset.bits) === bits);
+        });
+        schedulePreview();
+        saveState();
+    }
+
+    function setCustomBits(bits) {
+        state.customBits = bits;
+        document.querySelectorAll('.bits-preset-cust').forEach(b => {
+            b.classList.toggle('active-preset', parseInt(b.dataset.bits) === bits);
+        });
+        $.customBits.value = bits;
+        updateEquivalents();
+        schedulePreview();
+        saveState();
+    }
+
+    function setTheme(theme) {
+        state.theme = theme;
+        document.body.setAttribute('data-theme', theme);
+        saveState();
+    }
+
+    function toggleLanguage() {
+        state.language = state.language === 'en' ? 'ru' : 'en';
+        $.langToggle.textContent = state.language === 'en' ? '🌐 RU' : '🌐 EN';
+        refreshI18n();
+        schedulePreview();
+        saveState();
+    }
+
+    function refreshI18n() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (el.tagName === 'INPUT' && el.type === 'text') return;
+            if (['BUTTON','SPAN','DIV','LABEL','OPTION'].includes(el.tagName)) {
+                const translated = t(key);
+                if (translated && !translated.includes('{')) el.textContent = translated;
+            }
+        });
+        updatePreview();
+    }
+
+    function updateUIForGeneration(isGenerating) {
+        state.isGenerating = isGenerating;
+        $.btnGenerate.disabled = isGenerating;
+        $.btnStop.disabled = !isGenerating;
+        $.progressWrap.classList.toggle('visible', isGenerating);
+        if (!isGenerating) $.progressBar.style.width = '0%';
+    }
+
+    function showStopModal() {
+        $.stopModalOverlay.classList.add('visible');
+    }
+
+    function hideStopModal() {
+        $.stopModalOverlay.classList.remove('visible');
+    }
+
+    // ═══════════════════════════════════════
+    // 9. PREVIEW
+    // ═══════════════════════════════════════
+    let previewTimeout = null;
+
+    function updatePreview() {
+        const cfg = getSettingsSnapshot();
+        const count = Math.min(Math.max(state.previewCount, 10), 100);
+        const keys = [];
+        try {
+            if (cfg.mode === 'custom') {
+                const charset = buildCharset(cfg);
+                const randFn = getRandIndexFn(charset.length, cfg.randomMode);
+                for (let i = 0; i < count; i++) keys.push(generateKey(cfg, randFn));
+            } else {
+                for (let i = 0; i < count; i++) keys.push(generateKey(cfg, null));
+            }
+            $.previewArea.textContent = keys.join('\n');
+            $.previewStat.textContent = t('preview_keys', { count: keys.length });
+        } catch (err) {
+            $.previewArea.textContent = '⚠️ ' + err.message;
+        }
+    }
+
+    function schedulePreview() {
+        if (previewTimeout) clearTimeout(previewTimeout);
+        previewTimeout = setTimeout(updatePreview, 200);
+    }
+
+    // ═══════════════════════════════════════
+    // 10. GENERATION ORCHESTRATION
+    // ═══════════════════════════════════════
+    function startGeneration() {
+        if (state.isGenerating) return;
+        const count = Math.max(1, Math.min(1000000, parseInt(state.genCount) || 100));
+        state.genCount = count;
+        state.stopRequested = false;
+        state.partialKeys = [];
+        updateUIForGeneration(true);
+        $.progressText.textContent = t('generating');
+        $.progressBar.style.width = '0%';
+
+        const cfg = getSettingsSnapshot();
+        const worker = createWorker();
+        state.worker = worker;
+
+        worker.onmessage = function(e) {
+            const msg = e.data;
+            if (msg.type === 'progress') {
+                $.progressBar.style.width = msg.progress + '%';
+                $.progressText.textContent = `${msg.count.toLocaleString()} / ${count.toLocaleString()}`;
+            } else if (msg.type === 'complete') {
+                finishGeneration(msg.keys, count, false);
+            } else if (msg.type === 'stopped') {
+                finishGeneration(msg.keys, msg.keys.length, true);
+            }
+        };
+
+        worker.onerror = function(err) {
+            console.error('Worker error:', err);
+            updateUIForGeneration(false);
+            $.progressText.textContent = 'Error during generation.';
+            if (state.worker) { state.worker.terminate(); state.worker = null; }
+        };
+
+        worker.postMessage({ type: 'generate', config: cfg, count });
+    }
+
+    function stopGeneration() {
+        if (!state.isGenerating || !state.worker) return;
+        state.stopRequested = true;
+        state.worker.postMessage({ type: 'stop' });
+    }
+
+    function finishGeneration(keys, actualCount, wasStopped) {
+        updateUIForGeneration(false);
+        if (state.worker) { state.worker.terminate(); state.worker = null; }
+        if (wasStopped && keys.length > 0) {
+            state.partialKeys = keys;
+            showStopModal();
+        } else if (wasStopped) {
+            $.progressText.textContent = t('stopped_early', { count: 0 });
+        } else {
+            $.progressText.textContent = t('completed', { count: actualCount });
+            downloadKeys(keys, state.genFormat, actualCount);
+        }
+        saveState();
+    }
+
+    function downloadPartial() {
+        const keys = state.partialKeys;
+        hideStopModal();
+        if (keys && keys.length > 0) {
+            downloadKeys(keys, state.genFormat, keys.length);
+            $.progressText.textContent = t('stopped_early', { count: keys.length });
+        }
+        state.partialKeys = [];
+    }
+
+    function discardPartial() {
+        hideStopModal();
+        $.progressText.textContent = t('stopped_early', { count: state.partialKeys.length || 0 });
+        state.partialKeys = [];
+    }
+
+    // ═══════════════════════════════════════
+    // 11. STORAGE
+    // ═══════════════════════════════════════
+    const STORAGE_KEY = 'keyforge_pro_v4';
+
+    function saveState() {
+        const toSave = {
+            mode: state.mode,
+            standardBits: state.standardBits,
+            standardPrefix: state.standardPrefix,
+            standardKeyType: state.standardKeyType,
+            standardEnv: state.standardEnv,
+            customMode: state.customMode,
+            customLength: state.customLength,
+            customBits: state.customBits,
+            customCharsetLetters: state.customCharsetLetters,
+            customCharsetNumbers: state.customCharsetNumbers,
+            customCharsetSymbols: state.customCharsetSymbols,
+            customCharsetCustom: state.customCharsetCustom,
+            customExcludeSimilar: state.customExcludeSimilar,
+            customSeparator: state.customSeparator,
+            customInterval: state.customInterval,
+            customPrefix: state.customPrefix,
+            customKeyType: state.customKeyType,
+            customEnv: state.customEnv,
+            randomMode: state.randomMode,
+            genCount: state.genCount,
+            genFormat: state.genFormat,
+            previewCount: state.previewCount,
+            theme: state.theme,
+            language: state.language,
+        };
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch (e) {}
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const saved = JSON.parse(raw);
+                if (saved.mode) state.mode = saved.mode;
+                if (saved.standardBits) state.standardBits = saved.standardBits;
+                if (saved.standardPrefix !== undefined) state.standardPrefix = saved.standardPrefix;
+                if (saved.standardKeyType !== undefined) state.standardKeyType = saved.standardKeyType;
+                if (saved.standardEnv !== undefined) state.standardEnv = saved.standardEnv;
+                if (saved.customMode) state.customMode = saved.customMode;
+                if (saved.customLength) state.customLength = saved.customLength;
+                if (saved.customBits) state.customBits = saved.customBits;
+                if (saved.customCharsetLetters !== undefined) state.customCharsetLetters = saved.customCharsetLetters;
+                if (saved.customCharsetNumbers !== undefined) state.customCharsetNumbers = saved.customCharsetNumbers;
+                if (saved.customCharsetSymbols !== undefined) state.customCharsetSymbols = saved.customCharsetSymbols;
+                if (saved.customCharsetCustom !== undefined) state.customCharsetCustom = saved.customCharsetCustom;
+                if (saved.customExcludeSimilar !== undefined) state.customExcludeSimilar = saved.customExcludeSimilar;
+                if (saved.customSeparator !== undefined) state.customSeparator = saved.customSeparator;
+                if (saved.customInterval) state.customInterval = saved.customInterval;
+                if (saved.customPrefix !== undefined) state.customPrefix = saved.customPrefix;
+                if (saved.customKeyType !== undefined) state.customKeyType = saved.customKeyType;
+                if (saved.customEnv !== undefined) state.customEnv = saved.customEnv;
+                if (saved.randomMode) state.randomMode = saved.randomMode;
+                if (saved.genCount) state.genCount = saved.genCount;
+                if (saved.genFormat) state.genFormat = saved.genFormat;
+                if (saved.previewCount) state.previewCount = saved.previewCount;
+                if (saved.theme) state.theme = saved.theme;
+                if (saved.language) state.language = saved.language;
+            }
+        } catch (e) {}
+    }
+
+    // ═══════════════════════════════════════
+    // 12. EVENTS
+    // ═══════════════════════════════════════
+    function bindEvents() {
+        $.modeBadgeStandard.addEventListener('click', () => setMode('standard'));
+        $.modeBadgeCustom.addEventListener('click', () => setMode('custom'));
+
+        document.querySelectorAll('.bits-preset-std').forEach(btn => {
+            btn.addEventListener('click', () => setStandardBits(parseInt(btn.dataset.bits)));
+        });
+
+        $.customModeSelect.addEventListener('change', function() {
+            setCustomMode(this.value);
+        });
+
+        document.querySelectorAll('.bits-preset-cust').forEach(btn => {
+            btn.addEventListener('click', () => setCustomBits(parseInt(btn.dataset.bits)));
+        });
+
+        $.customBits.addEventListener('input', function() {
+            let val = parseInt(this.value) || 256;
+            val = Math.max(32, Math.min(2048, val));
+            state.customBits = val;
+            this.value = val;
+            setCustomBits(val);
+            updateEquivalents();
+            schedulePreview();
+            saveState();
+        });
+
+        $.customLength.addEventListener('input', function() {
+            state.customLength = Math.max(4, Math.min(256, parseInt(this.value) || 32));
+            schedulePreview();
+            saveState();
+        });
+
+        [$.stdPrefix, $.stdKeyType, $.stdEnv, $.custPrefix, $.custKeyType, $.custEnv, $.separator, $.interval, $.customCharset].forEach(el => {
+            el.addEventListener('input', () => {
+                state.standardPrefix = $.stdPrefix.value;
+                state.standardKeyType = $.stdKeyType.value;
+                state.standardEnv = $.stdEnv.value;
+                state.customPrefix = $.custPrefix.value;
+                state.customKeyType = $.custKeyType.value;
+                state.customEnv = $.custEnv.value;
+                state.customSeparator = $.separator.value;
+                state.customInterval = parseInt($.interval.value) || 8;
+                state.customCharsetCustom = $.customCharset.value;
+                schedulePreview();
+                saveState();
+            });
+        });
+
+        $.chkLetters.addEventListener('change', function() { state.customCharsetLetters = this.checked; schedulePreview(); saveState(); });
+        $.chkNumbers.addEventListener('change', function() { state.customCharsetNumbers = this.checked; schedulePreview(); saveState(); });
+        $.chkSymbols.addEventListener('change', function() { state.customCharsetSymbols = this.checked; schedulePreview(); saveState(); });
+        $.chkExcludeSimilar.addEventListener('change', function() { state.customExcludeSimilar = this.checked; schedulePreview(); saveState(); });
+
+        $.previewCount.addEventListener('input', function() {
+            state.previewCount = Math.max(10, Math.min(100, parseInt(this.value) || 60));
+            schedulePreview();
+            saveState();
+        });
+
+        $.genCount.addEventListener('input', function() {
+            state.genCount = Math.max(1, Math.min(1000000, parseInt(this.value) || 100));
+            saveState();
+        });
+        $.genFormat.addEventListener('change', function() {
+            state.genFormat = this.value;
+            saveState();
+        });
+
+        $.btnGenerate.addEventListener('click', startGeneration);
+        $.btnStop.addEventListener('click', stopGeneration);
+
+        $.copyAllPreview.addEventListener('click', () => {
+            const text = $.previewArea.textContent;
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = $.copyAllPreview.textContent;
+                $.copyAllPreview.textContent = '✅ ' + t('copied');
+                setTimeout(() => { $.copyAllPreview.textContent = orig; }, 1500);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                const orig = $.copyAllPreview.textContent;
+                $.copyAllPreview.textContent = '✅ ' + t('copied');
+                setTimeout(() => { $.copyAllPreview.textContent = orig; }, 1500);
+            });
+        });
+
+        $.btnDownloadPartial.addEventListener('click', downloadPartial);
+        $.btnDiscardPartial.addEventListener('click', discardPartial);
+        $.stopModalOverlay.addEventListener('click', e => { if (e.target === $.stopModalOverlay) discardPartial(); });
+
+        $.langToggle.addEventListener('click', toggleLanguage);
+
+        document.querySelectorAll('#themeBtns [data-theme-val]').forEach(btn => {
+            btn.addEventListener('click', () => setTheme(btn.dataset.themeVal));
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && state.isGenerating) stopGeneration();
+            if (e.key === 'Escape' && $.stopModalOverlay.classList.contains('visible')) discardPartial();
+        });
+    }
+
+    // ═══════════════════════════════════════
+    // 13. INIT
+    // ═══════════════════════════════════════
+    function applyLoadedState() {
+        setMode(state.mode);
+        setStandardBits(state.standardBits);
+        $.stdPrefix.value = state.standardPrefix;
+        $.stdKeyType.value = state.standardKeyType;
+        $.stdEnv.value = state.standardEnv;
+        setCustomMode(state.customMode);
+        $.customLength.value = state.customLength;
+        $.customBits.value = state.customBits;
+        $.chkLetters.checked = state.customCharsetLetters;
+        $.chkNumbers.checked = state.customCharsetNumbers;
+        $.chkSymbols.checked = state.customCharsetSymbols;
+        $.chkExcludeSimilar.checked = state.customExcludeSimilar;
+        $.customCharset.value = state.customCharsetCustom;
+        $.separator.value = state.customSeparator;
+        $.interval.value = state.customInterval;
+        $.custPrefix.value = state.customPrefix;
+        $.custKeyType.value = state.customKeyType;
+        $.custEnv.value = state.customEnv;
+        setCustomBits(state.customBits);
+        $.genCount.value = state.genCount;
+        $.genFormat.value = state.genFormat;
+        $.previewCount.value = state.previewCount;
+        setTheme(state.theme);
+        $.langToggle.textContent = state.language === 'en' ? '🌐 RU' : '🌐 EN';
+        refreshI18n();
+        updateEquivalents();
+        updatePreview();
+    }
+
+    function validateSystem() {
+        const errors = [];
+        const cfg = getSettingsSnapshot();
+        cfg.mode = 'custom';
+        cfg.customMode = 'bits';
+        cfg.customBits = 256;
+        cfg.customCharsetLetters = true;
+        cfg.customCharsetNumbers = false;
+        cfg.customCharsetSymbols = false;
+        cfg.customCharsetCustom = '';
+        cfg.customExcludeSimilar = false;
+        const charset = buildCharset(cfg);
+        const expectedLen = Math.ceil(256 / Math.log2(charset.length));
+        if (expectedLen < 10) errors.push('Entropy length calculation seems wrong');
+        if (typeof generateKey !== 'function') errors.push('Single generator missing');
+        if (Object.keys(i18n.en).length !== Object.keys(i18n.ru).length) errors.push('i18n key mismatch');
+        if (errors.length) console.error('⚠️ VALIDATION FAILED:', errors);
+        else console.log('✅ System validated. Ready.');
+    }
+
+    function init() {
+        cacheDom();
+        loadState();
+        bindEvents();
+        applyLoadedState();
+        validateSystem();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
+</html>
