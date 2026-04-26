@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Strength Analyzer</title>
+<style>
+:root{
+  --bg:#0f1117;
+  --card:#171923;
+  --text:#e6e6e6;
+  --muted:#8a8f98;
+  --accent:#6c5ce7;
+  --weak:#ff4757;
+  --medium:#ffa502;
+  --strong:#2ed573;
+  --verystrong:#1dd1a1;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.container{
+  width:100%;
+  max-width:480px;
+  padding:16px;
+}
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 0 30px rgba(0,0,0,0.4);
+}
+h1{
+  margin:0 0 16px;
+  font-size:20px;
+}
+.input-group{
+  display:flex;
+  gap:8px;
+}
+input{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#0d0f14;
+  color:white;
+  outline:none;
+}
+button{
+  background:var(--accent);
+  border:none;
+  color:white;
+  padding:12px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+button:hover{
+  opacity:0.85;
+}
+.progress{
+  margin-top:16px;
+  height:10px;
+  background:#0d0f14;
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  transition:0.3s ease;
+}
+.strength-label{
+  margin-top:8px;
+  font-size:14px;
+}
+.checks{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  font-size:13px;
+}
+.check{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#222;
+  padding:10px 16px;
+  border-radius:8px;
+  opacity:0;
+  transition:0.3s;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+@media(max-width:500px){
+  .checks{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <h1>Password Strength Analyzer</h1>
+
+    <div class="input-group">
+      <input type="text" id="password" placeholder="Enter password">
+    </div>
+
+    <div class="actions">
+      <button id="generate">Generate</button>
+      <button id="copy">Copy</button>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="bar"></div>
+    </div>
+
+    <div class="strength-label" id="label">Strength: -</div>
+
+    <div class="checks">
+      <div class="check" id="length">✖ Length ≥ 8</div>
+      <div class="check" id="upper">✖ Uppercase</div>
+      <div class="check" id="lower">✖ Lowercase</div>
+      <div class="check" id="number">✖ Number</div>
+      <div class="check" id="symbol">✖ Symbol</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const state = {
+  password: ''
+};
+
+const els = {
+  input: document.getElementById('password'),
+  bar: document.getElementById('bar'),
+  label: document.getElementById('label'),
+  toast: document.getElementById('toast'),
+  checks: {
+    length: document.getElementById('length'),
+    upper: document.getElementById('upper'),
+    lower: document.getElementById('lower'),
+    number: document.getElementById('number'),
+    symbol: document.getElementById('symbol')
+  }
+};
+
+function calculateStrength(pw){
+  let charset = 0;
+  const checks = {
+    length: pw.length >= 8,
+    upper: /[A-Z]/.test(pw),
+    lower: /[a-z]/.test(pw),
+    number: /[0-9]/.test(pw),
+    symbol: /[^A-Za-z0-9]/.test(pw)
+  };
+
+  if(checks.lower) charset += 26;
+  if(checks.upper) charset += 26;
+  if(checks.number) charset += 10;
+  if(checks.symbol) charset += 32;
+
+  if(charset === 0) return {score:0, checks};
+
+  const entropy = pw.length * Math.log2(charset);
+  let score = Math.min(100, Math.floor((entropy / 80) * 100));
+
+  return {score, checks};
+}
+
+function getStrengthLevel(score){
+  if(score < 30) return {text:'Weak', color:'var(--weak)'};
+  if(score < 60) return {text:'Medium', color:'var(--medium)'};
+  if(score < 80) return {text:'Strong', color:'var(--strong)'};
+  return {text:'Very Strong', color:'var(--verystrong)'};
+}
+
+function updateUI(){
+  const {score, checks} = calculateStrength(state.password);
+  const level = getStrengthLevel(score);
+
+  els.bar.style.width = score + '%';
+  els.bar.style.background = level.color;
+  els.label.textContent = 'Strength: ' + level.text;
+
+  for(const key in checks){
+    els.checks[key].textContent = (checks[key] ? '✔ ' : '✖ ') + els.checks[key].textContent.slice(2);
+    els.checks[key].style.color = checks[key] ? '#2ed573' : '#8a8f98';
+  }
+}
+
+function generatePassword(){
+  const length = 16;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}[]";
+  const array = new Uint32Array(length);
+  crypto.getRandomValues(array);
+
+  let password = '';
+  for(let i=0;i<length;i++){
+    password += chars[array[i] % chars.length];
+  }
+
+  state.password = password;
+  els.input.value = password;
+  updateUI();
+}
+
+function copyPassword(){
+  if(!state.password) return;
+  navigator.clipboard.writeText(state.password);
+  showToast();
+}
+
+function showToast(){
+  els.toast.classList.add('show');
+  setTimeout(()=>els.toast.classList.remove('show'),1500);
+}
+
+els.input.addEventListener('input', e=>{
+  state.password = e.target.value;
+  updateUI();
+});
+
+document.getElementById('generate').onclick = generatePassword;
+document.getElementById('copy').onclick = copyPassword;
+</script>
+
+</body>
+</html>
