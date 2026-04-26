@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Analyzer</title>
+    <style>
+        :root {
+            --bg: #0b0d14;
+            --surface: #151821;
+            --surface-2: #1c1f2c;
+            --border: #252836;
+            --text: #e4e6f0;
+            --text-secondary: #8b8fa8;
+            --text-muted: #5a5e72;
+            --accent: #6c72cb;
+            --accent-glow: rgba(108, 114, 203, 0.25);
+            --red: #e94b4b;
+            --red-bg: rgba(233, 75, 75, 0.12);
+            --amber: #f0a040;
+            --amber-bg: rgba(240, 160, 64, 0.12);
+            --green: #3ec77b;
+            --green-bg: rgba(62, 199, 123, 0.12);
+            --teal: #2dd4bf;
+            --teal-bg: rgba(45, 212, 191, 0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--spacing-md);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(108, 114, 203, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(45, 212, 191, 0.04) 0%, transparent 60%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            box-shadow:
+                0 4px 24px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+            transition: box-shadow var(--transition);
+        }
+
+        .card:focus-within {
+            box-shadow:
+                0 4px 32px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 0 0 3px var(--accent-glow);
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .header .subtitle {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 48px 14px 16px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+            letter-spacing: 0.04em;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+            font-family: var(--font);
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            background: #1e2130;
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            line-height: 0;
+        }
+
+        .toggle-visibility:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .toggle-visibility svg {
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        .strength-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+        }
+
+        .strength-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.01em;
+            transition: color var(--transition);
+        }
+
+        .strength-label.weak {
+            color: var(--red);
+        }
+        .strength-label.medium {
+            color: var(--amber);
+        }
+        .strength-label.strong {
+            color: var(--green);
+        }
+        .strength-label.very-strong {
+            color: var(--teal);
+        }
+
+        .score-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+            transition: all var(--transition);
+            background: var(--surface-2);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .progress-container {
+            height: 8px;
+            background: var(--surface-2);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            background-color: #3a3d4a;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            animation: shimmer 2s infinite;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .progress-bar.active::after {
+            opacity: 1;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .checks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        @media (max-width: 400px) {
+            .checks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.825rem;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            background: var(--surface-2);
+            border: 1px solid transparent;
+            transition: all var(--transition);
+            letter-spacing: 0.01em;
+        }
+
+        .check-item.satisfied {
+            border-color: rgba(62, 199, 123, 0.25);
+            background: var(--green-bg);
+            color: #a3ecc5;
+        }
+
+        .check-item.unsatisfied {
+            border-color: rgba(233, 75, 75, 0.2);
+            background: var(--red-bg);
+            color: #f5a3a3;
+        }
+
+        .check-icon {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: all var(--transition);
+        }
+
+        .check-item.satisfied .check-icon {
+            background: var(--green);
+            color: #0b1a10;
+        }
+
+        .check-item.unsatisfied .check-icon {
+            background: var(--red);
+            color: #1a0808;
+        }
+
+        .actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: var(--font);
+            white-space: nowrap;
+        }
+
+        .btn-generate {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        .btn-generate:hover {
+            background: #7b81d9;
+            border-color: #7b81d9;
+            box-shadow: 0 4px 16px rgba(108, 114, 203, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px var(--accent-glow);
+        }
+
+        .btn-copy {
+            background: var(--surface-2);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .btn-copy:hover {
+            background: #252838;
+            border-color: #3a3d52;
+            transform: translateY(-1px);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+            background: var(--surface-2);
+        }
+
+        .btn-copy.copied-flash {
+            background: var(--green-bg);
+            border-color: var(--green);
+            color: var(--green);
+            transition: all 0.15s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #2a2d3a;
+            color: #e4e6f0;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(16px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .entropy-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            letter-spacing: 0.02em;
+            transition: color var(--transition);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Password Strength Analyzer</h1>
+                <p class="subtitle">Real-time entropy-based analysis</p>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="Type or generate a password..." autocomplete="off" spellcheck="false">
+                <button class="toggle-visibility" id="toggleVisibility" aria-label="Toggle password visibility" disabled>
+                    <svg id="eyeIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                        <path d="m14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                    <svg id="eyeIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="strength-display">
+                <span class="strength-label weak" id="strengthLabel">Weak</span>
+                <span class="score-badge" id="scoreBadge">Score: 0 / 100</span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="checks-grid" id="checksGrid">
+                <div class="check-item unsatisfied" data-check="length">
+                    <span class="check-icon">✗</span>
+                    <span>8+ characters</span>
+                </div>
+                <div class="check-item unsatisfied" data-check="uppercase">
+                    <span class="check-icon">✗</span>
+                    <span>Uppercase letter</span>
+                </div>
+                <div class="check-item unsatisfied" data-check="lowercase">
+                    <span class="check-icon">✗</span>
+                    <span>Lowercase letter</span>
+                </div>
+                <div class="check-item unsatisfied" data-check="number">
+                    <span class="check-icon">✗</span>
+                    <span>Number</span>
+                </div>
+                <div class="check-item unsatisfied" data-check="symbol">
+                    <span class="check-icon">✗</span>
+                    <span>Symbol</span>
+                </div>
+            </div>
+
+            <div class="entropy-info" id="entropyInfo">Estimated entropy: 0 bits</div>
+
+            <div class="actions">
+                <button class="btn btn-generate" id="btnGenerate">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    Generate
+                </button>
+                <button class="btn btn-copy" id="btnCopy" disabled>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container">
+        <div class="toast" id="toast">Copied to clipboard</div>
+    </div>
+
+    <script>
+        (function() {
+            const LOWERCASE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
+            const UPPERCASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const NUMBER_CHARS = '0123456789';
+            const SYMBOL_CHARS = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`"\'';
+            const ALL_CHARS = LOWERCASE_CHARS + UPPERCASE_CHARS + NUMBER_CHARS + SYMBOL_CHARS;
+
+            const CHAR_SET_SIZES = {
+                lowercase: 26,
+                uppercase: 26,
+                number: 10,
+                symbol: SYMBOL_CHARS.length,
+            };
+
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleVisibilityBtn = document.getElementById('toggleVisibility');
+            const eyeIconOff = document.getElementById('eyeIconOff');
+            const eyeIconOn = document.getElementById('eyeIconOn');
+            const strengthLabel = document.getElementById('strengthLabel');
+            const scoreBadge = document.getElementById('scoreBadge');
+            const progressBar = document.getElementById('progressBar');
+            const checksGrid = document.getElementById('checksGrid');
+            const entropyInfo = document.getElementById('entropyInfo');
+            const btnGenerate = document.getElementById('btnGenerate');
+            const btnCopy = document.getElementById('btnCopy');
+            const toast = document.getElementById('toast');
+
+            const checkItems = {
+                length: checksGrid.querySelector('[data-check="length"]'),
+                uppercase: checksGrid.querySelector('[data-check="uppercase"]'),
+                lowercase: checksGrid.querySelector('[data-check="lowercase"]'),
+                number: checksGrid.querySelector('[data-check="number"]'),
+                symbol: checksGrid.querySelector('[data-check="symbol"]'),
+            };
+
+            let isPasswordVisible = false;
+            let toastTimeout = null;
+
+            function getCharsetCategories(password) {
+                return {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /[0-9]/.test(password),
+                    symbol: /[^a-zA-Z0-9]/.test(password) && password.length > 0,
+                };
+            }
+
+            function calculateCharsetSize(categories) {
+                let size = 0;
+                if (categories.lowercase) size += CHAR_SET_SIZES.lowercase;
+                if (categories.uppercase) size += CHAR_SET_SIZES.uppercase;
+                if (categories.number) size += CHAR_SET_SIZES.number;
+                if (categories.symbol) size += CHAR_SET_SIZES.symbol;
+                return size;
+            }
+
+            function calculateEntropy(password) {
+                if (password.length === 0) return 0;
+                const categories = getCharsetCategories(password);
+                const charsetSize = calculateCharsetSize(categories);
+                if (charsetSize === 0) return 0;
+                return password.length * Math.log2(charsetSize);
+            }
+
+            function calculateScore(entropy) {
+                if (entropy <= 0) return 0;
+                const score = Math.round((entropy / 80) * 100);
+                return Math.min(100, Math.max(0, score));
+            }
+
+            function getStrengthLevel(score) {
+                if (score >= 80) return 'very-strong';
+                if (score >= 55) return 'strong';
+                if (score >= 30) return 'medium';
+                return 'weak';
+            }
+
+            function getStrengthLabel(level) {
+                switch (level) {
+                    case 'very-strong':
+                        return 'Very Strong';
+                    case 'strong':
+                        return 'Strong';
+                    case 'medium':
+                        return 'Medium';
+                    case 'weak':
+                        return 'Weak';
+                    default:
+                        return 'Weak';
+                }
+            }
+
+            function getProgressColor(level) {
+                switch (level) {
+                    case 'very-strong':
+                        return '#2dd4bf';
+                    case 'strong':
+                        return '#3ec77b';
+                    case 'medium':
+                        return '#f0a040';
+                    case 'weak':
+                        return '#e94b4b';
+                    default:
+                        return '#3a3d4a';
+                }
+            }
+
+            function analyzePassword(password) {
+                const categories = getCharsetCategories(password);
+                const entropy = calculateEntropy(password);
+                const score = calculateScore(entropy);
+                const level = getStrengthLevel(score);
+                return { categories, entropy, score, level };
+            }
+
+            function updateCheckItem(element, satisfied) {
+                const icon = element.querySelector('.check-icon');
+                if (satisfied) {
+                    element.classList.remove('unsatisfied');
+                    element.classList.add('satisfied');
+                    icon.textContent = '✓';
+                } else {
+                    element.classList.remove('satisfied');
+                    element.classList.add('unsatisfied');
+                    icon.textContent = '✗';
+                }
+            }
+
+            function updateUI(analysis) {
+                const { categories, entropy, score, level } = analysis;
+                const password = passwordInput.value;
+
+                updateCheckItem(checkItems.length, categories.length);
+                updateCheckItem(checkItems.uppercase, categories.uppercase);
+                updateCheckItem(checkItems.lowercase, categories.lowercase);
+                updateCheckItem(checkItems.number, categories.number);
+                updateCheckItem(checkItems.symbol, categories.symbol);
+
+                const progressWidth = password.length === 0 ? 0 : Math.max(2, score);
+                const progressColor = password.length === 0 ? '#3a3d4a' : getProgressColor(level);
+
+                progressBar.style.width = progressWidth + '%';
+                progressBar.style.backgroundColor = progressColor;
+
+                if (score >= 60) {
+                    progressBar.classList.add('active');
+                } else {
+                    progressBar.classList.remove('active');
+                }
+
+                strengthLabel.textContent = getStrengthLabel(level);
+                strengthLabel.className = 'strength-label ' + level;
+
+                scoreBadge.textContent = 'Score: ' + score + ' / 100';
+
+                entropyInfo.textContent = 'Estimated entropy: ' + (entropy > 0 ? entropy.toFixed(1) : '0') + ' bits';
+
+                btnCopy.disabled = password.length === 0;
+                toggleVisibilityBtn.disabled = password.length === 0;
+
+                if (password.length === 0 && isPasswordVisible) {
+                    togglePasswordVisibility(false);
+                }
+            }
+
+            function togglePasswordVisibility(forceState) {
+                const newState = typeof forceState === 'boolean' ? forceState : !isPasswordVisible;
+                isPasswordVisible = newState;
+                passwordInput.type = isPasswordVisible ? 'text' : 'password';
+                eyeIconOff.style.display = isPasswordVisible ? 'none' : '';
+                eyeIconOn.style.display = isPasswordVisible ? '' : 'none';
+            }
+
+            function handleInput() {
+                const password = passwordInput.value;
+                const analysis = analyzePassword(password);
+                updateUI(analysis);
+            }
+
+            function generatePassword() {
+                const length = 16;
+                const randomValues = new Uint32Array(length * 2);
+                crypto.getRandomValues(randomValues);
+
+                const groups = [LOWERCASE_CHARS, UPPERCASE_CHARS, NUMBER_CHARS, SYMBOL_CHARS];
+                const passwordChars = [];
+
+                for (let i = 0; i < groups.length; i++) {
+                    const idx = randomValues[i] % groups[i].length;
+                    passwordChars.push(groups[i][idx]);
+                }
+
+                const shuffleRandom = new Uint32Array(length);
+                crypto.getRandomValues(shuffleRandom);
+
+                for (let i = groups.length; i < length; i++) {
+                    const idx = randomValues[i + groups.length] % ALL_CHARS.length;
+                    passwordChars.push(ALL_CHARS[idx]);
+                }
+
+                for (let i = passwordChars.length - 1; i > 0; i--) {
+                    const j = shuffleRandom[i] % (i + 1);
+                    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+                }
+
+                const generatedPassword = passwordChars.join('');
+                passwordInput.value = generatedPassword;
+                isPasswordVisible = true;
+                passwordInput.type = 'text';
+                eyeIconOff.style.display = 'none';
+                eyeIconOn.style.display = '';
+                toggleVisibilityBtn.disabled = false;
+
+                const analysis = analyzePassword(generatedPassword);
+                updateUI(analysis);
+
+                passwordInput.focus();
+                passwordInput.setSelectionRange(0, generatedPassword.length);
+            }
+
+            function copyToClipboard() {
+                const password = passwordInput.value;
+                if (!password) return;
+
+                navigator.clipboard.writeText(password).then(function() {
+                    showToast();
+                    btnCopy.classList.add('copied-flash');
+                    setTimeout(function() {
+                        btnCopy.classList.remove('copied-flash');
+                    }, 400);
+                }).catch(function() {
+                    const tempTextarea = document.createElement('textarea');
+                    tempTextarea.value = password;
+                    tempTextarea.style.position = 'fixed';
+                    tempTextarea.style.opacity = '0';
+                    document.body.appendChild(tempTextarea);
+                    tempTextarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast();
+                        btnCopy.classList.add('copied-flash');
+                        setTimeout(function() {
+                            btnCopy.classList.remove('copied-flash');
+                        }, 400);
+                    } catch (e) {}
+                    document.body.removeChild(tempTextarea);
+                });
+            }
+
+            function showToast() {
+                if (toastTimeout) {
+                    clearTimeout(toastTimeout);
+                    toast.classList.remove('visible');
+                }
+
+                requestAnimationFrame(function() {
+                    toast.classList.add('visible');
+                });
+
+                toastTimeout = setTimeout(function() {
+                    toast.classList.remove('visible');
+                    toastTimeout = null;
+                }, 1800);
+            }
+
+            passwordInput.addEventListener('input', handleInput);
+            passwordInput.addEventListener('paste', function() {
+                setTimeout(handleInput, 0);
+            });
+
+            toggleVisibilityBtn.addEventListener('click', function() {
+                togglePasswordVisibility();
+                if (passwordInput.value.length > 0) {
+                    passwordInput.focus();
+                }
+            });
+
+            btnGenerate.addEventListener('click', generatePassword);
+            btnCopy.addEventListener('click', copyToClipboard);
+
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                    const activeEl = document.activeElement;
+                    if (activeEl === passwordInput && passwordInput.value.length > 0 && passwordInput.selectionStart === 0 && passwordInput.selectionEnd === passwordInput.value.length) {
+                        copyToClipboard();
+                    }
+                }
+            });
+
+            const initialAnalysis = analyzePassword('');
+            updateUI(initialAnalysis);
+            progressBar.style.width = '0%';
+            progressBar.style.backgroundColor = '#3a3d4a';
+            progressBar.classList.remove('active');
+        })();
+    </script>
+</body>
+</html>
