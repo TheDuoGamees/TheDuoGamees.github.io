@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Key Generator</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #111936;
+      --card: rgba(17, 25, 54, 0.72);
+      --card-border: rgba(255, 255, 255, 0.10);
+      --text: #eef2ff;
+      --muted: rgba(238, 242, 255, 0.72);
+      --accent: #7c3aed;
+      --accent2: #22c55e;
+      --danger: #ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,0.35);
+      --radius: 22px;
+      --glow: 0 0 0 1px rgba(124, 58, 237, 0.25), 0 18px 50px rgba(124, 58, 237, 0.12);
+    }
+
+    [data-theme="light"] {
+      --bg: #edf2ff;
+      --bg2: #f7f9ff;
+      --card: rgba(255,255,255,0.75);
+      --card-border: rgba(15, 23, 42, 0.10);
+      --text: #0f172a;
+      --muted: rgba(15, 23, 42, 0.68);
+      --accent: #5b21b6;
+      --accent2: #059669;
+      --danger: #dc2626;
+      --shadow: 0 18px 60px rgba(15, 23, 42, 0.12);
+      --glow: 0 0 0 1px rgba(91, 33, 182, 0.18), 0 18px 50px rgba(91, 33, 182, 0.10);
+    }
+
+    [data-theme="sunset"] {
+      --bg: #1b1026;
+      --bg2: #2a1435;
+      --card: rgba(45, 20, 57, 0.70);
+      --card-border: rgba(255, 255, 255, 0.10);
+      --text: #fff8fb;
+      --muted: rgba(255, 248, 251, 0.72);
+      --accent: #fb7185;
+      --accent2: #f59e0b;
+      --danger: #f43f5e;
+      --shadow: 0 18px 60px rgba(0,0,0,0.34);
+      --glow: 0 0 0 1px rgba(251, 113, 133, 0.25), 0 18px 50px rgba(251, 113, 133, 0.12);
+    }
+
+    [data-theme="midnight"] {
+      --bg: #060816;
+      --bg2: #0b1124;
+      --card: rgba(12, 18, 39, 0.76);
+      --card-border: rgba(148, 163, 184, 0.12);
+      --text: #e2e8f0;
+      --muted: rgba(226, 232, 240, 0.68);
+      --accent: #38bdf8;
+      --accent2: #a78bfa;
+      --danger: #fb7185;
+      --shadow: 0 18px 60px rgba(0,0,0,0.40);
+      --glow: 0 0 0 1px rgba(56, 189, 248, 0.22), 0 18px 50px rgba(56, 189, 248, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, 0.20), transparent 30%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 28%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      width: min(1200px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 30px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: var(--glow);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.05;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip, .btn, .input, select, textarea {
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      color: var(--text);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .chip {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .panel-header small {
+      color: var(--muted);
+    }
+
+    .panel-body { padding: 18px; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 680px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .label-row strong { color: var(--text); font-weight: 600; }
+
+    .input, select, textarea {
+      width: 100%;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+      transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .input:focus, select:focus, textarea:focus {
+      border-color: color-mix(in oklab, var(--accent) 72%, white 28%);
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+      transform: translateY(-1px);
+    }
+
+    .range-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      user-select: none;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .toggle:hover { transform: translateY(-1px); }
+    .toggle input { accent-color: var(--accent); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .btn {
+      padding: 13px 14px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: transform .15s ease, filter .2s ease, opacity .2s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0px) scale(0.99); }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent2) 55%, var(--accent)));
+      color: white;
+      border-color: transparent;
+    }
+    .btn.ghost { background: rgba(255,255,255,0.04); }
+    .btn.danger { background: color-mix(in oklab, var(--danger) 17%, transparent); color: var(--text); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .stat {
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat .k { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .stat .v { font-size: 20px; font-weight: 800; }
+
+    .output {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .tab {
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      padding: 10px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: .2s ease;
+      font-weight: 600;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent2) 55%, var(--accent)));
+      color: white;
+      border-color: transparent;
+    }
+
+    .key-list {
+      display: grid;
+      gap: 10px;
+      max-height: 520px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .key-item {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .key-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      word-break: break-all;
+      line-height: 1.5;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .mini-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini {
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 9px 11px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(120%);
+      opacity: 0;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.92);
+      color: white;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: .25s ease;
+      z-index: 50;
+      pointer-events: none;
+      max-width: min(92vw, 560px);
+      text-align: center;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .hidden { display: none !important; }
+
+    .split {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 680px) {
+      .split { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">API</div>
+        <div>
+          <h1>API Key Generator</h1>
+          <p>Один HTML-файл. Красивый интерфейс. Гибкая генерация. Экспорт, копирование, темы.</p>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip">⚡ Быстро</div>
+        <div class="chip">🎛️ Много настроек</div>
+        <div class="chip">🔐 Чистая генерация</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Настройки генерации</h2>
+            <small>Выбирай стиль, формат, длину и поведение ключей</small>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <select id="themeSelect" class="input" style="width:auto; min-width:170px; padding:12px 14px;">
+              <option value="dark">Тема: Dark</option>
+              <option value="light">Тема: Light</option>
+              <option value="sunset">Тема: Sunset</option>
+              <option value="midnight">Тема: Midnight</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="controls">
+            <div class="field">
+              <div class="label-row"><strong>Пресет</strong><span>быстрый выбор</span></div>
+              <select id="preset" class="input">
+                <option value="balanced">Balanced</option>
+                <option value="short">Short Keys</option>
+                <option value="enterprise">Enterprise</option>
+                <option value="ultra">Ultra Secure</option>
+                <option value="human">Human Friendly</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row"><strong>Формат</strong><span>структура ключа</span></div>
+              <select id="format" class="input">
+                <option value="standard">STANDARD (рандом)</option>
+                <option value="uuid">UUID-like</option>
+                <option value="base64">Base64-like</option>
+                <option value="hex">HEX</option>
+                <option value="segmented">Segmented</option>
+                <option value="friendly">Human Friendly</option>
+                <option value="jwtLike">JWT-like token</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row"><strong>Количество</strong><span id="countLabel">10</span></div>
+              <input id="count" class="input" type="range" min="1" max="500" value="10" />
+            </div>
+
+            <div class="field">
+              <div class="label-row"><strong>Длина</strong><span id="lengthLabel">32</span></div>
+              <input id="length" class="input" type="range" min="8" max="128" value="32" />
+            </div>
+
+            <div class="field">
+              <div class="label-row"><strong>Сегменты</strong><span id="segmentsLabel">4</span></div>
+              <input id="segments" class="input" type="range" min="2" max="8" value="4" />
+            </div>
+
+            <div class="field">
+              <div class="label-row"><strong>Длина сегмента</strong><span id="segmentLenLabel">6</span></div>
+              <input id="segmentLen" class="input" type="range" min="2" max="20" value="6" />
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div class="split">
+            <div class="field">
+              <div class="label-row"><strong>Prefix</strong><span>например: sk_live_</span></div>
+              <input id="prefix" class="input" type="text" placeholder="sk_live_" value="sk_live_" />
+            </div>
+            <div class="field">
+              <div class="label-row"><strong>Suffix</strong><span>например: _v1</span></div>
+              <input id="suffix" class="input" type="text" placeholder="_v1" value="" />
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div class="toggles">
+            <label class="toggle"><input id="uppercase" type="checkbox" checked /> Uppercase</label>
+            <label class="toggle"><input id="lowercase" type="checkbox" /> Lowercase</label>
+            <label class="toggle"><input id="numbers" type="checkbox" checked /> Numbers</label>
+            <label class="toggle"><input id="symbols" type="checkbox" /> Symbols</label>
+            <label class="toggle"><input id="ambiguous" type="checkbox" /> Allow ambiguous chars</label>
+            <label class="toggle"><input id="checksum" type="checkbox" /> Add checksum</label>
+            <label class="toggle"><input id="uniqueOnly" type="checkbox" checked /> Unique only</label>
+            <label class="toggle"><input id="maskPreview" type="checkbox" /> Mask preview</label>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="generateBtn">✨ Generate</button>
+            <button class="btn ghost" id="copyAllBtn">📋 Copy all</button>
+            <button class="btn ghost" id="downloadBtn">⬇️ Download</button>
+            <button class="btn danger" id="clearBtn">🧹 Clear</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="k">Generated</div><div class="v" id="statCount">0</div></div>
+            <div class="stat"><div class="k">Charset</div><div class="v" id="statCharset">A-Z</div></div>
+            <div class="stat"><div class="k">Entropy</div><div class="v" id="statEntropy">0 bit</div></div>
+            <div class="stat"><div class="k">Format</div><div class="v" id="statFormat">Balanced</div></div>
+          </div>
+
+          <div class="footer-note">
+            Ключи здесь — это случайные строки для тестов, макетов, песочниц и внутренних инструментов. Для реальных секретов всегда проверяй требования своего backend и храни их безопасно.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Результаты</h2>
+            <small>Нажимай на строку, чтобы быстро копировать отдельный ключ</small>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-tab="list">Список</button>
+            <button class="tab" data-tab="json">JSON</button>
+            <button class="tab" data-tab="csv">CSV</button>
+          </div>
+        </div>
+        <div class="panel-body output">
+          <textarea id="rawOutput" class="input hidden" rows="16" readonly></textarea>
+          <div id="listOutput" class="key-list"></div>
+          <div class="footer-note">
+            Поддерживаются копирование, экспорт, очистка и сохранение настроек в браузере.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      themeSelect: $("themeSelect"),
+      preset: $("preset"),
+      format: $("format"),
+      count: $("count"),
+      length: $("length"),
+      segments: $("segments"),
+      segmentLen: $("segmentLen"),
+      prefix: $("prefix"),
+      suffix: $("suffix"),
+      uppercase: $("uppercase"),
+      lowercase: $("lowercase"),
+      numbers: $("numbers"),
+      symbols: $("symbols"),
+      ambiguous: $("ambiguous"),
+      checksum: $("checksum"),
+      uniqueOnly: $("uniqueOnly"),
+      maskPreview: $("maskPreview"),
+      generateBtn: $("generateBtn"),
+      copyAllBtn: $("copyAllBtn"),
+      downloadBtn: $("downloadBtn"),
+      clearBtn: $("clearBtn"),
+      countLabel: $("countLabel"),
+      lengthLabel: $("lengthLabel"),
+      segmentsLabel: $("segmentsLabel"),
+      segmentLenLabel: $("segmentLenLabel"),
+      statCount: $("statCount"),
+      statCharset: $("statCharset"),
+      statEntropy: $("statEntropy"),
+      statFormat: $("statFormat"),
+      listOutput: $("listOutput"),
+      rawOutput: $("rawOutput"),
+      toast: $("toast"),
+    };
+
+    const STORAGE_KEY = "api-key-generator-v1";
+    const TAB_KEY = "api-key-generator-tab";
+    let generated = [];
+    let currentTab = localStorage.getItem(TAB_KEY) || "list";
+
+    const ambiguousChars = new Set(["0","O","o","I","l","1","S","5","Z","2","B","8"]);
+    const charsetMap = {
+      upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      lower: "abcdefghijklmnopqrstuvwxyz",
+      numbers: "0123456789",
+      symbols: "_-@#$%&*",
+      base: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    };
+
+    function showToast(text) {
+      els.toast.textContent = text;
+      els.toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => els.toast.classList.remove("show"), 1600);
+    }
+
+    function saveState() {
+      const state = {
+        theme: els.themeSelect.value,
+        preset: els.preset.value,
+        format: els.format.value,
+        count: els.count.value,
+        length: els.length.value,
+        segments: els.segments.value,
+        segmentLen: els.segmentLen.value,
+        prefix: els.prefix.value,
+        suffix: els.suffix.value,
+        uppercase: els.uppercase.checked,
+        lowercase: els.lowercase.checked,
+        numbers: els.numbers.checked,
+        symbols: els.symbols.checked,
+        ambiguous: els.ambiguous.checked,
+        checksum: els.checksum.checked,
+        uniqueOnly: els.uniqueOnly.checked,
+        maskPreview: els.maskPreview.checked,
+        tab: currentTab,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(TAB_KEY, currentTab);
+    }
+
+    function loadState() {
+      try {
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        if (!state) return;
+        if (state.theme) els.themeSelect.value = state.theme;
+        if (state.preset) els.preset.value = state.preset;
+        if (state.format) els.format.value = state.format;
+        if (state.count) els.count.value = state.count;
+        if (state.length) els.length.value = state.length;
+        if (state.segments) els.segments.value = state.segments;
+        if (state.segmentLen) els.segmentLen.value = state.segmentLen;
+        if (state.prefix !== undefined) els.prefix.value = state.prefix;
+        if (state.suffix !== undefined) els.suffix.value = state.suffix;
+        if (state.uppercase !== undefined) els.uppercase.checked = state.uppercase;
+        if (state.lowercase !== undefined) els.lowercase.checked = state.lowercase;
+        if (state.numbers !== undefined) els.numbers.checked = state.numbers;
+        if (state.symbols !== undefined) els.symbols.checked = state.symbols;
+        if (state.ambiguous !== undefined) els.ambiguous.checked = state.ambiguous;
+        if (state.checksum !== undefined) els.checksum.checked = state.checksum;
+        if (state.uniqueOnly !== undefined) els.uniqueOnly.checked = state.uniqueOnly;
+        if (state.maskPreview !== undefined) els.maskPreview.checked = state.maskPreview;
+        if (state.tab) currentTab = state.tab;
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function getCharset() {
+      const chunks = [];
+      if (els.uppercase.checked) chunks.push(charsetMap.upper);
+      if (els.lowercase.checked) chunks.push(charsetMap.lower);
+      if (els.numbers.checked) chunks.push(charsetMap.numbers);
+      if (els.symbols.checked) chunks.push(charsetMap.symbols);
+      if (chunks.length === 0) chunks.push(charsetMap.base);
+      let charset = [...new Set(chunks.join("").split("")).values()].join("");
+      if (!els.ambiguous.checked) {
+        charset = charset.split("").filter(c => !ambiguousChars.has(c)).join("");
+      }
+      return charset || charsetMap.base;
+    }
+
+    function randomInt(max) {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return arr[0] % max;
+    }
+
+    function randomChar(charset) {
+      return charset[randomInt(charset.length)];
+    }
+
+    function checksum(str) {
+      let sum = 0;
+      for (let i = 0; i < str.length; i++) sum = (sum + str.charCodeAt(i) * (i + 1)) % 9973;
+      return sum.toString(36).toUpperCase().padStart(3, "0");
+    }
+
+    function formatRandom(length, charset) {
+      let out = "";
+      for (let i = 0; i < length; i++) out += randomChar(charset);
+      return out;
+    }
+
+    function formatUUIDLike() {
+      const hex = "0123456789abcdef";
+      const parts = [8,4,4,4,12].map(len => {
+        let s = "";
+        for (let i = 0; i < len; i++) s += hex[randomInt(hex.length)];
+        return s;
+      });
+      return parts.join("-");
+    }
+
+    function formatHex(length) {
+      const hex = "0123456789abcdef";
+      let s = "";
+      for (let i = 0; i < length; i++) s += hex[randomInt(hex.length)];
+      return s;
+    }
+
+    function formatBase64Like(length) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      let s = "";
+      for (let i = 0; i < length; i++) s += chars[randomInt(chars.length)];
+      return s.replace(/\+/g, "-").replace(/\//g, "_");
+    }
+
+    function formatSegmented(segments, segLen, charset) {
+      const out = [];
+      for (let i = 0; i < segments; i++) out.push(formatRandom(segLen, charset));
+      return out.join("-");
+    }
+
+    function formatFriendly(length, charset) {
+      const safe = charset.split("").filter(c => !"O0oIl1S5Z2B8".includes(c)).join("") || charsetMap.base;
+      const parts = [];
+      const groups = Math.max(2, Math.ceil(length / 4));
+      const per = Math.ceil(length / groups);
+      for (let i = 0; i < groups; i++) parts.push(formatRandom(per, safe));
+      return parts.join("-");
+    }
+
+    function formatJwtLike(charset) {
+      const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      const payloadObj = {
+        iat: Math.floor(Date.now() / 1000),
+        rnd: formatRandom(16, charset),
+        scope: "api_key",
+      };
+      const payload = btoa(JSON.stringify(payloadObj)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      const sig = formatBase64Like(32);
+      return `${header}.${payload}.${sig}`;
+    }
+
+    function maskKey(key) {
+      if (key.length <= 10) return "•".repeat(key.length);
+      const first = key.slice(0, 5);
+      const last = key.slice(-4);
+      return `${first}${"•".repeat(Math.max(8, key.length - 9))}${last}`;
+    }
+
+    function generateOne() {
+      const charset = getCharset();
+      const fmt = els.format.value;
+      let key = "";
+      const length = clamp(parseInt(els.length.value, 10) || 32, 8, 128);
+
+      if (fmt === "uuid") {
+        key = formatUUIDLike();
+      } else if (fmt === "hex") {
+        key = formatHex(length);
+      } else if (fmt === "base64") {
+        key = formatBase64Like(length);
+      } else if (fmt === "segmented") {
+        key = formatSegmented(clamp(parseInt(els.segments.value, 10) || 4, 2, 8), clamp(parseInt(els.segmentLen.value, 10) || 6, 2, 20), charset);
+      } else if (fmt === "friendly") {
+        key = formatFriendly(length, charset);
+      } else if (fmt === "jwtLike") {
+        key = formatJwtLike(charset);
+      } else {
+        key = formatRandom(length, charset);
+      }
+
+      if (els.checksum.checked && fmt !== "jwtLike") {
+        key = `${key}.${checksum(key)}`;
+      }
+
+      return `${els.prefix.value || ""}${key}${els.suffix.value || ""}`;
+    }
+
+    function updateLabels() {
+      els.countLabel.textContent = els.count.value;
+      els.lengthLabel.textContent = els.length.value;
+      els.segmentsLabel.textContent = els.segments.value;
+      els.segmentLenLabel.textContent = els.segmentLen.value;
+    }
+
+    function updateStats() {
+      const charset = getCharset();
+      els.statCount.textContent = generated.length.toString();
+      els.statCharset.textContent = charset.length >= 40 ? `${charset.length}+ chars` : `${charset.length} chars`;
+      const len = parseInt(els.length.value, 10) || 32;
+      const entropy = Math.round(len * Math.log2(Math.max(2, charset.length)));
+      els.statEntropy.textContent = `${entropy} bit`;
+      els.statFormat.textContent = els.preset.options[els.preset.selectedIndex].text;
+    }
+
+    function render() {
+      updateLabels();
+      updateStats();
+
+      const mask = els.maskPreview.checked;
+      if (currentTab === "json") {
+        els.rawOutput.classList.remove("hidden");
+        els.listOutput.classList.add("hidden");
+        els.rawOutput.value = JSON.stringify(generated, null, 2);
+      } else if (currentTab === "csv") {
+        els.rawOutput.classList.remove("hidden");
+        els.listOutput.classList.add("hidden");
+        els.rawOutput.value = generated.map((v, i) => `${i + 1},${JSON.stringify(v)}`).join("\n");
+      } else {
+        els.rawOutput.classList.add("hidden");
+        els.listOutput.classList.remove("hidden");
+        els.listOutput.innerHTML = generated.length
+          ? generated.map((key, index) => `
+            <div class="key-item">
+              <div class="key-row">
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <span class="chip">#${index + 1}</span>
+                  <span class="chip">${els.format.value}</span>
+                </div>
+                <div class="mini-actions">
+                  <button class="mini" data-copy="${index}">Copy</button>
+                  <button class="mini" data-fill="${index}">Use as prefix</button>
+                </div>
+              </div>
+              <div class="key-code">${mask ? maskKey(key) : key}</div>
+            </div>
+          `).join("")
+          : `<div class="stat"><div class="k">Пока пусто</div><div class="v" style="font-size:16px; font-weight:700;">Нажми Generate</div></div>`;
+      }
+      saveState();
+    }
+
+    function applyPreset(name) {
+      const presets = {
+        balanced: { format: "standard", length: 32, count: 10, segments: 4, segmentLen: 6, uppercase: true, lowercase: false, numbers: true, symbols: false, ambiguous: false, checksum: false },
+        short: { format: "segmented", length: 24, count: 20, segments: 3, segmentLen: 6, uppercase: true, lowercase: false, numbers: true, symbols: false, ambiguous: false, checksum: false },
+        enterprise: { format: "jwtLike", length: 48, count: 5, segments: 4, segmentLen: 8, uppercase: true, lowercase: true, numbers: true, symbols: false, ambiguous: true, checksum: false },
+        ultra: { format: "base64", length: 64, count: 10, segments: 4, segmentLen: 8, uppercase: true, lowercase: true, numbers: true, symbols: true, ambiguous: true, checksum: true },
+        human: { format: "friendly", length: 28, count: 15, segments: 4, segmentLen: 6, uppercase: true, lowercase: true, numbers: true, symbols: false, ambiguous: false, checksum: false },
+      };
+      const p = presets[name] || presets.balanced;
+      els.format.value = p.format;
+      els.length.value = p.length;
+      els.count.value = p.count;
+      els.segments.value = p.segments;
+      els.segmentLen.value = p.segmentLen;
+      els.uppercase.checked = p.uppercase;
+      els.lowercase.checked = p.lowercase;
+      els.numbers.checked = p.numbers;
+      els.symbols.checked = p.symbols;
+      els.ambiguous.checked = p.ambiguous;
+      els.checksum.checked = p.checksum;
+      els.prefix.value = p.format === "jwtLike" ? "" : els.prefix.value;
+      render();
+    }
+
+    function generateBatch() {
+      const count = clamp(parseInt(els.count.value, 10) || 10, 1, 500);
+      const uniqueOnly = els.uniqueOnly.checked;
+      const set = new Set();
+      const out = [];
+      let guard = 0;
+      while (out.length < count && guard < count * 40) {
+        const key = generateOne();
+        guard++;
+        if (uniqueOnly) {
+          if (set.has(key)) continue;
+          set.add(key);
+        }
+        out.push(key);
+      }
+      generated = out;
+      render();
+      showToast(`Сгенерировано ключей: ${generated.length}`);
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Скопировано в буфер обмена");
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Скопировано в буфер обмена");
+      }
+    }
+
+    async function copyAll() {
+      if (!generated.length) return showToast("Сначала сгенерируй ключи");
+      await copyText(generated.join("\n"));
+    }
+
+    function downloadFile() {
+      if (!generated.length) return showToast("Сначала сгенерируй ключи");
+      const payload = {
+        generatedAt: new Date().toISOString(),
+        theme: els.themeSelect.value,
+        format: els.format.value,
+        count: generated.length,
+        options: {
+          length: els.length.value,
+          segments: els.segments.value,
+          segmentLen: els.segmentLen.value,
+          prefix: els.prefix.value,
+          suffix: els.suffix.value,
+          uppercase: els.uppercase.checked,
+          lowercase: els.lowercase.checked,
+          numbers: els.numbers.checked,
+          symbols: els.symbols.checked,
+          ambiguous: els.ambiguous.checked,
+          checksum: els.checksum.checked,
+          uniqueOnly: els.uniqueOnly.checked,
+        },
+        keys: generated,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `api-keys-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Файл скачан");
+    }
+
+    function clearAll() {
+      generated = [];
+      render();
+      showToast("Очищено");
+    }
+
+    // Events
+    els.themeSelect.addEventListener("change", () => {
+      applyTheme(els.themeSelect.value);
+      render();
+    });
+    els.preset.addEventListener("change", () => applyPreset(els.preset.value));
+    [els.format, els.count, els.length, els.segments, els.segmentLen, els.prefix, els.suffix,
+     els.uppercase, els.lowercase, els.numbers, els.symbols, els.ambiguous,
+     els.checksum, els.uniqueOnly, els.maskPreview].forEach(el => {
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+
+    els.generateBtn.addEventListener("click", generateBatch);
+    els.copyAllBtn.addEventListener("click", copyAll);
+    els.downloadBtn.addEventListener("click", downloadFile);
+    els.clearBtn.addEventListener("click", clearAll);
+
+    els.listOutput.addEventListener("click", (e) => {
+      const copyIndex = e.target?.dataset?.copy;
+      const fillIndex = e.target?.dataset?.fill;
+      if (copyIndex !== undefined) {
+        const key = generated[Number(copyIndex)];
+        if (key) copyText(key);
+      }
+      if (fillIndex !== undefined) {
+        const key = generated[Number(fillIndex)];
+        if (key) {
+          els.prefix.value = key.slice(0, Math.min(16, key.length));
+          showToast("Принято как prefix");
+          render();
+        }
+      }
+    });
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentTab = btn.dataset.tab;
+        render();
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "enter") {
+        e.preventDefault();
+        generateBatch();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c" && generated.length && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+        // let browser handle normal copy in focused fields
+      }
+    });
+
+    // Init
+    loadState();
+    applyTheme(els.themeSelect.value);
+    document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === currentTab));
+    if (currentTab === "json" || currentTab === "csv") {
+      els.rawOutput.classList.remove("hidden");
+      els.listOutput.classList.add("hidden");
+    }
+    applyPreset(els.preset.value);
+    render();
+    if (!generated.length) generateBatch();
+  </script>
+</body>
+</html>
