@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Word Sorter</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e2e8f0;
+  --accent: #3b82f6;
+  --border: #334155;
+}
+
+[data-theme="light"] {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #0f172a;
+  --accent: #2563eb;
+  --border: #e2e8f0;
+}
+
+[data-theme="neon"] {
+  --bg: #020617;
+  --card: #020617;
+  --text: #22c55e;
+  --accent: #22c55e;
+  --border: #22c55e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding: 20px;
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 300px 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.card h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+}
+
+button.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.settings label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.settings select,
+.settings input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.output-list {
+  flex: 1;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.item {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stats {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.top-list {
+  margin-top: 6px;
+}
+
+.spinner {
+  display: none;
+  text-align: center;
+  padding: 10px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<div class="grid">
+
+<div class="card" id="inputCard">
+  <h2>Input</h2>
+  <textarea id="inputText" placeholder="Paste or drop text here..."></textarea>
+  <div class="controls">
+    <button id="loadFileBtn">Load File</button>
+    <button class="secondary" id="clearBtn">Clear</button>
+  </div>
+  <input type="file" id="fileInput" hidden>
+</div>
+
+<div class="card settings" id="settingsCard">
+  <h2>Settings</h2>
+
+  <label>Sort Mode
+    <select id="sortMode">
+      <option value="alpha">Alphabetical</option>
+      <option value="length">Length</option>
+      <option value="reverse">Reverse</option>
+    </select>
+  </label>
+
+  <label>Language Priority
+    <select id="langMode">
+      <option value="mixed">Mixed</option>
+      <option value="ru">RU → EN → OTHER</option>
+      <option value="en">EN → RU → OTHER</option>
+    </select>
+  </label>
+
+  <label>Ignore Case
+    <input type="checkbox" id="ignoreCase">
+  </label>
+
+  <label>Remove Duplicates
+    <input type="checkbox" id="dedupe">
+  </label>
+
+  <label>Alphanumeric Only
+    <input type="checkbox" id="alnumOnly">
+  </label>
+
+  <label>Theme
+    <select id="theme">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="neon">Neon</option>
+    </select>
+  </label>
+
+</div>
+
+<div class="card" id="outputCard">
+  <h2>Output</h2>
+  <div class="spinner" id="spinner">Processing...</div>
+  <div class="output-list" id="outputList"></div>
+
+  <div class="stats" id="stats">
+    <div>Total: <span id="totalCount">0</span></div>
+    <div>Unique: <span id="uniqueCount">0</span></div>
+    <div class="top-list" id="topList"></div>
+  </div>
+
+  <div class="controls">
+    <button id="copyBtn">Copy</button>
+    <button id="exportTxt">TXT</button>
+    <button id="exportCsv">CSV</button>
+    <button id="exportJson">JSON</button>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div>
+<script>
+const AppState = {
+  rawInput: "",
+  parsed: [],
+  processed: [],
+  filtered: [],
+  stats: {
+    total: 0,
+    unique: 0,
+    freq: {}
+  },
+  settings: {
+    sortMode: "alpha",
+    langMode: "mixed",
+    ignoreCase: false,
+    dedupe: false,
+    alnumOnly: false,
+    theme: "dark"
+  },
+  ui: {
+    loading: false,
+    search: "",
+    visibleStart: 0,
+    visibleEnd: 100
+  }
+};
+
+const Utils = {
+  debounce(fn, delay = 300) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), delay);
+    };
+  },
+
+  normalize(str, ignoreCase) {
+    return ignoreCase ? str.toLowerCase() : str;
+  },
+
+  download(filename, content) {
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  copy(text) {
+    return navigator.clipboard.writeText(text);
+  }
+};
+
+const ParserEngine = {
+  splitRegex: /[\s,.;\n]+/,
+
+  cleanToken(token, alnumOnly) {
+    let t = token.trim();
+
+    t = t.replace(/^\d+[\.\-\)]?/, "");
+
+    if (alnumOnly) {
+      t = t.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, "");
+    }
+
+    return t.trim();
+  },
+
+  parse(text, settings) {
+    if (!text) return [];
+
+    const parts = text.split(this.splitRegex);
+    const result = [];
+
+    for (let i = 0; i < parts.length; i++) {
+      const cleaned = this.cleanToken(parts[i], settings.alnumOnly);
+      if (cleaned) result.push(cleaned);
+    }
+
+    return result;
+  }
+};
+const LanguageEngine = {
+  detect(word) {
+    if (/[а-яё]/i.test(word)) return "ru";
+    if (/[a-z]/i.test(word)) return "en";
+    if (/[0-9]/.test(word)) return "num";
+    return "other";
+  }
+};
+
+const SortingEngine = {
+  sort(data, settings) {
+    let arr = data;
+
+    const normalize = (v) => Utils.normalize(v, settings.ignoreCase);
+
+    if (settings.langMode !== "mixed") {
+      const groups = { ru: [], en: [], other: [], num: [] };
+
+      for (let i = 0; i < arr.length; i++) {
+        const lang = LanguageEngine.detect(arr[i]);
+        (groups[lang] || groups.other).push(arr[i]);
+      }
+
+      if (settings.langMode === "ru") {
+        arr = [...groups.ru, ...groups.en, ...groups.other, ...groups.num];
+      } else if (settings.langMode === "en") {
+        arr = [...groups.en, ...groups.ru, ...groups.other, ...groups.num];
+      }
+    }
+
+    if (settings.sortMode === "alpha") {
+      arr.sort((a, b) => normalize(a).localeCompare(normalize(b)));
+    } else if (settings.sortMode === "length") {
+      arr.sort((a, b) => a.length - b.length);
+    } else if (settings.sortMode === "reverse") {
+      arr.reverse();
+    }
+
+    return arr;
+  }
+};
+
+const DeduplicationEngine = {
+  dedupe(data, settings) {
+    if (!settings.dedupe) return data;
+
+    const seen = new Set();
+    const result = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const val = settings.ignoreCase ? data[i].toLowerCase() : data[i];
+      if (!seen.has(val)) {
+        seen.add(val);
+        result.push(data[i]);
+      }
+    }
+
+    return result;
+  }
+};
+
+const SearchEngine = {
+  filter(data, query, settings) {
+    if (!query) return data;
+
+    const q = settings.ignoreCase ? query.toLowerCase() : query;
+
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+      const val = settings.ignoreCase ? data[i].toLowerCase() : data[i];
+      if (val.includes(q)) result.push(data[i]);
+    }
+
+    return result;
+  }
+};
+const StatsEngine = {
+  calculate(data) {
+    const freq = {};
+    let total = data.length;
+
+    for (let i = 0; i < data.length; i++) {
+      const w = data[i];
+      freq[w] = (freq[w] || 0) + 1;
+    }
+
+    const unique = Object.keys(freq).length;
+
+    const top = Object.entries(freq)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    return { total, unique, freq, top };
+  }
+};
+
+const CSVEngine = {
+  detect(text) {
+    const lines = text.split("\n").filter(Boolean);
+    if (!lines.length) return null;
+
+    const delimiter = lines[0].includes(";") ? ";" : ",";
+    const headers = lines[0].split(delimiter);
+
+    return { delimiter, headers, lines };
+  },
+
+  extractColumn(csvData, index) {
+    const result = [];
+    for (let i = 1; i < csvData.lines.length; i++) {
+      const cols = csvData.lines[i].split(csvData.delimiter);
+      if (cols[index]) result.push(cols[index]);
+    }
+    return result;
+  }
+};
+
+const ExportEngine = {
+  toTXT(data) {
+    return data.join("\n");
+  },
+
+  toCSV(data) {
+    return data.map(v => `"${v.replace(/"/g, '""')}"`).join(",");
+  },
+
+  toJSON(data) {
+    return JSON.stringify(data, null, 2);
+  }
+};
+const UI = {
+  els: {
+    input: document.getElementById("inputText"),
+    output: document.getElementById("outputList"),
+    spinner: document.getElementById("spinner"),
+    total: document.getElementById("totalCount"),
+    unique: document.getElementById("uniqueCount"),
+    top: document.getElementById("topList"),
+    toast: document.getElementById("toast"),
+
+    sortMode: document.getElementById("sortMode"),
+    langMode: document.getElementById("langMode"),
+    ignoreCase: document.getElementById("ignoreCase"),
+    dedupe: document.getElementById("dedupe"),
+    alnumOnly: document.getElementById("alnumOnly"),
+    theme: document.getElementById("theme"),
+
+    fileInput: document.getElementById("fileInput"),
+    loadFileBtn: document.getElementById("loadFileBtn"),
+    clearBtn: document.getElementById("clearBtn"),
+
+    copyBtn: document.getElementById("copyBtn"),
+    exportTxt: document.getElementById("exportTxt"),
+    exportCsv: document.getElementById("exportCsv"),
+    exportJson: document.getElementById("exportJson")
+  },
+
+  renderList(data) {
+    const start = AppState.ui.visibleStart;
+    const end = Math.min(AppState.ui.visibleEnd, data.length);
+
+    let html = "";
+    for (let i = start; i < end; i++) {
+      html += `<div class="item">${data[i]}</div>`;
+    }
+
+    this.els.output.innerHTML = html;
+  },
+
+  renderStats(stats) {
+    this.els.total.textContent = stats.total;
+    this.els.unique.textContent = stats.unique;
+
+    let html = "";
+    for (let i = 0; i < stats.top.length; i++) {
+      html += `<div>${stats.top[i][0]} (${stats.top[i][1]})</div>`;
+    }
+    this.els.top.innerHTML = html;
+  },
+
+  setLoading(v) {
+    AppState.ui.loading = v;
+    this.els.spinner.style.display = v ? "block" : "none";
+  },
+
+  toast(msg) {
+    this.els.toast.textContent = msg;
+    this.els.toast.classList.add("show");
+    setTimeout(() => {
+      this.els.toast.classList.remove("show");
+    }, 2000);
+  },
+
+  applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+};
+
+const Persistence = {
+  save() {
+    localStorage.setItem("sws_settings", JSON.stringify(AppState.settings));
+  },
+  load() {
+    const s = localStorage.getItem("sws_settings");
+    if (!s) return;
+    Object.assign(AppState.settings, JSON.parse(s));
+  }
+};
+
+const Controller = {
+  process() {
+    UI.setLoading(true);
+
+    setTimeout(() => {
+      AppState.parsed = ParserEngine.parse(AppState.rawInput, AppState.settings);
+
+      let data = AppState.parsed;
+
+      data = DeduplicationEngine.dedupe(data, AppState.settings);
+      data = SortingEngine.sort(data, AppState.settings);
+      data = SearchEngine.filter(data, AppState.ui.search, AppState.settings);
+
+      AppState.processed = data;
+
+      AppState.stats = StatsEngine.calculate(data);
+
+      UI.renderList(data);
+      UI.renderStats(AppState.stats);
+
+      UI.setLoading(false);
+      UI.toast("Processing complete");
+    }, 0);
+  }
+};
+
+const bindEvents = () => {
+  const debounced = Utils.debounce(() => {
+    AppState.rawInput = UI.els.input.value;
+    Controller.process();
+  }, 400);
+
+  UI.els.input.addEventListener("input", debounced);
+
+  UI.els.sortMode.onchange = e => {
+    AppState.settings.sortMode = e.target.value;
+    Persistence.save();
+    Controller.process();
+  };
+
+  UI.els.langMode.onchange = e => {
+    AppState.settings.langMode = e.target.value;
+    Persistence.save();
+    Controller.process();
+  };
+
+  UI.els.ignoreCase.onchange = e => {
+    AppState.settings.ignoreCase = e.target.checked;
+    Persistence.save();
+    Controller.process();
+  };
+
+  UI.els.dedupe.onchange = e => {
+    AppState.settings.dedupe = e.target.checked;
+    Persistence.save();
+    Controller.process();
+  };
+
+  UI.els.alnumOnly.onchange = e => {
+    AppState.settings.alnumOnly = e.target.checked;
+    Persistence.save();
+    Controller.process();
+  };
+
+  UI.els.theme.onchange = e => {
+    AppState.settings.theme = e.target.value;
+    UI.applyTheme(e.target.value);
+    Persistence.save();
+  };
+
+  UI.els.clearBtn.onclick = () => {
+    UI.els.input.value = "";
+    AppState.rawInput = "";
+    Controller.process();
+  };
+
+  UI.els.loadFileBtn.onclick = () => UI.els.fileInput.click();
+
+  UI.els.fileInput.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+      AppState.rawInput = ev.target.result;
+      UI.els.input.value = AppState.rawInput;
+      Controller.process();
+      UI.toast("File loaded");
+    };
+    reader.readAsText(file);
+  };
+
+  UI.els.copyBtn.onclick = () => {
+    Utils.copy(AppState.processed.join("\n"));
+    UI.toast("Copied");
+  };
+
+  UI.els.exportTxt.onclick = () => {
+    Utils.download("words.txt", ExportEngine.toTXT(AppState.processed));
+  };
+
+  UI.els.exportCsv.onclick = () => {
+    Utils.download("words.csv", ExportEngine.toCSV(AppState.processed));
+  };
+
+  UI.els.exportJson.onclick = () => {
+    Utils.download("words.json", ExportEngine.toJSON(AppState.processed));
+  };
+};
+const WorkerEngine = {
+  worker: null,
+
+  init() {
+    const code = `
+      self.onmessage = function(e) {
+        const { text, settings, query } = e.data;
+
+        const splitRegex = /[\\s,.;\\n]+/;
+
+        function clean(token) {
+          let t = token.trim();
+          t = t.replace(/^\\d+[\\.\\-\\)]?/, "");
+          if (settings.alnumOnly) {
+            t = t.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, "");
+          }
+          return t.trim();
+        }
+
+        function detect(word) {
+          if (/[а-яё]/i.test(word)) return "ru";
+          if (/[a-z]/i.test(word)) return "en";
+          if (/[0-9]/.test(word)) return "num";
+          return "other";
+        }
+
+        let parts = text.split(splitRegex);
+        let parsed = [];
+
+        for (let i = 0; i < parts.length; i++) {
+          const c = clean(parts[i]);
+          if (c) parsed.push(c);
+        }
+
+        if (settings.dedupe) {
+          const seen = new Set();
+          const res = [];
+          for (let i = 0; i < parsed.length; i++) {
+            const v = settings.ignoreCase ? parsed[i].toLowerCase() : parsed[i];
+            if (!seen.has(v)) {
+              seen.add(v);
+              res.push(parsed[i]);
+            }
+          }
+          parsed = res;
+        }
+
+        if (settings.langMode !== "mixed") {
+          const g = { ru: [], en: [], other: [], num: [] };
+          for (let i = 0; i < parsed.length; i++) {
+            const l = detect(parsed[i]);
+            (g[l] || g.other).push(parsed[i]);
+          }
+          if (settings.langMode === "ru") {
+            parsed = [...g.ru, ...g.en, ...g.other, ...g.num];
+          } else {
+            parsed = [...g.en, ...g.ru, ...g.other, ...g.num];
+          }
+        }
+
+        const normalize = v => settings.ignoreCase ? v.toLowerCase() : v;
+
+        if (settings.sortMode === "alpha") {
+          parsed.sort((a,b)=>normalize(a).localeCompare(normalize(b)));
+        } else if (settings.sortMode === "length") {
+          parsed.sort((a,b)=>a.length-b.length);
+        } else if (settings.sortMode === "reverse") {
+          parsed.reverse();
+        }
+
+        if (query) {
+          const q = settings.ignoreCase ? query.toLowerCase() : query;
+          parsed = parsed.filter(v => {
+            const val = settings.ignoreCase ? v.toLowerCase() : v;
+            return val.includes(q);
+          });
+        }
+
+        const freq = {};
+        for (let i = 0; i < parsed.length; i++) {
+          freq[parsed[i]] = (freq[parsed[i]] || 0) + 1;
+        }
+
+        const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+        self.postMessage({
+          data: parsed,
+          stats: {
+            total: parsed.length,
+            unique: Object.keys(freq).length,
+            top
+          }
+        });
+      }
+    `;
+
+    const blob = new Blob([code], { type: "application/javascript" });
+    this.worker = new Worker(URL.createObjectURL(blob));
+  },
+
+  run(text, settings, query, cb) {
+    if (!this.worker) this.init();
+
+    this.worker.onmessage = e => {
+      cb(e.data);
+    };
+
+    this.worker.postMessage({ text, settings, query });
+  }
+};
+
+const VirtualList = {
+  init() {
+    UI.els.output.addEventListener("scroll", () => {
+      const scrollTop = UI.els.output.scrollTop;
+      const itemHeight = 24;
+      const start = Math.floor(scrollTop / itemHeight);
+      const visible = Math.ceil(UI.els.output.clientHeight / itemHeight);
+
+      AppState.ui.visibleStart = start;
+      AppState.ui.visibleEnd = start + visible + 20;
+
+      UI.renderList(AppState.processed);
+    });
+  }
+};
+
+const initApp = () => {
+  Persistence.load();
+
+  UI.els.sortMode.value = AppState.settings.sortMode;
+  UI.els.langMode.value = AppState.settings.langMode;
+  UI.els.ignoreCase.checked = AppState.settings.ignoreCase;
+  UI.els.dedupe.checked = AppState.settings.dedupe;
+  UI.els.alnumOnly.checked = AppState.settings.alnumOnly;
+  UI.els.theme.value = AppState.settings.theme;
+
+  UI.applyTheme(AppState.settings.theme);
+
+  bindEvents();
+  VirtualList.init();
+
+  Controller.process = () => {
+    UI.setLoading(true);
+
+    WorkerEngine.run(
+      AppState.rawInput,
+      AppState.settings,
+      AppState.ui.search,
+      ({ data, stats }) => {
+        AppState.processed = data;
+        AppState.stats = stats;
+
+        UI.renderList(data);
+        UI.renderStats(stats);
+
+        UI.setLoading(false);
+        UI.toast("Processing complete");
+      }
+    );
+  };
+
+  Controller.process();
+};
+
+initApp();
+</script>
+</body>
+</html>
