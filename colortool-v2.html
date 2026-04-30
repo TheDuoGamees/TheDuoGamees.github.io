@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Color Design Tool</title>
+
+  <style id="app-style">
+:root {
+  --bg: #0b1020;
+  --bg-2: #10172d;
+  --card: rgba(16, 23, 45, 0.82);
+  --card-solid: #11182f;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #e7ecff;
+  --text-dim: rgba(231, 236, 255, 0.72);
+  --muted: rgba(231, 236, 255, 0.55);
+  --accent: #26c6da;
+  --accent-rgb: 38, 198, 218;
+  --accent-2: #7c4dff;
+  --accent-hover: #39d9ec;
+  --accent-active: #1fb0c1;
+  --on-accent: #06111a;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --success: #37d67a;
+  --warn: #fbbf24;
+  --danger: #fb7185;
+  --radius: 22px;
+  --radius-sm: 14px;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.18);
+  --border: 1px solid var(--card-border);
+  --gap: 18px;
+  --focus: 0 0 0 3px rgba(38, 198, 218, 0.24);
+  --grid-max: 1520px;
+}
+
+body.theme-light {
+  --bg: #edf2ff;
+  --bg-2: #f5f7ff;
+  --card: rgba(255, 255, 255, 0.84);
+  --card-solid: #ffffff;
+  --card-border: rgba(20, 30, 50, 0.08);
+  --text: #0d1630;
+  --text-dim: rgba(13, 22, 48, 0.72);
+  --muted: rgba(13, 22, 48, 0.55);
+  --surface: rgba(13, 22, 48, 0.04);
+  --surface-2: rgba(13, 22, 48, 0.07);
+  --shadow: 0 24px 80px rgba(41, 59, 97, 0.14);
+  --shadow-soft: 0 10px 30px rgba(41, 59, 97, 0.08);
+  --focus: 0 0 0 3px rgba(38, 198, 218, 0.16);
+}
+
+body.theme-neon {
+  --bg: #07111a;
+  --bg-2: #061622;
+  --card: rgba(4, 16, 26, 0.82);
+  --card-solid: #04101a;
+  --card-border: rgba(68, 255, 222, 0.14);
+  --text: #effffd;
+  --text-dim: rgba(239, 255, 253, 0.72);
+  --muted: rgba(239, 255, 253, 0.55);
+  --accent: #43ffd8;
+  --accent-rgb: 67, 255, 216;
+  --accent-hover: #79ffe4;
+  --accent-active: #1de7c0;
+  --on-accent: #031210;
+  --surface: rgba(67, 255, 216, 0.08);
+  --surface-2: rgba(67, 255, 216, 0.14);
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+  --shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.26);
+  --focus: 0 0 0 3px rgba(67, 255, 216, 0.2);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(124, 77, 255, 0.18), transparent 32%),
+    radial-gradient(circle at top right, rgba(38, 198, 218, 0.16), transparent 35%),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition:
+    background 260ms ease,
+    color 260ms ease;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  max-width: var(--grid-max);
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.14), transparent);
+  padding: 10px 0 18px;
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: var(--border);
+  border-radius: 28px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.brand-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 35%),
+    linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 14px 30px rgba(var(--accent-rgb), 0.28);
+  flex: none;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.1;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: var(--border);
+  background: var(--surface);
+}
+
+.control-pill label {
+  color: var(--text-dim);
+  font-size: 0.84rem;
+  white-space: nowrap;
+}
+
+.control-pill select,
+.control-pill input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.btn,
+.icon-btn,
+.segment-btn {
+  border: 0;
+  outline: 0;
+  border-radius: 14px;
+  transition:
+    transform 160ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.btn:focus-visible,
+.icon-btn:focus-visible,
+.segment-btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: var(--focus);
+}
+
+.btn {
+  padding: 12px 16px;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: var(--surface-2);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+  border-color: transparent;
+  box-shadow: 0 18px 36px rgba(var(--accent-rgb), 0.24);
+}
+
+.btn.primary:hover {
+  background: linear-gradient(135deg, var(--accent-hover), var(--accent-2));
+}
+
+.btn.ghost {
+  background: transparent;
+  border: var(--border);
+  box-shadow: none;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: var(--border);
+  color: var(--text);
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+  background: var(--surface-2);
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: var(--border);
+}
+
+.segment-btn {
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-dim);
+}
+
+.segment-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.column {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  overflow: clip;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 0;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+.card-header p {
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.card-body {
+  padding: 18px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.input,
+textarea,
+select {
+  width: 100%;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.02);
+  border: var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  outline: 0;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+body.theme-light .input,
+body.theme-light textarea,
+body.theme-light select {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+
+textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.small {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+}
+
+.slider-wrap {
+  display: grid;
+  gap: 7px;
+}
+
+.slider-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+input[type="color"] {
+  width: 100%;
+  height: 44px;
+  padding: 4px;
+  border-radius: 14px;
+  border: var(--border);
+  background: var(--surface);
+}
+
+.preview-stage {
+  display: grid;
+  gap: 14px;
+}
+
+.preview-main {
+  min-height: 320px;
+  border-radius: 26px;
+  border: var(--border);
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 28%),
+    linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 18px 50px rgba(var(--accent-rgb), 0.18);
+}
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 22px;
+  display: grid;
+  align-content: space-between;
+  color: var(--preview-text, #fff);
+}
+
+.preview-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.preview-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  color: var(--preview-text, #fff);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.preview-title {
+  font-size: clamp(1.3rem, 2.6vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.preview-copy {
+  max-width: 28ch;
+  margin: 12px 0 0;
+  font-size: 0.98rem;
+  opacity: 0.96;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-actions .btn {
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--preview-text, #fff);
+  border-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.preview-actions .btn.primary {
+  background: rgba(255, 255, 255, 0.96);
+  color: #08111a;
+}
+
+.preview-sample {
+  display: grid;
+  gap: 12px;
+}
+
+.sample-navbar,
+.sample-card,
+.sample-block {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--accent-rgb), 0.14);
+}
+
+.sample-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background:
+    linear-gradient(135deg, rgba(var(--accent-rgb), 0.96), rgba(var(--accent-rgb), 0.74));
+  color: var(--preview-text, #fff);
+}
+
+.sample-links {
+  display: flex;
+  gap: 14px;
+  font-size: 0.92rem;
+  opacity: 0.96;
+}
+
+.sample-card {
+  padding: 14px;
+  background: var(--surface);
+}
+
+.sample-title {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.sample-text {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sample-btn {
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 0;
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 12px 22px rgba(var(--accent-rgb), 0.18);
+}
+
+.sample-btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border: var(--border);
+  box-shadow: none;
+}
+
+.sample-btn:hover {
+  transform: translateY(-1px);
+}
+
+.stats {
+  display: grid;
+  gap: 12px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--surface);
+  border: var(--border);
+}
+
+.stat .kpi {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border: var(--border);
+  background: var(--surface);
+}
+
+.badge.pass {
+  color: var(--success);
+  border-color: rgba(55, 214, 122, 0.24);
+}
+
+.badge.fail {
+  color: var(--danger);
+  border-color: rgba(251, 113, 133, 0.24);
+}
+
+.palette-section {
+  display: grid;
+  gap: 14px;
+}
+
+.palette-row {
+  display: grid;
+  gap: 10px;
+}
+
+.palette-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.palette-row-head h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+  gap: 10px;
+}
+
+.swatch {
+  position: relative;
+  min-height: 74px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.swatch button {
+  all: unset;
+  display: grid;
+  place-items: end start;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.swatch.light button {
+  color: rgba(6, 11, 16, 0.94);
+  text-shadow: none;
+}
+
+.gradient-stage {
+  display: grid;
+  gap: 14px;
+}
+
+.gradient-preview {
+  min-height: 180px;
+  border-radius: 22px;
+  border: var(--border);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: var(--shadow-soft);
+}
+
+.stop-list {
+  display: grid;
+  gap: 12px;
+}
+
+.stop-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: var(--border);
+}
+
+.stop-item .mini {
+  height: 44px;
+  padding: 4px;
+}
+
+.image-preview {
+  display: grid;
+  gap: 14px;
+}
+
+.dropzone {
+  border: 1.5px dashed rgba(var(--accent-rgb), 0.35);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 18px;
+  text-align: center;
+}
+
+.dropzone strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.thumb-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  gap: 10px;
+}
+
+.thumb {
+  min-height: 56px;
+  border-radius: 14px;
+  border: var(--border);
+  cursor: pointer;
+}
+
+.storage-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: var(--border);
+  border-radius: 16px;
+}
+
+.list-item .meta {
+  display: grid;
+  gap: 3px;
+}
+
+.list-item .meta strong {
+  font-size: 0.92rem;
+}
+
+.list-item .meta span {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.export-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.toast-stack {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 36px));
+}
+
+.toast {
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(12, 18, 34, 0.92);
+  color: #fff;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transform: translateY(6px);
+  opacity: 0;
+  animation: toast-in 180ms ease forwards;
+}
+
+body.theme-light .toast {
+  background: rgba(255, 255, 255, 0.96);
+  color: #08111a;
+}
+
+.toast.success {
+  border-color: rgba(55, 214, 122, 0.28);
+}
+
+.toast.error {
+  border-color: rgba(251, 113, 133, 0.28);
+}
+
+.toast.info {
+  border-color: rgba(var(--accent-rgb), 0.22);
+}
+
+@keyframes toast-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+hr.sep {
+  border: 0;
+  border-top: var(--border);
+  margin: 14px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .topbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .top-actions {
+    justify-content: space-between;
+  }
+
+  .grid-2,
+  .grid-3,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stop-item {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-main {
+    min-height: 280px;
+  }
+
+  .toast-stack {
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="topbar">
+    <div class="app-shell">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge" id="brandBadge"></div>
+          <div>
+            <h1 data-i18n="appTitle">Color Design Tool</h1>
+            <p data-i18n="appSubtitle">Production-grade color system workspace</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <div class="control-pill">
+            <label for="themeSelect" data-i18n="themeLabel">Theme</label>
+            <select id="themeSelect">
+              <option value="dark" data-i18n="themeDark">Dark</option>
+              <option value="light" data-i18n="themeLight">Light</option>
+              <option value="neon" data-i18n="themeNeon">Neon</option>
+            </select>
+          </div>
+
+          <div class="control-pill">
+            <label for="langSelect" data-i18n="languageLabel">Language</label>
+            <select id="langSelect">
+              <option value="en">EN</option>
+              <option value="ru">RU</option>
+            </select>
+          </div>
+
+          <button class="btn ghost" id="saveProjectBtn" data-i18n="saveProject">Save project</button>
+          <button class="btn primary" id="shareBtn" data-i18n="shareState">Share state</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <div class="main-grid">
+      <div class="column">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="colorInputTitle">Color input</h2>
+              <p data-i18n="colorInputSubtitle">HEX, RGB, HSL, HSV, alpha, picker, eyedropper</p>
+            </div>
+            <div class="button-row">
+              <button class="btn" id="eyedropperBtn" data-i18n="eyedropper">EyeDropper</button>
+              <label class="btn ghost" style="display:inline-flex;align-items:center;gap:10px;">
+                <span data-i18n="picker">Picker</span>
+                <input type="color" id="pickerInput" aria-label="Color picker" />
+              </label>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div class="field">
+                <label for="hexInput" data-i18n="hexLabel">HEX</label>
+                <input class="input" id="hexInput" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="rgbInput" data-i18n="rgbLabel">RGB / RGBA</label>
+                <input class="input" id="rgbInput" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="hslInput" data-i18n="hslLabel">HSL / HSLA</label>
+                <input class="input" id="hslInput" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="hsvInput" data-i18n="hsvLabel">HSV</label>
+                <input class="input" id="hsvInput" autocomplete="off" spellcheck="false" />
+              </div>
+            </div>
+
+            <div class="slider-wrap" style="margin-top:14px;">
+              <div class="slider-meta"><span data-i18n="alphaLabel">Alpha</span><span id="alphaValue">100%</span></div>
+              <input type="range" id="alphaSlider" min="0" max="100" value="100" />
+            </div>
+
+            <hr class="sep" />
+
+            <div class="grid-2">
+              <button class="btn" id="copyHexBtn" data-i18n="copyHex">Copy HEX</button>
+              <button class="btn" id="copyRgbBtn" data-i18n="copyRgb">Copy RGB</button>
+              <button class="btn" id="copyHslBtn" data-i18n="copyHsl">Copy HSL</button>
+              <button class="btn primary" id="copyAllBtn" data-i18n="copyAll">Copy all</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="slidersTitle">Live color sliders</h2>
+              <p data-i18n="slidersSubtitle">Hue, saturation, lightness and opacity stay in sync</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="slider-wrap">
+              <div class="slider-meta"><span data-i18n="hue">Hue</span><span id="hueValue">0</span></div>
+              <input type="range" id="hueSlider" min="0" max="360" value="0" />
+            </div>
+            <div class="slider-wrap">
+              <div class="slider-meta"><span data-i18n="saturation">Saturation</span><span id="satValue">0%</span></div>
+              <input type="range" id="satSlider" min="0" max="100" value="0" />
+            </div>
+            <div class="slider-wrap">
+              <div class="slider-meta"><span data-i18n="lightness">Lightness</span><span id="lightValue">0%</span></div>
+              <input type="range" id="lightSlider" min="0" max="100" value="0" />
+            </div>
+            <div class="slider-wrap">
+              <div class="slider-meta"><span data-i18n="alphaLabel">Alpha</span><span id="alphaValue2">100%</span></div>
+              <input type="range" id="alphaSlider2" min="0" max="100" value="100" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="palettesTitle">Generated palettes</h2>
+              <p data-i18n="palettesSubtitle">Lighter, darker, monochrome, complementary, analogous, triadic, Tailwind scale and smart random</p>
+            </div>
+            <button class="btn ghost" id="savePaletteBtn" data-i18n="savePalette">Save palette</button>
+          </div>
+          <div class="card-body palette-section" id="paletteContainer"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="gradientTitle">Gradient generator</h2>
+              <p data-i18n="gradientSubtitle">Angle control, multiple stops, live preview and CSS export</p>
+            </div>
+            <button class="btn" id="addStopBtn" data-i18n="addStop">Add stop</button>
+          </div>
+          <div class="card-body gradient-stage">
+            <div class="slider-wrap">
+              <div class="slider-meta"><span data-i18n="angle">Angle</span><span id="angleValue">90°</span></div>
+              <input type="range" id="gradientAngle" min="0" max="360" value="90" />
+            </div>
+            <div class="gradient-preview" id="gradientPreview"></div>
+            <div class="stop-list" id="gradientStops"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="imageSupportTitle">Image support</h2>
+              <p data-i18n="imageSupportSubtitle">Upload an image to extract a palette and dominant color</p>
+            </div>
+          </div>
+          <div class="card-body image-preview">
+            <label class="dropzone">
+              <strong data-i18n="uploadImage">Upload image</strong>
+              <span class="small" data-i18n="imageHint">PNG, JPG, WebP and more</span>
+              <input type="file" id="imageInput" accept="image/*" style="display:none" />
+            </label>
+            <div class="field">
+              <label data-i18n="dominantColor">Dominant color</label>
+              <div class="grid-2">
+                <div class="stat">
+                  <span class="kpi" id="dominantColorHex">—</span>
+                  <span class="small" id="dominantColorName">—</span>
+                </div>
+                <div class="stat" id="dominantColorSwatch" style="min-height:72px;border-radius:18px;"></div>
+              </div>
+            </div>
+            <div class="thumb-row" id="imagePalette"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="column">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="previewTitle">Live preview</h2>
+              <p data-i18n="previewSubtitle">Buttons, cards, text blocks and navbar update instantly</p>
+            </div>
+          </div>
+          <div class="card-body preview-stage">
+            <div class="preview-main" id="mainPreview">
+              <div class="preview-overlay">
+                <div class="preview-head">
+                  <div>
+                    <div class="preview-chip" id="previewChip">#000000</div>
+                    <h3 class="preview-title" id="previewTitleText">Design system preview</h3>
+                    <p class="preview-copy" id="previewCopyText">Readable contrast, surface hierarchy and interactive states.</p>
+                  </div>
+                  <div class="preview-chip" id="previewContrastChip">AA</div>
+                </div>
+
+                <div class="preview-actions">
+                  <button class="btn primary" id="previewPrimaryBtn" data-i18n="primaryAction">Primary</button>
+                  <button class="btn" id="previewSecondaryBtn" data-i18n="secondaryAction">Secondary</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="preview-sample">
+              <div class="sample-navbar" id="sampleNavbar">
+                <strong>Brand</strong>
+                <div class="sample-links">
+                  <span>Docs</span>
+                  <span>Pricing</span>
+                  <span>Login</span>
+                </div>
+              </div>
+
+              <div class="sample-card" id="sampleCard">
+                <h3 class="sample-title" data-i18n="sampleCardTitle">Card title</h3>
+                <p class="sample-text" data-i18n="sampleCardText">Supporting text stays readable with automatic contrast management.</p>
+              </div>
+
+              <div class="button-row">
+                <button class="sample-btn" data-i18n="buttonNormal">Normal</button>
+                <button class="sample-btn secondary" data-i18n="buttonSecondary">Hover / Active</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="accessibilityTitle">Accessibility</h2>
+              <p data-i18n="accessibilitySubtitle">WCAG contrast checks for small and large text</p>
+            </div>
+          </div>
+          <div class="card-body stats">
+            <div class="stats-grid">
+              <div class="stat"><span class="kpi" id="contrastRatio">0.00</span><span class="small" data-i18n="contrastRatioLabel">Contrast ratio</span></div>
+              <div class="stat"><span class="kpi" id="contrastSmall">—</span><span class="small" data-i18n="smallText">Small text</span></div>
+              <div class="stat"><span class="kpi" id="contrastLarge">—</span><span class="small" data-i18n="largeText">Large text</span></div>
+              <div class="stat"><span class="kpi" id="textColorChoice">—</span><span class="small" data-i18n="autoTextColor">Auto text color</span></div>
+            </div>
+            <div class="badges" id="accessibilityBadges"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="smartTitle">Smart features</h2>
+              <p data-i18n="smartSubtitle">Psychology, closest matches and generated theme guidance</p>
+            </div>
+          </div>
+          <div class="card-body export-grid">
+            <div class="field">
+              <label data-i18n="psychology">Color psychology</label>
+              <textarea class="input" id="psychologyText" readonly></textarea>
+            </div>
+
+            <div class="grid-2">
+              <div class="stat">
+                <span class="kpi" id="closestTailwind">—</span>
+                <span class="small" data-i18n="closestTailwindLabel">Closest Tailwind color</span>
+              </div>
+              <div class="stat">
+                <span class="kpi" id="closestMaterial">—</span>
+                <span class="small" data-i18n="closestMaterialLabel">Closest Material color</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="storageTitle">Storage</h2>
+              <p data-i18n="storageSubtitle">History, saved palettes and projects are stored locally</p>
+            </div>
+          </div>
+          <div class="card-body storage-grid">
+            <div>
+              <div class="palette-row-head">
+                <h3 data-i18n="history">History</h3>
+                <button class="btn ghost" id="clearHistoryBtn" data-i18n="clearHistory">Clear</button>
+              </div>
+              <div class="list" id="historyList"></div>
+            </div>
+            <div>
+              <div class="palette-row-head">
+                <h3 data-i18n="savedPalettes">Saved palettes</h3>
+              </div>
+              <div class="list" id="savedPalettesList"></div>
+            </div>
+            <div>
+              <div class="palette-row-head">
+                <h3 data-i18n="savedProjects">Saved projects</h3>
+              </div>
+              <div class="list" id="savedProjectsList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="exportTitle">Export</h2>
+              <p data-i18n="exportSubtitle">CSS variables, JSON, SCSS and Tailwind config</p>
+            </div>
+            <button class="btn primary" id="exportCopyBtn" data-i18n="copyExport">Copy export</button>
+          </div>
+          <div class="card-body export-grid">
+            <div class="field">
+              <label for="exportFormat" data-i18n="exportFormat">Export format</label>
+              <select id="exportFormat">
+                <option value="css">CSS variables</option>
+                <option value="json">JSON</option>
+                <option value="scss">SCSS</option>
+                <option value="tailwind">Tailwind config</option>
+              </select>
+            </div>
+            <textarea id="exportOutput" class="input" readonly></textarea>
+            <div class="field">
+              <label for="shareUrl" data-i18n="shareUrl">Shareable URL</label>
+              <input id="shareUrl" class="input" readonly />
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <input type="file" id="hiddenImageInput" class="hidden" accept="image/*" />
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script>
+(() => {
+  "use strict";
+
+  const I18N = {
+    en: {
+      appTitle: "Color Design Tool",
+      appSubtitle: "Production-grade color system workspace",
+      themeLabel: "Theme",
+      languageLabel: "Language",
+      themeDark: "Dark",
+      themeLight: "Light",
+      themeNeon: "Neon",
+      saveProject: "Save project",
+      shareState: "Share state",
+      colorInputTitle: "Color input",
+      colorInputSubtitle: "HEX, RGB, HSL, HSV, alpha, picker, eyedropper",
+      eyedropper: "EyeDropper",
+      picker: "Picker",
+      hexLabel: "HEX",
+      rgbLabel: "RGB / RGBA",
+      hslLabel: "HSL / HSLA",
+      hsvLabel: "HSV",
+      alphaLabel: "Alpha",
+      copyHex: "Copy HEX",
+      copyRgb: "Copy RGB",
+      copyHsl: "Copy HSL",
+      copyAll: "Copy all",
+      slidersTitle: "Live color sliders",
+      slidersSubtitle: "Hue, saturation, lightness and opacity stay in sync",
+      hue: "Hue",
+      saturation: "Saturation",
+      lightness: "Lightness",
+      palettesTitle: "Generated palettes",
+      palettesSubtitle: "Lighter, darker, monochrome, complementary, analogous, triadic, Tailwind scale and smart random",
+      savePalette: "Save palette",
+      gradientTitle: "Gradient generator",
+      gradientSubtitle: "Angle control, multiple stops, live preview and CSS export",
+      addStop: "Add stop",
+      angle: "Angle",
+      imageSupportTitle: "Image support",
+      imageSupportSubtitle: "Upload an image to extract a palette and dominant color",
+      uploadImage: "Upload image",
+      imageHint: "PNG, JPG, WebP and more",
+      dominantColor: "Dominant color",
+      previewTitle: "Live preview",
+      previewSubtitle: "Buttons, cards, text blocks and navbar update instantly",
+      primaryAction: "Primary",
+      secondaryAction: "Secondary",
+      sampleCardTitle: "Card title",
+      sampleCardText: "Supporting text stays readable with automatic contrast management.",
+      buttonNormal: "Normal",
+      buttonSecondary: "Hover / Active",
+      accessibilityTitle: "Accessibility",
+      accessibilitySubtitle: "WCAG contrast checks for small and large text",
+      contrastRatioLabel: "Contrast ratio",
+      smallText: "Small text",
+      largeText: "Large text",
+      autoTextColor: "Auto text color",
+      smartTitle: "Smart features",
+      smartSubtitle: "Psychology, closest matches and generated theme guidance",
+      psychology: "Color psychology",
+      closestTailwindLabel: "Closest Tailwind color",
+      closestMaterialLabel: "Closest Material color",
+      storageTitle: "Storage",
+      storageSubtitle: "History, saved palettes and projects are stored locally",
+      history: "History",
+      savedPalettes: "Saved palettes",
+      savedProjects: "Saved projects",
+      clearHistory: "Clear",
+      exportTitle: "Export",
+      exportSubtitle: "CSS variables, JSON, SCSS and Tailwind config",
+      copyExport: "Copy export",
+      exportFormat: "Export format",
+      shareUrl: "Shareable URL",
+      contrastAA: "AA",
+      contrastAAA: "AAA",
+      toastCopied: "Copied to clipboard",
+      toastSaved: "Saved successfully",
+      toastProjectSaved: "Project saved",
+      toastPaletteSaved: "Palette saved",
+      toastHistoryCleared: "History cleared",
+      toastImported: "State loaded",
+      toastEyeDropperUnsupported: "EyeDropper is not supported in this browser",
+      toastEyeDropperFailed: "Could not pick a color",
+      toastImageLoaded: "Palette extracted from image",
+      toastUrlCopied: "Shareable URL copied",
+      toastExportCopied: "Export copied",
+      toastThemeChanged: "Theme updated",
+      toastLanguageChanged: "Language updated",
+      lighter: "Lighter",
+      darker: "Darker",
+      monochrome: "Monochrome",
+      complementary: "Complementary",
+      analogous: "Analogous",
+      triadic: "Triadic",
+      tailwindScale: "Tailwind scale",
+      smartRandom: "Smart random",
+      copyColor: "Copy color",
+      setColor: "Set color",
+      remove: "Remove",
+      noHistory: "No history yet",
+      noSavedPalettes: "No saved palettes yet",
+      noSavedProjects: "No saved projects yet"
+    },
+    ru: {
+      appTitle: "Инструмент дизайна цветов",
+      appSubtitle: "Профессиональное рабочее пространство для цветовых систем",
+      themeLabel: "Тема",
+      languageLabel: "Язык",
+      themeDark: "Тёмная",
+      themeLight: "Светлая",
+      themeNeon: "Неон",
+      saveProject: "Сохранить проект",
+      shareState: "Поделиться",
+      colorInputTitle: "Ввод цвета",
+      colorInputSubtitle: "HEX, RGB, HSL, HSV, альфа, пипетка, EyeDropper",
+      eyedropper: "EyeDropper",
+      picker: "Палитра",
+      hexLabel: "HEX",
+      rgbLabel: "RGB / RGBA",
+      hslLabel: "HSL / HSLA",
+      hsvLabel: "HSV",
+      alphaLabel: "Альфа",
+      copyHex: "Копировать HEX",
+      copyRgb: "Копировать RGB",
+      copyHsl: "Копировать HSL",
+      copyAll: "Копировать всё",
+      slidersTitle: "Живые ползунки цвета",
+      slidersSubtitle: "Оттенок, насыщенность, яркость и прозрачность синхронизированы",
+      hue: "Оттенок",
+      saturation: "Насыщенность",
+      lightness: "Светлота",
+      palettesTitle: "Сгенерированные палитры",
+      palettesSubtitle: "Светлее, темнее, монохром, комплементарная, аналоговая, триада, шкала Tailwind и умная случайная",
+      savePalette: "Сохранить палитру",
+      gradientTitle: "Генератор градиентов",
+      gradientSubtitle: "Угол, несколько стопов, live-превью и CSS-экспорт",
+      addStop: "Добавить стоп",
+      angle: "Угол",
+      imageSupportTitle: "Поддержка изображений",
+      imageSupportSubtitle: "Загрузите картинку, чтобы извлечь палитру и доминантный цвет",
+      uploadImage: "Загрузить изображение",
+      imageHint: "PNG, JPG, WebP и другие",
+      dominantColor: "Доминирующий цвет",
+      previewTitle: "Живое превью",
+      previewSubtitle: "Кнопки, карточки, текст и навбар обновляются мгновенно",
+      primaryAction: "Основная",
+      secondaryAction: "Вторичная",
+      sampleCardTitle: "Заголовок карточки",
+      sampleCardText: "Текст остаётся читаемым благодаря авто-контрасту.",
+      buttonNormal: "Обычная",
+      buttonSecondary: "Наведение / Нажатие",
+      accessibilityTitle: "Доступность",
+      accessibilitySubtitle: "Проверка контраста WCAG для мелкого и крупного текста",
+      contrastRatioLabel: "Коэффициент контраста",
+      smallText: "Мелкий текст",
+      largeText: "Крупный текст",
+      autoTextColor: "Авто-цвет текста",
+      smartTitle: "Умные функции",
+      smartSubtitle: "Психология цвета, ближайшие совпадения и генерация темы",
+      psychology: "Психология цвета",
+      closestTailwindLabel: "Ближайший цвет Tailwind",
+      closestMaterialLabel: "Ближайший цвет Material",
+      storageTitle: "Хранилище",
+      storageSubtitle: "История, сохранённые палитры и проекты хранятся локально",
+      history: "История",
+      savedPalettes: "Сохранённые палитры",
+      savedProjects: "Сохранённые проекты",
+      clearHistory: "Очистить",
+      exportTitle: "Экспорт",
+      exportSubtitle: "CSS-переменные, JSON, SCSS и Tailwind config",
+      copyExport: "Копировать экспорт",
+      exportFormat: "Формат экспорта",
+      shareUrl: "Ссылка для шаринга",
+      contrastAA: "AA",
+      contrastAAA: "AAA",
+      toastCopied: "Скопировано в буфер обмена",
+      toastSaved: "Сохранено",
+      toastProjectSaved: "Проект сохранён",
+      toastPaletteSaved: "Палитра сохранена",
+      toastHistoryCleared: "История очищена",
+      toastImported: "Состояние загружено",
+      toastEyeDropperUnsupported: "EyeDropper не поддерживается в этом браузере",
+      toastEyeDropperFailed: "Не удалось выбрать цвет",
+      toastImageLoaded: "Палитра извлечена из изображения",
+      toastUrlCopied: "Ссылка скопирована",
+      toastExportCopied: "Экспорт скопирован",
+      toastThemeChanged: "Тема обновлена",
+      toastLanguageChanged: "Язык обновлён",
+      lighter: "Светлее",
+      darker: "Темнее",
+      monochrome: "Монохром",
+      complementary: "Комплементарная",
+      analogous: "Аналоговая",
+      triadic: "Триада",
+      tailwindScale: "Шкала Tailwind",
+      smartRandom: "Умная случайная",
+      copyColor: "Копировать цвет",
+      setColor: "Применить цвет",
+      remove: "Удалить",
+      noHistory: "Пока нет истории",
+      noSavedPalettes: "Пока нет сохранённых палитр",
+      noSavedProjects: "Пока нет сохранённых проектов"
+    }
+  };
+
+  const STORAGE_KEY = "color-design-tool:v1";
+
+  const TAILWIND_BASE = [
+    ["slate", "#64748b"], ["gray", "#6b7280"], ["zinc", "#71717a"], ["neutral", "#737373"], ["stone", "#78716c"],
+    ["red", "#ef4444"], ["orange", "#f97316"], ["amber", "#f59e0b"], ["yellow", "#eab308"], ["lime", "#84cc16"],
+    ["green", "#22c55e"], ["emerald", "#10b981"], ["teal", "#14b8a6"], ["cyan", "#06b6d4"], ["sky", "#0ea5e9"],
+    ["blue", "#3b82f6"], ["indigo", "#6366f1"], ["violet", "#8b5cf6"], ["purple", "#a855f7"], ["fuchsia", "#d946ef"], ["pink", "#ec4899"], ["rose", "#f43f5e"]
+  ];
+
+  const MATERIAL_BASE = [
+    ["Red", "#F44336"], ["Pink", "#E91E63"], ["Purple", "#9C27B0"], ["Deep Purple", "#673AB7"], ["Indigo", "#3F51B5"],
+    ["Blue", "#2196F3"], ["Light Blue", "#03A9F4"], ["Cyan", "#00BCD4"], ["Teal", "#009688"], ["Green", "#4CAF50"],
+    ["Light Green", "#8BC34A"], ["Lime", "#CDDC39"], ["Yellow", "#FFEB3B"], ["Amber", "#FFC107"], ["Orange", "#FF9800"],
+    ["Deep Orange", "#FF5722"], ["Brown", "#795548"], ["Gray", "#9E9E9E"], ["Blue Gray", "#607D8B"]
+  ];
+
+  const dom = {};
+  const state = {
+    lang: "en",
+    theme: "dark",
+    color: { r: 38, g: 198, b: 218, a: 1 },
+    gradient: {
+      angle: 90,
+      stops: [
+        { id: uid(), color: "#26c6da", pos: 0 },
+        { id: uid(), color: "#7c4dff", pos: 100 }
+      ]
+    },
+    history: [],
+    savedPalettes: [],
+    savedProjects: [],
+    imagePalette: [],
+    exportFormat: "css",
+    psychological: "",
+    closest: { tailwind: "", material: "" },
+    lastAction: ""
+  };
+
+  let suppress = false;
+  let saveTimer = 0;
+
+  function uid() {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  function $(id) {
+    return dom[id];
+  }
+
+  function cacheDom() {
+    [
+      "themeSelect", "langSelect", "saveProjectBtn", "shareBtn",
+      "eyedropperBtn", "pickerInput", "hexInput", "rgbInput", "hslInput", "hsvInput",
+      "alphaSlider", "alphaSlider2", "alphaValue", "alphaValue2",
+      "hueSlider", "satSlider", "lightSlider", "hueValue", "satValue", "lightValue",
+      "copyHexBtn", "copyRgbBtn", "copyHslBtn", "copyAllBtn",
+      "paletteContainer", "gradientAngle", "gradientPreview", "gradientStops", "addStopBtn",
+      "imageInput", "imagePalette", "dominantColorHex", "dominantColorName", "dominantColorSwatch",
+      "mainPreview", "previewChip", "previewTitleText", "previewCopyText", "previewContrastChip",
+      "sampleNavbar", "sampleCard", "contrastRatio", "contrastSmall", "contrastLarge",
+      "textColorChoice", "accessibilityBadges", "psychologyText", "closestTailwind", "closestMaterial",
+      "historyList", "savedPalettesList", "savedProjectsList", "clearHistoryBtn",
+      "exportFormat", "exportOutput", "exportCopyBtn", "shareUrl", "toastStack",
+      "brandBadge", "previewPrimaryBtn", "previewSecondaryBtn"
+    ].forEach(id => dom[id] = document.getElementById(id));
+  }
+
+  function t(key) {
+    return (I18N[state.lang] && I18N[state.lang][key]) || I18N.en[key] || key;
+  }
+
+  function applyI18n() {
+    document.documentElement.lang = state.lang;
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.dataset.i18n;
+      el.textContent = t(key);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+  }
+
+  function clamp(v, min, max) {
+    return Math.min(max, Math.max(min, v));
+  }
+
+  function round(n, p = 0) {
+    const m = Math.pow(10, p);
+    return Math.round(n * m) / m;
+  }
+
+  function normalizeHue(h) {
+    return ((h % 360) + 360) % 360;
+  }
+
+  function rgbToHex(r, g, b, a = 1) {
+    const toHex = n => clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
+    const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    if (a < 1) return `${hex}${toHex(a * 255)}`;
+    return hex;
+  }
+
+  function hexToRgb(hex) {
+    let value = String(hex).trim().replace(/^#/, "");
+    if (![3, 4, 6, 8].includes(value.length)) return null;
+    if (value.length === 3 || value.length === 4) value = value.split("").map(ch => ch + ch).join("");
+    const hasAlpha = value.length === 8;
+    const int = parseInt(value, 16);
+    if (Number.isNaN(int)) return null;
+    const r = (int >> (hasAlpha ? 24 : 16)) & 255;
+    const g = (int >> (hasAlpha ? 16 : 8)) & 255;
+    const b = (int >> (hasAlpha ? 8 : 0)) & 255;
+    const a = hasAlpha ? ((int & 255) / 255) : 1;
+    return { r, g, b, a };
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l: l * 100 };
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h;
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      default: h = (r - g) / d + 4;
+    }
+    h *= 60;
+    return { h: normalizeHue(h), s: s * 100, l: l * 100 };
+  }
+
+  function hslToRgb(h, s, l) {
+    h = normalizeHue(h) / 360;
+    s = clamp(s, 0, 100) / 100;
+    l = clamp(l, 0, 100) / 100;
+    if (s === 0) {
+      const val = Math.round(l * 255);
+      return { r: val, g: val, b: val };
+    }
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const r = hue2rgb(p, q, h + 1 / 3);
+    const g = hue2rgb(p, q, h);
+    const b = hue2rgb(p, q, h - 1 / 3);
+    return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+  }
+
+  function rgbToHsv(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const d = max - min;
+    const v = max;
+    const s = max === 0 ? 0 : d / max;
+    let h = 0;
+    if (d !== 0) {
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+        case g: h = (b - r) / d + 2; break;
+        default: h = (r - g) / d + 4;
+      }
+      h *= 60;
+    }
+    return { h: normalizeHue(h), s: s * 100, v: v * 100 };
+  }
+
+  function hsvToRgb(h, s, v) {
+    h = normalizeHue(h);
+    s = clamp(s, 0, 100) / 100;
+    v = clamp(v, 0, 100) / 100;
+    const c = v * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = v - c;
+    let rp = 0, gp = 0, bp = 0;
+    if (h < 60) [rp, gp, bp] = [c, x, 0];
+    else if (h < 120) [rp, gp, bp] = [x, c, 0];
+    else if (h < 180) [rp, gp, bp] = [0, c, x];
+    else if (h < 240) [rp, gp, bp] = [0, x, c];
+    else if (h < 300) [rp, gp, bp] = [x, 0, c];
+    else [rp, gp, bp] = [c, 0, x];
+    return {
+      r: Math.round((rp + m) * 255),
+      g: Math.round((gp + m) * 255),
+      b: Math.round((bp + m) * 255)
+    };
+  }
+
+  function rgbToLinear(v) {
+    v /= 255;
+    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  }
+
+  function relativeLuminance({ r, g, b }) {
+    const R = rgbToLinear(r);
+    const G = rgbToLinear(g);
+    const B = rgbToLinear(b);
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  }
+
+  function contrastRatio(c1, c2) {
+    const L1 = relativeLuminance(c1);
+    const L2 = relativeLuminance(c2);
+    const hi = Math.max(L1, L2);
+    const lo = Math.min(L1, L2);
+    return (hi + 0.05) / (lo + 0.05);
+  }
+
+  function bestTextColor(bg) {
+    const black = { r: 0, g: 0, b: 0 };
+    const white = { r: 255, g: 255, b: 255 };
+    const cBlack = contrastRatio(bg, black);
+    const cWhite = contrastRatio(bg, white);
+    return cBlack >= cWhite ? { color: "#000000", ratio: cBlack } : { color: "#ffffff", ratio: cWhite };
+  }
+
+  function parseRgbString(str) {
+    const m = String(str).trim().match(/^rgba?\(\s*([+\-.\d]+)%?\s*,\s*([+\-.\d]+)%?\s*,\s*([+\-.\d]+)%?(?:\s*[,/]\s*([+\-.\d]+))?\s*\)$/i);
+    if (!m) return null;
+    const percent = /%/.test(str);
+    let r = Number(m[1]), g = Number(m[2]), b = Number(m[3]);
+    if (percent) {
+      r = r * 2.55; g = g * 2.55; b = b * 2.55;
+    }
+    const a = m[4] == null ? 1 : Number(m[4]);
+    return { r: clamp(r, 0, 255), g: clamp(g, 0, 255), b: clamp(b, 0, 255), a: clamp(a, 0, 1) };
+  }
+
+  function parseHslString(str) {
+    const m = String(str).trim().match(/^hsla?\(\s*([+\-.\d]+)\s*,\s*([+\-.\d]+)%\s*,\s*([+\-.\d]+)%?(?:\s*[,/]\s*([+\-.\d]+))?\s*\)$/i);
+    if (!m) return null;
+    return {
+      h: normalizeHue(Number(m[1])),
+      s: clamp(Number(m[2]), 0, 100),
+      l: clamp(Number(m[3]), 0, 100),
+      a: m[4] == null ? 1 : clamp(Number(m[4]), 0, 1)
+    };
+  }
+
+  function parseHsvString(str) {
+    const m = String(str).trim().match(/^hsv\(\s*([+\-.\d]+)\s*,\s*([+\-.\d]+)%\s*,\s*([+\-.\d]+)%\s*\)$/i);
+    if (!m) return null;
+    return {
+      h: normalizeHue(Number(m[1])),
+      s: clamp(Number(m[2]), 0, 100),
+      v: clamp(Number(m[3]), 0, 100)
+    };
+  }
+
+  function parseColorInput(value) {
+    const str = String(value).trim();
+    if (!str) return null;
+    if (str.startsWith("#")) return hexToRgb(str);
+    const rgb = parseRgbString(str);
+    if (rgb) return rgb;
+    const hsl = parseHslString(str);
+    if (hsl) {
+      const rgb2 = hslToRgb(hsl.h, hsl.s, hsl.l);
+      return { ...rgb2, a: hsl.a };
+    }
+    const hsv = parseHsvString(str);
+    if (hsv) return { ...hsvToRgb(hsv.h, hsv.s, hsv.v), a: 1 };
+    return null;
+  }
+
+  function rgbToCss({ r, g, b, a = 1 }) {
+    return a < 1 ? `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${round(a, 3)})` : `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+  }
+
+  function hslToCss(hsl, a = 1) {
+    return a < 1
+      ? `hsla(${Math.round(hsl.h)}, ${round(hsl.s, 1)}%, ${round(hsl.l, 1)}%, ${round(a, 3)})`
+      : `hsl(${Math.round(hsl.h)}, ${round(hsl.s, 1)}%, ${round(hsl.l, 1)}%)`;
+  }
+
+  function formatHexInput(color) {
+    const { r, g, b, a } = color;
+    return rgbToHex(r, g, b, a);
+  }
+
+  function formatRgbInput(color) {
+    return rgbToCss(color);
+  }
+
+  function formatHslInput(color) {
+    const hsl = rgbToHsl(color.r, color.g, color.b);
+    return hslToCss(hsl, color.a);
+  }
+
+  function formatHsvInput(color) {
+    const hsv = rgbToHsv(color.r, color.g, color.b);
+    return `hsv(${Math.round(hsv.h)}, ${round(hsv.s, 1)}%, ${round(hsv.v, 1)}%)`;
+  }
+
+  function colorToState(rgb) {
+    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+    state.color = {
+      r: clamp(Math.round(rgb.r), 0, 255),
+      g: clamp(Math.round(rgb.g), 0, 255),
+      b: clamp(Math.round(rgb.b), 0, 255),
+      a: clamp(rgb.a == null ? state.color.a : rgb.a, 0, 1)
+    };
+    state.hsl = hsl;
+    state.hsv = hsv;
+  }
+
+  function setColor(rgb, from = "color") {
+    colorToState(rgb);
+    if (!suppress) {
+      addHistoryItem();
+      syncFromColor();
+      schedulePersist();
+      updateURL();
+    }
+    state.lastAction = from;
+    updateUI();
+  }
+
+  function syncFromColor() {
+    const { r, g, b } = state.color;
+    state.hsl = rgbToHsl(r, g, b);
+    state.hsv = rgbToHsv(r, g, b);
+  }
+
+  function updateStateFromHsl(h, s, l, a = state.color.a) {
+    const rgb = hslToRgb(h, s, l);
+    setColor({ ...rgb, a }, "hsl");
+  }
+
+  function updateStateFromHsv(h, s, v, a = state.color.a) {
+    const rgb = hsvToRgb(h, s, v);
+    setColor({ ...rgb, a }, "hsv");
+  }
+
+  function setTheme(theme) {
+    state.theme = theme;
+    document.body.classList.remove("theme-dark", "theme-light", "theme-neon");
+    document.body.classList.add(`theme-${theme}`);
+    schedulePersist();
+    updateURL();
+    toast("info", "toastThemeChanged");
+  }
+
+  function setLanguage(lang) {
+    state.lang = lang;
+    applyI18n();
+    schedulePersist();
+    updateURL();
+    toast("info", "toastLanguageChanged");
+    updateUI();
+  }
+
+  function hexString() {
+    return formatHexInput(state.color);
+  }
+
+  function buildPalette(type) {
+    const { h, s, l } = state.hsl;
+    const base = state.color;
+    const rgb = [base.r, base.g, base.b];
+
+    if (type === "lighter") {
+      return [20, 34, 48, 62, 76].map(step => {
+        const next = hslToRgb(h, s * 0.9, step);
+        return { ...next, a: 1 };
+      });
+    }
+
+    if (type === "darker") {
+      return [82, 68, 54, 40, 26].map(step => {
+        const next = hslToRgb(h, s * 0.9, step);
+        return { ...next, a: 1 };
+      });
+    }
+
+    if (type === "monochrome") {
+      return [
+        { h, s: 6, l: 94 }, { h, s: 12, l: 82 }, { h, s: 18, l: 68 },
+        { h, s: 28, l: 54 }, { h, s: s, l: l }, { h, s: 38, l: 36 }, { h, s: 48, l: 24 }
+      ].map(x => ({ ...hslToRgb(x.h, x.s, x.l), a: 1 }));
+    }
+
+    if (type === "complementary") {
+      const c = hslToRgb(normalizeHue(h + 180), s, l);
+      return [base, c, hslToRgb(h, Math.max(10, s * 0.5), clamp(l + 18, 0, 100)), hslToRgb(normalizeHue(h + 180), Math.max(10, s * 0.5), clamp(l - 10, 0, 100))];
+    }
+
+    if (type === "analogous") {
+      return [-40, -20, 0, 20, 40].map(delta => ({ ...hslToRgb(normalizeHue(h + delta), clamp(s + (delta === 0 ? 0 : -4), 0, 100), l), a: 1 }));
+    }
+
+    if (type === "triadic") {
+      return [0, 120, 240].map(delta => ({ ...hslToRgb(normalizeHue(h + delta), s, l), a: 1 }));
+    }
+
+    if (type === "tailwind") {
+      const steps = [
+        [100, 96], [200, 90], [300, 82], [400, 72], [500, l],
+        [600, 48], [700, 40], [800, 31], [900, 24]
+      ];
+      return steps.map(([_, light]) => ({ ...hslToRgb(h, clamp(s + 6, 0, 100), light), a: 1 }));
+    }
+
+    if (type === "smart") {
+      const schemes = [
+        [0], [180], [30, 330], [120, 240], [60, 180], [15, 195]
+      ];
+      const pick = schemes[Math.floor((h + s + l) % schemes.length)];
+      const result = [
+        { ...base, a: 1 },
+        ...pick.map(delta => ({ ...hslToRgb(normalizeHue(h + delta), clamp(s - 8, 10, 95), clamp(l + (delta % 60 === 0 ? 0 : 8), 22, 80)), a: 1 }))
+      ];
+      return result.slice(0, 6);
+    }
+
+    return [base];
+  }
+
+  function renderPaletteRow(parent, key, colors) {
+    const row = document.createElement("div");
+    row.className = "palette-row";
+
+    const head = document.createElement("div");
+    head.className = "palette-row-head";
+    const title = document.createElement("h3");
+    title.textContent = t(key);
+    head.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "swatch-grid";
+
+    colors.forEach((c, idx) => {
+      const hex = typeof c === "string" ? c : rgbToHex(c.r, c.g, c.b, c.a ?? 1);
+      const rgb = typeof c === "string" ? hexToRgb(hex) : c;
+      const luminance = relativeLuminance(rgb);
+      const light = luminance > 0.6;
+
+      const sw = document.createElement("div");
+      sw.className = `swatch ${light ? "light" : ""}`;
+      sw.style.background = rgbToCss(rgb);
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.title = `${t("copyColor")} ${hex}`;
+      btn.textContent = hex.toUpperCase();
+      btn.addEventListener("click", () => {
+        setColor(rgb, "palette");
+        copyText(hex.toUpperCase(), "toastCopied");
+      });
+
+      sw.appendChild(btn);
+      grid.appendChild(sw);
+    });
+
+    row.appendChild(head);
+    row.appendChild(grid);
+    parent.appendChild(row);
+  }
+
+  function renderPalettes() {
+    const container = $("paletteContainer");
+    container.innerHTML = "";
+    renderPaletteRow(container, "lighter", buildPalette("lighter"));
+    renderPaletteRow(container, "darker", buildPalette("darker"));
+    renderPaletteRow(container, "monochrome", buildPalette("monochrome"));
+    renderPaletteRow(container, "complementary", buildPalette("complementary"));
+    renderPaletteRow(container, "analogous", buildPalette("analogous"));
+    renderPaletteRow(container, "triadic", buildPalette("triadic"));
+    renderPaletteRow(container, "tailwindScale", buildPalette("tailwind"));
+    renderPaletteRow(container, "smartRandom", buildPalette("smart"));
+  }
+
+  function renderGradientStops() {
+    const wrap = $("gradientStops");
+    wrap.innerHTML = "";
+    state.gradient.stops.forEach((stop, index) => {
+      const item = document.createElement("div");
+      item.className = "stop-item";
+
+      const colorInput = document.createElement("input");
+      colorInput.type = "color";
+      colorInput.className = "mini";
+      colorInput.value = hexToRgb(stop.color) ? stop.color.slice(0, 7) : "#000000";
+      colorInput.addEventListener("input", e => {
+        stop.color = e.target.value;
+        updateUI();
+        schedulePersist();
+      });
+
+      const posInput = document.createElement("input");
+      posInput.type = "range";
+      posInput.min = "0";
+      posInput.max = "100";
+      posInput.value = stop.pos;
+      posInput.addEventListener("input", e => {
+        stop.pos = Number(e.target.value);
+        updateUI();
+        schedulePersist();
+      });
+
+      const right = document.createElement("div");
+      right.className = "button-row";
+      const label = document.createElement("span");
+      label.className = "small";
+      label.style.minWidth = "56px";
+      label.textContent = `${Math.round(stop.pos)}%`;
+      const remove = document.createElement("button");
+      remove.className = "btn ghost";
+      remove.type = "button";
+      remove.textContent = t("remove");
+      remove.disabled = state.gradient.stops.length <= 2;
+      remove.addEventListener("click", () => {
+        state.gradient.stops = state.gradient.stops.filter(s => s.id !== stop.id);
+        updateUI();
+        schedulePersist();
+      });
+
+      posInput.addEventListener("input", () => {
+        label.textContent = `${Math.round(posInput.value)}%`;
+      });
+
+      right.appendChild(label);
+      right.appendChild(remove);
+
+      item.appendChild(colorInput);
+      item.appendChild(posInput);
+      item.appendChild(right);
+      wrap.appendChild(item);
+    });
+  }
+
+  function gradientCss() {
+    const sorted = [...state.gradient.stops].sort((a, b) => a.pos - b.pos);
+    return `linear-gradient(${state.gradient.angle}deg, ${sorted.map(s => `${s.color} ${s.pos}%`).join(", ")})`;
+  }
+
+  function renderGradient() {
+    const css = gradientCss();
+    $("gradientPreview").style.background = css;
+    $("gradientPreview").dataset.css = css;
+    $("angleValue").textContent = `${state.gradient.angle}°`;
+  }
+
+  function renderAccessibility() {
+    const bg = state.color;
+    const text = bestTextColor(bg);
+    $("contrastRatio").textContent = round(text.ratio, 2).toFixed(2);
+    $("textColorChoice").textContent = text.color;
+    const ratio = text.ratio;
+    const smallAA = ratio >= 4.5;
+    const largeAA = ratio >= 3;
+    const smallAAA = ratio >= 7;
+    const largeAAA = ratio >= 4.5;
+
+    $("contrastSmall").textContent = smallAA ? t("contrastAA") : "Fail";
+    $("contrastLarge").textContent = largeAA ? t("contrastAA") : "Fail";
+    $("previewContrastChip").textContent = `${smallAA ? t("contrastAA") : "Fail"} · ${smallAAA ? t("contrastAAA") : "—"}`;
+
+    const badges = $("accessibilityBadges");
+    badges.innerHTML = "";
+    [
+      { label: `Small AA ${smallAA ? "✓" : "✕"}`, pass: smallAA },
+      { label: `Large AA ${largeAA ? "✓" : "✕"}`, pass: largeAA },
+      { label: `Small AAA ${smallAAA ? "✓" : "✕"}`, pass: smallAAA },
+      { label: `Large AAA ${largeAAA ? "✓" : "✕"}`, pass: largeAAA }
+    ].forEach(item => {
+      const badge = document.createElement("span");
+      badge.className = `badge ${item.pass ? "pass" : "fail"}`;
+      badge.textContent = item.label;
+      badges.appendChild(badge);
+    });
+  }
+
+  function psychologyDescription(hsl) {
+    const h = hsl.h;
+    const s = hsl.s;
+    const l = hsl.l;
+    let base = "";
+    if (s < 12) base = state.lang === "ru" ? "Нейтральный, минималистичный и спокойный." : "Neutral, minimal, calm.";
+    else if (h < 15 || h >= 345) base = state.lang === "ru" ? "Энергия, страсть и внимание." : "Energy, passion and attention.";
+    else if (h < 45) base = state.lang === "ru" ? "Тёплый, дружелюбный и креативный." : "Warm, friendly and creative.";
+    else if (h < 70) base = state.lang === "ru" ? "Оптимизм, ясность и акцент." : "Optimism, clarity and emphasis.";
+    else if (h < 160) base = state.lang === "ru" ? "Рост, баланс и естественность." : "Growth, balance and nature.";
+    else if (h < 210) base = state.lang === "ru" ? "Спокойствие, доверие и технологичность." : "Calm, trust and technology.";
+    else if (h < 275) base = state.lang === "ru" ? "Премиальность, креативность и глубина." : "Luxury, creativity and depth.";
+    else if (h < 330) base = state.lang === "ru" ? "Игривость, мягкость и эмоция." : "Playful, softness and emotion.";
+    else base = state.lang === "ru" ? "Универсальный и сбалансированный." : "Balanced and versatile.";
+
+    const tone = l > 75
+      ? (state.lang === "ru" ? " Светлая версия выглядит лёгкой и воздушной." : " The lightness makes it feel airy.")
+      : l < 28
+        ? (state.lang === "ru" ? " Тон выглядит глубоким и насыщенным." : " The tone feels deep and rich.")
+        : "";
+
+    return base + tone;
+  }
+
+  function hexNameFallback(hex) {
+    const map = {
+      "#000000": state.lang === "ru" ? "Чёрный" : "Black",
+      "#ffffff": state.lang === "ru" ? "Белый" : "White"
+    };
+    return map[hex.toLowerCase()] || hex.toUpperCase();
+  }
+
+  function rgbToLab({ r, g, b }) {
+    let R = rgbToLinear(r);
+    let G = rgbToLinear(g);
+    let B = rgbToLinear(b);
+    const X = R * 0.4124 + G * 0.3576 + B * 0.1805;
+    const Y = R * 0.2126 + G * 0.7152 + B * 0.0722;
+    const Z = R * 0.0193 + G * 0.1192 + B * 0.9505;
+    const refX = 0.95047, refY = 1.0, refZ = 1.08883;
+    const f = t => t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116);
+    const fx = f(X / refX), fy = f(Y / refY), fz = f(Z / refZ);
+    return { L: (116 * fy) - 16, a: 500 * (fx - fy), b: 200 * (fy - fz) };
+  }
+
+  function labDistance(a, b) {
+    const dL = a.L - b.L;
+    const da = a.a - b.a;
+    const db = a.b - b.b;
+    return Math.sqrt(dL * dL + da * da + db * db);
+  }
+
+  function closestMatch(color, list) {
+    const lab = rgbToLab(color);
+    return list
+      .map(([name, hex]) => {
+        const rgb = hexToRgb(hex);
+        return { name, hex, dist: labDistance(lab, rgbToLab(rgb)) };
+      })
+      .sort((a, b) => a.dist - b.dist)[0];
+  }
+
+  function buildThemeTheme() {
+    const hsl = state.hsl;
+    const light = hsl.l > 65;
+    const dark = hsl.l < 35;
+    const base = state.color;
+    const best = bestTextColor(base).color;
+
+    const s = clamp(hsl.s, 20, 90);
+    const bg1 = hslToRgb(hsl.h, clamp(s * 0.35, 8, 32), state.theme === "light" ? 96 : dark ? 10 : 14);
+    const bg2 = hslToRgb(normalizeHue(hsl.h + 18), clamp(s * 0.45, 8, 36), state.theme === "light" ? 99 : dark ? 13 : 18);
+    const accentHover = hslToRgb(hsl.h, clamp(s + 8, 25, 100), clamp(hsl.l + (light ? -8 : 8), 18, 74));
+    const accentActive = hslToRgb(hsl.h, clamp(s + 5, 25, 100), clamp(hsl.l + (light ? -14 : 4), 12, 64));
+
+    document.documentElement.style.setProperty("--accent", formatHexInput(base));
+    document.documentElement.style.setProperty("--accent-rgb", `${base.r}, ${base.g}, ${base.b}`);
+    document.documentElement.style.setProperty("--accent-2", rgbToHex(accentHover.r, accentHover.g, accentHover.b));
+    document.documentElement.style.setProperty("--accent-hover", rgbToHex(accentHover.r, accentHover.g, accentHover.b));
+    document.documentElement.style.setProperty("--accent-active", rgbToHex(accentActive.r, accentActive.g, accentActive.b));
+    document.documentElement.style.setProperty("--on-accent", best);
+    document.documentElement.style.setProperty("--bg", state.theme === "light" ? rgbToCss(bg1) : rgbToCss(bg1));
+    document.documentElement.style.setProperty("--bg-2", state.theme === "light" ? rgbToCss(bg2) : rgbToCss(bg2));
+    document.documentElement.style.setProperty("--preview-text", best);
+  }
+
+  function previewTextContrast() {
+    const best = bestTextColor(state.color);
+    return best.color;
+  }
+
+  function renderPreview() {
+    const c = state.color;
+    const hex = formatHexInput(c).toUpperCase();
+    const bg = rgbToCss(c);
+    const textColor = previewTextContrast();
+    const lighter = hslToRgb(normalizeHue(state.hsl.h), clamp(state.hsl.s * 0.9, 0, 100), clamp(state.hsl.l + 10, 0, 100));
+    const darker = hslToRgb(normalizeHue(state.hsl.h), clamp(state.hsl.s * 1.03, 0, 100), clamp(state.hsl.l - 10, 0, 100));
+
+    $("previewChip").textContent = hex;
+    $("previewTitleText").style.color = textColor;
+    $("previewCopyText").style.color = textColor;
+    $("mainPreview").style.background = `linear-gradient(135deg, ${bg}, ${rgbToCss(darker)})`;
+    $("sampleNavbar").style.background = `linear-gradient(135deg, ${bg}, ${rgbToCss(lighter)})`;
+    $("sampleNavbar").style.color = textColor;
+    $("sampleCard").style.background = `linear-gradient(180deg, ${rgbToCss(lighter)}, ${rgbToCss(darker)})`;
+    $("sampleCard").style.color = textColor;
+    $("sampleCard").style.borderColor = `rgba(${c.r}, ${c.g}, ${c.b}, 0.14)`;
+    $("previewPrimaryBtn").style.background = `linear-gradient(135deg, ${bg}, ${rgbToCss(lighter)})`;
+    $("previewPrimaryBtn").style.color = textColor;
+    $("previewSecondaryBtn").style.background = "transparent";
+    $("previewSecondaryBtn").style.color = textColor;
+    $("previewSecondaryBtn").style.border = `1px solid rgba(${c.r}, ${c.g}, ${c.b}, 0.28)`;
+    $("brandBadge").style.background = `linear-gradient(135deg, ${bg}, ${rgbToCss(lighter)})`;
+  }
+
+  function renderInputs() {
+    suppress = true;
+    $("hexInput").value = formatHexInput(state.color).toUpperCase();
+    $("rgbInput").value = formatRgbInput(state.color);
+    $("hslInput").value = formatHslInput(state.color);
+    $("hsvInput").value = formatHsvInput(state.color);
+    $("pickerInput").value = rgbToHex(state.color.r, state.color.g, state.color.b);
+    $("hueSlider").value = Math.round(state.hsl.h);
+    $("satSlider").value = Math.round(state.hsl.s);
+    $("lightSlider").value = Math.round(state.hsl.l);
+    $("alphaSlider").value = Math.round(state.color.a * 100);
+    $("alphaSlider2").value = Math.round(state.color.a * 100);
+    $("gradientAngle").value = state.gradient.angle;
+    $("themeSelect").value = state.theme;
+    $("langSelect").value = state.lang;
+    $("alphaValue").textContent = `${Math.round(state.color.a * 100)}%`;
+    $("alphaValue2").textContent = `${Math.round(state.color.a * 100)}%`;
+    $("hueValue").textContent = Math.round(state.hsl.h);
+    $("satValue").textContent = `${Math.round(state.hsl.s)}%`;
+    $("lightValue").textContent = `${Math.round(state.hsl.l)}%`;
+    suppress = false;
+  }
+
+  function renderSmart() {
+    $("psychologyText").value = psychologyDescription(state.hsl);
+    const tw = closestMatch(state.color, TAILWIND_BASE);
+    const mat = closestMatch(state.color, MATERIAL_BASE);
+    state.closest.tailwind = `${tw.name} ${tw.hex.toUpperCase()}`;
+    state.closest.material = `${mat.name} ${mat.hex.toUpperCase()}`;
+    $("closestTailwind").textContent = state.closest.tailwind;
+    $("closestMaterial").textContent = state.closest.material;
+  }
+
+  function renderHistory() {
+    const list = $("historyList");
+    list.innerHTML = "";
+    if (!state.history.length) {
+      list.appendChild(emptyItem("noHistory"));
+      return;
+    }
+    state.history.slice(0, 12).forEach(item => {
+      list.appendChild(historyRow(item.hex, item.ts));
+    });
+  }
+
+  function renderSaved() {
+    const palList = $("savedPalettesList");
+    palList.innerHTML = "";
+    if (!state.savedPalettes.length) palList.appendChild(emptyItem("noSavedPalettes"));
+    else state.savedPalettes.slice().reverse().forEach(p => palList.appendChild(savedPaletteRow(p)));
+
+    const projList = $("savedProjectsList");
+    projList.innerHTML = "";
+    if (!state.savedProjects.length) projList.appendChild(emptyItem("noSavedProjects"));
+    else state.savedProjects.slice().reverse().forEach(p => projList.appendChild(savedProjectRow(p)));
+  }
+
+  function emptyItem(key) {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.innerHTML = `<div class="meta"><strong>${t(key)}</strong><span>&nbsp;</span></div>`;
+    return item;
+  }
+
+  function historyRow(hex, ts) {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    const left = document.createElement("div");
+    left.className = "meta";
+    const strong = document.createElement("strong");
+    strong.textContent = hex.toUpperCase();
+    const span = document.createElement("span");
+    span.textContent = new Date(ts).toLocaleString();
+    left.appendChild(strong);
+    left.appendChild(span);
+
+    const right = document.createElement("div");
+    right.className = "button-row";
+    const copy = document.createElement("button");
+    copy.className = "btn";
+    copy.textContent = t("copyColor");
+    copy.addEventListener("click", () => copyText(hex.toUpperCase(), "toastCopied"));
+    right.appendChild(copy);
+
+    item.appendChild(left);
+    item.appendChild(right);
+    return item;
+  }
+
+  function savedPaletteRow(p) {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    const left = document.createElement("div");
+    left.className = "meta";
+    const title = document.createElement("strong");
+    title.textContent = p.name;
+    const span = document.createElement("span");
+    span.textContent = new Date(p.ts).toLocaleString();
+    left.appendChild(title);
+    left.appendChild(span);
+
+    const right = document.createElement("div");
+    right.className = "button-row";
+    const load = document.createElement("button");
+    load.className = "btn";
+    load.textContent = t("setColor");
+    load.addEventListener("click", () => {
+      const first = p.colors?.[0];
+      if (!first) return;
+      setColor(parseColorInput(first) || state.color, "saved-palette");
+      toast("info", "toastImported");
+    });
+    const copy = document.createElement("button");
+    copy.className = "btn";
+    copy.textContent = t("copyAll");
+    copy.addEventListener("click", () => copyText((p.colors || []).join(", "), "toastCopied"));
+    right.appendChild(load);
+    right.appendChild(copy);
+
+    item.appendChild(left);
+    item.appendChild(right);
+    return item;
+  }
+
+  function savedProjectRow(p) {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    const left = document.createElement("div");
+    left.className = "meta";
+    const title = document.createElement("strong");
+    title.textContent = p.name;
+    const span = document.createElement("span");
+    span.textContent = new Date(p.ts).toLocaleString();
+    left.appendChild(title);
+    left.appendChild(span);
+
+    const right = document.createElement("div");
+    right.className = "button-row";
+    const load = document.createElement("button");
+    load.className = "btn";
+    load.textContent = t("setColor");
+    load.addEventListener("click", () => {
+      loadProject(p.snapshot);
+      toast("info", "toastImported");
+    });
+    right.appendChild(load);
+
+    item.appendChild(left);
+    item.appendChild(right);
+    return item;
+  }
+
+  function renderImagePalette() {
+    const wrap = $("imagePalette");
+    wrap.innerHTML = "";
+    state.imagePalette.forEach(hex => {
+      const div = document.createElement("button");
+      div.className = "thumb";
+      div.style.background = hex;
+      div.title = hex.toUpperCase();
+      div.addEventListener("click", () => {
+        const rgb = hexToRgb(hex);
+        if (rgb) setColor(rgb, "image-palette");
+      });
+      wrap.appendChild(div);
+    });
+    const dominant = state.imagePalette[0];
+    if (dominant) {
+      $("dominantColorHex").textContent = dominant.toUpperCase();
+      $("dominantColorName").textContent = hexNameFallback(dominant);
+      $("dominantColorSwatch").style.background = dominant;
+    } else {
+      $("dominantColorHex").textContent = "—";
+      $("dominantColorName").textContent = "—";
+      $("dominantColorSwatch").style.background = "var(--surface)";
+    }
+  }
+
+  function updateURL() {
+    const payload = {
+      color: state.color,
+      theme: state.theme,
+      lang: state.lang,
+      gradient: state.gradient,
+      exportFormat: state.exportFormat
+    };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const url = new URL(window.location.href);
+    url.searchParams.set("s", encoded);
+    $("shareUrl").value = url.toString();
+    history.replaceState(null, "", url.toString());
+  }
+
+  function loadFromURL() {
+    const params = new URLSearchParams(location.search);
+    const encoded = params.get("s");
+    if (!encoded) return;
+    try {
+      const parsed = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+      if (parsed.color) state.color = {
+        r: clamp(parsed.color.r, 0, 255),
+        g: clamp(parsed.color.g, 0, 255),
+        b: clamp(parsed.color.b, 0, 255),
+        a: clamp(parsed.color.a ?? 1, 0, 1)
+      };
+      if (parsed.theme) state.theme = parsed.theme;
+      if (parsed.lang) state.lang = parsed.lang;
+      if (parsed.gradient) {
+        state.gradient = parsed.gradient;
+        if (!Array.isArray(state.gradient.stops) || state.gradient.stops.length < 2) {
+          state.gradient.stops = [
+            { id: uid(), color: rgbToHex(state.color.r, state.color.g, state.color.b, state.color.a), pos: 0 },
+            { id: uid(), color: "#7c4dff", pos: 100 }
+          ];
+        } else {
+          state.gradient.stops = state.gradient.stops.map(s => ({ id: s.id || uid(), color: s.color, pos: clamp(Number(s.pos), 0, 100) }));
+        }
+      }
+      if (parsed.exportFormat) state.exportFormat = parsed.exportFormat;
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  function saveToStorage() {
+    const payload = {
+      color: state.color,
+      theme: state.theme,
+      lang: state.lang,
+      gradient: state.gradient,
+      history: state.history,
+      savedPalettes: state.savedPalettes,
+      savedProjects: state.savedProjects,
+      exportFormat: state.exportFormat
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  function loadFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.color) state.color = data.color;
+      if (data.theme) state.theme = data.theme;
+      if (data.lang) state.lang = data.lang;
+      if (data.gradient) state.gradient = data.gradient;
+      if (Array.isArray(data.history)) state.history = data.history;
+      if (Array.isArray(data.savedPalettes)) state.savedPalettes = data.savedPalettes;
+      if (Array.isArray(data.savedProjects)) state.savedProjects = data.savedProjects;
+      if (data.exportFormat) state.exportFormat = data.exportFormat;
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  function schedulePersist() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveToStorage();
+    }, 120);
+  }
+
+  function addHistoryItem() {
+    const hex = rgbToHex(state.color.r, state.color.g, state.color.b, state.color.a).toLowerCase();
+    const last = state.history[0];
+    if (last && last.hex === hex && Math.abs(last.a - state.color.a) < 0.001) return;
+    state.history.unshift({ hex, a: state.color.a, ts: Date.now() });
+    state.history = state.history.slice(0, 20);
+  }
+
+  function savePalette() {
+    const palette = buildPalette("smart").map(c => rgbToHex(c.r, c.g, c.b, c.a ?? 1));
+    state.savedPalettes.push({ id: uid(), name: `${rgbToHex(state.color.r, state.color.g, state.color.b).toUpperCase()}`, colors: palette, ts: Date.now() });
+    toast("success", "toastPaletteSaved");
+    schedulePersist();
+    updateUI();
+  }
+
+  function saveProject() {
+    const snapshot = getProjectSnapshot();
+    state.savedProjects.push({ id: uid(), name: `${rgbToHex(state.color.r, state.color.g, state.color.b).toUpperCase()} · ${new Date().toLocaleString()}`, snapshot, ts: Date.now() });
+    toast("success", "toastProjectSaved");
+    schedulePersist();
+    updateUI();
+  }
+
+  function getProjectSnapshot() {
+    return JSON.parse(JSON.stringify({
+      color: state.color,
+      theme: state.theme,
+      lang: state.lang,
+      gradient: state.gradient,
+      exportFormat: state.exportFormat,
+      history: state.history.slice(0, 20)
+    }));
+  }
+
+  function loadProject(snapshot) {
+    if (!snapshot) return;
+    suppress = true;
+    if (snapshot.color) state.color = snapshot.color;
+    if (snapshot.theme) state.theme = snapshot.theme;
+    if (snapshot.lang) state.lang = snapshot.lang;
+    if (snapshot.gradient) state.gradient = snapshot.gradient;
+    if (snapshot.exportFormat) state.exportFormat = snapshot.exportFormat;
+    suppress = false;
+    syncFromColor();
+    updateUI();
+    schedulePersist();
+    updateURL();
+  }
+
+  function exportData() {
+    const c = state.color;
+    const hsl = rgbToHsl(c.r, c.g, c.b);
+    const palette = {
+      lighter: buildPalette("lighter").map(toHex),
+      darker: buildPalette("darker").map(toHex),
+      monochrome: buildPalette("monochrome").map(toHex),
+      complementary: buildPalette("complementary").map(toHex),
+      analogous: buildPalette("analogous").map(toHex),
+      triadic: buildPalette("triadic").map(toHex),
+      tailwindScale: buildPalette("tailwind").map(toHex),
+      smartRandom: buildPalette("smart").map(toHex)
+    };
+    const gradient = gradientCss();
+
+    function toHex(x) {
+      return rgbToHex(x.r, x.g, x.b, x.a ?? 1).toUpperCase();
+    }
+
+    if (state.exportFormat === "json") {
+      return JSON.stringify({
+        color: { ...c, hex: rgbToHex(c.r, c.g, c.b, c.a).toUpperCase(), hsl, hsv: rgbToHsv(c.r, c.g, c.b) },
+        palettes: palette,
+        gradient,
+        theme: state.theme,
+        language: state.lang
+      }, null, 2);
+    }
+
+    if (state.exportFormat === "scss") {
+      return [
+        `$color-primary: ${rgbToHex(c.r, c.g, c.b, c.a).toUpperCase()};`,
+        `$color-primary-rgb: ${c.r}, ${c.g}, ${c.b};`,
+        `$color-primary-hsl: ${Math.round(hsl.h)}, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%;`,
+        `$color-primary-alpha: ${round(c.a, 3)};`,
+        "",
+        `@mixin color-vars {`,
+        `  --color-primary: #{$color-primary};`,
+        `  --color-primary-rgb: #{$color-primary-rgb};`,
+        `  --color-primary-hsl: #{$color-primary-hsl};`,
+        `  --color-primary-alpha: #{$color-primary-alpha};`,
+        `}`
+      ].join("\n");
+    }
+
+    if (state.exportFormat === "tailwind") {
+      const hex = rgbToHex(c.r, c.g, c.b, c.a).toUpperCase();
+      return [
+        "module.exports = {",
+        "  theme: {",
+        "    extend: {",
+        "      colors: {",
+        `        primary: "${hex}",`,
+        `        primaryRgb: "rgb(${c.r} ${c.g} ${c.b})",`,
+        "      }",
+        "    }",
+        "  }",
+        "};"
+      ].join("\n");
+    }
+
+    return [
+      ":root {",
+      `  --color-primary: ${rgbToHex(c.r, c.g, c.b, c.a).toUpperCase()};`,
+      `  --color-primary-rgb: ${c.r}, ${c.g}, ${c.b};`,
+      `  --color-primary-hsl: ${Math.round(hsl.h)} ${Math.round(hsl.s)}% ${Math.round(hsl.l)}%;`,
+      `  --color-primary-alpha: ${round(c.a, 3)};`,
+      `  --color-primary-contrast: ${bestTextColor(c).color};`,
+      "}"
+    ].join("\n");
+  }
+
+  function renderExport() {
+    $("exportOutput").value = exportData();
+  }
+
+  function updateExportFormat(format) {
+    state.exportFormat = format;
+    renderExport();
+    schedulePersist();
+    updateURL();
+  }
+
+  function toast(type, key) {
+    const el = document.createElement("div");
+    el.className = `toast ${type}`;
+    el.textContent = t(key);
+    $("toastStack").appendChild(el);
+    setTimeout(() => {
+      el.style.opacity = "0";
+      el.style.transform = "translateY(8px)";
+      setTimeout(() => el.remove(), 220);
+    }, 2000);
+  }
+
+  async function copyText(text, toastKey = "toastCopied") {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("success", toastKey);
+    } catch (err) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        toast("success", toastKey);
+      } catch (copyErr) {
+        toast("error", "toastEyeDropperFailed");
+      } finally {
+        ta.remove();
+      }
+    }
+  }
+
+  function copyCurrent(mode) {
+    if (mode === "hex") return copyText(formatHexInput(state.color).toUpperCase(), "toastCopied");
+    if (mode === "rgb") return copyText(formatRgbInput(state.color), "toastCopied");
+    if (mode === "hsl") return copyText(formatHslInput(state.color), "toastCopied");
+    const all = [
+      `HEX: ${formatHexInput(state.color).toUpperCase()}`,
+      `RGB: ${formatRgbInput(state.color)}`,
+      `HSL: ${formatHslInput(state.color)}`,
+      `HSV: ${formatHsvInput(state.color)}`
+    ].join("\n");
+    return copyText(all, "toastCopied");
+  }
+
+  function setStateColorFromInput(value) {
+    const parsed = parseColorInput(value);
+    if (!parsed) return false;
+    setColor(parsed, "input");
+    return true;
+  }
+
+  function updateUI() {
+    if (!suppress) {
+      applyI18n();
+    }
+    document.body.classList.toggle("theme-light", state.theme === "light");
+    document.body.classList.toggle("theme-dark", state.theme === "dark");
+    document.body.classList.toggle("theme-neon", state.theme === "neon");
+
+    buildThemeTheme();
+    renderInputs();
+    renderPalettes();
+    renderGradientStops();
+    renderGradient();
+    renderPreview();
+    renderAccessibility();
+    renderSmart();
+    renderHistory();
+    renderSaved();
+    renderImagePalette();
+    renderExport();
+    if (!$("shareUrl").value) updateURL();
+    $("gradientPreview").style.background = gradientCss();
+    $("previewCopyText").textContent = t("previewSubtitle");
+  }
+
+  async function useEyeDropper() {
+    if (!("EyeDropper" in window)) {
+      toast("error", "toastEyeDropperUnsupported");
+      return;
+    }
+    try {
+      const eyeDropper = new window.EyeDropper();
+      const result = await eyeDropper.open();
+      if (result && result.sRGBHex) setStateColorFromInput(result.sRGBHex);
+    } catch (err) {
+      toast("error", "toastEyeDropperFailed");
+    }
+  }
+
+  function addGradientStop() {
+    const base = rgbToHex(state.color.r, state.color.g, state.color.b, state.color.a);
+    const pos = Math.max(5, Math.min(95, Math.round((state.gradient.stops[state.gradient.stops.length - 1]?.pos ?? 50) / 2 + 25)));
+    state.gradient.stops.push({ id: uid(), color: base, pos });
+    updateUI();
+    schedulePersist();
+  }
+
+  async function extractPaletteFromImage(file) {
+    if (!file) return;
+    const img = new Image();
+    img.decoding = "async";
+    const url = URL.createObjectURL(file);
+    img.src = url;
+    await img.decode();
+    const canvas = document.createElement("canvas");
+    const max = 72;
+    const scale = Math.min(max / img.width, max / img.height, 1);
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+
+    const buckets = new Map();
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+      if (a < 160) continue;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const qr = r >> 4, qg = g >> 4, qb = b >> 4;
+      const key = `${qr},${qg},${qb}`;
+      const bucket = buckets.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+      bucket.count++;
+      bucket.r += r;
+      bucket.g += g;
+      bucket.b += b;
+      buckets.set(key, bucket);
+    }
+
+    const colors = [...buckets.values()]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8)
+      .map(c => rgbToHex(c.r / c.count, c.g / c.count, c.b / c.count))
+      .filter(Boolean);
+
+    state.imagePalette = colors;
+    if (colors[0]) {
+      const rgb = hexToRgb(colors[0]);
+      if (rgb) setColor(rgb, "image");
+    }
+    updateUI();
+    toast("success", "toastImageLoaded");
+  }
+
+  function bindEvents() {
+    $("themeSelect").addEventListener("change", e => setTheme(e.target.value));
+    $("langSelect").addEventListener("change", e => setLanguage(e.target.value));
+    $("saveProjectBtn").addEventListener("click", saveProject);
+    $("shareBtn").addEventListener("click", async () => {
+      await copyText($("shareUrl").value, "toastUrlCopied");
+    });
+
+    $("pickerInput").addEventListener("input", e => {
+      setStateColorFromInput(e.target.value);
+    });
+
+    $("hexInput").addEventListener("change", e => {
+      setStateColorFromInput(e.target.value);
+    });
+
+    $("rgbInput").addEventListener("change", e => {
+      setStateColorFromInput(e.target.value);
+    });
+
+    $("hslInput").addEventListener("change", e => {
+      setStateColorFromInput(e.target.value);
+    });
+
+    $("hsvInput").addEventListener("change", e => {
+      setStateColorFromInput(e.target.value);
+    });
+
+    $("alphaSlider").addEventListener("input", e => {
+      state.color.a = clamp(Number(e.target.value) / 100, 0, 1);
+      state.lastAction = "alpha";
+      syncFromColor();
+      schedulePersist();
+      updateURL();
+      updateUI();
+    });
+
+    $("alphaSlider2").addEventListener("input", e => {
+      state.color.a = clamp(Number(e.target.value) / 100, 0, 1);
+      state.lastAction = "alpha";
+      syncFromColor();
+      schedulePersist();
+      updateURL();
+      updateUI();
+    });
+
+    $("hueSlider").addEventListener("input", e => {
+      updateStateFromHsl(Number(e.target.value), state.hsl.s, state.hsl.l, state.color.a);
+    });
+
+    $("satSlider").addEventListener("input", e => {
+      updateStateFromHsl(state.hsl.h, Number(e.target.value), state.hsl.l, state.color.a);
+    });
+
+    $("lightSlider").addEventListener("input", e => {
+      updateStateFromHsl(state.hsl.h, state.hsl.s, Number(e.target.value), state.color.a);
+    });
+
+    $("copyHexBtn").addEventListener("click", () => copyCurrent("hex"));
+    $("copyRgbBtn").addEventListener("click", () => copyCurrent("rgb"));
+    $("copyHslBtn").addEventListener("click", () => copyCurrent("hsl"));
+    $("copyAllBtn").addEventListener("click", () => copyCurrent("all"));
+
+    $("eyedropperBtn").addEventListener("click", useEyeDropper);
+
+    $("savePaletteBtn").addEventListener("click", savePalette);
+    $("clearHistoryBtn").addEventListener("click", () => {
+      state.history = [];
+      toast("info", "toastHistoryCleared");
+      schedulePersist();
+      updateUI();
+    });
+
+    $("addStopBtn").addEventListener("click", addGradientStop);
+    $("gradientAngle").addEventListener("input", e => {
+      state.gradient.angle = Number(e.target.value);
+      $("angleValue").textContent = `${state.gradient.angle}°`;
+      schedulePersist();
+      updateUI();
+    });
+
+    $("exportFormat").addEventListener("change", e => updateExportFormat(e.target.value));
+    $("exportCopyBtn").addEventListener("click", () => copyText($("exportOutput").value, "toastExportCopied"));
+
+    $("imageInput").addEventListener("change", e => {
+      const file = e.target.files && e.target.files[0];
+      if (file) extractPaletteFromImage(file);
+    });
+
+    $("dominantColorSwatch").addEventListener("click", () => {
+      const hex = $("dominantColorHex").textContent;
+      if (hex && hex !== "—") setStateColorFromInput(hex);
+    });
+
+    document.addEventListener("keydown", e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        $("hexInput").focus();
+      }
+    });
+  }
+
+  function hydrate() {
+    loadFromStorage();
+    loadFromURL();
+    syncFromColor();
+    updateUI();
+    applyI18n();
+    renderExport();
+    schedulePersist();
+  }
+
+  function init() {
+    cacheDom();
+    bindEvents();
+    hydrate();
+    window.addEventListener("beforeunload", saveToStorage);
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+  </script>
+</body>
+</html>
