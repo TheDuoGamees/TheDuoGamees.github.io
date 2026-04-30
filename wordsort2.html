@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Word Sorter</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:rgba(15,23,42,.82);
+      --panel-strong:rgba(15,23,42,.96);
+      --panel-soft:rgba(30,41,59,.72);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --border:rgba(148,163,184,.18);
+      --accent:#7c3aed;
+      --accent-2:#22c55e;
+      --danger:#ef4444;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:22px;
+      --input:rgba(15,23,42,.95);
+      --input-border:rgba(148,163,184,.18);
+      --chip:rgba(148,163,184,.14);
+      --chip-text:#dbeafe;
+      --scrollbar:rgba(148,163,184,.35);
+    }
+    body.theme-light{
+      --bg:#f4f7fb;
+      --panel:rgba(255,255,255,.86);
+      --panel-strong:rgba(255,255,255,.98);
+      --panel-soft:rgba(241,245,249,.86);
+      --text:#0f172a;
+      --muted:#475569;
+      --border:rgba(15,23,42,.10);
+      --accent:#5b21b6;
+      --accent-2:#15803d;
+      --danger:#dc2626;
+      --shadow:0 20px 50px rgba(15,23,42,.10);
+      --input:rgba(255,255,255,.98);
+      --input-border:rgba(15,23,42,.12);
+      --chip:rgba(15,23,42,.06);
+      --chip-text:#1e293b;
+      --scrollbar:rgba(100,116,139,.45);
+    }
+    body.theme-neon{
+      --bg:radial-gradient(circle at top,#111827 0%,#050816 55%,#02030a 100%);
+      --panel:rgba(2,6,23,.80);
+      --panel-strong:rgba(2,6,23,.95);
+      --panel-soft:rgba(15,23,42,.72);
+      --text:#f8fafc;
+      --muted:#a5b4fc;
+      --border:rgba(99,102,241,.22);
+      --accent:#22d3ee;
+      --accent-2:#a78bfa;
+      --danger:#fb7185;
+      --shadow:0 20px 80px rgba(34,211,238,.12);
+      --input:rgba(2,6,23,.95);
+      --input-border:rgba(34,211,238,.18);
+      --chip:rgba(34,211,238,.10);
+      --chip-text:#cffafe;
+      --scrollbar:rgba(34,211,238,.42);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+      transition:background .25s ease,color .25s ease;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 20%,rgba(124,58,237,.18),transparent 25%),
+        radial-gradient(circle at 80% 10%,rgba(34,197,94,.12),transparent 25%),
+        radial-gradient(circle at 80% 80%,rgba(59,130,246,.12),transparent 25%);
+      opacity:.9;
+      z-index:0;
+    }
+    .app-shell{
+      position:relative;
+      z-index:1;
+      min-height:100%;
+      padding:24px;
+      max-width:1640px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:20px;
+      padding:18px 20px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+    }
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand-mark{
+      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff;font-weight:800;
+      box-shadow:0 12px 30px rgba(124,58,237,.28);flex:0 0 auto;
+    }
+    .brand h1{margin:0;font-size:clamp(1.2rem,2vw,1.7rem);line-height:1.1;letter-spacing:-.03em}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+    .theme-group{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .theme-btn,.btn,.icon-btn{
+      appearance:none;border:1px solid var(--border);background:var(--panel-soft);color:var(--text);
+      border-radius:14px;padding:11px 15px;cursor:pointer;font-weight:600;
+      transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease,opacity .16s ease;
+      box-shadow:0 8px 22px rgba(0,0,0,.08);
+    }
+    .theme-btn:hover,.btn:hover,.icon-btn:hover{transform:translateY(-1px);border-color:rgba(124,58,237,.35)}
+    .theme-btn.active{background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff;border-color:transparent;box-shadow:0 12px 28px rgba(124,58,237,.24)}
+    .layout{display:grid;grid-template-columns:1.08fr 1fr;gap:18px;align-items:start}
+    .stack{display:grid;gap:18px}
+    .panel{
+      border:1px solid var(--border);background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);overflow:hidden;
+    }
+    .panel-header{
+      padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .panel-title{margin:0;font-size:1.05rem;letter-spacing:-.02em}
+    .panel-subtitle{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+    .panel-body{padding:18px 20px 20px}
+    .section{display:grid;gap:14px;margin-bottom:18px}
+    .section:last-child{margin-bottom:0}
+    .field-label{font-size:.86rem;color:var(--muted);display:block;margin-bottom:8px;font-weight:600}
+    textarea,input[type="text"],input[type="search"],select{
+      width:100%;border:1px solid var(--input-border);border-radius:16px;background:var(--input);color:var(--text);
+      padding:13px 14px;outline:none;font:inherit;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+    }
+    textarea:focus,input[type="text"]:focus,input[type="search"]:focus,select:focus{
+      border-color:rgba(124,58,237,.55);box-shadow:0 0 0 4px rgba(124,58,237,.14)
+    }
+    textarea{min-height:250px;resize:vertical;line-height:1.55;padding:16px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px}
+    .controls .btn,.controls .icon-btn{flex:0 0 auto}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff;border-color:transparent}
+    .btn.success{background:linear-gradient(135deg,var(--accent-2),#22c55e);color:#fff;border-color:transparent}
+    .btn.ghost{background:var(--panel-soft)}
+    .btn.danger{background:linear-gradient(135deg,var(--danger),#fb7185);color:#fff;border-color:transparent}
+    .dropzone{
+      border:1.5px dashed rgba(124,58,237,.35);border-radius:18px;padding:18px;background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(14,165,233,.05));
+      display:grid;gap:8px;place-items:center;text-align:center;min-height:124px;transition:border-color .16s ease,transform .16s ease,background .16s ease;
+    }
+    .dropzone.dragover{border-color:rgba(34,197,94,.7);background:linear-gradient(135deg,rgba(34,197,94,.14),rgba(14,165,233,.06));transform:scale(1.005)}
+    .dropzone strong{font-size:1rem}
+    .dropzone span{color:var(--muted);font-size:.92rem}
+    .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .check-group{display:flex;flex-wrap:wrap;gap:12px}
+    .check-pill{
+      display:inline-flex;align-items:center;gap:10px;background:var(--chip);color:var(--chip-text);border:1px solid var(--border);
+      padding:10px 12px;border-radius:999px;user-select:none
+    }
+    .check-pill input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+    .toolbar .btn{padding:10px 13px}
+    .result-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+    .stat-card{
+      border:1px solid var(--border);background:var(--panel-soft);border-radius:18px;padding:14px;min-height:90px;
+    }
+    .stat-card .k{color:var(--muted);font-size:.82rem;margin-bottom:8px;display:block}
+    .stat-card .v{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+    .output-grid{display:grid;gap:16px}
+    .list-card{border:1px solid var(--border);background:var(--panel-soft);border-radius:18px;overflow:hidden}
+    .list-card-header{
+      padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;align-items:center
+    }
+    .list-card-header h3{margin:0;font-size:.98rem}
+    .list-card-header small{color:var(--muted)}
+    #resultViewport{
+      position:relative;height:min(68vh,760px);overflow:auto;scrollbar-color:var(--scrollbar) transparent;scrollbar-width:thin;
+    }
+    #resultViewport::-webkit-scrollbar,.mini-scroll::-webkit-scrollbar{width:10px;height:10px}
+    #resultViewport::-webkit-scrollbar-thumb,.mini-scroll::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:999px}
+    #resultViewport::-webkit-scrollbar-track,.mini-scroll::-webkit-scrollbar-track{background:transparent}
+    #resultList{position:relative;width:100%;min-height:100%}
+    .result-row{
+      position:absolute;left:12px;right:12px;border:1px solid var(--border);background:var(--panel-strong);border-radius:16px;
+      padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;min-height:62px;
+      box-shadow:0 8px 20px rgba(0,0,0,.05);transition:transform .14s ease,border-color .14s ease;
+    }
+    .result-row:hover{transform:translateY(-1px);border-color:rgba(124,58,237,.32)}
+    .result-index{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--chip);color:var(--chip-text);font-size:.85rem;font-weight:700;flex:0 0 auto}
+    .result-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;letter-spacing:-.01em}
+    .result-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .badge{padding:7px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--chip-text);font-size:.8rem;line-height:1;white-space:nowrap}
+    .empty-state{
+      display:grid;place-items:center;min-height:210px;color:var(--muted);text-align:center;padding:24px;
+    }
+    .empty-state strong{color:var(--text);font-size:1.05rem;display:block;margin-bottom:6px}
+    .freq-list{display:grid;gap:8px;max-height:320px;overflow:auto;padding-right:4px}
+    .freq-item{
+      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;
+      background:var(--panel-strong);border:1px solid var(--border);
+    }
+    .freq-item .label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+    .freq-item .count{color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+    .csv-panel{display:none;border:1px solid var(--border);background:var(--panel-soft);border-radius:18px;padding:14px;gap:12px}
+    .csv-panel.active{display:grid}
+    .helper-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .helper{color:var(--muted);font-size:.9rem}
+    .loader{
+      position:fixed;inset:0;background:rgba(2,6,23,.3);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:40;
+    }
+    .loader.active{display:flex}
+    .spinner{
+      width:58px;height:58px;border-radius:50%;border:5px solid rgba(255,255,255,.22);border-top-color:var(--accent);animation:spin .9s linear infinite;box-shadow:0 0 0 10px rgba(255,255,255,.02);
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast-wrap{position:fixed;right:18px;bottom:18px;display:grid;gap:10px;z-index:60;pointer-events:none}
+    .toast{
+      pointer-events:none;min-width:220px;max-width:360px;padding:12px 14px;border-radius:16px;background:var(--panel-strong);color:var(--text);
+      border:1px solid var(--border);box-shadow:var(--shadow);transform:translateY(8px);opacity:0;animation:toastIn .18s ease forwards,toastOut .22s ease forwards 2.7s;
+    }
+    @keyframes toastIn{to{transform:translateY(0);opacity:1}}
+    @keyframes toastOut{to{transform:translateY(8px);opacity:0}}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .hidden{display:none!important}
+    .footer-note{color:var(--muted);font-size:.85rem;margin-top:10px}
+    @media (max-width:1180px){
+      .layout{grid-template-columns:1fr}
+      #resultViewport{height:58vh}
+    }
+    @media (max-width:760px){
+      .app-shell{padding:14px}
+      .topbar{flex-direction:column;align-items:stretch}
+      .theme-group{justify-content:stretch}
+      .theme-btn{flex:1 1 0}
+      .settings-grid,.result-meta{grid-template-columns:1fr 1fr}
+      .result-row{
+        grid-template-columns:auto 1fr;
+        grid-template-areas:"idx val" "idx badges";
+      }
+      .result-index{grid-area:idx}
+      .result-value{grid-area:val;white-space:normal}
+      .result-badges{grid-area:badges;justify-content:flex-start}
+      textarea{min-height:210px}
+    }
+    @media (max-width:500px){
+      .settings-grid,.result-meta{grid-template-columns:1fr}
+      .panel-header,.panel-body{padding-left:14px;padding-right:14px}
+      .topbar{padding:14px}
+    }
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">SW</div>
+        <div>
+          <h1>Smart Word Sorter</h1>
+          <p>Fast sorting, filtering, deduplication, statistics, and exports in one clean workspace.</p>
+        </div>
+      </div>
+      <div class="theme-group" aria-label="Theme switcher">
+        <button class="theme-btn active" data-theme="dark" type="button">Dark</button>
+        <button class="theme-btn" data-theme="light" type="button">Light</button>
+        <button class="theme-btn" data-theme="neon" type="button">Neon</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="stack">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Input</h2>
+              <p class="panel-subtitle">Paste text, load a file, or drop a document here.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="section">
+              <label class="field-label" for="rawInput">Source text</label>
+              <textarea id="rawInput" placeholder="Paste words, phrases, or rows here..."></textarea>
+            </div>
+
+            <div class="section">
+              <div class="controls">
+                <button class="btn primary" id="loadFileBtn" type="button">Load File</button>
+                <button class="btn ghost" id="processBtn" type="button">Process Now</button>
+                <button class="btn danger" id="clearBtn" type="button">Clear All</button>
+                <input id="fileInput" class="hidden" type="file" accept=".txt,.csv,text/plain,text/csv,.tsv" />
+              </div>
+
+              <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Drop a text or CSV file here">
+                <strong>Drop .txt or .csv files here</strong>
+                <span>Or click “Load File” to browse.</span>
+              </div>
+            </div>
+
+            <div id="csvPanel" class="csv-panel">
+              <div class="helper-row">
+                <strong>CSV detected</strong>
+                <span id="csvInfo" class="helper">No CSV loaded yet.</span>
+              </div>
+              <div>
+                <label class="field-label" for="csvColumnSelect">Select column</label>
+                <select id="csvColumnSelect"></select>
+              </div>
+            </div>
+
+            <p class="footer-note">Supports drag and drop, instant processing, and large-list virtualization.</p>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Settings</h2>
+              <p class="panel-subtitle">Tune sorting, cleanup, and matching behavior.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="settings-grid">
+              <div>
+                <label class="field-label" for="sortMode">Sort mode</label>
+                <select id="sortMode">
+                  <option value="alpha">Alphabetical</option>
+                  <option value="length">By length</option>
+                  <option value="reverse">Reverse</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="field-label" for="priorityMode">Language priority</label>
+                <select id="priorityMode">
+                  <option value="mixed">Mixed</option>
+                  <option value="ru-en-other">RU → EN → OTHER</option>
+                  <option value="en-ru-other">EN → RU → OTHER</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="field-label" for="searchInput">Search</label>
+                <input id="searchInput" type="search" placeholder="Filter results in real time..." />
+              </div>
+
+              <div>
+                <label class="field-label" for="outputLimit">Render cap</label>
+                <select id="outputLimit">
+                  <option value="1000">Virtualize above 1000</option>
+                  <option value="2000">Virtualize above 2000</option>
+                  <option value="5000">Virtualize above 5000</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section" style="margin-top:14px;">
+              <div class="check-group">
+                <label class="check-pill"><input id="ignoreCase" type="checkbox" checked /> Ignore case</label>
+                <label class="check-pill"><input id="removeDuplicates" type="checkbox" /> Remove duplicates</label>
+                <label class="check-pill"><input id="lettersOnly" type="checkbox" /> Keep only letters and numbers</label>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="stack">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Output</h2>
+              <p class="panel-subtitle">Inspect statistics, filter results, and export instantly.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="toolbar">
+              <button class="btn success" id="copyBtn" type="button">Copy</button>
+              <button class="btn ghost" id="exportTxtBtn" type="button">Download TXT</button>
+              <button class="btn ghost" id="exportCsvBtn" type="button">Download CSV</button>
+              <button class="btn ghost" id="exportJsonBtn" type="button">Download JSON</button>
+            </div>
+
+            <div class="result-meta" aria-label="Statistics summary">
+              <div class="stat-card">
+                <span class="k">Total</span>
+                <span class="v" id="totalCount">0</span>
+              </div>
+              <div class="stat-card">
+                <span class="k">Unique</span>
+                <span class="v" id="uniqueCount">0</span>
+              </div>
+              <div class="stat-card">
+                <span class="k">Visible</span>
+                <span class="v" id="visibleCount">0</span>
+              </div>
+              <div class="stat-card">
+                <span class="k">Source</span>
+                <span class="v" id="sourceType">TXT</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Top 10 most frequent</h2>
+              <p class="panel-subtitle">Based on the currently processed input.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div id="topFrequencies" class="freq-list mini-scroll"></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="list-card-header">
+            <div>
+              <h3>Sorted results</h3>
+              <small id="resultInfo">No data processed yet.</small>
+            </div>
+            <div class="helper" id="resultModeHint">Virtual scrolling enabled for large lists.</div>
+          </div>
+          <div id="resultViewport">
+            <div id="resultList"></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="loader" class="loader" aria-hidden="true">
+    <div class="spinner" aria-label="Loading"></div>
+  </div>
+
+  <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+  <div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEYS = {
+        theme: "smart_word_sorter.theme",
+        settings: "smart_word_sorter.settings"
+      };
+
+      const AppState = {
+        rawText: "",
+        sourceType: "text",
+        csv: {
+          loaded: false,
+          delimiter: ",",
+          rows: [],
+          headers: [],
+          selectedColumnIndex: 0,
+          hasHeader: false
+        },
+        entries: [],
+        processed: [],
+        stats: {
+          total: 0,
+          unique: 0,
+          frequencies: [],
+          visible: 0
+        },
+        theme: "dark",
+        settings: {
+          sortMode: "alpha",
+          priorityMode: "mixed",
+          ignoreCase: true,
+          removeDuplicates: false,
+          lettersOnly: false,
+          search: "",
+          outputLimit: 1000
+        },
+        render: {
+          itemHeight: 62,
+          overscan: 8
+        },
+        worker: null,
+        workerBusy: false,
+        requestId: 0
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const dom = {};
+      let processTimer = 0;
+
+      const escapeHTML = (value) => String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      const normalizeForCompare = (value, ignoreCase = true) => {
+        const text = String(value ?? "").trim();
+        return ignoreCase ? text.toLocaleLowerCase() : text;
+      };
+
+      const stripNumbering = (token) => {
+        let value = String(token ?? "").trim();
+        if (!value) return "";
+        value = value.replace(/^[\s\(\[\{]*\d+(?:[.)\-:]\s*|\s+)/, "");
+        value = value.replace(/^[\s\(\[\{]*\d+[a-z]?(?:[.)\-:]\s*|\s+)/i, "");
+        value = value.replace(/^[\s\-\–\—]+/, "");
+        return value.trim();
+      };
+
+      const sanitizeEntry = (token, keepLettersNumbersOnly = false) => {
+        let value = String(token ?? "").trim();
+        if (!value) return "";
+        value = stripNumbering(value);
+        if (!value) return "";
+        if (keepLettersNumbersOnly) {
+          try {
+            value = value.replace(/[^\p{L}\p{N}]+/gu, " ").replace(/\s+/g, " ").trim();
+          } catch {
+            value = value.replace(/[^0-9a-zа-яё]+/gi, " ").replace(/\s+/g, " ").trim();
+          }
+        }
+        return value.trim();
+      };
+
+      const splitSmartText = (text, options = {}) => {
+        const keepLettersNumbersOnly = !!options.keepLettersNumbersOnly;
+        const input = String(text ?? "").replace(/\u00A0/g, " ").replace(/\r/g, "\n");
+        if (!input.trim()) return [];
+        return input
+          .split(/[,\.;\n\t ]+/g)
+          .map((item) => sanitizeEntry(item, keepLettersNumbersOnly))
+          .filter(Boolean);
+      };
+
+      const isProbablyCSV = (text) => {
+        const sample = String(text ?? "").slice(0, 12000);
+        const lines = sample.split(/\r?\n/).filter(Boolean).slice(0, 8);
+        if (lines.length < 2) return false;
+        const candidates = [",", ";", "\t", "|"];
+        let best = 0;
+        for (const delimiter of candidates) {
+          let score = 0;
+          for (const line of lines) {
+            const count = line.split(delimiter).length - 1;
+            if (count >= 1) score += count;
+          }
+          best = Math.max(best, score);
+        }
+        return best >= 4;
+      };
+
+      const detectLanguage = (value) => {
+        const text = String(value ?? "");
+        const hasRu = /[а-яё]/i.test(text);
+        const hasEn = /[a-z]/i.test(text);
+        const hasNum = /[0-9]/.test(text);
+        const onlyNumber = /^[0-9]+$/.test(text.trim());
+        if (onlyNumber) return "number";
+        if (hasRu && !hasEn) return "ru";
+        if (hasEn && !hasRu) return "en";
+        if (hasNum && !hasRu && !hasEn) return "number";
+        return "other";
+      };
+
+      const languageRank = (language, priorityMode) => {
+        if (priorityMode === "mixed") return 0;
+        const order = {
+          "ru-en-other": ["ru", "en", "other", "number"],
+          "en-ru-other": ["en", "ru", "other", "number"]
+        }[priorityMode] || ["mixed"];
+        const idx = order.indexOf(language);
+        return idx === -1 ? order.length : idx;
+      };
+
+      const compareFrequencies = (a, b, ignoreCase) => {
+        if (b.count !== a.count) return b.count - a.count;
+        return normalizeForCompare(a.value, ignoreCase).localeCompare(
+          normalizeForCompare(b.value, ignoreCase),
+          undefined,
+          { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+        );
+      };
+
+      const parseDelimitedText = (text, delimiter) => {
+        const rows = [];
+        let row = [];
+        let cell = "";
+        let inQuotes = false;
+        const source = String(text ?? "");
+        const pushCell = () => {
+          row.push(cell);
+          cell = "";
+        };
+        const pushRow = () => {
+          if (row.length || cell !== "") {
+            pushCell();
+            rows.push(row);
+          }
+          row = [];
+          cell = "";
+        };
+
+        for (let i = 0; i < source.length; i += 1) {
+          const char = source[i];
+          const next = source[i + 1];
+
+          if (char === '"') {
+            if (inQuotes && next === '"') {
+              cell += '"';
+              i += 1;
+            } else {
+              inQuotes = !inQuotes;
+            }
+            continue;
+          }
+
+          if (!inQuotes && char === delimiter) {
+            pushCell();
+            continue;
+          }
+
+          if (!inQuotes && (char === "\n" || char === "\r")) {
+            if (char === "\r" && next === "\n") i += 1;
+            pushRow();
+            continue;
+          }
+
+          cell += char;
+        }
+
+        if (cell !== "" || row.length) pushRow();
+        return rows.filter((r) => r.some((c) => String(c).trim() !== ""));
+      };
+
+      const detectCSVDelimiter = (text) => {
+        const sample = String(text ?? "").slice(0, 12000);
+        const lines = sample.split(/\r?\n/).filter(Boolean).slice(0, 12);
+        const candidates = [",", ";", "\t", "|"];
+        let best = { delimiter: ",", score: -1 };
+        for (const delimiter of candidates) {
+          let score = 0;
+          let consistentRows = 0;
+          let previous = null;
+          for (const line of lines) {
+            const count = (line.match(new RegExp(`\\${delimiter}`, "g")) || []).length;
+            if (count > 0) {
+              score += count;
+              if (previous === null || previous === count) consistentRows += 1;
+              previous = count;
+            }
+          }
+          score += consistentRows * 2;
+          if (score > best.score) best = { delimiter, score };
+        }
+        return best.delimiter;
+      };
+
+      const parseCSVSource = (text) => {
+        const delimiter = detectCSVDelimiter(text);
+        const rows = parseDelimitedText(text, delimiter);
+        const headers = rows[0] ? rows[0].map((item, index) => String(item ?? "").trim() || `Column ${index + 1}`) : [];
+        const firstRow = rows[0] || [];
+        const hasHeader = rows.length > 1 && headers.some((h, idx) => {
+          const cell = String(firstRow[idx] ?? "").trim();
+          return h !== cell;
+        });
+        return {
+          loaded: true,
+          delimiter,
+          rows,
+          headers,
+          hasHeader,
+          selectedColumnIndex: 0
+        };
+      };
+
+      const extractCSVColumnValues = (csvState, columnIndex) => {
+        const rows = csvState.rows || [];
+        if (!rows.length) return [];
+        const startRow = csvState.hasHeader ? 1 : 0;
+        const values = [];
+        for (let i = startRow; i < rows.length; i += 1) {
+          const row = rows[i];
+          const cell = row[columnIndex];
+          if (cell !== undefined && cell !== null && String(cell).trim() !== "") {
+            values.push(String(cell).trim());
+          }
+        }
+        return values;
+      };
+
+      const deduplicateEntries = (entries, ignoreCase) => {
+        const seen = new Set();
+        const out = [];
+        for (const entry of entries) {
+          const key = normalizeForCompare(entry.value, ignoreCase);
+          if (seen.has(key)) continue;
+          seen.add(key);
+          out.push(entry);
+        }
+        return out;
+      };
+
+      const sortEntries = (entries, settings) => {
+        const ignoreCase = !!settings.ignoreCase;
+        const priorityMode = settings.priorityMode || "mixed";
+        const sortMode = settings.sortMode || "alpha";
+        const comparatorMap = {
+          alpha: (a, b) => normalizeForCompare(a.value, ignoreCase).localeCompare(
+            normalizeForCompare(b.value, ignoreCase),
+            undefined,
+            { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+          ),
+          length: (a, b) => {
+            const diff = a.value.length - b.value.length;
+            return diff !== 0 ? diff : normalizeForCompare(a.value, ignoreCase).localeCompare(
+              normalizeForCompare(b.value, ignoreCase),
+              undefined,
+              { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+            );
+          },
+          reverse: (a, b) => -normalizeForCompare(a.value, ignoreCase).localeCompare(
+            normalizeForCompare(b.value, ignoreCase),
+            undefined,
+            { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+          )
+        };
+        const valueComparator = comparatorMap[sortMode] || comparatorMap.alpha;
+        const usePriority = priorityMode !== "mixed";
+        const sorted = entries.slice();
+        sorted.sort((a, b) => {
+          if (usePriority) {
+            const pa = languageRank(a.language, priorityMode);
+            const pb = languageRank(b.language, priorityMode);
+            if (pa !== pb) return pa - pb;
+          }
+          const cmp = valueComparator(a, b);
+          if (cmp !== 0) return cmp;
+          return a.index - b.index;
+        });
+        return sorted;
+      };
+
+      const filterEntries = (entries, search, settings) => {
+        const query = String(search ?? "").trim();
+        if (!query) return entries;
+        const needle = normalizeForCompare(query, !!settings.ignoreCase);
+        return entries.filter((entry) => entry.normalized.includes(needle));
+      };
+
+      const computeStatistics = (entries, settings) => {
+        const ignoreCase = !!settings.ignoreCase;
+        const frequencies = new Map();
+        for (const raw of entries) {
+          const key = normalizeForCompare(raw, ignoreCase);
+          const current = frequencies.get(key);
+          if (current) current.count += 1;
+          else frequencies.set(key, { value: String(raw), count: 1 });
+        }
+        return {
+          total: entries.length,
+          unique: frequencies.size,
+          frequencies: Array.from(frequencies.values()).sort((a, b) => compareFrequencies(a, b, ignoreCase)).slice(0, 10)
+        };
+      };
+
+      const buildCSVExport = (items) => {
+        const lines = ["value"];
+        for (const item of items) {
+          const value = String(item.value ?? item).replaceAll('"', '""');
+          lines.push(`"${value}"`);
+        }
+        return lines.join("\n");
+      };
+
+      const buildTXTExport = (items) => items.map((item) => item.value ?? item).join("\n");
+
+      const buildJSONExport = (items, stats = null) => JSON.stringify({
+        generatedAt: new Date().toISOString(),
+        count: items.length,
+        stats,
+        items: items.map((item) => String(item.value ?? item))
+      }, null, 2);
+
+      const copyToClipboardText = async (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+        const area = document.createElement("textarea");
+        area.value = text;
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.focus();
+        area.select();
+        let ok = false;
+        try { ok = document.execCommand("copy"); } finally { area.remove(); }
+        return ok;
+      };
+
+      const buildWorkerBlob = () => {
+        const code = `
+          const normalizeForCompare = (value, ignoreCase = true) => {
+            const text = String(value ?? "").trim();
+            return ignoreCase ? text.toLocaleLowerCase() : text;
+          };
+          const detectLanguage = (value) => {
+            const text = String(value ?? "");
+            const hasRu = /[а-яё]/i.test(text);
+            const hasEn = /[a-z]/i.test(text);
+            const hasNum = /[0-9]/.test(text);
+            const onlyNumber = /^[0-9]+$/.test(text.trim());
+            if (onlyNumber) return "number";
+            if (hasRu && !hasEn) return "ru";
+            if (hasEn && !hasRu) return "en";
+            if (hasNum && !hasRu && !hasEn) return "number";
+            return "other";
+          };
+          const stripNumbering = (token) => {
+            let value = String(token ?? "").trim();
+            if (!value) return "";
+            value = value.replace(/^\\s*[\\(\\[\\{]*\\d+(?:[.)\\-:]\\s*|\\s+)/, "");
+            value = value.replace(/^\\s*[\\(\\[\\{]*\\d+[a-z]?(?:[.)\\-:]\\s*|\\s+)/i, "");
+            value = value.replace(/^\\s*[\\-\\–\\—]+/, "");
+            return value.trim();
+          };
+          const sanitizeEntry = (token, keepLettersNumbersOnly = false) => {
+            let value = String(token ?? "").trim();
+            if (!value) return "";
+            value = stripNumbering(value);
+            if (!value) return "";
+            if (keepLettersNumbersOnly) {
+              try {
+                value = value.replace(/[^\\p{L}\\p{N}]+/gu, " ").replace(/\\s+/g, " ").trim();
+              } catch {
+                value = value.replace(/[^0-9a-zа-яё]+/gi, " ").replace(/\\s+/g, " ").trim();
+              }
+            }
+            return value.trim();
+          };
+          const compareFrequencies = (a, b, ignoreCase) => {
+            if (b.count !== a.count) return b.count - a.count;
+            return normalizeForCompare(a.value, ignoreCase).localeCompare(
+              normalizeForCompare(b.value, ignoreCase),
+              undefined,
+              { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+            );
+          };
+          const languageRank = (language, priorityMode) => {
+            if (priorityMode === "mixed") return 0;
+            const order = {
+              "ru-en-other": ["ru", "en", "other", "number"],
+              "en-ru-other": ["en", "ru", "other", "number"]
+            }[priorityMode] || ["mixed"];
+            const idx = order.indexOf(language);
+            return idx === -1 ? order.length : idx;
+          };
+          const processEntries = (entries, settings) => {
+            const ignoreCase = !!settings.ignoreCase;
+            const removeDuplicates = !!settings.removeDuplicates;
+            const search = String(settings.search || "").trim();
+            const searchKey = normalizeForCompare(search, ignoreCase);
+            const priorityMode = settings.priorityMode || "mixed";
+            const sortMode = settings.sortMode || "alpha";
+            const frequencies = new Map();
+            const processed = [];
+            const seen = new Set();
+
+            for (let i = 0; i < entries.length; i += 1) {
+              const cleaned = sanitizeEntry(entries[i], !!settings.lettersOnly);
+              if (!cleaned) continue;
+              const normalized = normalizeForCompare(cleaned, ignoreCase);
+              const freq = frequencies.get(normalized);
+              if (freq) freq.count += 1;
+              else frequencies.set(normalized, { value: cleaned, count: 1 });
+              if (removeDuplicates) {
+                if (seen.has(normalized)) continue;
+                seen.add(normalized);
+              }
+              if (searchKey && !normalized.includes(searchKey)) continue;
+              processed.push({
+                value: cleaned,
+                normalized,
+                language: detectLanguage(cleaned),
+                index: i
+              });
+            }
+
+            const freqList = Array.from(frequencies.values()).sort((a, b) => compareFrequencies(a, b, ignoreCase)).slice(0, 10);
+
+            const compareValue = {
+              alpha: (a, b) => a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }),
+              length: (a, b) => {
+                const diff = a.value.length - b.value.length;
+                return diff !== 0 ? diff : a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" });
+              },
+              reverse: (a, b) => -a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" })
+            }[sortMode] || ((a, b) => a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }));
+
+            processed.sort((a, b) => {
+              if (priorityMode !== "mixed") {
+                const pa = languageRank(a.language, priorityMode);
+                const pb = languageRank(b.language, priorityMode);
+                if (pa !== pb) return pa - pb;
+              }
+              const cmp = compareValue(a, b);
+              if (cmp !== 0) return cmp;
+              return a.index - b.index;
+            });
+
+            return {
+              items: processed,
+              stats: {
+                total: entries.length,
+                unique: frequencies.size,
+                frequencies: freqList
+              }
+            };
+          };
+
+          self.onmessage = (event) => {
+            const { requestId, entries, settings } = event.data || {};
+            try {
+              const result = processEntries(Array.isArray(entries) ? entries : [], settings || {});
+              self.postMessage({ requestId, ok: true, ...result });
+            } catch (error) {
+              self.postMessage({
+                requestId,
+                ok: false,
+                error: error && error.message ? error.message : String(error)
+              });
+            }
+          };
+        `;
+        const blob = new Blob([code], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const w = new Worker(url);
+        URL.revokeObjectURL(url);
+        return w;
+      };
+
+      const setBusyState = (active) => {
+        dom.loader.classList.toggle("active", !!active);
+        dom.loader.setAttribute("aria-hidden", active ? "false" : "true");
+        AppState.workerBusy = !!active;
+        dom.processBtn.disabled = !!active;
+        dom.copyBtn.disabled = !!active;
+        dom.exportTxtBtn.disabled = !!active;
+        dom.exportCsvBtn.disabled = !!active;
+        dom.exportJsonBtn.disabled = !!active;
+      };
+
+      const showToast = (message) => {
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.textContent = message;
+        dom.toastWrap.appendChild(el);
+        setTimeout(() => el.remove(), 3200);
+        dom.liveRegion.textContent = message;
+      };
+
+      const downloadBlob = (filename, content, mimeType) => {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
+
+      const readFileAsText = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result ?? ""));
+        reader.onerror = () => reject(reader.error || new Error("File read failed"));
+        reader.readAsText(file);
+      });
+
+      const renderTopFrequencies = () => {
+        const items = AppState.stats.frequencies || [];
+        if (!items.length) {
+          dom.topFrequencies.innerHTML = `<div class="empty-state"><strong>No frequency data</strong><span>Process input to view top repeated values.</span></div>`;
+          return;
+        }
+        dom.topFrequencies.innerHTML = items.map((item) => `
+          <div class="freq-item">
+            <div class="label" title="${escapeHTML(item.value)}">${escapeHTML(item.value)}</div>
+            <div class="count">${item.count}</div>
+          </div>
+        `).join("");
+      };
+
+      const updateStatsUI = () => {
+        dom.totalCount.textContent = String(AppState.stats.total || 0);
+        dom.uniqueCount.textContent = String(AppState.stats.unique || 0);
+        dom.visibleCount.textContent = String(AppState.processed.length || 0);
+        dom.sourceType.textContent = String(AppState.sourceType || "TXT").toUpperCase();
+        dom.resultInfo.textContent = AppState.processed.length ? `${AppState.processed.length} items ready` : "No data processed yet.";
+      };
+
+      const renderResultRow = (item, index) => `
+        <div class="result-row" style="position:relative; top:0; left:0; right:0; margin-bottom:10px;">
+          <div class="result-index">${index + 1}</div>
+          <div class="result-value" title="${escapeHTML(item.value)}">${escapeHTML(item.value)}</div>
+          <div class="result-badges">
+            <span class="badge">${escapeHTML((item.language || "other").toUpperCase())}</span>
+          </div>
+        </div>
+      `;
+
+      const createResultRow = (item, index, itemHeight) => {
+        const row = document.createElement("div");
+        row.className = "result-row";
+        row.style.top = `${index * itemHeight + 6}px`;
+        row.dataset.index = String(index + 1);
+        row.innerHTML = `
+          <div class="result-index">${index + 1}</div>
+          <div class="result-value" title="${escapeHTML(item.value)}">${escapeHTML(item.value)}</div>
+          <div class="result-badges">
+            <span class="badge">${escapeHTML((item.language || "other").toUpperCase())}</span>
+          </div>
+        `;
+        return row;
+      };
+
+      const renderResults = (items) => {
+        const viewport = dom.resultViewport;
+        const list = dom.resultList;
+        const count = items.length;
+        const threshold = Number(AppState.settings.outputLimit || 1000);
+        const virtual = count > threshold;
+
+        list.innerHTML = "";
+
+        if (!count) {
+          list.style.height = "auto";
+          list.innerHTML = `
+            <div class="empty-state">
+              <div>
+                <strong>No results yet</strong>
+                <span>Paste text or load a file to start sorting.</span>
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (!virtual) {
+          list.style.height = "auto";
+          list.innerHTML = items.map((item, index) => renderResultRow(item, index)).join("");
+          return;
+        }
+
+        const itemHeight = AppState.render.itemHeight;
+        const overscan = AppState.render.overscan;
+        const visibleCount = Math.ceil(viewport.clientHeight / itemHeight) + overscan * 2;
+        list.style.height = `${count * itemHeight}px`;
+
+        const renderWindow = () => {
+          const scrollTop = viewport.scrollTop;
+          const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+          const endIndex = Math.min(count, startIndex + visibleCount);
+          const fragment = document.createDocumentFragment();
+          list.innerHTML = "";
+          for (let i = startIndex; i < endIndex; i += 1) {
+            fragment.appendChild(createResultRow(items[i], i, itemHeight));
+          }
+          list.appendChild(fragment);
+        };
+
+        if (!viewport._virtualBound) {
+          viewport.addEventListener("scroll", () => {
+            if (AppState._scrollRaf) cancelAnimationFrame(AppState._scrollRaf);
+            AppState._scrollRaf = requestAnimationFrame(renderWindow);
+          }, { passive: true });
+          viewport._virtualBound = true;
+        }
+
+        renderWindow();
+      };
+
+      const saveSettings = () => {
+        const payload = {
+          sortMode: dom.sortMode.value,
+          priorityMode: dom.priorityMode.value,
+          ignoreCase: dom.ignoreCase.checked,
+          removeDuplicates: dom.removeDuplicates.checked,
+          lettersOnly: dom.lettersOnly.checked,
+          search: dom.searchInput.value,
+          outputLimit: Number(dom.outputLimit.value || 1000)
+        };
+        AppState.settings = { ...AppState.settings, ...payload };
+        localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(AppState.settings));
+      };
+
+      const syncSettingsToUI = () => {
+        dom.sortMode.value = AppState.settings.sortMode;
+        dom.priorityMode.value = AppState.settings.priorityMode;
+        dom.ignoreCase.checked = !!AppState.settings.ignoreCase;
+        dom.removeDuplicates.checked = !!AppState.settings.removeDuplicates;
+        dom.lettersOnly.checked = !!AppState.settings.lettersOnly;
+        dom.searchInput.value = AppState.settings.search || "";
+        dom.outputLimit.value = String(AppState.settings.outputLimit || 1000);
+      };
+
+      const renderCSVControls = () => {
+        const csv = AppState.csv;
+        dom.csvPanel.classList.toggle("active", !!csv.loaded);
+        dom.csvInfo.textContent = csv.loaded
+          ? `${csv.rows.length} rows detected · delimiter "${csv.delimiter === "\t" ? "TAB" : csv.delimiter}" · ${csv.hasHeader ? "header found" : "no header detected"}`
+          : "No CSV loaded yet.";
+
+        dom.csvColumnSelect.innerHTML = "";
+        if (!csv.loaded || !csv.headers.length) {
+          const option = document.createElement("option");
+          option.value = "0";
+          option.textContent = "Column 1";
+          dom.csvColumnSelect.appendChild(option);
+          return;
+        }
+
+        csv.headers.forEach((header, index) => {
+          const option = document.createElement("option");
+          option.value = String(index);
+          option.textContent = header || `Column ${index + 1}`;
+          dom.csvColumnSelect.appendChild(option);
+        });
+        dom.csvColumnSelect.value = String(clamp(csv.selectedColumnIndex, 0, Math.max(0, csv.headers.length - 1)));
+      };
+
+      const setSourceType = (type) => {
+        AppState.sourceType = type === "csv" ? "csv" : "text";
+        dom.sourceType.textContent = AppState.sourceType.toUpperCase();
+      };
+
+      const restorePreferences = () => {
+        const theme = localStorage.getItem(STORAGE_KEYS.theme);
+        const savedSettings = localStorage.getItem(STORAGE_KEYS.settings);
+        if (theme) AppState.theme = theme;
+        if (savedSettings) {
+          try {
+            const parsed = JSON.parse(savedSettings);
+            AppState.settings = { ...AppState.settings, ...parsed };
+          } catch {}
+        }
+      };
+
+      const setTheme = (theme) => {
+        AppState.theme = theme;
+        document.body.classList.remove("theme-dark", "theme-light", "theme-neon");
+        document.body.classList.add(`theme-${theme}`);
+        dom.themeButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.theme === theme));
+        localStorage.setItem(STORAGE_KEYS.theme, theme);
+      };
+
+      const updateThemeButtons = () => {
+        dom.themeButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.theme === AppState.theme));
+      };
+
+      const getCurrentItemsText = () => AppState.processed.map((item) => item.value).join("\n");
+
+      const refreshUIAfterProcess = () => {
+        updateStatsUI();
+        renderTopFrequencies();
+        renderResults(AppState.processed);
+        dom.resultModeHint.textContent = AppState.processed.length > Number(AppState.settings.outputLimit || 1000)
+          ? "Virtual scrolling active."
+          : "Rendering full list.";
+      };
+
+      const computeFallback = (entries, settings) => {
+        const ignoreCase = !!settings.ignoreCase;
+        const removeDuplicates = !!settings.removeDuplicates;
+        const search = String(settings.search ?? "").trim();
+        const searchKey = normalizeForCompare(search, ignoreCase);
+        const frequencies = new Map();
+        const prepared = [];
+        const seen = new Set();
+
+        for (let i = 0; i < entries.length; i += 1) {
+          const cleaned = sanitizeEntry(entries[i], !!settings.lettersOnly);
+          if (!cleaned) continue;
+
+          const normalized = normalizeForCompare(cleaned, ignoreCase);
+
+          const freq = frequencies.get(normalized);
+          if (freq) freq.count += 1;
+          else frequencies.set(normalized, { value: cleaned, count: 1 });
+
+          if (removeDuplicates) {
+            if (seen.has(normalized)) continue;
+            seen.add(normalized);
+          }
+
+          if (searchKey && !normalized.includes(searchKey)) continue;
+
+          prepared.push({
+            value: cleaned,
+            normalized,
+            language: detectLanguage(cleaned),
+            index: i
+          });
+        }
+
+        const sorted = sortEntries(prepared, settings);
+        const stats = {
+          total: entries.length,
+          unique: frequencies.size,
+          frequencies: Array.from(frequencies.values()).sort((a, b) => compareFrequencies(a, b, ignoreCase)).slice(0, 10),
+          visible: sorted.length
+        };
+        return { items: sorted, stats };
+      };
+
+      const ensureWorker = () => {
+        if (AppState.worker) return AppState.worker;
+        if (!window.Worker) return null;
+        const code = `
+          const normalizeForCompare = (value, ignoreCase = true) => {
+            const text = String(value ?? "").trim();
+            return ignoreCase ? text.toLocaleLowerCase() : text;
+          };
+          const detectLanguage = (value) => {
+            const text = String(value ?? "");
+            const hasRu = /[а-яё]/i.test(text);
+            const hasEn = /[a-z]/i.test(text);
+            const hasNum = /[0-9]/.test(text);
+            const onlyNumber = /^[0-9]+$/.test(text.trim());
+            if (onlyNumber) return "number";
+            if (hasRu && !hasEn) return "ru";
+            if (hasEn && !hasRu) return "en";
+            if (hasNum && !hasRu && !hasEn) return "number";
+            return "other";
+          };
+          const stripNumbering = (token) => {
+            let value = String(token ?? "").trim();
+            if (!value) return "";
+            value = value.replace(/^\\s*[\\(\\[\\{]*\\d+(?:[.)\\-:]\\s*|\\s+)/, "");
+            value = value.replace(/^\\s*[\\(\\[\\{]*\\d+[a-z]?(?:[.)\\-:]\\s*|\\s+)/i, "");
+            value = value.replace(/^\\s*[\\-\\–\\—]+/, "");
+            return value.trim();
+          };
+          const sanitizeEntry = (token, keepLettersNumbersOnly = false) => {
+            let value = String(token ?? "").trim();
+            if (!value) return "";
+            value = stripNumbering(value);
+            if (!value) return "";
+            if (keepLettersNumbersOnly) {
+              try {
+                value = value.replace(/[^\\p{L}\\p{N}]+/gu, " ").replace(/\\s+/g, " ").trim();
+              } catch {
+                value = value.replace(/[^0-9a-zа-яё]+/gi, " ").replace(/\\s+/g, " ").trim();
+              }
+            }
+            return value.trim();
+          };
+          const compareFrequencies = (a, b, ignoreCase) => {
+            if (b.count !== a.count) return b.count - a.count;
+            return normalizeForCompare(a.value, ignoreCase).localeCompare(
+              normalizeForCompare(b.value, ignoreCase),
+              undefined,
+              { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }
+            );
+          };
+          const languageRank = (language, priorityMode) => {
+            if (priorityMode === "mixed") return 0;
+            const order = {
+              "ru-en-other": ["ru", "en", "other", "number"],
+              "en-ru-other": ["en", "ru", "other", "number"]
+            }[priorityMode] || ["mixed"];
+            const idx = order.indexOf(language);
+            return idx === -1 ? order.length : idx;
+          };
+          const processEntries = (entries, settings) => {
+            const ignoreCase = !!settings.ignoreCase;
+            const removeDuplicates = !!settings.removeDuplicates;
+            const search = String(settings.search || "").trim();
+            const searchKey = normalizeForCompare(search, ignoreCase);
+            const priorityMode = settings.priorityMode || "mixed";
+            const sortMode = settings.sortMode || "alpha";
+            const frequencies = new Map();
+            const processed = [];
+            const seen = new Set();
+
+            for (let i = 0; i < entries.length; i += 1) {
+              const cleaned = sanitizeEntry(entries[i], !!settings.lettersOnly);
+              if (!cleaned) continue;
+              const normalized = normalizeForCompare(cleaned, ignoreCase);
+              const freq = frequencies.get(normalized);
+              if (freq) freq.count += 1;
+              else frequencies.set(normalized, { value: cleaned, count: 1 });
+              if (removeDuplicates) {
+                if (seen.has(normalized)) continue;
+                seen.add(normalized);
+              }
+              if (searchKey && !normalized.includes(searchKey)) continue;
+              processed.push({
+                value: cleaned,
+                normalized,
+                language: detectLanguage(cleaned),
+                index: i
+              });
+            }
+
+            const freqList = Array.from(frequencies.values()).sort((a, b) => compareFrequencies(a, b, ignoreCase)).slice(0, 10);
+            const compareValue = {
+              alpha: (a, b) => a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }),
+              length: (a, b) => {
+                const diff = a.value.length - b.value.length;
+                return diff !== 0 ? diff : a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" });
+              },
+              reverse: (a, b) => -a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" })
+            }[sortMode] || ((a, b) => a.normalized.localeCompare(b.normalized, undefined, { numeric: true, sensitivity: ignoreCase ? "base" : "variant" }));
+
+            processed.sort((a, b) => {
+              if (priorityMode !== "mixed") {
+                const pa = languageRank(a.language, priorityMode);
+                const pb = languageRank(b.language, priorityMode);
+                if (pa !== pb) return pa - pb;
+              }
+              const cmp = compareValue(a, b);
+              if (cmp !== 0) return cmp;
+              return a.index - b.index;
+            });
+
+            return {
+              items: processed,
+              stats: {
+                total: entries.length,
+                unique: frequencies.size,
+                frequencies: freqList
+              }
+            };
+          };
+
+          self.onmessage = (event) => {
+            const { requestId, entries, settings } = event.data || {};
+            try {
+              const result = processEntries(Array.isArray(entries) ? entries : [], settings || {});
+              self.postMessage({ requestId, ok: true, ...result });
+            } catch (error) {
+              self.postMessage({
+                requestId,
+                ok: false,
+                error: error && error.message ? error.message : String(error)
+              });
+            }
+          };
+        `;
+        const blob = new Blob([code], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const w = new Worker(url);
+        URL.revokeObjectURL(url);
+        w.onmessage = handleWorkerMessage;
+        w.onerror = handleWorkerError;
+        AppState.worker = w;
+        return w;
+      };
+
+      const handleWorkerError = () => {
+        AppState.workerBusy = false;
+        setBusyState(false);
+        showToast("Processing failed");
+      };
+
+      const handleWorkerMessage = (event) => {
+        const data = event.data || {};
+        if (!data.ok) return handleWorkerError();
+        if (data.requestId !== AppState.requestId) return;
+        AppState.entries = data.entries || [];
+        AppState.processed = data.items || [];
+        AppState.stats = data.stats || { total: 0, unique: 0, frequencies: [] };
+        AppState.stats.visible = AppState.processed.length;
+        AppState.workerBusy = false;
+        setBusyState(false);
+        refreshUIAfterProcess();
+        showToast("Processing complete");
+      };
+
+      const collectSourceEntries = () => {
+        if (AppState.sourceType === "csv" && AppState.csv.loaded && AppState.csv.rows.length) {
+          return extractCSVColumnValues(AppState.csv, Number(AppState.csv.selectedColumnIndex || 0));
+        }
+        return splitSmartText(AppState.rawText, { keepLettersNumbersOnly: !!AppState.settings.lettersOnly });
+      };
+
+      const processCurrentInput = (immediate = false) => {
+        clearTimeout(processTimer);
+        const run = () => {
+          const textExists = String(AppState.rawText || "").trim().length > 0 || (AppState.csv.loaded && AppState.csv.rows.length > 0);
+          if (!textExists) {
+            AppState.entries = [];
+            AppState.processed = [];
+            AppState.stats = { total: 0, unique: 0, frequencies: [], visible: 0 };
+            refreshUIAfterProcess();
+            return;
+          }
+
+          setBusyState(true);
+          AppState.requestId += 1;
+          const currentId = AppState.requestId;
+          const entries = collectSourceEntries();
+          const payload = { requestId: currentId, entries, settings: { ...AppState.settings } };
+          const w = ensureWorker();
+
+          if (w) {
+            try {
+              w.postMessage(payload);
+            } catch {
+              const fallback = computeFallback(entries, AppState.settings);
+              if (currentId !== AppState.requestId) return;
+              AppState.entries = entries;
+              AppState.processed = fallback.items;
+              AppState.stats = fallback.stats;
+              AppState.stats.visible = AppState.processed.length;
+              setBusyState(false);
+              refreshUIAfterProcess();
+              showToast("Processing complete");
+            }
+          } else {
+            const fallback = computeFallback(entries, AppState.settings);
+            if (currentId !== AppState.requestId) return;
+            AppState.entries = entries;
+            AppState.processed = fallback.items;
+            AppState.stats = fallback.stats;
+            AppState.stats.visible = AppState.processed.length;
+            setBusyState(false);
+            refreshUIAfterProcess();
+            showToast("Processing complete");
+          }
+        };
+
+        if (immediate) {
+          run();
+          return;
+        }
+        processTimer = setTimeout(run, 420);
+      };
+
+      const exportCurrent = (format) => {
+        const items = AppState.processed;
+        if (!items.length) {
+          showToast("Nothing to export");
+          return;
+        }
+
+        let content = "";
+        let mime = "text/plain;charset=utf-8";
+        let ext = "txt";
+
+        if (format === "csv") {
+          content = buildCSVExport(items);
+          mime = "text/csv;charset=utf-8";
+          ext = "csv";
+        } else if (format === "json") {
+          content = buildJSONExport(items, AppState.stats);
+          mime = "application/json;charset=utf-8";
+          ext = "json";
+        } else {
+          content = buildTXTExport(items);
+          mime = "text/plain;charset=utf-8";
+          ext = "txt";
+        }
+
+        downloadBlob(`smart-word-sorter.${ext}`, content, mime);
+        showToast(`Downloaded ${ext.toUpperCase()}`);
+      };
+
+      const handleFile = async (file) => {
+        try {
+          setBusyState(true);
+          const text = await readFileAsText(file);
+          const lower = file.name.toLowerCase();
+          if (lower.endsWith(".csv") || isProbablyCSV(text)) {
+            const csvState = parseCSVSource(text);
+            AppState.csv = { ...AppState.csv, ...csvState };
+            AppState.rawText = text;
+            AppState.sourceType = "csv";
+            dom.rawInput.value = text;
+            renderCSVControls();
+            setSourceType("csv");
+            showToast("File loaded");
+          } else {
+            AppState.csv.loaded = false;
+            dom.csvPanel.classList.remove("active");
+            AppState.rawText = text;
+            AppState.sourceType = "text";
+            dom.rawInput.value = text;
+            setSourceType("text");
+            showToast("File loaded");
+          }
+          processCurrentInput(true);
+        } catch {
+          showToast("File load failed");
+        } finally {
+          setBusyState(false);
+        }
+      };
+
+      const cacheDom = () => {
+        const ids = [
+          "rawInput","loadFileBtn","processBtn","clearBtn","fileInput","dropzone",
+          "csvPanel","csvInfo","csvColumnSelect","sortMode","priorityMode","searchInput",
+          "outputLimit","ignoreCase","removeDuplicates","lettersOnly","copyBtn",
+          "exportTxtBtn","exportCsvBtn","exportJsonBtn","totalCount","uniqueCount",
+          "visibleCount","sourceType","topFrequencies","resultViewport","resultList",
+          "resultInfo","resultModeHint","loader","toastWrap","liveRegion"
+        ];
+        for (const id of ids) dom[id] = $(id);
+        dom.themeButtons = Array.from(document.querySelectorAll(".theme-btn"));
+      };
+
+      const syncAppSettingsToUI = () => {
+        dom.sortMode.value = AppState.settings.sortMode;
+        dom.priorityMode.value = AppState.settings.priorityMode;
+        dom.ignoreCase.checked = !!AppState.settings.ignoreCase;
+        dom.removeDuplicates.checked = !!AppState.settings.removeDuplicates;
+        dom.lettersOnly.checked = !!AppState.settings.lettersOnly;
+        dom.searchInput.value = AppState.settings.search || "";
+        dom.outputLimit.value = String(AppState.settings.outputLimit || 1000);
+      };
+
+      const restoreAppPreferences = () => {
+        restorePreferences();
+      };
+
+      const renderCSVControlsUI = () => {
+        renderCSVControls();
+      };
+
+      const scheduleProcess = (immediate = false) => {
+        clearTimeout(processTimer);
+        processTimer = setTimeout(() => processCurrentInput(immediate), immediate ? 0 : 420);
+      };
+
+      const wireAppInteractions = () => {
+        dom.rawInput.addEventListener("input", () => {
+          AppState.rawText = dom.rawInput.value;
+          AppState.sourceType = "text";
+          AppState.csv.loaded = false;
+          dom.csvPanel.classList.remove("active");
+          setSourceType("text");
+          saveSettings();
+          scheduleProcess();
+        });
+
+        dom.searchInput.addEventListener("input", () => {
+          saveSettings();
+          scheduleProcess();
+        });
+
+        [dom.sortMode, dom.priorityMode, dom.outputLimit, dom.csvColumnSelect].forEach((el) => {
+          el.addEventListener("change", () => {
+            if (el === dom.csvColumnSelect) {
+              AppState.csv.selectedColumnIndex = Number(dom.csvColumnSelect.value || 0);
+              if (AppState.csv.loaded) AppState.sourceType = "csv";
+            }
+            saveSettings();
+            scheduleProcess(true);
+          });
+        });
+
+        [dom.ignoreCase, dom.removeDuplicates, dom.lettersOnly].forEach((el) => {
+          el.addEventListener("change", () => {
+            saveSettings();
+            scheduleProcess(true);
+          });
+        });
+
+        dom.processBtn.addEventListener("click", () => processCurrentInput(true));
+
+        dom.clearBtn.addEventListener("click", () => {
+          AppState.rawText = "";
+          AppState.entries = [];
+          AppState.processed = [];
+          AppState.stats = { total: 0, unique: 0, frequencies: [], visible: 0 };
+          AppState.csv = { loaded: false, delimiter: ",", rows: [], headers: [], selectedColumnIndex: 0, hasHeader: false };
+          dom.rawInput.value = "";
+          dom.csvPanel.classList.remove("active");
+          renderCSVControls();
+          updateStatsUI();
+          renderTopFrequencies();
+          renderResults([]);
+          dom.resultInfo.textContent = "No data processed yet.";
+          setSourceType("text");
+          showToast("Cleared");
+        });
+
+        dom.loadFileBtn.addEventListener("click", () => dom.fileInput.click());
+        dom.fileInput.addEventListener("change", async () => {
+          const file = dom.fileInput.files && dom.fileInput.files[0];
+          if (!file) return;
+          await handleFile(file);
+          dom.fileInput.value = "";
+        });
+
+        dom.copyBtn.addEventListener("click", async () => {
+          const text = getCurrentItemsText();
+          if (!text) {
+            showToast("Nothing to copy");
+            return;
+          }
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(text);
+            } else {
+              const area = document.createElement("textarea");
+              area.value = text;
+              area.style.position = "fixed";
+              area.style.opacity = "0";
+              document.body.appendChild(area);
+              area.focus();
+              area.select();
+              document.execCommand("copy");
+              area.remove();
+            }
+            showToast("Copied");
+          } catch {
+            showToast("Copy failed");
+          }
+        });
+
+        dom.exportTxtBtn.addEventListener("click", () => exportCurrent("txt"));
+        dom.exportCsvBtn.addEventListener("click", () => exportCurrent("csv"));
+        dom.exportJsonBtn.addEventListener("click", () => exportCurrent("json"));
+
+        dom.themeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            setTheme(btn.dataset.theme);
+            showToast(`Theme: ${btn.dataset.theme}`);
+          });
+        });
+
+        const dropHandlers = {
+          dragover(ev) {
+            ev.preventDefault();
+            dom.dropzone.classList.add("dragover");
+          },
+          dragleave(ev) {
+            ev.preventDefault();
+            dom.dropzone.classList.remove("dragover");
+          },
+          drop(ev) {
+            ev.preventDefault();
+            dom.dropzone.classList.remove("dragover");
+            const file = ev.dataTransfer.files && ev.dataTransfer.files[0];
+            if (file) handleFile(file);
+          },
+          click() {
+            dom.fileInput.click();
+          },
+          keydown(ev) {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              dom.fileInput.click();
+            }
+          }
+        };
+
+        dom.dropzone.addEventListener("dragover", dropHandlers.dragover);
+        dom.dropzone.addEventListener("dragleave", dropHandlers.dragleave);
+        dom.dropzone.addEventListener("drop", dropHandlers.drop);
+        dom.dropzone.addEventListener("click", dropHandlers.click);
+        dom.dropzone.addEventListener("keydown", dropHandlers.keydown);
+
+        window.addEventListener("beforeunload", () => {
+          localStorage.setItem(STORAGE_KEYS.theme, AppState.theme);
+          localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(AppState.settings));
+        });
+      };
+
+      const applyThemeFromStorage = () => {
+        const saved = localStorage.getItem(STORAGE_KEYS.theme);
+        setTheme(saved === "light" || saved === "neon" || saved === "dark" ? saved : "dark");
+      };
+
+      const initialize = () => {
+        cacheDom();
+        restoreAppPreferences();
+        applyThemeFromStorage();
+        syncAppSettingsToUI();
+        renderCSVControlsUI();
+        updateStatsUI();
+        wireAppInteractions();
+        renderTopFrequencies();
+        renderResults([]);
+        setSourceType("text");
+        if (AppState.rawText.trim()) processCurrentInput(true);
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize, { once: true });
+      } else {
+        initialize();
+      }
+
+      window.processCurrentInput = processCurrentInput;
+      window.scheduleProcess = scheduleProcess;
+    })();
+  </script>
+</body>
+</html>
