@@ -1,2111 +1,1877 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#08111f" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
   <title>TheDuo Tools</title>
   <style>
-    :root{
-      --bg1:#08111f;
-      --bg2:#0d1730;
-      --bg3:#101b38;
-      --panel:rgba(12,18,33,.72);
-      --panel-2:rgba(15,24,44,.82);
-      --panel-3:rgba(20,30,52,.92);
-      --text:#f5f7ff;
-      --muted:#9aa8c7;
-      --muted-2:#7181a4;
-      --border:rgba(145,174,255,.16);
-      --border-2:rgba(145,174,255,.26);
-      --shadow:0 24px 60px rgba(0,0,0,.34);
-      --shadow-soft:0 12px 30px rgba(0,0,0,.18);
-      --accent:#7c5cff;
-      --accent-2:#00e5ff;
-      --accent-3:#24f6a4;
-      --danger:#ff5d8f;
-      --warn:#ffcc66;
-      --radius:22px;
-      --radius-sm:16px;
-      --radius-xs:12px;
-      --header-h:82px;
-      --sidebar-w:288px;
-      --scrollbar:10px;
-      --ease:cubic-bezier(.2,.9,.2,1);
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(16, 22, 40, 0.96);
+      --panel-2: rgba(13, 18, 33, 0.96);
+      --card: rgba(19, 26, 47, 0.95);
+      --card-2: rgba(25, 33, 57, 0.95);
+      --text: #eef3ff;
+      --muted: #9aa6c3;
+      --border: rgba(255, 255, 255, 0.08);
+      --primary: #7c8cff;
+      --primary-2: #95a2ff;
+      --accent: #4bd8c8;
+      --danger: #ff6b8b;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+      --shadow-soft: 0 8px 18px rgba(0, 0, 0, 0.16);
+      --radius: 18px;
+      --radius-lg: 24px;
     }
 
-    body[data-theme="light-glass"]{
-      --bg1:#edf2ff;
-      --bg2:#f8fbff;
-      --bg3:#eef3ff;
-      --panel:rgba(255,255,255,.72);
-      --panel-2:rgba(255,255,255,.86);
-      --panel-3:rgba(255,255,255,.95);
-      --text:#13213a;
-      --muted:#5f6d86;
-      --muted-2:#7a879a;
-      --border:rgba(68,101,160,.14);
-      --border-2:rgba(68,101,160,.22);
-      --shadow:0 24px 60px rgba(36,58,95,.14);
-      --shadow-soft:0 12px 30px rgba(36,58,95,.08);
-      --accent:#684dff;
-      --accent-2:#0bb1ff;
-      --accent-3:#11b883;
-      --danger:#e34b6a;
-      --warn:#e2a836;
+    body[data-theme="light"] {
+      --bg: #f5f7fb;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-2: rgba(248, 250, 255, 0.95);
+      --card: rgba(255, 255, 255, 0.96);
+      --card-2: rgba(244, 247, 255, 0.98);
+      --text: #1f2937;
+      --muted: #667085;
+      --border: rgba(17, 24, 39, 0.09);
+      --primary: #5865f2;
+      --primary-2: #6e7bff;
+      --accent: #12b886;
+      --danger: #e11d48;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 8px 18px rgba(15, 23, 42, 0.06);
     }
 
-    body[data-theme="purple-cyber"]{
-      --bg1:#090617;
-      --bg2:#140927;
-      --bg3:#1d0f34;
-      --panel:rgba(20,10,38,.74);
-      --panel-2:rgba(28,14,54,.86);
-      --panel-3:rgba(36,18,68,.94);
-      --text:#fbf8ff;
-      --muted:#b8a8dd;
-      --muted-2:#8b79b5;
-      --border:rgba(205,176,255,.16);
-      --border-2:rgba(205,176,255,.26);
-      --shadow:0 24px 60px rgba(0,0,0,.42);
-      --shadow-soft:0 12px 30px rgba(0,0,0,.22);
-      --accent:#c15cff;
-      --accent-2:#6c7bff;
-      --accent-3:#31f3c9;
-      --danger:#ff6ea8;
-      --warn:#ffc76c;
+    body[data-theme="purple"] {
+      --bg: #120f1f;
+      --panel: rgba(24, 19, 42, 0.96);
+      --panel-2: rgba(19, 15, 35, 0.96);
+      --card: rgba(29, 22, 52, 0.96);
+      --card-2: rgba(35, 27, 64, 0.96);
+      --text: #f2ecff;
+      --muted: #b5a9d6;
+      --border: rgba(232, 224, 255, 0.1);
+      --primary: #b58cff;
+      --primary-2: #cfb0ff;
+      --accent: #69e1ff;
+      --danger: #ff7ba5;
+      --shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+      --shadow-soft: 0 8px 18px rgba(0, 0, 0, 0.16);
     }
 
-    body[data-theme="emerald-matrix"]{
-      --bg1:#071510;
-      --bg2:#0c2019;
-      --bg3:#102a20;
-      --panel:rgba(8,26,19,.74);
-      --panel-2:rgba(11,35,25,.86);
-      --panel-3:rgba(13,45,31,.94);
-      --text:#effff6;
-      --muted:#9dd6b7;
-      --muted-2:#76ae94;
-      --border:rgba(145,255,201,.16);
-      --border-2:rgba(145,255,201,.26);
-      --shadow:0 24px 60px rgba(0,0,0,.38);
-      --shadow-soft:0 12px 30px rgba(0,0,0,.2);
-      --accent:#25d37d;
-      --accent-2:#42ffd3;
-      --accent-3:#9cff5c;
-      --danger:#ff6d8c;
-      --warn:#ffe27c;
+    body[data-theme="emerald"] {
+      --bg: #071815;
+      --panel: rgba(10, 28, 24, 0.96);
+      --panel-2: rgba(8, 23, 20, 0.96);
+      --card: rgba(12, 33, 29, 0.96);
+      --card-2: rgba(14, 38, 34, 0.96);
+      --text: #ebfff8;
+      --muted: #9cc4ba;
+      --border: rgba(206, 255, 243, 0.09);
+      --primary: #3ee3b0;
+      --primary-2: #66f0c6;
+      --accent: #7be4ff;
+      --danger: #ff7e92;
+      --shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+      --shadow-soft: 0 8px 18px rgba(0, 0, 0, 0.16);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color:var(--text);
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    select,
+    input {
+      touch-action: manipulation;
+    }
+
+    ::selection {
+      background: color-mix(in srgb, var(--primary) 28%, transparent);
+    }
+
+    .app {
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
       background:
-        radial-gradient(1200px 600px at 20% 10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 62%),
-        radial-gradient(900px 500px at 85% 14%, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 60%),
-        radial-gradient(900px 560px at 50% 100%, color-mix(in srgb, var(--accent-3) 10%, transparent), transparent 64%),
-        linear-gradient(135deg,var(--bg1),var(--bg2) 46%,var(--bg3));
-      overflow:hidden;
-      min-width:320px;
+        radial-gradient(1200px 650px at 15% -20%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 55%),
+        radial-gradient(900px 480px at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 50%),
+        var(--bg);
     }
 
-    body::before,
-    body::after{
-      content:"";
-      position:fixed;
-      inset:auto;
-      pointer-events:none;
-      z-index:0;
-      mix-blend-mode:screen;
+    .topbar {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding:
+        calc(12px + env(safe-area-inset-top))
+        calc(14px + env(safe-area-inset-right))
+        12px
+        calc(14px + env(safe-area-inset-left));
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: none;
+      box-shadow: var(--shadow-soft);
+      flex-wrap: wrap;
     }
 
-    body::before{
-      width:42vw;height:42vw;left:-14vw;top:-10vw;
-      background:radial-gradient(circle, color-mix(in srgb, var(--accent) 24%, transparent), transparent 62%);
-      filter:blur(30px);
-      opacity:.55;
-      animation: floatGlow 18s var(--ease) infinite alternate;
-    }
-    body::after{
-      width:40vw;height:40vw;right:-14vw;bottom:-12vw;
-      background:radial-gradient(circle, color-mix(in srgb, var(--accent-2) 20%, transparent), transparent 64%);
-      filter:blur(38px);
-      opacity:.48;
-      animation: floatGlow 20s var(--ease) infinite alternate-reverse;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 0 0 auto;
+      user-select: none;
     }
 
-    @keyframes floatGlow{
-      from{transform:translate3d(0,0,0) scale(1)}
-      to{transform:translate3d(2vw,2vh,0) scale(1.08)}
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow-soft);
+      flex: 0 0 auto;
     }
 
-    #bgCanvas{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      width:100%;
-      height:100%;
-      pointer-events:none;
-      opacity:.8;
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
     }
 
-    .app{
-      position:relative;
-      z-index:1;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
+    .brand-text strong {
+      font-size: 1rem;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .header{
-      height:var(--header-h);
-      padding:14px 16px;
-      display:flex;
-      align-items:center;
-      gap:14px;
-      position:sticky;
-      top:0;
-      z-index:20;
-      backdrop-filter:blur(22px) saturate(1.2);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, transparent), color-mix(in srgb, var(--panel) 82%, transparent));
-      border-bottom:1px solid var(--border);
-      box-shadow:var(--shadow-soft);
+    .brand-text span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:220px;
-      flex:0 0 auto;
-    }
-    .brandMark{
-      width:46px;height:46px;border-radius:16px;
-      display:grid;place-items:center;
-      background:
-        radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 55%),
-        linear-gradient(135deg, color-mix(in srgb, var(--accent) 95%, white 5%), color-mix(in srgb, var(--accent-2) 72%, black 28%));
-      color:white;
-      box-shadow:0 12px 28px color-mix(in srgb, var(--accent) 28%, transparent);
-      border:1px solid color-mix(in srgb, white 18%, transparent);
-      font-weight:900;
-      letter-spacing:.04em;
-    }
-    .brandText{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width:0;
-    }
-    .brandText strong{
-      font-size:1.02rem;
-      line-height:1.1;
-      letter-spacing:-.02em;
-    }
-    .brandText span{
-      font-size:.8rem;
-      color:var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    .search-wrap {
+      flex: 1 1 320px;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .searchWrap{
-      position:relative;
-      flex:1 1 auto;
-      max-width:700px;
-      min-width:0;
-      margin-inline:auto;
-    }
-    .searchIcon{
-      position:absolute;
-      left:14px;
-      top:50%;
-      transform:translateY(-50%);
-      width:18px;height:18px;
-      color:var(--muted);
-      pointer-events:none;
-      opacity:.95;
-    }
-    .searchInput{
-      width:100%;
-      height:52px;
-      padding:0 42px 0 42px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      outline:none;
-      background:color-mix(in srgb, var(--panel-2) 86%, transparent);
-      color:var(--text);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-      transition:transform .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
-    }
-    .searchInput::placeholder{color:color-mix(in srgb, var(--muted) 90%, transparent)}
-    .searchInput:focus{
-      border-color:color-mix(in srgb, var(--accent) 42%, var(--border));
-      box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent), inset 0 1px 0 rgba(255,255,255,.04);
-      transform:translateY(-1px);
-    }
-    .searchClear{
-      position:absolute;
-      right:10px;top:50%;
-      transform:translateY(-50%);
-      width:30px;height:30px;
-      border:none;border-radius:10px;
-      background:transparent;
-      color:var(--muted);
-      cursor:pointer;
-      transition:background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
-    }
-    .searchClear:hover{background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--text); transform:translateY(-50%) scale(1.05)}
-    .searchClear:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-
-    .headerActions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex:0 0 auto;
-      margin-left:auto;
-    }
-    .select{
-      height:52px;
-      border-radius:16px;
-      padding:0 14px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-2) 92%, transparent);
-      color:var(--text);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-      outline:none;
-      cursor:pointer;
-      transition:border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease);
-    }
-    .select:hover{transform:translateY(-1px); border-color:var(--border-2)}
-    .select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-
-    .iconBtn, .pillBtn, .ghostBtn, .openBtn, .favBtn, .chipBtn, .sideBtn{
-      border:none;
-      outline:none;
-      cursor:pointer;
-      transition:transform .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), opacity .2s var(--ease);
-      font:inherit;
-      color:inherit;
+    .search {
+      width: 100%;
+      min-width: 0;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      outline: none;
+      box-shadow: var(--shadow-soft);
     }
 
-    .iconBtn{
-      width:52px;height:52px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      background:color-mix(in srgb, var(--panel-2) 88%, transparent);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow-soft);
-    }
-    .iconBtn:hover{transform:translateY(-1px); border-color:var(--border-2); box-shadow:0 16px 28px rgba(0,0,0,.12)}
-    .iconBtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-
-    .toolCount{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      height:52px;
-      padding:0 14px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--panel-2)), color-mix(in srgb, var(--accent-2) 10%, var(--panel-2)));
-      box-shadow:var(--shadow-soft);
-      white-space:nowrap;
-      font-weight:700;
-    }
-    .toolCount small{
-      font-weight:600;
-      color:var(--muted);
+    .search::placeholder {
+      color: var(--muted);
     }
 
-    .menuBtn{display:none}
-
-    .layout{
-      display:grid;
-      grid-template-columns:var(--sidebar-w) 1fr;
-      min-height:0;
-      flex:1 1 auto;
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      margin-left: auto;
     }
 
-    .sidebar{
-      min-height:0;
-      padding:18px 14px 18px 16px;
-      border-right:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, transparent), color-mix(in srgb, var(--panel) 78%, transparent));
-      backdrop-filter:blur(22px) saturate(1.15);
-      overflow:auto;
-      scrollbar-width:thin;
-      scrollbar-color:var(--border) transparent;
-    }
-    .sidebar::-webkit-scrollbar, .main::-webkit-scrollbar{width:var(--scrollbar);height:var(--scrollbar)}
-    .sidebar::-webkit-scrollbar-thumb, .main::-webkit-scrollbar-thumb{
-      background:color-mix(in srgb, var(--border-2) 80%, transparent);
-      border-radius:999px;
-      border:2px solid transparent;
-      background-clip:padding-box;
-    }
-
-    .sideSection{
-      margin-bottom:18px;
-      padding:16px;
-      border-radius:var(--radius);
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 90%, transparent), color-mix(in srgb, var(--panel) 84%, transparent));
-      box-shadow:var(--shadow-soft);
+    .control,
+    .icon-btn,
+    .seg-btn,
+    .chip-btn,
+    .open-btn,
+    .back-btn,
+    .card-fav,
+    .mini-item,
+    .category-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      box-shadow: none;
+      outline: none;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease, opacity 0.12s ease;
     }
 
-    .sideTitle{
-      margin:0 0 12px 0;
-      font-size:.78rem;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      color:var(--muted);
+    .control:hover,
+    .icon-btn:hover,
+    .seg-btn:hover,
+    .chip-btn:hover,
+    .open-btn:hover,
+    .back-btn:hover,
+    .card-fav:hover,
+    .mini-item:hover,
+    .category-btn:hover {
+      border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
     }
 
-    .sideBtn{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:13px 14px;
-      margin-bottom:10px;
-      border-radius:16px;
-      background:transparent;
-      border:1px solid transparent;
-      color:var(--text);
-      text-align:left;
-    }
-    .sideBtn:last-child{margin-bottom:0}
-    .sideBtn:hover{
-      background:color-mix(in srgb, var(--accent) 10%, transparent);
-      border-color:color-mix(in srgb, var(--accent) 22%, transparent);
-      transform:translateX(2px);
-    }
-    .sideBtn.active{
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent-2) 14%, transparent));
-      border-color:color-mix(in srgb, var(--accent) 38%, transparent);
-      box-shadow:0 12px 28px color-mix(in srgb, var(--accent) 15%, transparent);
-    }
-    .sideBtn span:last-child{
-      color:var(--muted);
-      font-size:.86rem;
+    .control:active,
+    .icon-btn:active,
+    .seg-btn:active,
+    .chip-btn:active,
+    .open-btn:active,
+    .back-btn:active,
+    .card-fav:active,
+    .mini-item:active,
+    .category-btn:active {
+      transform: scale(0.98);
     }
 
-    .favFilter{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      width:100%;
-      padding:13px 14px;
-      margin-bottom:10px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 82%, transparent);
-    }
-    .favFilter.active{
-      border-color:color-mix(in srgb, var(--accent) 40%, var(--border));
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--panel-3)), color-mix(in srgb, var(--accent-2) 12%, var(--panel-3)));
-      box-shadow:0 10px 24px color-mix(in srgb, var(--accent) 18%, transparent);
+    .seg-btn,
+    .control {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
     }
 
-    .sidebarNote{
-      margin:14px 0 0;
-      color:var(--muted);
-      font-size:.92rem;
-      line-height:1.55;
+    .seg-group {
+      display: inline-flex;
+      border-radius: 13px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow-soft);
     }
 
-    .main{
-      min-height:0;
-      overflow:auto;
-      padding:20px 20px 28px 20px;
-      scrollbar-width:thin;
-      scrollbar-color:var(--border) transparent;
+    .seg-btn {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      height: 40px;
+      padding: 0 12px;
+      min-width: 46px;
     }
 
-    .hero{
-      display:grid;
-      grid-template-columns:minmax(0,1.3fr) minmax(240px,.95fr);
-      gap:18px;
-      align-items:stretch;
-      padding:22px;
-      margin-bottom:18px;
-      border-radius:28px;
-      border:1px solid var(--border);
-      background:
-        radial-gradient(1000px 240px at 8% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
-        radial-gradient(900px 240px at 100% 0%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 52%),
-        linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 92%, transparent), color-mix(in srgb, var(--panel) 82%, transparent));
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(24px) saturate(1.15);
-      position:relative;
-      overflow:hidden;
-    }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:auto -12% -30% auto;
-      width:300px;height:300px;
-      border-radius:50%;
-      background:radial-gradient(circle, color-mix(in srgb, var(--accent-3) 20%, transparent), transparent 62%);
-      filter:blur(8px);
-      opacity:.5;
-      pointer-events:none;
-    }
-    .eyebrow{
-      margin:0 0 10px 0;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 70%, transparent);
-      color:var(--muted);
-      font-size:.82rem;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      width:max-content;
-    }
-    .hero h1{
-      margin:0;
-      font-size:clamp(1.75rem, 3vw, 3.1rem);
-      line-height:1.02;
-      letter-spacing:-.04em;
-      max-width:14ch;
-    }
-    .hero p{
-      margin:12px 0 0 0;
-      color:var(--muted);
-      max-width:60ch;
-      line-height:1.65;
-      font-size:1rem;
+    .seg-btn.active {
+      background: color-mix(in srgb, var(--primary) 20%, transparent);
+      color: var(--text);
     }
 
-    .heroMeta{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      align-items:stretch;
-      justify-content:space-between;
-    }
-    .resumeWrap{
-      display:flex;
-      justify-content:flex-end;
-    }
-    .resumeBtn{
-      min-height:48px;
-      padding:0 16px;
-      border-radius:16px;
-      border:1px solid color-mix(in srgb, var(--accent) 32%, var(--border));
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 26%, var(--panel-3)), color-mix(in srgb, var(--accent-2) 12%, var(--panel-3)));
-      color:var(--text);
-      box-shadow:0 14px 28px color-mix(in srgb, var(--accent) 16%, transparent);
-      font-weight:800;
-      letter-spacing:-.01em;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-    }
-    .resumeBtn:hover{transform:translateY(-1px)}
-    .resumeBtn.hidden{display:none}
-
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
-    .stat{
-      padding:14px 14px 12px;
-      border-radius:18px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 76%, transparent);
-      box-shadow:var(--shadow-soft);
-    }
-    .stat strong{
-      display:block;
-      font-size:1.25rem;
-      letter-spacing:-.03em;
-      line-height:1.1;
-    }
-    .stat span{
-      display:block;
-      margin-top:6px;
-      color:var(--muted);
-      font-size:.86rem;
+    .theme-select {
+      height: 40px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 0 12px;
+      box-shadow: var(--shadow-soft);
+      outline: none;
     }
 
-    .recent{
-      margin:0 0 18px 0;
-      padding:16px 18px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 88%, transparent), color-mix(in srgb, var(--panel) 84%, transparent));
-      box-shadow:var(--shadow-soft);
-      backdrop-filter:blur(20px);
-    }
-    .recentHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:12px;
-    }
-    .recentHead strong{
-      font-size:.92rem;
-      letter-spacing:-.01em;
-    }
-    .recentStrip{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .chipBtn{
-      min-height:38px;
-      padding:0 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 82%, transparent);
-      color:var(--text);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-size:.88rem;
-    }
-    .chipBtn:hover{
-      transform:translateY(-1px);
-      border-color:color-mix(in srgb, var(--accent) 28%, var(--border));
-      box-shadow:0 10px 20px rgba(0,0,0,.08);
+    .menu-btn {
+      display: none;
     }
 
-    .contentHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-    }
-    .contentHeader h2{
-      margin:0;
-      font-size:1.02rem;
-      letter-spacing:-.02em;
-    }
-    .filterSummary{
-      color:var(--muted);
-      font-size:.92rem;
-    }
-    .clearBtn{
-      min-height:40px;
-      padding:0 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:transparent;
-      color:var(--text);
-    }
-    .clearBtn:hover{
-      transform:translateY(-1px);
-      border-color:color-mix(in srgb, var(--accent) 26%, var(--border));
-      background:color-mix(in srgb, var(--accent) 8%, transparent);
+    .content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      position: relative;
+      overflow: hidden;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-      gap:16px;
-      align-items:stretch;
+    .sidebar {
+      width: 290px;
+      flex: 0 0 290px;
+      min-width: 0;
+      border-right: 1px solid var(--border);
+      background: var(--panel-2);
+      padding:
+        16px
+        14px
+        calc(16px + env(safe-area-inset-bottom))
+        calc(14px + env(safe-area-inset-left));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
-    .card{
-      position:relative;
-      padding:18px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      background:
-        radial-gradient(500px 180px at 20% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 56%),
-        linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 88%, transparent), color-mix(in srgb, var(--panel) 82%, transparent));
-      box-shadow:var(--shadow-soft);
-      backdrop-filter:blur(20px) saturate(1.15);
-      overflow:hidden;
-      cursor:pointer;
-      transform:translateY(0) scale(1);
-      transition:transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease);
-      min-height:240px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      isolation:isolate;
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      border-radius:inherit;
-      padding:1px;
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 38%, transparent), transparent 40%, color-mix(in srgb, var(--accent-2) 24%, transparent));
-      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite:xor;
-      mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask-composite:exclude;
-      opacity:.72;
-      pointer-events:none;
-      z-index:-1;
-    }
-    .card:hover{
-      transform:translateY(-4px);
-      box-shadow:0 24px 56px rgba(0,0,0,.18);
-      border-color:color-mix(in srgb, var(--accent) 30%, var(--border));
-    }
-    .card:focus-visible{
-      outline:2px solid var(--accent);
-      outline-offset:2px;
+    .sidebar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
-    .cardTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      margin-bottom:14px;
-    }
-    .toolIcon{
-      width:56px;height:56px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      letter-spacing:.02em;
-      font-size:.78rem;
-      background:
-        radial-gradient(circle at 30% 28%, color-mix(in srgb, white 18%, transparent), transparent 48%),
-        linear-gradient(135deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent-2) 78%, black 22%));
-      color:white;
-      border:1px solid color-mix(in srgb, white 14%, transparent);
-      box-shadow:0 16px 24px color-mix(in srgb, var(--accent) 16%, transparent);
-      position:relative;
-    }
-    .toolIcon::after{
-      content:"";
-      position:absolute;
-      inset:8px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .favBtn{
-      width:40px;height:40px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 82%, transparent);
-      display:grid;
-      place-items:center;
-      color:var(--muted);
-      flex:0 0 auto;
-    }
-    .favBtn.active{
-      color:#fff;
-      background:linear-gradient(135deg, color-mix(in srgb, var(--danger) 82%, white 18%), color-mix(in srgb, var(--warn) 50%, transparent));
-      border-color:color-mix(in srgb, var(--danger) 40%, var(--border));
-      box-shadow:0 10px 20px color-mix(in srgb, var(--danger) 18%, transparent);
-    }
-    .favBtn:hover{transform:scale(1.04)}
-    .favBtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-
-    .card h3{
-      margin:0 0 8px 0;
-      font-size:1.12rem;
-      letter-spacing:-.02em;
-      line-height:1.22;
-    }
-    .card p{
-      margin:0;
-      color:var(--muted);
-      font-size:.94rem;
-      line-height:1.6;
+    .sidebar-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .metaRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-top:16px;
-    }
-    .categoryPill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 78%, transparent);
-      color:var(--muted);
-      font-size:.84rem;
-    }
-    .openBtn{
-      min-height:42px;
-      padding:0 16px;
-      border-radius:14px;
-      border:1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
-      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 72%, white 28%), color-mix(in srgb, var(--accent-2) 58%, black 42%));
-      color:#fff;
-      font-weight:800;
-      letter-spacing:-.01em;
-      box-shadow:0 14px 22px color-mix(in srgb, var(--accent) 16%, transparent);
-    }
-    .openBtn:hover{transform:translateY(-1px)}
-    .openBtn:focus-visible{outline:2px solid var(--accent-2); outline-offset:2px}
-
-    .empty{
-      margin-top:18px;
-      padding:26px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 90%, transparent), color-mix(in srgb, var(--panel) 84%, transparent));
-      text-align:center;
-      color:var(--muted);
-      box-shadow:var(--shadow-soft);
-    }
-    .empty h3{margin:0 0 10px 0; color:var(--text)}
-    .empty p{margin:0 0 18px 0; line-height:1.6}
-    .empty .clearBtn{display:inline-flex}
-
-    .workspace{
-      position:fixed;
-      inset:0;
-      z-index:30;
-      display:flex;
-      flex-direction:column;
-      background:
-        radial-gradient(1200px 600px at 15% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 58%),
-        linear-gradient(135deg, color-mix(in srgb, var(--bg1) 85%, black 15%), color-mix(in srgb, var(--bg2) 90%, black 10%));
-      opacity:0;
-      pointer-events:none;
-      transform:translateY(18px) scale(.985);
-      transition:opacity .28s var(--ease), transform .28s var(--ease);
-    }
-    body.workspace-mode .workspace{
-      opacity:1;
-      pointer-events:auto;
-      transform:translateY(0) scale(1);
-    }
-    body.workspace-mode .header,
-    body.workspace-mode .layout{
-      filter:blur(8px) saturate(.92);
-      transform:scale(.985);
-      opacity:0;
-      pointer-events:none;
-    }
-    .workspaceBar{
-      height:74px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding:12px 14px;
-      border-bottom:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel) 90%, transparent), color-mix(in srgb, var(--panel) 72%, transparent));
-      backdrop-filter:blur(22px) saturate(1.15);
-      box-shadow:var(--shadow-soft);
-    }
-    .workspaceTitle{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-      min-width:0;
-    }
-    .workspaceTitle strong{
-      font-size:1.02rem;
-      letter-spacing:-.02em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .workspaceTitle span{
-      font-size:.84rem;
-      color:var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .workspaceActions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex:0 0 auto;
-    }
-    .ghostBtn{
-      min-height:46px;
-      padding:0 16px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-2) 86%, transparent);
-      color:var(--text);
-      box-shadow:var(--shadow-soft);
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      font-weight:700;
-    }
-    .ghostBtn:hover{transform:translateY(-1px); border-color:var(--border-2)}
-    .ghostBtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-
-    .frameShell{
-      position:relative;
-      flex:1 1 auto;
-      min-height:0;
-      padding:16px;
-    }
-    .frameBox{
-      position:relative;
-      width:100%;
-      height:100%;
-      border-radius:28px;
-      overflow:hidden;
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 82%, transparent), color-mix(in srgb, var(--panel) 72%, transparent));
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(24px) saturate(1.1);
-    }
-    .frameBox iframe{
-      width:100%;
-      height:100%;
-      border:0;
-      background:transparent;
-    }
-    .loading{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(180deg, color-mix(in srgb, var(--panel-3) 74%, transparent), color-mix(in srgb, var(--panel) 60%, transparent));
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .2s var(--ease);
-    }
-    .loading.show{opacity:1; pointer-events:auto}
-    .loaderCard{
-      width:min(360px, 88vw);
-      padding:22px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-2) 86%, transparent);
-      box-shadow:var(--shadow);
-      text-align:center;
-      backdrop-filter:blur(22px);
-    }
-    .spinner{
-      width:46px;height:46px;
-      margin:0 auto 14px;
-      border-radius:50%;
-      border:3px solid color-mix(in srgb, var(--border-2) 68%, transparent);
-      border-top-color:var(--accent);
-      animation:spin .8s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .loaderCard strong{display:block; font-size:1.02rem; margin-bottom:8px}
-    .loaderCard span{color:var(--muted); font-size:.92rem; line-height:1.55}
-
-    .toastWrap{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      z-index:50;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      pointer-events:none;
-    }
-    .toast{
-      min-width:240px;
-      max-width:min(420px, calc(100vw - 32px));
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--panel-3) 88%, transparent);
-      color:var(--text);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(20px);
-      transform:translateY(10px);
-      opacity:0;
-      animation:toastIn .25s var(--ease) forwards, toastOut .3s var(--ease) forwards 2.8s;
-    }
-    .toast strong{display:block; margin-bottom:4px}
-    .toast span{display:block; color:var(--muted); font-size:.9rem; line-height:1.45}
-    @keyframes toastIn{to{transform:translateY(0); opacity:1}}
-    @keyframes toastOut{to{transform:translateY(10px); opacity:0}}
-
-    .mobileBackdrop{
-      position:fixed;
-      inset:0;
-      z-index:18;
-      background:rgba(0,0,0,.38);
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .22s var(--ease);
+    .sidebar-title strong {
+      font-size: 0.98rem;
     }
 
-    .hidden{display:none !important}
+    .sidebar-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
 
-    @media (max-width: 1080px){
-      .layout{grid-template-columns:1fr}
-      .sidebar{
-        position:fixed;
-        left:0; top:var(--header-h);
-        bottom:0;
-        width:min(86vw, 320px);
-        transform:translateX(-102%);
-        transition:transform .26s var(--ease);
-        z-index:19;
+    .sidebar-close {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .section-label {
+      margin: 18px 0 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .category-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .category-btn {
+      width: 100%;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      text-align: left;
+      background: var(--card);
+    }
+
+    .category-btn.active {
+      background: color-mix(in srgb, var(--primary) 15%, var(--card));
+      border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+    }
+
+    .category-btn .count {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .sidebar-note {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 10%, transparent), transparent), var(--card);
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.9rem;
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding:
+        16px
+        calc(16px + env(safe-area-inset-right))
+        calc(16px + env(safe-area-inset-bottom))
+        16px;
+      scroll-behavior: smooth;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--card);
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+      min-width: 0;
+    }
+
+    .stat .num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-top: 4px;
+    }
+
+    .workspace {
+      display: none;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .workspace.active {
+      display: flex;
+      animation: fadeIn 0.18s ease-out;
+    }
+
+    .workspace-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .workspace-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .workspace-title .title-stack {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .workspace-title strong {
+      font-size: 1.05rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .workspace-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .workspace-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .back-btn,
+    .open-btn {
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .open-btn {
+      background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 55%, var(--primary)));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .workspace-frame {
+      flex: 1 1 auto;
+      min-height: clamp(420px, 72dvh, 920px);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #0a0a0a;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .workspace-frame.loading::after {
+      content: attr(data-loading);
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.15));
+      pointer-events: none;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+      pointer-events: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .launcher {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .launcher-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .launcher-head h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      line-height: 1.15;
+    }
+
+    .launcher-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      max-width: 62ch;
+      line-height: 1.5;
+    }
+
+    .mini-sections {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-block {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow-soft);
+      padding: 14px;
+    }
+
+    .mini-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .mini-head strong {
+      font-size: 0.92rem;
+    }
+
+    .mini-head span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .mini-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+      scrollbar-width: thin;
+    }
+
+    .mini-item {
+      flex: 0 0 auto;
+      min-width: 170px;
+      max-width: 240px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      text-align: left;
+      background: var(--card-2);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mini-item strong {
+      font-size: 0.92rem;
+      line-height: 1.2;
+    }
+
+    .mini-item span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .tool-card {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 8%, transparent), transparent 26%), var(--card);
+      box-shadow: var(--shadow-soft);
+      padding: 14px;
+      color: var(--text);
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+      min-width: 0;
+    }
+
+    .tool-card:focus-visible,
+    .mini-item:focus-visible,
+    .category-btn:focus-visible,
+    .control:focus-visible,
+    .seg-btn:focus-visible,
+    .open-btn:focus-visible,
+    .back-btn:focus-visible,
+    .card-fav:focus-visible,
+    .icon-btn:focus-visible,
+    .theme-select:focus-visible,
+    .search:focus-visible,
+    .sidebar-close:focus-visible,
+    .menu-btn:focus-visible {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+
+    .tool-card:hover {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+    }
+
+    .tool-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 38%, transparent), color-mix(in srgb, var(--accent) 28%, transparent));
+      color: #fff;
+      font-size: 1.25rem;
+      flex: 0 0 auto;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-fav {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: var(--card-2);
+      color: var(--muted);
+    }
+
+    .card-fav.active {
+      color: #ffd34d;
+      background: color-mix(in srgb, #ffd34d 16%, var(--card-2));
+    }
+
+    .tool-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .tool-content h3 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.2;
+      min-width: 0;
+    }
+
+    .tool-content p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      min-width: 0;
+    }
+
+    .tool-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--muted);
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .badge.primary {
+      color: var(--text);
+      background: color-mix(in srgb, var(--primary) 14%, var(--card-2));
+      border-color: color-mix(in srgb, var(--primary) 22%, var(--border));
+    }
+
+    .open-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary-2);
+      font-weight: 700;
+      font-size: 0.84rem;
+      white-space: nowrap;
+    }
+
+    .empty {
+      border: 1px dashed var(--border);
+      border-radius: 22px;
+      padding: 24px 18px;
+      color: var(--muted);
+      text-align: center;
+      background: var(--card);
+    }
+
+    .empty strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .backdrop {
+      display: none;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      left: 50%;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 100;
+      pointer-events: none;
+      display: grid;
+      gap: 8px;
+      width: min(92vw, 420px);
+    }
+
+    .toast {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: toastIn 0.18s ease-out forwards;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .toast.good {
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    }
+
+    .toast.warn {
+      border-color: color-mix(in srgb, var(--danger) 35%, var(--border));
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes toastIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      body.sidebar-open .sidebar{transform:translateX(0)}
-      body.sidebar-open .mobileBackdrop{opacity:1; pointer-events:auto}
-      .menuBtn{display:grid}
-      .brand{min-width:0}
-      .header{gap:10px}
-      .searchWrap{max-width:none}
-      .headerActions{gap:8px}
-      .toolCount{display:none}
-      .hero{grid-template-columns:1fr}
-      .resumeWrap{justify-content:flex-start}
-      .stats{grid-template-columns:repeat(3,1fr)}
-      .main{padding:16px}
     }
 
-    @media (max-width: 720px){
-      :root{--header-h:74px}
-      .header{padding:10px 12px}
-      .brandMark{width:40px;height:40px;border-radius:14px}
-      .brandText strong{font-size:.98rem}
-      .brandText span{font-size:.75rem}
-      .searchInput{height:46px;border-radius:14px}
-      .iconBtn,.select{height:46px;border-radius:14px}
-      .hero{padding:18px;border-radius:24px}
-      .hero h1{max-width:none}
-      .stats{grid-template-columns:1fr}
-      .contentHeader{flex-direction:column; align-items:flex-start}
-      .frameShell{padding:10px}
-      .frameBox{border-radius:22px}
-      .workspaceBar{height:auto; min-height:74px; flex-wrap:wrap}
-      .workspaceActions{width:100%; justify-content:space-between}
-      .ghostBtn{flex:1 1 auto; justify-content:center}
+    @media (max-width: 920px) {
+      .topbar {
+        gap: 10px;
+      }
+
+      .menu-btn {
+        display: inline-flex;
+      }
+
+      .controls {
+        margin-left: 0;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 70;
+        width: min(88vw, 320px);
+        transform: translateX(-102%);
+        transition: transform 0.22s ease;
+        box-shadow: 20px 0 45px rgba(0, 0, 0, 0.24);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-close {
+        display: inline-flex;
+      }
+
+      .backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 65;
+        background: rgba(0, 0, 0, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+      }
+
+      .backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .main {
+        padding-top: 14px;
+      }
+
+      .workspace-frame {
+        min-height: 58dvh;
+      }
+
+      .mini-item {
+        min-width: 160px;
+      }
     }
 
-    @media (prefers-reduced-motion: reduce){
-      *,*::before,*::after{animation:none !important; transition:none !important; scroll-behavior:auto !important}
-      body::before, body::after{display:none}
-    }
+    @media (max-width: 560px) {
+      .brand-text span {
+        display: none;
+      }
 
-    .focusRing:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+      .search-wrap {
+        flex-basis: 100%;
+        order: 3;
+      }
+
+      .topbar {
+        align-items: center;
+      }
+
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-bar {
+        align-items: flex-start;
+      }
+
+      .workspace-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
   </style>
 </head>
-<body data-theme="dark-neon">
-  <canvas id="bgCanvas" aria-hidden="true"></canvas>
-  <div class="mobileBackdrop" id="mobileBackdrop" aria-hidden="true"></div>
-
-  <div class="app" id="app">
-    <header class="header">
-      <button class="iconBtn menuBtn focusRing" id="menuBtn" aria-label="Toggle sidebar">
-        ☰
-      </button>
-
+<body data-theme="dark">
+  <div class="app">
+    <header class="topbar">
       <div class="brand" aria-label="TheDuo Tools">
-        <div class="brandMark">TD</div>
-        <div class="brandText">
+        <div class="brand-mark">TD</div>
+        <div class="brand-text">
           <strong id="brandTitle">TheDuo Tools</strong>
-          <span id="brandSubtitle">All-in-One Browser Utilities</span>
+          <span id="brandSubtitle">Mini web tools ecosystem</span>
         </div>
       </div>
 
-      <div class="searchWrap" role="search">
-        <svg class="searchIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M11 18.5a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" />
-          <path d="M16.4 16.4 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-        <input id="searchInput" class="searchInput focusRing" type="search" autocomplete="off" spellcheck="false" />
-        <button class="searchClear focusRing" id="clearSearch" type="button" aria-label="Clear search">✕</button>
+      <div class="search-wrap">
+        <input id="searchInput" class="search" type="search" autocomplete="off" spellcheck="false" />
       </div>
 
-      <div class="headerActions">
-        <select id="langSelect" class="select focusRing" aria-label="Language switcher">
-          <option value="en">EN</option>
-          <option value="ru">RU</option>
-        </select>
+      <div class="controls">
+        <div class="seg-group" aria-label="Language switch">
+          <button id="langEn" class="seg-btn" type="button">EN</button>
+          <button id="langRu" class="seg-btn" type="button">RU</button>
+        </div>
 
-        <select id="themeSelect" class="select focusRing" aria-label="Theme switcher"></select>
+        <select id="themeSelect" class="theme-select" aria-label="Theme switch"></select>
 
-        <div class="toolCount" id="toolCountBadge" aria-live="polite"></div>
+        <button id="menuBtn" class="control menu-btn" type="button" aria-label="Menu">☰</button>
       </div>
     </header>
 
-    <div class="layout">
-      <aside class="sidebar" id="sidebar">
-        <div class="sideSection">
-          <h3 class="sideTitle" id="filtersTitle">Filters</h3>
-
-          <button class="favFilter focusRing" id="favoritesToggle" type="button">
-            <span id="favoritesLabel">Favorites</span>
-            <span id="favoritesCount">0</span>
-          </button>
-
-          <div id="categoriesList"></div>
-
-          <p class="sidebarNote" id="sidebarNote"></p>
+    <div class="content">
+      <aside id="sidebar" class="sidebar" aria-label="Sidebar">
+        <div class="sidebar-head">
+          <div class="sidebar-title">
+            <strong id="sidebarTitle">Browse</strong>
+            <span id="sidebarSubtitle">Filters and categories</span>
+          </div>
+          <button id="sidebarClose" class="sidebar-close" type="button" aria-label="Close">✕</button>
         </div>
 
-        <div class="sideSection">
-          <h3 class="sideTitle" id="controlsTitle">Controls</h3>
-          <button class="sideBtn focusRing" id="clearAllBtn" type="button"></button>
-          <button class="sideBtn focusRing" id="hideSidebarBtn" type="button"></button>
+        <div class="section-label" id="catLabel">Categories</div>
+        <nav id="categoryList" class="category-list"></nav>
+
+        <div class="sidebar-note" id="sidebarNote">
+          Fast launcher, favorites, recent tools, and saved preferences.
         </div>
       </aside>
 
-      <main class="main" id="main">
-        <section class="hero">
-          <div>
-            <div class="eyebrow" id="heroEyebrow"></div>
-            <h1 id="heroTitle"></h1>
-            <p id="heroDesc"></p>
-          </div>
+      <div id="backdrop" class="backdrop" aria-hidden="true"></div>
 
-          <div class="heroMeta">
-            <div class="resumeWrap">
-              <button class="resumeBtn focusRing hidden" id="resumeBtn" type="button"></button>
-            </div>
-
-            <div class="stats">
-              <div class="stat">
-                <strong id="statTools">10</strong>
-                <span id="statToolsLabel">Tools</span>
-              </div>
-              <div class="stat">
-                <strong id="statCategories">7</strong>
-                <span id="statCategoriesLabel">Categories</span>
-              </div>
-              <div class="stat">
-                <strong id="statThemes">4</strong>
-                <span id="statThemesLabel">Themes</span>
+      <main id="main" class="main">
+        <section id="workspace" class="workspace" aria-label="Workspace">
+          <div class="workspace-bar">
+            <div class="workspace-title">
+              <button id="backBtn" class="back-btn" type="button">←</button>
+              <div class="title-stack">
+                <strong id="workspaceTitle">Workspace</strong>
+                <span id="workspacePath">—</span>
               </div>
             </div>
+
+            <div class="workspace-actions">
+              <button id="openNewTabBtn" class="open-btn" type="button">↗</button>
+            </div>
+          </div>
+
+          <div id="frameBox" class="workspace-frame loading" data-loading="Loading..." aria-live="polite">
+            <iframe id="toolFrame" title="Tool workspace" loading="eager"></iframe>
           </div>
         </section>
 
-        <section class="recent hidden" id="recentSection">
-          <div class="recentHead">
-            <strong id="recentTitle">Recently opened</strong>
+        <section id="launcher" class="launcher">
+          <div class="launcher-head">
+            <div>
+              <h1 id="launcherTitle">Tools launcher</h1>
+              <p id="launcherDesc">Search, favorite, and open your HTML tools instantly.</p>
+            </div>
           </div>
-          <div class="recentStrip" id="recentStrip"></div>
-        </section>
 
-        <section class="contentHeader">
-          <div>
-            <h2 id="toolsHeading"></h2>
-            <div class="filterSummary" id="filterSummary"></div>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="num" id="statTools">0</div>
+              <div class="label" id="statToolsLabel">Tools</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="statFavs">0</div>
+              <div class="label" id="statFavsLabel">Favorites</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="statRecent">0</div>
+              <div class="label" id="statRecentLabel">Recent</div>
+            </div>
           </div>
-          <button class="clearBtn focusRing" id="resetBtn" type="button"></button>
-        </section>
 
-        <section class="grid" id="cardsGrid" aria-live="polite"></section>
-        <section class="empty hidden" id="emptyState">
-          <h3 id="emptyTitle"></h3>
-          <p id="emptyDesc"></p>
-          <button class="clearBtn focusRing" id="emptyResetBtn" type="button"></button>
+          <div class="mini-sections">
+            <div id="favoritesBlock" class="mini-block hidden">
+              <div class="mini-head">
+                <strong id="favoritesTitle">Favorites</strong>
+                <span id="favoritesCount">0</span>
+              </div>
+              <div id="favoritesRow" class="mini-row"></div>
+            </div>
+
+            <div id="recentBlock" class="mini-block hidden">
+              <div class="mini-head">
+                <strong id="recentTitle">Recent</strong>
+                <span id="recentCount">0</span>
+              </div>
+              <div id="recentRow" class="mini-row"></div>
+            </div>
+          </div>
+
+          <div id="gridWrap">
+            <div class="section-label" id="allToolsLabel">All tools</div>
+            <div id="toolGrid" class="tool-grid"></div>
+          </div>
         </section>
       </main>
     </div>
+
+    <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
   </div>
 
-  <section class="workspace" id="workspace" aria-hidden="true">
-    <div class="workspaceBar">
-      <div class="workspaceTitle">
-        <strong id="workspaceTitle">Workspace</strong>
-        <span id="workspaceMeta"></span>
-      </div>
-
-      <div class="workspaceActions">
-        <button class="ghostBtn focusRing" id="backBtn" type="button"></button>
-        <button class="ghostBtn focusRing" id="fullscreenBtn" type="button"></button>
-      </div>
-    </div>
-
-    <div class="frameShell">
-      <div class="frameBox">
-        <div class="loading show" id="loading">
-          <div class="loaderCard">
-            <div class="spinner"></div>
-            <strong id="loadingTitle"></strong>
-            <span id="loadingDesc"></span>
-          </div>
-        </div>
-        <iframe id="toolFrame" title="Tool workspace"></iframe>
-      </div>
-    </div>
-  </section>
-
-  <div class="toastWrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
-
   <script>
-    (() => {
-      const STORAGE = {
-        lang: "theduo_lang",
-        theme: "theduo_theme",
-        favorites: "theduo_favorites",
-        recent: "theduo_recent",
-        lastTool: "theduo_last_tool"
-      };
+    const tools = [
+      {
+        id: "api-key",
+        href: "api-key.html",
+        category: "security",
+        icon: "🔐",
+        title: { en: "API Key Generator", ru: "Генератор API-ключей" },
+        desc: {
+          en: "Fast secure-style key generator with flexible presets and controls.",
+          ru: "Быстрый генератор ключей с пресетами и настройками."
+        }
+      },
+      {
+        id: "api-key2",
+        href: "api-key2.html",
+        category: "security",
+        icon: "🛡️",
+        title: { en: "API Key Generator 2", ru: "Генератор API-ключей 2" },
+        desc: {
+          en: "Alternative key tool for quick bulk generation and copying.",
+          ru: "Альтернативный инструмент для быстрой массовой генерации и копирования."
+        }
+      },
+      {
+        id: "colortool-v2",
+        href: "colortool-v2.html",
+        category: "design",
+        icon: "🎨",
+        title: { en: "Color Tool v2", ru: "Цветовой инструмент v2" },
+        desc: {
+          en: "Modern palette utility for design work and fast color testing.",
+          ru: "Современный инструмент палитр для дизайна и быстрого теста цветов."
+        }
+      },
+      {
+        id: "colortool",
+        href: "colortool.html",
+        category: "design",
+        icon: "🖌️",
+        title: { en: "Color Tool", ru: "Цветовой инструмент" },
+        desc: {
+          en: "Simple color helper for quick visual experiments.",
+          ru: "Простой помощник для быстрых цветовых экспериментов."
+        }
+      },
+      {
+        id: "url",
+        href: "url.html",
+        category: "developer",
+        icon: "🔗",
+        title: { en: "URL Tool", ru: "Инструмент URL" },
+        desc: {
+          en: "Build, decode, and manage links in a clean compact workspace.",
+          ru: "Сборка, декодирование и управление ссылками в компактном интерфейсе."
+        }
+      },
+      {
+        id: "hashes",
+        href: "hashes.html",
+        category: "security",
+        icon: "#",
+        title: { en: "Hash Tools", ru: "Хеш-инструменты" },
+        desc: {
+          en: "Hashing utilities for quick text testing and verification.",
+          ru: "Утилиты хеширования для быстрого теста текста и проверки."
+        }
+      },
+      {
+        id: "dipcheck",
+        href: "dipcheck.html",
+        category: "developer",
+        icon: "📡",
+        title: { en: "Dip Check", ru: "Dip Check" },
+        desc: {
+          en: "Network-style checker for fast lookups and diagnostics.",
+          ru: "Проверка сети для быстрых запросов и диагностики."
+        }
+      },
+      {
+        id: "wordsort2",
+        href: "wordsort2.html",
+        category: "text",
+        icon: "🔤",
+        title: { en: "Word Sort", ru: "Сортировка слов" },
+        desc: {
+          en: "Sort, clean, and organize word lists with minimal effort.",
+          ru: "Сортировка, очистка и упорядочивание списков слов без лишних действий."
+        }
+      },
+      {
+        id: "phiziks",
+        href: "phiziks.html",
+        category: "study",
+        icon: "📘",
+        title: { en: "Phiziks", ru: "Phiziks" },
+        desc: {
+          en: "Study helper for physics practice and fast revision.",
+          ru: "Помощник для изучения физики и быстрой подготовки."
+        }
+      },
+      {
+        id: "pong",
+        href: "pong.html",
+        category: "games",
+        icon: "🎮",
+        title: { en: "Pong", ru: "Понг" },
+        desc: {
+          en: "Lightweight classic game, ready for a quick break.",
+          ru: "Лёгкая классическая игра для короткой паузы."
+        }
+      }
+    ];
 
-      const THEMES = [
-        { id: "dark-neon", labels: { en: "Dark Neon", ru: "Тёмный неон" } },
-        { id: "light-glass", labels: { en: "Light Glass", ru: "Светлое стекло" } },
-        { id: "purple-cyber", labels: { en: "Purple Cyber", ru: "Фиолетовый кибер" } },
-        { id: "emerald-matrix", labels: { en: "Emerald Matrix", ru: "Изумрудная матрица" } }
+    const categoryOrder = ["all", "security", "developer", "design", "text", "study", "games"];
+
+    const i18n = {
+      en: {
+        appTitle: "TheDuo Tools",
+        appSub: "Mini web tools ecosystem",
+        searchPlaceholder: "Search tools...",
+        menu: "Menu",
+        close: "Close",
+        browse: "Browse",
+        filters: "Filters and categories",
+        categories: "Categories",
+        sidebarNote: "Fast launcher, favorites, recent tools, and saved preferences.",
+        launcherTitle: "Tools launcher",
+        launcherDesc: "Search, favorite, and open your HTML tools instantly.",
+        tools: "Tools",
+        favorites: "Favorites",
+        recent: "Recent",
+        allTools: "All tools",
+        workspace: "Workspace",
+        openNewTab: "Open in new tab",
+        back: "Back",
+        loading: "Loading...",
+        noResultsTitle: "No tools found",
+        noResultsDesc: "Try another search or category.",
+        toastOpened: (name) => `Opened ${name}`,
+        toastSaved: "Saved",
+        toastRestored: "Session restored",
+        open: "Open",
+        favorite: "Favorite",
+        unfavorite: "Unfavorite",
+        language: "Language",
+        theme: "Theme",
+        dark: "Dark",
+        light: "Light",
+        purple: "Purple",
+        emerald: "Emerald",
+        counts: (n) => `${n}`,
+        nothingYet: "Nothing here yet"
+      },
+      ru: {
+        appTitle: "TheDuo Tools",
+        appSub: "Экосистема мини веб-инструментов",
+        searchPlaceholder: "Поиск инструментов...",
+        menu: "Меню",
+        close: "Закрыть",
+        browse: "Обзор",
+        filters: "Фильтры и категории",
+        categories: "Категории",
+        sidebarNote: "Быстрый лаунчер, избранное, недавние инструменты и сохранённые настройки.",
+        launcherTitle: "Панель инструментов",
+        launcherDesc: "Ищи, добавляй в избранное и открывай HTML-инструменты мгновенно.",
+        tools: "Инструменты",
+        favorites: "Избранное",
+        recent: "Недавние",
+        allTools: "Все инструменты",
+        workspace: "Рабочая область",
+        openNewTab: "Открыть в новой вкладке",
+        back: "Назад",
+        loading: "Загрузка...",
+        noResultsTitle: "Инструменты не найдены",
+        noResultsDesc: "Попробуй другой поиск или категорию.",
+        toastOpened: (name) => `Открыто: ${name}`,
+        toastSaved: "Сохранено",
+        toastRestored: "Сессия восстановлена",
+        open: "Открыть",
+        favorite: "В избранное",
+        unfavorite: "Убрать из избранного",
+        language: "Язык",
+        theme: "Тема",
+        dark: "Тёмная",
+        light: "Светлая",
+        purple: "Фиолетовая",
+        emerald: "Изумрудная",
+        counts: (n) => `${n}`,
+        nothingYet: "Пока ничего нет"
+      }
+    };
+
+    const categories = ["all", "security", "developer", "design", "text", "study", "games"];
+
+    const els = {
+      body: document.body,
+      searchInput: document.getElementById("searchInput"),
+      themeSelect: document.getElementById("themeSelect"),
+      langEn: document.getElementById("langEn"),
+      langRu: document.getElementById("langRu"),
+      menuBtn: document.getElementById("menuBtn"),
+      sidebar: document.getElementById("sidebar"),
+      sidebarClose: document.getElementById("sidebarClose"),
+      backdrop: document.getElementById("backdrop"),
+      categoryList: document.getElementById("categoryList"),
+      sidebarTitle: document.getElementById("sidebarTitle"),
+      sidebarSubtitle: document.getElementById("sidebarSubtitle"),
+      catLabel: document.getElementById("catLabel"),
+      sidebarNote: document.getElementById("sidebarNote"),
+      launcherTitle: document.getElementById("launcherTitle"),
+      launcherDesc: document.getElementById("launcherDesc"),
+      statTools: document.getElementById("statTools"),
+      statFavs: document.getElementById("statFavs"),
+      statRecent: document.getElementById("statRecent"),
+      statToolsLabel: document.getElementById("statToolsLabel"),
+      statFavsLabel: document.getElementById("statFavsLabel"),
+      statRecentLabel: document.getElementById("statRecentLabel"),
+      favoritesBlock: document.getElementById("favoritesBlock"),
+      recentBlock: document.getElementById("recentBlock"),
+      favoritesTitle: document.getElementById("favoritesTitle"),
+      recentTitle: document.getElementById("recentTitle"),
+      favoritesCount: document.getElementById("favoritesCount"),
+      recentCount: document.getElementById("recentCount"),
+      favoritesRow: document.getElementById("favoritesRow"),
+      recentRow: document.getElementById("recentRow"),
+      allToolsLabel: document.getElementById("allToolsLabel"),
+      toolGrid: document.getElementById("toolGrid"),
+      workspace: document.getElementById("workspace"),
+      workspaceTitle: document.getElementById("workspaceTitle"),
+      workspacePath: document.getElementById("workspacePath"),
+      openNewTabBtn: document.getElementById("openNewTabBtn"),
+      backBtn: document.getElementById("backBtn"),
+      toolFrame: document.getElementById("toolFrame"),
+      frameBox: document.getElementById("frameBox"),
+      toastWrap: document.getElementById("toastWrap"),
+      brandTitle: document.getElementById("brandTitle"),
+      brandSubtitle: document.getElementById("brandSubtitle")
+    };
+
+    const STORAGE_KEY = "thedduo-tools-portal-v3";
+
+    const state = {
+      lang: "en",
+      theme: "dark",
+      category: "all",
+      query: "",
+      favorites: [],
+      recent: [],
+      activeTool: null,
+      sidebarOpen: false
+    };
+
+    function t(key, ...args) {
+      const value = i18n[state.lang][key];
+      return typeof value === "function" ? value(...args) : value;
+    }
+
+    function getTool(id) {
+      return tools.find((tool) => tool.id === id) || null;
+    }
+
+    function toolTitle(tool) {
+      return tool.title[state.lang] || tool.title.en;
+    }
+
+    function toolDesc(tool) {
+      return tool.desc[state.lang] || tool.desc.en;
+    }
+
+    function categoryLabel(cat) {
+      if (cat === "all") return t("allTools");
+      const map = {
+        all: { en: "All", ru: "Все" },
+        security: { en: "Security", ru: "Безопасность" },
+        developer: { en: "Developer", ru: "Разработка" },
+        design: { en: "Design", ru: "Дизайн" },
+        text: { en: "Text", ru: "Текст" },
+        study: { en: "Study", ru: "Учёба" },
+        games: { en: "Games", ru: "Игры" }
+      };
+      return map[cat]?.[state.lang] || cat;
+    }
+
+    function saveState() {
+      const payload = {
+        lang: state.lang,
+        theme: state.theme,
+        category: state.category,
+        favorites: state.favorites,
+        recent: state.recent,
+        lastTool: state.activeTool ? state.activeTool.id : null
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+
+        if (parsed && typeof parsed === "object") {
+          if (["en", "ru"].includes(parsed.lang)) state.lang = parsed.lang;
+          if (["dark", "light", "purple", "emerald"].includes(parsed.theme)) state.theme = parsed.theme;
+          if (categories.includes(parsed.category)) state.category = parsed.category;
+          if (Array.isArray(parsed.favorites)) state.favorites = parsed.favorites.filter((id) => getTool(id));
+          if (Array.isArray(parsed.recent)) state.recent = parsed.recent.filter((id) => getTool(id)).slice(0, 6);
+          if (parsed.lastTool && getTool(parsed.lastTool)) {
+            state.activeTool = getTool(parsed.lastTool);
+          }
+        }
+      } catch {
+        return;
+      }
+    }
+
+    function applyTheme() {
+      document.body.dataset.theme = state.theme;
+      const options = [
+        ["dark", t("dark")],
+        ["light", t("light")],
+        ["purple", t("purple")],
+        ["emerald", t("emerald")]
       ];
+      els.themeSelect.innerHTML = options
+        .map(([value, label]) => `<option value="${value}">${label}</option>`)
+        .join("");
+      els.themeSelect.value = state.theme;
+    }
 
-      const CATEGORIES = ["all", "security", "developer", "design", "text", "study", "games"];
+    function applyLanguage() {
+      els.langEn.classList.toggle("active", state.lang === "en");
+      els.langRu.classList.toggle("active", state.lang === "ru");
 
-      const CATEGORY_LABELS = {
-        en: {
-          all: "All Tools",
-          security: "Security",
-          developer: "Developer",
-          design: "Design",
-          text: "Text",
-          study: "Study",
-          games: "Games"
-        },
-        ru: {
-          all: "Все инструменты",
-          security: "Безопасность",
-          developer: "Разработка",
-          design: "Дизайн",
-          text: "Текст",
-          study: "Учёба",
-          games: "Игры"
-        }
-      };
+      document.title = t("appTitle");
+      els.brandTitle.textContent = t("appTitle");
+      els.brandSubtitle.textContent = t("appSub");
+      els.searchInput.placeholder = t("searchPlaceholder");
 
-      const I18N = {
-        en: {
-          appSubtitle: "All-in-One Browser Utilities",
-          searchPlaceholder: "Search tools by name, description, or file...",
-          filtersTitle: "Filters",
-          controlsTitle: "Controls",
-          favorites: "Favorites",
-          clearAll: "Clear filters",
-          hideSidebar: "Hide sidebar",
-          sidebarNote: "Fast access to every local tool in the folder.",
-          heroEyebrow: "Central launcher",
-          heroTitle: "Launch every tool from one premium dashboard.",
-          heroDesc: "Search instantly, filter by category, save favorites, return to recent tools, and open any utility in an elegant embedded workspace.",
-          resume: "Resume last tool",
-          tools: "Tools",
-          categories: "Categories",
-          themes: "Themes",
-          toolsHeading: "Available tools",
-          recentTitle: "Recently opened",
-          reset: "Reset all",
-          emptyTitle: "No tools match this view.",
-          emptyDesc: "Change the category, clear the search, or turn off favorites-only mode to bring the grid back.",
-          emptyReset: "Reset filters",
-          open: "Open",
-          back: "Back to Dashboard",
-          fullscreen: "Fullscreen",
-          loadingTitle: "Opening workspace",
-          loadingDesc: "Loading the selected tool inside the embedded viewer.",
-          category: "Category",
-          favorited: "Added to favorites",
-          unfavorited: "Removed from favorites",
-          opened: "Opened",
-          themeSaved: "Theme saved",
-          languageSaved: "Language saved",
-          restored: "Last opened tool restored",
-          noRecent: "No recent tools yet",
-          visible: (count, total) => `${count} shown of ${total}`,
-          totalTools: (count) => `${count} tools`,
-          recentEmpty: "Open a tool to build your recent list.",
-          themeLabel: "Theme",
-          languageLabel: "Language",
-          shortcuts: "Keyboard shortcuts",
-          shortcutsText: "1–9 open tools, 0 opens Pong, Esc returns to the dashboard."
-        },
-        ru: {
-          appSubtitle: "Утилиты для браузера в одном месте",
-          searchPlaceholder: "Поиск по названию, описанию или файлу...",
-          filtersTitle: "Фильтры",
-          controlsTitle: "Управление",
-          favorites: "Избранное",
-          clearAll: "Сбросить фильтры",
-          hideSidebar: "Скрыть панель",
-          sidebarNote: "Быстрый доступ ко всем локальным инструментам в папке.",
-          heroEyebrow: "Центральный лаунчер",
-          heroTitle: "Запускайте все инструменты из одной премиальной панели.",
-          heroDesc: "Мгновенный поиск, фильтрация по категориям, избранное, недавние инструменты и открытие любого утилитарного модуля в элегантном встроенном рабочем окне.",
-          resume: "Продолжить с последним",
-          tools: "Инструменты",
-          categories: "Категории",
-          themes: "Темы",
-          toolsHeading: "Доступные инструменты",
-          recentTitle: "Недавно открытые",
-          reset: "Сбросить всё",
-          emptyTitle: "Под этот фильтр ничего не подходит.",
-          emptyDesc: "Смените категорию, очистите поиск или отключите режим только избранных, чтобы вернуть сетку.",
-          emptyReset: "Сбросить фильтры",
-          open: "Открыть",
-          back: "Назад к панели",
-          fullscreen: "Во весь экран",
-          loadingTitle: "Открывается рабочее окно",
-          loadingDesc: "Загрузка выбранного инструмента во встроенном просмотрщике.",
-          category: "Категория",
-          favorited: "Добавлено в избранное",
-          unfavorited: "Удалено из избранного",
-          opened: "Открыто",
-          themeSaved: "Тема сохранена",
-          languageSaved: "Язык сохранён",
-          restored: "Последний инструмент восстановлен",
-          noRecent: "Пока нет недавних инструментов",
-          visible: (count, total) => `Показано ${count} из ${total}`,
-          totalTools: (count) => `${count} инструментов`,
-          recentEmpty: "Откройте инструмент, чтобы заполнить список недавних.",
-          themeLabel: "Тема",
-          languageLabel: "Язык",
-          shortcuts: "Горячие клавиши",
-          shortcutsText: "1–9 открывают инструменты, 0 открывает Pong, Esc возвращает на панель."
-        }
-      };
+      els.sidebarTitle.textContent = t("browse");
+      els.sidebarSubtitle.textContent = t("filters");
+      els.catLabel.textContent = t("categories");
+      els.sidebarNote.textContent = t("sidebarNote");
+      els.launcherTitle.textContent = t("launcherTitle");
+      els.launcherDesc.textContent = t("launcherDesc");
+      els.statToolsLabel.textContent = t("tools");
+      els.statFavsLabel.textContent = t("favorites");
+      els.statRecentLabel.textContent = t("recent");
+      els.favoritesTitle.textContent = t("favorites");
+      els.recentTitle.textContent = t("recent");
+      els.allToolsLabel.textContent = t("allTools");
+      els.backBtn.textContent = `← ${t("back")}`;
+      els.openNewTabBtn.textContent = `${t("openNewTab")} ↗`;
+      els.menuBtn.setAttribute("aria-label", t("menu"));
+      els.sidebarClose.setAttribute("aria-label", t("close"));
 
-      const TOOLS = [
-        {
-          id: "api-key.html",
-          file: "api-key.html",
-          category: "security",
-          icon: "API",
-          titles: { en: "API Key Generator", ru: "Генератор API-ключей" },
-          descriptions: {
-            en: "Generate secure API keys instantly.",
-            ru: "Мгновенно создавайте безопасные API-ключи."
-          }
-        },
-        {
-          id: "api-key2.html",
-          file: "api-key2.html",
-          category: "security",
-          icon: "API2",
-          titles: { en: "API Key Generator 2", ru: "Генератор API-ключей 2" },
-          descriptions: {
-            en: "Generate secure API keys instantly.",
-            ru: "Мгновенно создавайте безопасные API-ключи."
-          }
-        },
-        {
-          id: "colortool-v2.html",
-          file: "colortool-v2.html",
-          category: "design",
-          icon: "HEX",
-          titles: { en: "Color Tool Pro", ru: "Цветовой инструмент Pro" },
-          descriptions: {
-            en: "HEX, RGB, palettes, gradients, and conversion tools.",
-            ru: "HEX, RGB, палитры, градиенты и конвертация цветов."
-          }
-        },
-        {
-          id: "colortool.html",
-          file: "colortool.html",
-          category: "design",
-          icon: "CLR",
-          titles: { en: "Color Tool Classic", ru: "Цветовой инструмент Classic" },
-          descriptions: {
-            en: "Original color utility version.",
-            ru: "Оригинальная версия цветового инструмента."
-          }
-        },
-        {
-          id: "url.html",
-          file: "url.html",
-          category: "developer",
-          icon: "URL",
-          titles: { en: "URL Toolbox", ru: "URL Toolbox" },
-          descriptions: {
-            en: "Parse, build, compare, and clean URLs.",
-            ru: "Разбор, сборка, сравнение и очистка URL."
-          }
-        },
-        {
-          id: "hashes.html",
-          file: "hashes.html",
-          category: "security",
-          icon: "HSH",
-          titles: { en: "Hash Tool", ru: "Инструмент хешей" },
-          descriptions: {
-            en: "Generate and compare hashes.",
-            ru: "Генерируйте и сравнивайте хеши."
-          }
-        },
-        {
-          id: "dipcheck.html",
-          file: "dipcheck.html",
-          category: "security",
-          icon: "PWD",
-          titles: { en: "Password Tool", ru: "Парольный инструмент" },
-          descriptions: {
-            en: "Password strength checker and generator.",
-            ru: "Проверка сложности и генератор паролей."
-          }
-        },
-        {
-          id: "wordsort2.html",
-          file: "wordsort2.html",
-          category: "text",
-          icon: "TXT",
-          titles: { en: "Word Sorter", ru: "Сортировщик слов" },
-          descriptions: {
-            en: "Sort, clean, and organize text lists.",
-            ru: "Сортировка, очистка и упорядочивание текстовых списков."
-          }
-        },
-        {
-          id: "phiziks.html",
-          file: "phiziks.html",
-          category: "study",
-          icon: "PHY",
-          titles: { en: "Physics Notes", ru: "Заметки по физике" },
-          descriptions: {
-            en: "Private physics tickets and study helper.",
-            ru: "Личные билеты по физике и помощник для учёбы."
-          }
-        },
-        {
-          id: "pong.html",
-          file: "pong.html",
-          category: "games",
-          icon: "PONG",
-          titles: { en: "Pong Game", ru: "Игра Pong" },
-          descriptions: {
-            en: "Classic arcade game.",
-            ru: "Классическая аркадная игра."
-          }
-        }
-      ];
+      renderCategoryList();
+      renderMiniBlocks();
+      renderTools();
+      if (state.activeTool) {
+        renderWorkspace();
+      }
+      applyTheme();
+    }
 
-      const THEME_SELECT = document.getElementById("themeSelect");
-      const LANG_SELECT = document.getElementById("langSelect");
-      const SEARCH = document.getElementById("searchInput");
-      const CLEAR_SEARCH = document.getElementById("clearSearch");
-      const TOOL_COUNT = document.getElementById("toolCountBadge");
-      const BRAND_SUBTITLE = document.getElementById("brandSubtitle");
-      const FILTERS_TITLE = document.getElementById("filtersTitle");
-      const CONTROLS_TITLE = document.getElementById("controlsTitle");
-      const SIDEBAR_NOTE = document.getElementById("sidebarNote");
-      const FAVORITES_LABEL = document.getElementById("favoritesLabel");
-      const FAVORITES_COUNT = document.getElementById("favoritesCount");
-      const FAVORITES_TOGGLE = document.getElementById("favoritesToggle");
-      const CATEGORIES_LIST = document.getElementById("categoriesList");
-      const CLEAR_ALL = document.getElementById("clearAllBtn");
-      const HIDE_SIDEBAR = document.getElementById("hideSidebarBtn");
-      const HERO_EYEBROW = document.getElementById("heroEyebrow");
-      const HERO_TITLE = document.getElementById("heroTitle");
-      const HERO_DESC = document.getElementById("heroDesc");
-      const RESUME_BTN = document.getElementById("resumeBtn");
-      const STAT_TOOLS = document.getElementById("statTools");
-      const STAT_CATEGORIES = document.getElementById("statCategories");
-      const STAT_THEMES = document.getElementById("statThemes");
-      const STAT_TOOLS_LABEL = document.getElementById("statToolsLabel");
-      const STAT_CATEGORIES_LABEL = document.getElementById("statCategoriesLabel");
-      const STAT_THEMES_LABEL = document.getElementById("statThemesLabel");
-      const RECENT_SECTION = document.getElementById("recentSection");
-      const RECENT_TITLE = document.getElementById("recentTitle");
-      const RECENT_STRIP = document.getElementById("recentStrip");
-      const TOOLS_HEADING = document.getElementById("toolsHeading");
-      const FILTER_SUMMARY = document.getElementById("filterSummary");
-      const RESET_BTN = document.getElementById("resetBtn");
-      const CARDS_GRID = document.getElementById("cardsGrid");
-      const EMPTY_STATE = document.getElementById("emptyState");
-      const EMPTY_TITLE = document.getElementById("emptyTitle");
-      const EMPTY_DESC = document.getElementById("emptyDesc");
-      const EMPTY_RESET = document.getElementById("emptyResetBtn");
-      const MENU_BTN = document.getElementById("menuBtn");
-      const MOBILE_BACKDROP = document.getElementById("mobileBackdrop");
-      const WORKSPACE = document.getElementById("workspace");
-      const WORKSPACE_TITLE = document.getElementById("workspaceTitle");
-      const WORKSPACE_META = document.getElementById("workspaceMeta");
-      const BACK_BTN = document.getElementById("backBtn");
-      const FULLSCREEN_BTN = document.getElementById("fullscreenBtn");
-      const TOOL_FRAME = document.getElementById("toolFrame");
-      const LOADING = document.getElementById("loading");
-      const LOADING_TITLE = document.getElementById("loadingTitle");
-      const LOADING_DESC = document.getElementById("loadingDesc");
-      const TOAST_WRAP = document.getElementById("toastWrap");
-      const SEARCH_CONTAINER = SEARCH.parentElement;
-      const APP = document.getElementById("app");
+    function setTheme(theme) {
+      if (!["dark", "light", "purple", "emerald"].includes(theme)) return;
+      state.theme = theme;
+      applyTheme();
+      saveState();
+      toast(t("toastSaved"), "good");
+    }
 
-      const state = {
-        lang: safeGet(STORAGE.lang, "en"),
-        theme: safeGet(STORAGE.theme, "dark-neon"),
-        category: "all",
-        favoritesOnly: false,
-        query: "",
-        favorites: safeGet(STORAGE.favorites, []),
-        recent: safeGet(STORAGE.recent, []),
-        lastTool: safeGet(STORAGE.lastTool, ""),
-        workspaceTool: null
-      };
+    function setLanguage(lang) {
+      if (!["en", "ru"].includes(lang)) return;
+      state.lang = lang;
+      applyLanguage();
+      saveState();
+      toast(t("toastSaved"), "good");
+    }
 
-      function safeGet(key, fallback) {
-        try {
-          const raw = localStorage.getItem(key);
-          if (raw === null || raw === "") return fallback;
-          return JSON.parse(raw);
-        } catch {
-          return fallback;
-        }
+    function openSidebar() {
+      state.sidebarOpen = true;
+      els.sidebar.classList.add("open");
+      els.backdrop.classList.add("open");
+      els.menuBtn.setAttribute("aria-expanded", "true");
+    }
+
+    function closeSidebar() {
+      state.sidebarOpen = false;
+      els.sidebar.classList.remove("open");
+      els.backdrop.classList.remove("open");
+      els.menuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleSidebar() {
+      if (state.sidebarOpen) closeSidebar();
+      else openSidebar();
+    }
+
+    function setCategory(category) {
+      state.category = category;
+      renderCategoryList();
+      renderTools();
+      saveState();
+    }
+
+    function matchesQuery(tool, query) {
+      if (!query) return true;
+      const text = [
+        toolTitle(tool),
+        toolDesc(tool),
+        tool.href,
+        categoryLabel(tool.category)
+      ].join(" ").toLowerCase();
+      return text.includes(query.toLowerCase());
+    }
+
+    function filteredTools() {
+      return tools.filter((tool) => {
+        const categoryOk = state.category === "all" || tool.category === state.category;
+        return categoryOk && matchesQuery(tool, state.query);
+      });
+    }
+
+    function renderCategoryList() {
+      const counts = {};
+      for (const cat of categories) counts[cat] = 0;
+      for (const tool of tools) counts[tool.category] = (counts[tool.category] || 0) + 1;
+
+      els.categoryList.innerHTML = categories
+        .map((cat) => {
+          const active = state.category === cat;
+          const label = cat === "all" ? t("allTools") : categoryLabel(cat);
+          const count = cat === "all" ? tools.length : counts[cat] || 0;
+          return `
+            <button type="button" class="category-btn ${active ? "active" : ""}" data-category="${cat}">
+              <span>${label}</span>
+              <span class="count">${count}</span>
+            </button>
+          `;
+        })
+        .join("");
+
+      els.categoryList.querySelectorAll(".category-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setCategory(btn.dataset.category);
+          if (window.matchMedia("(max-width: 920px)").matches) closeSidebar();
+        });
+      });
+    }
+
+    function renderMiniBlocks() {
+      const favTools = state.favorites.map(getTool).filter(Boolean);
+      const recentTools = state.recent.map(getTool).filter(Boolean);
+
+      els.statTools.textContent = String(tools.length);
+      els.statFavs.textContent = String(favTools.length);
+      els.statRecent.textContent = String(recentTools.length);
+
+      els.favoritesCount.textContent = String(favTools.length);
+      els.recentCount.textContent = String(recentTools.length);
+
+      els.favoritesBlock.classList.toggle("hidden", favTools.length === 0);
+      els.recentBlock.classList.toggle("hidden", recentTools.length === 0);
+
+      els.favoritesRow.innerHTML = favTools.length
+        ? favTools.map(miniItemHTML).join("")
+        : `<div class="empty">${t("nothingYet")}</div>`;
+      els.recentRow.innerHTML = recentTools.length
+        ? recentTools.map(miniItemHTML).join("")
+        : `<div class="empty">${t("nothingYet")}</div>`;
+
+      els.favoritesRow.querySelectorAll("[data-open-id]").forEach(bindMiniItem);
+      els.recentRow.querySelectorAll("[data-open-id]").forEach(bindMiniItem);
+    }
+
+    function miniItemHTML(tool) {
+      return `
+        <button type="button" class="mini-item" data-open-id="${tool.id}">
+          <strong>${tool.icon} ${escapeHTML(toolTitle(tool))}</strong>
+          <span>${escapeHTML(toolDesc(tool))}</span>
+        </button>
+      `;
+    }
+
+    function renderTools() {
+      const list = filteredTools();
+      els.toolGrid.innerHTML = "";
+
+      if (!list.length) {
+        els.toolGrid.innerHTML = `
+          <div class="empty" style="grid-column: 1 / -1;">
+            <strong>${t("noResultsTitle")}</strong>
+            <div>${t("noResultsDesc")}</div>
+          </div>
+        `;
+        return;
       }
 
-      function safeSet(key, value) {
-        try {
-          localStorage.setItem(key, JSON.stringify(value));
-        } catch {}
-      }
-
-      function t(key) {
-        return I18N[state.lang][key];
-      }
-
-      function categoryLabel(key) {
-        return CATEGORY_LABELS[state.lang][key] || key;
-      }
-
-      function themeLabel(id) {
-        const theme = THEMES.find(item => item.id === id);
-        return theme ? theme.labels[state.lang] : id;
-      }
-
-      function toolTitle(tool) {
-        return tool.titles[state.lang];
-      }
-
-      function toolDesc(tool) {
-        return tool.descriptions[state.lang];
-      }
-
-      function getTool(id) {
-        return TOOLS.find(tool => tool.id === id) || null;
-      }
-
-      function normalize(str) {
-        return String(str || "").toLocaleLowerCase();
-      }
-
-      function matchesSearch(tool, query) {
-        if (!query) return true;
-        const hay = [
-          tool.titles.en, tool.titles.ru,
-          tool.descriptions.en, tool.descriptions.ru,
-          tool.file, tool.category, categoryLabel(tool.category)
-        ].join(" ").toLowerCase();
-        return hay.includes(query);
-      }
-
-      function isFav(id) {
-        return state.favorites.includes(id);
-      }
-
-      function toggleFav(id) {
-        if (isFav(id)) {
-          state.favorites = state.favorites.filter(x => x !== id);
-          toast(t("unfavorited"), getTool(id) ? toolTitle(getTool(id)) : id);
-        } else {
-          state.favorites = [id, ...state.favorites.filter(x => x !== id)];
-          toast(t("favorited"), getTool(id) ? toolTitle(getTool(id)) : id);
-        }
-        safeSet(STORAGE.favorites, state.favorites);
-        renderEverything();
-      }
-
-      function setTheme(themeId) {
-        state.theme = themeId;
-        document.body.dataset.theme = themeId;
-        safeSet(STORAGE.theme, themeId);
-        toast(t("themeSaved"), themeLabel(themeId));
-        drawParticles();
-        renderEverything();
-      }
-
-      function setLang(lang) {
-        state.lang = lang;
-        document.documentElement.lang = lang;
-        safeSet(STORAGE.lang, lang);
-        toast(t("languageSaved"), lang.toUpperCase());
-        renderEverything();
-      }
-
-      function setCategory(category) {
-        state.category = category;
-        state.favoritesOnly = false;
-        renderEverything();
-      }
-
-      function setFavoritesOnly(flag) {
-        state.favoritesOnly = flag;
-        if (flag) state.category = "all";
-        renderEverything();
-      }
-
-      function clearFilters() {
-        state.category = "all";
-        state.favoritesOnly = false;
-        state.query = "";
-        SEARCH.value = "";
-        renderEverything();
-      }
-
-      function openToolById(id, announce = true) {
+      els.toolGrid.innerHTML = list.map(cardHTML).join("");
+      els.toolGrid.querySelectorAll(".tool-card").forEach((card) => {
+        const id = card.dataset.id;
         const tool = getTool(id);
         if (!tool) return;
 
-        state.workspaceTool = tool;
-        state.lastTool = id;
-        safeSet(STORAGE.lastTool, id);
-
-        state.recent = [id, ...state.recent.filter(x => x !== id)].slice(0, 6);
-        safeSet(STORAGE.recent, state.recent);
-
-        openWorkspace();
-        renderEverything();
-
-        WORKSPACE_TITLE.textContent = toolTitle(tool);
-        WORKSPACE_META.textContent = `${categoryLabel(tool.category)} · ${tool.file}`;
-        LOADING_TITLE.textContent = t("loadingTitle");
-        LOADING_DESC.textContent = t("loadingDesc");
-        BACK_BTN.innerHTML = `← ${t("back")}`;
-        FULLSCREEN_BTN.innerHTML = `⛶ ${t("fullscreen")}`;
-
-        LOADING.classList.add("show");
-        TOOL_FRAME.src = `${tool.file}#${Date.now()}`;
-
-        if (announce) toast(t("opened"), toolTitle(tool));
-      }
-
-      function openWorkspace() {
-        document.body.classList.add("workspace-mode");
-        WORKSPACE.setAttribute("aria-hidden", "false");
-      }
-
-      function closeWorkspace() {
-        document.body.classList.remove("workspace-mode");
-        WORKSPACE.setAttribute("aria-hidden", "true");
-        setTimeout(() => {
-          if (!document.body.classList.contains("workspace-mode")) {
-            TOOL_FRAME.src = "about:blank";
-            LOADING.classList.remove("show");
-          }
-        }, 250);
-      }
-
-      function showSidebar(open) {
-        document.body.classList.toggle("sidebar-open", open);
-      }
-
-      function toast(title, message = "") {
-        const node = document.createElement("div");
-        node.className = "toast";
-        node.innerHTML = `<strong>${escapeHtml(title)}</strong>${message ? `<span>${escapeHtml(message)}</span>` : ""}`;
-        TOAST_WRAP.appendChild(node);
-        setTimeout(() => node.remove(), 3300);
-      }
-
-      function escapeHtml(str) {
-        return String(str)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#39;");
-      }
-
-      function renderThemeOptions() {
-        THEME_SELECT.innerHTML = THEMES.map(theme => {
-          const selected = theme.id === state.theme ? "selected" : "";
-          return `<option value="${theme.id}" ${selected}>${escapeHtml(theme.labels[state.lang])}</option>`;
-        }).join("");
-      }
-
-      function renderCategories() {
-        const html = CATEGORIES.map(cat => {
-          const active = state.category === cat && !state.favoritesOnly ? "active" : "";
-          const count = cat === "all" ? TOOLS.length : TOOLS.filter(tool => tool.category === cat).length;
-          return `
-            <button class="sideBtn focusRing ${active}" data-category="${cat}" type="button">
-              <span>${escapeHtml(categoryLabel(cat))}</span>
-              <span>${count}</span>
-            </button>
-          `;
-        }).join("");
-        CATEGORIES_LIST.innerHTML = html;
-
-        CATEGORIES_LIST.querySelectorAll("[data-category]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            setCategory(btn.dataset.category);
-            showSidebar(false);
-          });
-        });
-      }
-
-      function renderRecent() {
-        const recents = state.recent
-          .map(getTool)
-          .filter(Boolean)
-          .slice(0, 6);
-
-        RECENT_SECTION.classList.toggle("hidden", recents.length === 0);
-        RECENT_TITLE.textContent = t("recentTitle");
-        RECENT_STRIP.innerHTML = recents.map(tool => `
-          <button class="chipBtn focusRing" type="button" data-open="${tool.id}">
-            <span>${escapeHtml(tool.icon)}</span>
-            <span>${escapeHtml(toolTitle(tool))}</span>
-          </button>
-        `).join("");
-
-        RECENT_STRIP.querySelectorAll("[data-open]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            openToolById(btn.dataset.open, true);
-            showSidebar(false);
-          });
-        });
-      }
-
-      function renderCards() {
-        const q = normalize(state.query.trim());
-        const filtered = TOOLS.filter(tool => {
-          if (state.favoritesOnly && !isFav(tool.id)) return false;
-          if (state.category !== "all" && tool.category !== state.category) return false;
-          if (!matchesSearch(tool, q)) return false;
-          return true;
+        card.addEventListener("click", (e) => {
+          const favBtn = e.target.closest("[data-fav-id]");
+          if (favBtn) return;
+          openTool(id);
         });
 
-        TOOL_COUNT.innerHTML = `${filtered.length}<small>${filtered.length === 1 ? "" : ""}</small>`;
-        TOOL_COUNT.setAttribute("title", t("visible")(filtered.length, TOOLS.length));
-
-        FILTER_SUMMARY.textContent = [
-          state.favoritesOnly ? t("favorites") : categoryLabel(state.category),
-          state.query ? `"${state.query}"` : ""
-        ].filter(Boolean).join(" · ");
-
-        FAVORITES_COUNT.textContent = String(state.favorites.length);
-        FAVORITES_TOGGLE.classList.toggle("active", state.favoritesOnly);
-
-        const currentCategoryTools = TOOLS.filter(tool =>
-          state.category === "all" ? true : tool.category === state.category
-        );
-        const queryText = state.query.trim();
-
-        CARDS_GRID.innerHTML = filtered.map(tool => `
-          <article class="card focusRing" tabindex="0" data-card="${tool.id}" aria-label="${escapeHtml(toolTitle(tool))}">
-            <div>
-              <div class="cardTop">
-                <div class="toolIcon">${escapeHtml(tool.icon)}</div>
-                <button class="favBtn focusRing ${isFav(tool.id) ? "active" : ""}" type="button" data-fav="${tool.id}" aria-label="${isFav(tool.id) ? t("unfavorited") : t("favorited")}">
-                  ${isFav(tool.id) ? "★" : "☆"}
-                </button>
-              </div>
-
-              <h3>${escapeHtml(toolTitle(tool))}</h3>
-              <p>${escapeHtml(toolDesc(tool))}</p>
-            </div>
-
-            <div class="metaRow">
-              <span class="categoryPill">${escapeHtml(categoryLabel(tool.category))}</span>
-              <button class="openBtn focusRing" type="button" data-open="${tool.id}">${escapeHtml(t("open"))}</button>
-            </div>
-          </article>
-        `).join("");
-
-        CARDS_GRID.querySelectorAll("[data-open]").forEach(btn => {
-          btn.addEventListener("click", e => {
-            e.stopPropagation();
-            openToolById(btn.dataset.open, true);
-          });
-        });
-
-        CARDS_GRID.querySelectorAll("[data-fav]").forEach(btn => {
-          btn.addEventListener("click", e => {
-            e.stopPropagation();
-            toggleFav(btn.dataset.fav);
-          });
-        });
-
-        CARDS_GRID.querySelectorAll("[data-card]").forEach(card => {
-          card.addEventListener("click", e => {
-            if (e.target.closest("button")) return;
-            openToolById(card.dataset.card, true);
-          });
-          card.addEventListener("keydown", e => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              openToolById(card.dataset.card, true);
-            }
-          });
-        });
-
-        EMPTY_STATE.classList.toggle("hidden", filtered.length !== 0);
-        if (filtered.length === 0) {
-          EMPTY_TITLE.textContent = t("emptyTitle");
-          EMPTY_DESC.textContent = t("emptyDesc");
-          EMPTY_RESET.textContent = t("emptyReset");
-        }
-
-        RESUME_BTN.classList.toggle("hidden", !state.lastTool || !getTool(state.lastTool));
-        if (state.lastTool && getTool(state.lastTool)) {
-          RESUME_BTN.innerHTML = `↺ ${escapeHtml(t("resume"))}`;
-        }
-
-        TOOLS_HEADING.textContent = t("toolsHeading");
-        RESET_BTN.textContent = t("reset");
-      }
-
-      function renderHeaderAndText() {
-        BRAND_SUBTITLE.textContent = t("appSubtitle");
-        SEARCH.placeholder = t("searchPlaceholder");
-        FILTERS_TITLE.textContent = t("filtersTitle");
-        CONTROLS_TITLE.textContent = t("controlsTitle");
-        SIDEBAR_NOTE.textContent = t("sidebarNote");
-        FAVORITES_LABEL.textContent = t("favorites");
-        CLEAR_ALL.textContent = t("clearAll");
-        HIDE_SIDEBAR.textContent = t("hideSidebar");
-        HERO_EYEBROW.textContent = t("heroEyebrow");
-        HERO_TITLE.textContent = t("heroTitle");
-        HERO_DESC.textContent = t("heroDesc");
-        RECENT_TITLE.textContent = t("recentTitle");
-        STAT_TOOLS_LABEL.textContent = t("tools");
-        STAT_CATEGORIES_LABEL.textContent = t("categories");
-        STAT_THEMES_LABEL.textContent = t("themes");
-        STAT_TOOLS.textContent = String(TOOLS.length);
-        STAT_CATEGORIES.textContent = String(CATEGORIES.length);
-        STAT_THEMES.textContent = String(THEMES.length);
-        TOOLS_HEADING.textContent = t("toolsHeading");
-        EMPTY_TITLE.textContent = t("emptyTitle");
-        EMPTY_DESC.textContent = t("emptyDesc");
-        EMPTY_RESET.textContent = t("emptyReset");
-        RESET_BTN.textContent = t("reset");
-        CLEAR_ALL.textContent = t("clearAll");
-        HIDE_SIDEBAR.textContent = t("hideSidebar");
-        BACK_BTN.innerHTML = `← ${escapeHtml(t("back"))}`;
-        FULLSCREEN_BTN.innerHTML = `⛶ ${escapeHtml(t("fullscreen"))}`;
-        LOADING_TITLE.textContent = t("loadingTitle");
-        LOADING_DESC.textContent = t("loadingDesc");
-        document.title = "TheDuo Tools";
-        document.documentElement.lang = state.lang;
-      }
-
-      function renderRecentEmptyStateIfNeeded() {
-        if (!state.recent.length) {
-          RECENT_SECTION.classList.add("hidden");
-        }
-      }
-
-      function renderEverything() {
-        renderThemeOptions();
-        renderHeaderAndText();
-        renderCategories();
-        renderRecent();
-        renderCards();
-        renderRecentEmptyStateIfNeeded();
-        TOOL_COUNT.innerHTML = `${visibleCount()}<small></small>`;
-        FAVORITES_COUNT.textContent = String(state.favorites.length);
-        FAVORITES_TOGGLE.classList.toggle("active", state.favoritesOnly);
-        RESUME_BTN.classList.toggle("hidden", !(state.lastTool && getTool(state.lastTool)));
-        if (state.lastTool && getTool(state.lastTool)) {
-          RESUME_BTN.innerHTML = `↺ ${escapeHtml(t("resume"))}`;
-        }
-
-        CLEAR_ALL.textContent = t("clearAll");
-        HIDE_SIDEBAR.textContent = t("hideSidebar");
-        BACK_BTN.innerHTML = `← ${escapeHtml(t("back"))}`;
-        FULLSCREEN_BTN.innerHTML = `⛶ ${escapeHtml(t("fullscreen"))}`;
-        menuBtnAria();
-      }
-
-      function visibleCount() {
-        const q = normalize(state.query.trim());
-        return TOOLS.filter(tool => {
-          if (state.favoritesOnly && !isFav(tool.id)) return false;
-          if (state.category !== "all" && tool.category !== state.category) return false;
-          return matchesSearch(tool, q);
-        }).length;
-      }
-
-      function menuBtnAria() {
-        MENU_BTN.setAttribute("aria-label", state.lang === "en" ? "Toggle sidebar" : "Переключить боковую панель");
-        FAVORITES_TOGGLE.setAttribute("aria-label", state.lang === "en" ? "Show favorites only" : "Показать только избранное");
-      }
-
-      function drawBackdropTexts() {
-        // no-op reserved for future themed overlays
-      }
-
-      function buildThemeOptionLabels() {
-        const options = THEMES.map(theme => `<option value="${theme.id}">${escapeHtml(theme.labels[state.lang])}</option>`).join("");
-        THEME_SELECT.innerHTML = options;
-        THEME_SELECT.value = state.theme;
-      }
-
-      function applyTheme(theme) {
-        document.body.dataset.theme = theme;
-      }
-
-      function updateLoadingState() {
-        LOADING.classList.add("show");
-      }
-
-      function initParticles() {
-        const canvas = document.getElementById("bgCanvas");
-        const ctx = canvas.getContext("2d", { alpha: true });
-        const particles = [];
-        let w = 0, h = 0, raf = 0;
-        let particleColor = "";
-
-        function resize() {
-          const dpr = Math.min(window.devicePixelRatio || 1, 2);
-          w = canvas.width = Math.floor(innerWidth * dpr);
-          h = canvas.height = Math.floor(innerHeight * dpr);
-          canvas.style.width = innerWidth + "px";
-          canvas.style.height = innerHeight + "px";
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          const count = Math.max(18, Math.min(36, Math.round((innerWidth * innerHeight) / 60000)));
-          particles.length = 0;
-          for (let i = 0; i < count; i++) {
-            particles.push({
-              x: Math.random() * innerWidth,
-              y: Math.random() * innerHeight,
-              vx: (Math.random() - .5) * 0.28,
-              vy: (Math.random() - .5) * 0.28,
-              r: 1.2 + Math.random() * 2.8,
-              a: 0.25 + Math.random() * 0.5
-            });
-          }
-        }
-
-        function themeParticleColor() {
-          const computed = getComputedStyle(document.body);
-          const accent = computed.getPropertyValue("--accent").trim() || "#7c5cff";
-          const accent2 = computed.getPropertyValue("--accent-2").trim() || "#00e5ff";
-          return { accent, accent2 };
-        }
-
-        function step() {
-          const { accent, accent2 } = themeParticleColor();
-          particleColor = accent;
-          ctx.clearRect(0, 0, innerWidth, innerHeight);
-
-          // soft wash
-          const wash = ctx.createRadialGradient(innerWidth * .35, innerHeight * .18, 40, innerWidth * .35, innerHeight * .18, Math.max(innerWidth, innerHeight) * .7);
-          wash.addColorStop(0, hexToRgba(accent, .06));
-          wash.addColorStop(.55, "rgba(0,0,0,0)");
-          wash.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = wash;
-          ctx.fillRect(0, 0, innerWidth, innerHeight);
-
-          particles.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
-
-            if (p.x < -20) p.x = innerWidth + 20;
-            if (p.x > innerWidth + 20) p.x = -20;
-            if (p.y < -20) p.y = innerHeight + 20;
-            if (p.y > innerHeight + 20) p.y = -20;
-
-            ctx.beginPath();
-            ctx.fillStyle = hexToRgba(i % 2 ? accent : accent2, p.a * 0.56);
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
-          });
-
-          for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-              const a = particles[i];
-              const b = particles[j];
-              const dx = a.x - b.x;
-              const dy = a.y - b.y;
-              const dist = Math.hypot(dx, dy);
-              if (dist < 150) {
-                const alpha = (1 - dist / 150) * 0.08;
-                ctx.strokeStyle = hexToRgba(accent2, alpha);
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-                ctx.stroke();
-              }
-            }
-          }
-
-          raf = requestAnimationFrame(step);
-        }
-
-        function hexToRgba(color, alpha) {
-          const c = document.createElement("canvas").getContext("2d");
-          c.fillStyle = color;
-          const computed = c.fillStyle;
-          if (computed.startsWith("rgb")) {
-            return computed.replace("rgb(", "rgba(").replace(")", `, ${alpha})`);
-          }
-          return color;
-        }
-
-        window.addEventListener("resize", resize);
-        resize();
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(step);
-
-        // make theme updates feel alive
-        document.body.addEventListener("themechange", () => {
-          resize();
-        });
-      }
-
-      function bindEvents() {
-        THEME_SELECT.addEventListener("change", e => setTheme(e.target.value));
-        LANG_SELECT.value = state.lang;
-        THEME_SELECT.value = state.theme;
-
-        LANG_SELECT.addEventListener("change", e => setLang(e.target.value));
-
-        SEARCH.addEventListener("input", e => {
-          state.query = e.target.value;
-          renderCards();
-        });
-
-        CLEAR_SEARCH.addEventListener("click", () => {
-          SEARCH.value = "";
-          state.query = "";
-          renderCards();
-          SEARCH.focus();
-        });
-
-        FAVORITES_TOGGLE.addEventListener("click", () => {
-          setFavoritesOnly(!state.favoritesOnly);
-        });
-
-        CLEAR_ALL.addEventListener("click", clearFilters);
-        RESET_BTN.addEventListener("click", clearFilters);
-        EMPTY_RESET.addEventListener("click", clearFilters);
-        HIDE_SIDEBAR.addEventListener("click", () => showSidebar(false));
-        MENU_BTN.addEventListener("click", () => showSidebar(!document.body.classList.contains("sidebar-open")));
-        MOBILE_BACKDROP.addEventListener("click", () => showSidebar(false));
-
-        RESUME_BTN.addEventListener("click", () => {
-          if (state.lastTool) openToolById(state.lastTool, true);
-        });
-
-        BACK_BTN.addEventListener("click", closeWorkspace);
-
-        FULLSCREEN_BTN.addEventListener("click", async () => {
-          const target = document.querySelector(".frameBox");
-          try {
-            if (document.fullscreenElement) {
-              await document.exitFullscreen();
-            } else if (target.requestFullscreen) {
-              await target.requestFullscreen();
-            } else if (TOOL_FRAME.requestFullscreen) {
-              await TOOL_FRAME.requestFullscreen();
-            }
-          } catch {}
-        });
-
-        TOOL_FRAME.addEventListener("load", () => {
-          LOADING.classList.remove("show");
-        });
-
-        window.addEventListener("keydown", e => {
-          const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
-          const typing = tag === "input" || tag === "textarea" || tag === "select" || document.activeElement?.isContentEditable;
-          if (e.key === "Escape") {
-            if (document.body.classList.contains("workspace-mode")) {
-              e.preventDefault();
-              closeWorkspace();
-              return;
-            }
-            if (document.body.classList.contains("sidebar-open")) {
-              e.preventDefault();
-              showSidebar(false);
-              return;
-            }
-          }
-
-          if (typing || document.body.classList.contains("workspace-mode")) return;
-
-          const map = {
-            "1": 0, "2": 1, "3": 2, "4": 3, "5": 4,
-            "6": 5, "7": 6, "8": 7, "9": 8, "0": 9
-          };
-          if (map.hasOwnProperty(e.key)) {
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            const index = map[e.key];
-            const tool = TOOLS[index];
-            if (tool) openToolById(tool.id, true);
+            openTool(id);
           }
         });
+      });
 
-        window.addEventListener("storage", () => {
-          // Reflect external changes when the same file is open in multiple tabs.
-          state.lang = safeGet(STORAGE.lang, state.lang);
-          state.theme = safeGet(STORAGE.theme, state.theme);
-          state.favorites = safeGet(STORAGE.favorites, state.favorites);
-          state.recent = safeGet(STORAGE.recent, state.recent);
-          state.lastTool = safeGet(STORAGE.lastTool, state.lastTool);
-          applyTheme(state.theme);
-          document.documentElement.lang = state.lang;
-          renderEverything();
+      els.toolGrid.querySelectorAll("[data-fav-id]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleFavorite(btn.dataset.favId);
         });
+      });
+    }
+
+    function cardHTML(tool) {
+      const isFav = state.favorites.includes(tool.id);
+      return `
+        <article class="tool-card" role="button" tabindex="0" data-id="${tool.id}" aria-label="${escapeHTML(toolTitle(tool))}">
+          <div class="tool-top">
+            <div class="tool-icon">${tool.icon}</div>
+            <button
+              type="button"
+              class="card-fav ${isFav ? "active" : ""}"
+              data-fav-id="${tool.id}"
+              aria-label="${isFav ? t("unfavorite") : t("favorite")}"
+              title="${isFav ? t("unfavorite") : t("favorite")}"
+            >★</button>
+          </div>
+
+          <div class="tool-content">
+            <h3>${escapeHTML(toolTitle(tool))}</h3>
+            <p>${escapeHTML(toolDesc(tool))}</p>
+          </div>
+
+          <div class="tool-meta">
+            <span class="badge primary">${escapeHTML(categoryLabel(tool.category))}</span>
+            <span class="open-mini">${t("open")} →</span>
+          </div>
+        </article>
+      `;
+    }
+
+    function bindMiniItem(el) {
+      el.addEventListener("click", () => openTool(el.dataset.openId));
+    }
+
+    function toggleFavorite(id) {
+      const idx = state.favorites.indexOf(id);
+      if (idx >= 0) state.favorites.splice(idx, 1);
+      else state.favorites.unshift(id);
+      state.favorites = uniqueIds(state.favorites).slice(0, 12);
+      renderMiniBlocks();
+      renderTools();
+      saveState();
+    }
+
+    function updateRecent(id) {
+      state.recent = uniqueIds([id, ...state.recent]).slice(0, 6);
+    }
+
+    function uniqueIds(list) {
+      const seen = new Set();
+      const out = [];
+      for (const item of list) {
+        if (!item || seen.has(item)) continue;
+        seen.add(item);
+        out.push(item);
+      }
+      return out;
+    }
+
+    function openTool(id, announce = true) {
+      const tool = getTool(id);
+      if (!tool) return;
+
+      state.activeTool = tool;
+      updateRecent(id);
+      renderWorkspace();
+      renderMiniBlocks();
+      renderTools();
+      saveState();
+
+      if (window.matchMedia("(max-width: 920px)").matches) closeSidebar();
+
+      if (announce) toast(t("toastOpened", toolTitle(tool)), "good");
+      els.main?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderWorkspace() {
+      if (!state.activeTool) {
+        els.workspace.classList.remove("active");
+        els.launcher.classList.remove("hidden");
+        return;
       }
 
-      function initThemeAndLang() {
-        document.body.dataset.theme = state.theme;
-        document.documentElement.lang = state.lang;
-        buildThemeOptionLabels();
-        LANG_SELECT.value = state.lang;
-        THEME_SELECT.value = state.theme;
-      }
+      const tool = state.activeTool;
+      els.workspace.classList.add("active");
+      els.launcher.classList.add("hidden");
+      els.workspaceTitle.textContent = toolTitle(tool);
+      els.workspacePath.textContent = tool.href;
+      els.toolFrame.src = tool.href;
+      els.frameBox.classList.add("loading");
+      els.frameBox.setAttribute("data-loading", t("loading"));
 
-      function announceLastTool() {
-        if (state.lastTool && getTool(state.lastTool)) {
-          // Keep remembered tool visible without forcing open.
-          toast(t("restored"), toolTitle(getTool(state.lastTool)));
+      els.toolFrame.onload = () => {
+        els.frameBox.classList.remove("loading");
+      };
+    }
+
+    function closeWorkspace() {
+      state.activeTool = null;
+      els.workspace.classList.remove("active");
+      els.launcher.classList.remove("hidden");
+      els.toolFrame.removeAttribute("src");
+      saveState();
+      renderTools();
+      renderMiniBlocks();
+    }
+
+    function openCurrentInNewTab() {
+      if (!state.activeTool) return;
+      window.open(state.activeTool.href, "_blank", "noopener");
+    }
+
+    function toast(message, kind = "") {
+      const item = document.createElement("div");
+      item.className = `toast ${kind}`.trim();
+      item.textContent = message;
+      els.toastWrap.appendChild(item);
+      window.setTimeout(() => {
+        item.style.opacity = "0";
+        item.style.transform = "translateY(10px)";
+        item.style.transition = "opacity .16s ease, transform .16s ease";
+      }, 1800);
+      window.setTimeout(() => item.remove(), 2050);
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function isDesktopShortcutTarget(el) {
+      const tag = el?.tagName?.toLowerCase();
+      return !["input", "textarea", "select"].includes(tag);
+    }
+
+    function bindEvents() {
+      els.searchInput.addEventListener("input", () => {
+        state.query = els.searchInput.value.trim();
+        renderTools();
+      });
+
+      els.themeSelect.addEventListener("change", () => {
+        setTheme(els.themeSelect.value);
+      });
+
+      els.langEn.addEventListener("click", () => setLanguage("en"));
+      els.langRu.addEventListener("click", () => setLanguage("ru"));
+
+      els.menuBtn.addEventListener("click", toggleSidebar);
+      els.sidebarClose.addEventListener("click", closeSidebar);
+      els.backdrop.addEventListener("click", closeSidebar);
+
+      els.backBtn.addEventListener("click", closeWorkspace);
+      els.openNewTabBtn.addEventListener("click", openCurrentInNewTab);
+
+      window.addEventListener("keydown", (e) => {
+        const desktop = window.matchMedia("(min-width: 921px)").matches;
+        if (!desktop) return;
+
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          els.searchInput.focus();
+          els.searchInput.select();
+          return;
         }
-      }
 
-      function setupThemeChangeSync() {
-        const sync = () => document.body.dispatchEvent(new Event("themechange"));
-        const obs = new MutationObserver(sync);
-        obs.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
-      }
-
-      function init() {
-        initThemeAndLang();
-        bindEvents();
-        applyTheme(state.theme);
-        renderEverything();
-        initParticles();
-
-        if (!state.lastTool) {
-          RESUME_BTN.classList.add("hidden");
+        if (e.key === "Escape") {
+          if (state.activeTool) {
+            closeWorkspace();
+          } else if (state.sidebarOpen) {
+            closeSidebar();
+          }
+          return;
         }
 
-        // Keep the remembered tool available, but do not hijack the page.
-        if (state.lastTool && getTool(state.lastTool)) {
-          RESUME_BTN.classList.remove("hidden");
-          RESUME_BTN.innerHTML = `↺ ${escapeHtml(t("resume"))}`;
-        }
+        if (!isDesktopShortcutTarget(document.activeElement)) return;
 
-        setupThemeChangeSync();
+        if (e.altKey && e.key === "1") {
+          e.preventDefault();
+          setCategory("all");
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.matchMedia("(min-width: 921px)").matches) {
+          closeSidebar();
+        }
+      });
+
+      let touchStartX = null;
+      let touchStartY = null;
+      let tracking = false;
+
+      const onStart = (e) => {
+        if (!window.matchMedia("(max-width: 920px)").matches) return;
+        const target = e.target.closest?.("#sidebar");
+        if (!target) return;
+        const t = e.touches[0];
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+        tracking = true;
+      };
+
+      const onMove = (e) => {
+        if (!tracking || touchStartX === null || touchStartY === null) return;
+        const t = e.touches[0];
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+
+        if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx < -42) closeSidebar();
+          tracking = false;
+        }
+      };
+
+      const onEnd = () => {
+        tracking = false;
+        touchStartX = null;
+        touchStartY = null;
+      };
+
+      els.sidebar.addEventListener("touchstart", onStart, { passive: true });
+      els.sidebar.addEventListener("touchmove", onMove, { passive: true });
+      els.sidebar.addEventListener("touchend", onEnd, { passive: true });
+      els.sidebar.addEventListener("touchcancel", onEnd, { passive: true });
+    }
+
+    function init() {
+      loadState();
+      applyTheme();
+      applyLanguage();
+      bindEvents();
+
+      els.searchInput.value = state.query || "";
+      els.themeSelect.value = state.theme;
+
+      renderCategoryList();
+      renderMiniBlocks();
+      renderTools();
+
+      if (state.activeTool) {
+        renderWorkspace();
+        toast(t("toastRestored"), "good");
       }
 
-      init();
-    })();
+      saveState();
+    }
+
+    init();
   </script>
 </body>
 </html>
