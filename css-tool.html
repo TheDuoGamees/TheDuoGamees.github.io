@@ -1,0 +1,1993 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>CSS / Design Generator Hub</title>
+  <style>
+    :root{
+      --bg:#090b14;
+      --bg2:#0e1220;
+      --surface:#111827cc;
+      --surface2:#0f172acc;
+      --surface3:#172033cc;
+      --line:#243049;
+      --text:#e5eefc;
+      --muted:#97a6c3;
+      --accent:#8b5cf6;
+      --accent2:#22d3ee;
+      --success:#22c55e;
+      --danger:#fb7185;
+      --warning:#f59e0b;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --shadow2: 0 10px 30px rgba(0,0,0,.28);
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-2xl: 34px;
+      --ease-premium: cubic-bezier(.2,.85,.2,1);
+      --sidebar-w: 312px;
+      --toolbar-h: 72px;
+      --focus: 0 0 0 3px rgba(139,92,246,.28), 0 0 0 1px rgba(139,92,246,.55) inset;
+    }
+    [data-theme="light"]{
+      --bg:#f3f6ff;
+      --bg2:#e8edfb;
+      --surface:#ffffffd8;
+      --surface2:#ffffffc8;
+      --surface3:#f3f6ffcc;
+      --line:#d5def1;
+      --text:#0c1220;
+      --muted:#51607e;
+      --shadow: 0 20px 50px rgba(31,41,55,.14);
+      --shadow2: 0 10px 30px rgba(31,41,55,.10);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 680px at var(--pointer-x, 20%) var(--pointer-y, 15%), rgba(139,92,246,.17), transparent 60%),
+        radial-gradient(800px 520px at 90% 10%, rgba(34,211,238,.11), transparent 45%),
+        radial-gradient(900px 680px at 20% 100%, rgba(249,115,22,.08), transparent 45%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+      overscroll-behavior:none;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.06), transparent 18%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,.04), transparent 22%),
+        linear-gradient(rgba(255,255,255,.03), rgba(255,255,255,0));
+      opacity:.55;
+      mix-blend-mode:overlay;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.22), transparent 82%);
+      opacity:.16;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,select,textarea{font:inherit}
+    button{touch-action:manipulation}
+    ::selection{background:rgba(139,92,246,.28)}
+    .app{
+      min-height:100dvh;
+      display:grid;
+      grid-template-columns: var(--sidebar-w) minmax(0,1fr);
+      position:relative;
+      isolation:isolate;
+    }
+    .sidebar{
+      position:sticky;
+      top:0;
+      align-self:start;
+      height:100dvh;
+      overflow:auto;
+      padding:16px 14px 16px 16px;
+      border-right:1px solid color-mix(in srgb, var(--line) 86%, transparent);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      backdrop-filter: blur(18px) saturate(160%);
+    }
+    .sidebar::-webkit-scrollbar,.panel::-webkit-scrollbar,.codeblock textarea::-webkit-scrollbar,.toolList::-webkit-scrollbar{width:10px;height:10px}
+    .sidebar::-webkit-scrollbar-thumb,.panel::-webkit-scrollbar-thumb,.codeblock textarea::-webkit-scrollbar-thumb,.toolList::-webkit-scrollbar-thumb{background:rgba(120,140,180,.24);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+    .main{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      min-height:100dvh;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      padding:10px 12px;
+      border:1px solid color-mix(in srgb, var(--line) 88%, transparent);
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+      box-shadow: var(--shadow2);
+      transition: transform .28s var(--ease-premium), box-shadow .28s var(--ease-premium), border-color .28s var(--ease-premium);
+      will-change:transform;
+    }
+    .brand:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.26);border-color:rgba(139,92,246,.45)}
+    .brandMark{
+      width:40px;height:40px;border-radius:14px;display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(139,92,246,.95), rgba(34,211,238,.9));
+      box-shadow: 0 10px 24px rgba(139,92,246,.25);
+      flex:0 0 auto;
+    }
+    .brandMark svg{width:18px;height:18px;fill:#fff}
+    .brandText{display:flex;flex-direction:column;min-width:0}
+    .brandText strong{font-size:13px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brandText span{font-size:11px;color:var(--muted)}
+    .sidebarSection{margin-top:14px}
+    .sectionTitle{
+      display:flex;align-items:center;justify-content:space-between;
+      color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      margin:18px 4px 10px;
+    }
+    .search{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:16px;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border:1px solid color-mix(in srgb, var(--line) 88%, transparent);
+      box-shadow: var(--shadow2);
+    }
+    .search svg{width:16px;height:16px;opacity:.7;flex:0 0 auto}
+    .search input{
+      width:100%;border:0;outline:none;background:transparent;color:var(--text)
+    }
+    .toolList{display:grid;gap:8px;max-height: calc(100dvh - 292px);overflow:auto;padding-right:4px}
+    .toolItem{
+      display:flex;align-items:center;gap:12px;
+      width:100%;padding:11px 12px;border-radius:16px;
+      border:1px solid transparent;
+      background:transparent;color:var(--text);
+      text-align:left;
+      transition: transform .22s var(--ease-premium), background .22s var(--ease-premium), border-color .22s var(--ease-premium);
+    }
+    .toolItem:hover{transform:translateY(-1px);background:rgba(255,255,255,.05);border-color:rgba(139,92,246,.26)}
+    .toolItem.active{background:linear-gradient(180deg, rgba(139,92,246,.16), rgba(34,211,238,.08));border-color:rgba(139,92,246,.44);box-shadow:0 10px 24px rgba(139,92,246,.12)}
+    .toolIcon{
+      width:36px;height:36px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(139,92,246,.15), rgba(34,211,238,.11));
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--text);flex:0 0 auto;
+    }
+    .toolItem strong{display:block;font-size:13px}
+    .toolItem small{display:block;font-size:11px;color:var(--muted)}
+    .sidebarCard{
+      padding:14px;border-radius:22px;border:1px solid color-mix(in srgb, var(--line) 86%, transparent);
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      box-shadow: var(--shadow2);
+    }
+    .chipRow{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      border:1px solid color-mix(in srgb, var(--line) 92%, transparent);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:999px;
+      padding:9px 11px;
+      display:inline-flex;align-items:center;gap:8px;
+      transition:transform .22s var(--ease-premium), border-color .22s var(--ease-premium), background .22s var(--ease-premium);
+    }
+    .chip:hover{transform:translateY(-1px);border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.09)}
+    .chip button{border:0;background:transparent;color:inherit;padding:0;cursor:pointer}
+    .toolbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      height:var(--toolbar-h);padding:12px 16px;
+      border-bottom:1px solid color-mix(in srgb, var(--line) 88%, transparent);
+      background: color-mix(in srgb, var(--surface2) 88%, transparent);
+      backdrop-filter: blur(18px) saturate(160%);
+    }
+    .toolbarLeft,.toolbarRight{display:flex;align-items:center;gap:10px;min-width:0}
+    .toolTitle{display:flex;flex-direction:column;min-width:0}
+    .toolTitle strong{font-size:15px}
+    .toolTitle span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .iconButton,.ghostButton,.primaryButton,.tabButton,.inputButton{
+      border:1px solid color-mix(in srgb, var(--line) 86%, transparent);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      color:var(--text);
+      border-radius:14px;
+      height:40px;
+      padding:0 14px;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      cursor:pointer;
+      transition: transform .2s var(--ease-premium), border-color .2s var(--ease-premium), background .2s var(--ease-premium), box-shadow .2s var(--ease-premium), opacity .2s;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .iconButton:hover,.ghostButton:hover,.primaryButton:hover,.tabButton:hover,.inputButton:hover{transform:translateY(-1px);border-color:rgba(139,92,246,.4);box-shadow:0 12px 26px rgba(0,0,0,.16)}
+    .primaryButton{
+      background:linear-gradient(135deg, rgba(139,92,246,.98), rgba(34,211,238,.82));
+      border-color:transparent;
+      box-shadow: 0 12px 24px rgba(139,92,246,.23);
+    }
+    .primaryButton:hover{box-shadow:0 16px 34px rgba(139,92,246,.28)}
+    .iconButton:focus-visible,.ghostButton:focus-visible,.primaryButton:focus-visible,.tabButton:focus-visible,.inputButton:focus-visible,.toolItem:focus-visible,.brand:focus-visible,.control input:focus-visible,.control select:focus-visible,.control textarea:focus-visible{outline:none;box-shadow:var(--focus)}
+    .buttonIcon{width:16px;height:16px;display:block}
+    .workspace{
+      display:grid;
+      grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);
+      gap:16px;
+      padding:16px;
+      min-width:0;
+      flex:1;
+      align-items:start;
+    }
+    .panel{
+      min-width:0;
+      border:1px solid color-mix(in srgb, var(--line) 86%, transparent);
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-2xl);
+      overflow:hidden;
+      backdrop-filter: blur(18px) saturate(160%);
+    }
+    .panelHeader{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding:16px 16px 12px;
+      border-bottom:1px solid color-mix(in srgb, var(--line) 88%, transparent);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent);
+    }
+    .panelHeader h2{margin:0;font-size:18px}
+    .panelHeader p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .previewWrap{padding:16px}
+    .previewFrame{
+      min-height:320px;
+      border-radius:28px;
+      border:1px solid color-mix(in srgb, var(--line) 88%, transparent);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03)),
+        radial-gradient(800px 320px at 50% 0%, rgba(139,92,246,.1), transparent 58%);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      position:relative;
+    }
+    .previewFrame::before{
+      content:"";
+      position:absolute;inset:0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.07), transparent);
+      transform: translateX(-60%);
+      animation: shimmer 6.5s linear infinite;
+      opacity:.55;
+      pointer-events:none;
+    }
+    @keyframes shimmer{to{transform:translateX(60%)}}
+    .previewInner{
+      width:min(100%, 540px);
+      padding:20px;
+      position:relative;
+      z-index:1;
+    }
+    .controlsWrap{padding:16px}
+    .controlGroup{
+      display:grid;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .groupTitle{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:10px;
+      color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      margin:2px 2px 0;
+    }
+    .control{
+      display:grid;
+      gap:8px;
+      padding:12px;
+      border-radius:18px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .controlTop{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .control label,.control .label{
+      font-size:12px;color:var(--text);font-weight:600;
+    }
+    .control .value{
+      color:var(--muted);
+      font-size:12px;
+      flex:0 0 auto;
+    }
+    .control input[type="range"]{
+      width:100%;
+      appearance:none;
+      height:28px;
+      background:transparent;
+      outline:none;
+      margin:0;
+      cursor:pointer;
+    }
+    .control input[type="range"]::-webkit-slider-runnable-track{
+      height:8px;border-radius:999px;
+      background:linear-gradient(90deg, rgba(139,92,246,.9), rgba(34,211,238,.85));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .control input[type="range"]::-webkit-slider-thumb{
+      appearance:none;
+      width:22px;height:22px;border-radius:50%;
+      margin-top:-7px;
+      background: linear-gradient(180deg, #fff, #dbe5ff);
+      border:3px solid rgba(139,92,246,.82);
+      box-shadow:0 8px 18px rgba(0,0,0,.28);
+    }
+    .control input[type="range"]::-moz-range-track{
+      height:8px;border-radius:999px;background:linear-gradient(90deg, rgba(139,92,246,.9), rgba(34,211,238,.85));
+    }
+    .control input[type="range"]::-moz-range-thumb{
+      width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid rgba(139,92,246,.82);
+    }
+    .row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .row3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .row4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .miniField{
+      display:grid;gap:8px;
+      padding:12px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+    }
+    .miniField input[type="number"], .miniField input[type="text"], .miniField select, .miniField textarea,
+    .codeblock textarea{
+      width:100%;
+      border-radius:14px;
+      border:1px solid color-mix(in srgb, var(--line) 82%, transparent);
+      background: color-mix(in srgb, var(--bg2) 58%, rgba(255,255,255,.06));
+      color:var(--text);
+      padding:11px 12px;
+      outline:none;
+      transition:border-color .2s var(--ease-premium), box-shadow .2s var(--ease-premium), transform .2s;
+    }
+    .miniField textarea{min-height:88px;resize:vertical}
+    .miniField input[type="color"]{
+      width:100%;height:42px;border:0;padding:0;background:transparent;border-radius:14px;cursor:pointer;
+    }
+    .miniField input:focus,.miniField select:focus,.miniField textarea:focus{box-shadow:var(--focus);border-color:rgba(139,92,246,.55)}
+    .toggle{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:12px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+    }
+    .switch{
+      width:54px;height:32px;border-radius:999px;padding:3px;
+      display:flex;align-items:center;
+      background:rgba(148,163,184,.28);
+      border:1px solid rgba(255,255,255,.08);
+      transition:background .2s var(--ease-premium);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+    .switchKnob{
+      width:24px;height:24px;border-radius:50%;
+      background:linear-gradient(180deg,#fff,#dfe9ff);
+      box-shadow:0 8px 16px rgba(0,0,0,.22);
+      transform:translateX(0);
+      transition:transform .22s var(--ease-premium);
+    }
+    .switch.on{background:linear-gradient(135deg, rgba(139,92,246,.95), rgba(34,211,238,.8))}
+    .switch.on .switchKnob{transform:translateX(22px)}
+    .codePanel{padding:16px;border-top:1px solid color-mix(in srgb, var(--line) 86%, transparent)}
+    .codeTabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+    .tabButton.active{background:linear-gradient(135deg, rgba(139,92,246,.95), rgba(34,211,238,.8));border-color:transparent}
+    .codeblock{
+      position:relative;
+      display:grid;
+      gap:10px;
+    }
+    .codeblock textarea{
+      min-height:150px;
+      resize:vertical;
+      font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      white-space:pre;
+      tab-size:2;
+    }
+    .codeHeader{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .subtle{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .toastStack{
+      position:fixed;
+      right:16px;bottom:16px;
+      z-index:100;
+      display:grid;
+      gap:10px;
+      width:min(360px, calc(100vw - 32px));
+      pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;
+      padding:12px 14px;
+      border-radius:16px;
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border:1px solid color-mix(in srgb, var(--line) 82%, transparent);
+      box-shadow: var(--shadow);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+      animation: toastIn .26s var(--ease-premium);
+    }
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+    .toast strong{display:block;margin-bottom:2px}
+    .toast p{margin:0;color:var(--muted);font-size:12px}
+    .toast .dot{
+      width:10px;height:10px;border-radius:50%;margin-top:3px;flex:0 0 auto;background:var(--accent)
+    }
+    .hidden{display:none !important}
+    .mobileOnly{display:none}
+    .spotlight{
+      position:fixed;inset:-20vmax;
+      pointer-events:none;
+      background: radial-gradient(circle at var(--pointer-x,20%) var(--pointer-y,20%), rgba(139,92,246,.13), transparent 22%);
+      z-index:0;
+      opacity:.8;
+    }
+    .toolbar,.sidebar,.panel{position:relative;z-index:1}
+    .previewCard{
+      width:100%;
+      min-height:220px;
+      border-radius:28px;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .previewCard .content{
+      padding:22px;
+      max-width:100%;
+    }
+    .previewCard h3{margin:0 0 8px;font-size:20px}
+    .previewCard p{margin:0;color:var(--muted)}
+    .blobSvgWrap{width:min(100%, 420px);aspect-ratio:1/1;display:grid;place-items:center}
+    .blobSvgWrap svg{width:100%;height:100%;display:block}
+    .patternPreview{
+      width:100%;min-height:260px;border-radius:28px;overflow:hidden;display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .patternCanvas{
+      width:100%;height:100%;min-height:260px;
+      background-size:var(--pattern-size, 32px) var(--pattern-size, 32px);
+    }
+    .split{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .footerNote{margin-top:14px;color:var(--muted);font-size:12px}
+    @media (max-width: 1080px){
+      .app{grid-template-columns:1fr}
+      .sidebar{
+        position:fixed;
+        left:0;top:0;bottom:0;
+        width:min(86vw, 340px);
+        transform:translateX(-102%);
+        transition:transform .28s var(--ease-premium);
+        box-shadow: 20px 0 60px rgba(0,0,0,.38);
+      }
+      body.sidebar-open .sidebar{transform:none}
+      .main{min-height:100dvh}
+      .workspace{grid-template-columns:1fr}
+      .mobileOnly{display:inline-flex}
+    }
+    @media (max-width: 720px){
+      :root{--toolbar-h: 66px}
+      .toolbar{padding:10px 12px}
+      .workspace{padding:12px;gap:12px}
+      .panel{border-radius:24px}
+      .previewFrame{min-height:260px}
+      .row,.row3,.row4,.split{grid-template-columns:1fr}
+      .sidebar{padding:14px}
+      .toolList{max-height:unset}
+      .codeblock textarea{min-height:128px}
+      .toolbarRight{gap:8px}
+      .iconButton,.ghostButton,.primaryButton,.tabButton,.inputButton{height:38px;padding:0 12px;border-radius:13px}
+      .brand{padding:9px 10px}
+      .brandMark{width:38px;height:38px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+      .previewFrame::before{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="spotlight"></div>
+  <div class="app" id="app">
+    <aside class="sidebar" aria-label="Tools sidebar">
+      <a class="brand" href="https://theduogamees.github.io" target="_blank" rel="noopener noreferrer">
+        <div class="brandMark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2zm0 3.2L6.8 8v8L12 18.8 17.2 16V8L12 5.2zM7.7 9.2l4.3-2.5 4.3 2.5L12 11.7 7.7 9.2zm0 5.6L12 17.3l4.3-2.5-4.3-2.6-4.3 2.6z"/></svg>
+        </div>
+        <div class="brandText">
+          <strong>theduogamees.github.io</strong>
+          <span>CSS / Design Generator Hub</span>
+        </div>
+      </a>
+
+      <div class="sidebarSection">
+        <div class="search" role="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="toolSearch" type="text" placeholder="Search tools" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="sectionTitle">
+        <span>Generators</span>
+        <button class="iconButton mobileOnly" id="closeSidebarBtn" type="button" aria-label="Close sidebar">
+          <svg class="buttonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="toolList" id="toolList"></div>
+
+      <div class="sectionTitle"><span>Recent</span></div>
+      <div class="sidebarCard">
+        <div class="chipRow" id="recentRow"></div>
+        <div class="footerNote">Autosaves locally. No backend. No external dependencies.</div>
+      </div>
+
+      <div class="sectionTitle"><span>Settings</span></div>
+      <div class="sidebarCard">
+        <div class="toggle" style="margin-bottom:10px">
+          <div>
+            <div class="label">Theme</div>
+            <div class="subtle">Switch UI appearance</div>
+          </div>
+          <button class="switch" id="themeSwitch" type="button" aria-label="Toggle theme"><span class="switchKnob"></span></button>
+        </div>
+        <div class="chipRow">
+          <button class="chip" id="exportSessionBtn" type="button">Export session</button>
+          <button class="chip" id="clearSessionBtn" type="button">Clear data</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="toolbar">
+        <div class="toolbarLeft">
+          <button class="iconButton mobileOnly" id="openSidebarBtn" type="button" aria-label="Open sidebar">
+            <svg class="buttonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="toolTitle">
+            <strong id="activeTitle">Gradient Generator</strong>
+            <span id="activeSubtitle">Create polished CSS gradients with live preview and exportable code.</span>
+          </div>
+        </div>
+        <div class="toolbarRight">
+          <button class="ghostButton" id="fullscreenPreviewBtn" type="button">Fullscreen</button>
+          <button class="primaryButton" id="savePresetBtn" type="button">Save preset</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Live Preview</h2>
+              <p id="previewHint">Interactive output updates instantly.</p>
+            </div>
+            <div class="chipRow">
+              <button class="inputButton" id="copyCssBtn" type="button">Copy CSS</button>
+              <button class="inputButton" id="randomizeBtn" type="button">Randomize</button>
+              <button class="inputButton" id="resetBtn" type="button">Reset</button>
+            </div>
+          </div>
+          <div class="previewWrap">
+            <div class="previewFrame" id="previewFrame">
+              <div class="previewInner" id="previewInner"></div>
+            </div>
+          </div>
+
+          <div class="codePanel">
+            <div class="codeTabs" id="codeTabs"></div>
+            <div class="codeblock">
+              <div class="codeHeader">
+                <div>
+                  <strong id="codeTitle">CSS</strong>
+                  <div class="subtle" id="codeSubtitle">Generated code is ready to copy or edit.</div>
+                </div>
+                <div class="chipRow">
+                  <button class="inputButton" id="copyCodeBtn" type="button">Copy code</button>
+                  <button class="inputButton" id="downloadCodeBtn" type="button">Download</button>
+                </div>
+              </div>
+              <textarea id="codeOutput" spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Controls</h2>
+              <p>Adjusted through a shared state engine with safe persistence.</p>
+            </div>
+            <div class="chipRow" id="toolPresetRow"></div>
+          </div>
+          <div class="controlsWrap" id="controlsRoot"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toastStack" id="toastStack"></div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const STORAGE_KEY = 'css_design_generator_hub_v1';
+    const APP_VERSION = 1;
+    const toolOrder = ['gradient','glass','shadow','radius','neumorphism','blob','pattern','animation'];
+
+    const icon = {
+      gradient:'◐', glass:'◍', shadow:'◌', radius:'▢', neumorphism:'⬣', blob:'✦', pattern:'▤', animation:'↻'
+    };
+
+    const defaults = {
+      theme: 'dark',
+      activeTool: 'gradient',
+      search: '',
+      recent: [],
+      presetCounter: 0,
+      presets: {},
+      tools: {
+        gradient: {
+          type: 'linear',
+          angle: 135,
+          radialX: 50,
+          radialY: 50,
+          radialSize: 65,
+          conicFrom: 0,
+          stops: [
+            { color: '#8b5cf6', pos: 0 },
+            { color: '#22d3ee', pos: 48 },
+            { color: '#f59e0b', pos: 100 }
+          ]
+        },
+        glass: {
+          bg: '#111827',
+          opacity: 0.16,
+          blur: 20,
+          border: 1,
+          shadow: 24,
+          radius: 26,
+          tint: '#8b5cf6'
+        },
+        shadow: {
+          x: 0,
+          y: 18,
+          blur: 38,
+          spread: -6,
+          opacity: 0.32,
+          inset: false,
+          color: '#000000'
+        },
+        radius: {
+          tl: 28,
+          tr: 28,
+          br: 28,
+          bl: 28,
+          blob: false,
+          blobness: 52,
+          size: 220
+        },
+        neumorphism: {
+          mode: 'convex',
+          base: '#dde5f3',
+          depth: 26,
+          intensity: 0.25,
+          radius: 28,
+          darkSurface: false
+        },
+        blob: {
+          points: 9,
+          smoothness: 68,
+          seed: 11,
+          fill: '#8b5cf6',
+          stroke: '#22d3ee',
+          strokeWidth: 0,
+          size: 260
+        },
+        pattern: {
+          type: 'mesh',
+          size: 44,
+          opacity: 0.34,
+          angle: 135,
+          colorA: '#8b5cf6',
+          colorB: '#22d3ee',
+          colorC: '#f59e0b'
+        },
+        animation: {
+          duration: 2.8,
+          easing: 'cubic-bezier(.2,.85,.2,1)',
+          x: 18,
+          y: 0,
+          scale: 1.08,
+          rotate: 8,
+          opacity: 0.75,
+          delay: 0,
+          alternate: true
+        }
+      }
+    };
+
+    const state = loadState();
+
+    const app = {
+      state,
+      tools: {},
+      raf: 0,
+      saveTimer: 0,
+      paletteOpen: false
+    };
+
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const round = (v, d = 0) => {
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      const p = 10 ** d;
+      return Math.round(n * p) / p;
+    };
+    const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+    const safeClone = (obj) => JSON.parse(JSON.stringify(obj));
+    const esc = (s) => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const uid = () => Math.random().toString(36).slice(2, 9);
+    const now = () => new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return safeClone(defaults);
+        const parsed = JSON.parse(raw);
+        const merged = safeClone(defaults);
+        if (parsed && typeof parsed === 'object') {
+          merged.theme = parsed.theme === 'light' ? 'light' : 'dark';
+          merged.activeTool = toolOrder.includes(parsed.activeTool) ? parsed.activeTool : merged.activeTool;
+          merged.search = typeof parsed.search === 'string' ? parsed.search : '';
+          merged.recent = Array.isArray(parsed.recent) ? parsed.recent.filter(id => toolOrder.includes(id)).slice(0, 8) : [];
+          merged.presetCounter = Number.isFinite(parsed.presetCounter) ? parsed.presetCounter : 0;
+          merged.presets = parsed.presets && typeof parsed.presets === 'object' ? parsed.presets : {};
+          if (parsed.tools && typeof parsed.tools === 'object') {
+            for (const id of toolOrder) {
+              merged.tools[id] = deepMerge(safeClone(defaults.tools[id]), parsed.tools[id]);
+            }
+          }
+        }
+        return merged;
+      } catch {
+        return safeClone(defaults);
+      }
+    }
+
+    function deepMerge(base, extra){
+      if (!extra || typeof extra !== 'object') return base;
+      for (const [key, val] of Object.entries(extra)) {
+        if (Array.isArray(base[key]) && Array.isArray(val)) {
+          base[key] = val.map(item => typeof item === 'object' && item ? safeClone(item) : item);
+        } else if (base[key] && typeof base[key] === 'object' && !Array.isArray(base[key]) && val && typeof val === 'object' && !Array.isArray(val)) {
+          base[key] = deepMerge(base[key], val);
+        } else if (typeof base[key] === typeof val || typeof base[key] === 'undefined') {
+          base[key] = val;
+        }
+      }
+      return base;
+    }
+
+    function saveState(){
+      try{
+        const payload = {
+          theme: state.theme,
+          activeTool: state.activeTool,
+          search: state.search,
+          recent: state.recent,
+          presetCounter: state.presetCounter,
+          presets: state.presets,
+          tools: state.tools
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch {}
+    }
+
+    function scheduleSave(){
+      clearTimeout(app.saveTimer);
+      app.saveTimer = setTimeout(saveState, 150);
+    }
+
+    function toast(title, message = ''){
+      const stack = $('#toastStack');
+      const node = document.createElement('div');
+      node.className = 'toast';
+      node.innerHTML = `
+        <div style="display:flex;gap:10px;min-width:0">
+          <span class="dot"></span>
+          <div style="min-width:0">
+            <strong>${esc(title)}</strong>
+            <p>${esc(message)}</p>
+          </div>
+        </div>
+        <button class="iconButton" type="button" aria-label="Dismiss">✕</button>
+      `;
+      $('button', node).addEventListener('click', () => node.remove());
+      stack.appendChild(node);
+      setTimeout(() => node.remove(), 2400);
+    }
+
+    async function copyText(text, label = 'Copied'){
+      const value = String(text ?? '');
+      try{
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          ta.setAttribute('readonly','');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        toast(label, 'Clipboard updated successfully.');
+      } catch {
+        toast('Copy failed', 'Clipboard access was blocked.');
+      }
+    }
+
+    function downloadFile(filename, content, mime = 'text/plain'){
+      try{
+        const blob = content instanceof Blob ? content : new Blob([content], {type:mime});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+        toast('Downloaded', filename);
+      } catch {
+        toast('Export failed', 'Unable to generate the file.');
+      }
+    }
+
+    function parsePath(path){
+      return String(path).split('.').filter(Boolean).map(seg => (/^\d+$/.test(seg) ? Number(seg) : seg));
+    }
+
+    function setByPath(obj, path, value){
+      const parts = parsePath(path);
+      let cur = obj;
+      for(let i = 0; i < parts.length - 1; i++){
+        const key = parts[i];
+        if (cur[key] == null || typeof cur[key] !== 'object') {
+          cur[key] = typeof parts[i + 1] === 'number' ? [] : {};
+        }
+        cur = cur[key];
+      }
+      cur[parts[parts.length - 1]] = value;
+    }
+
+    function getByPath(obj, path){
+      return parsePath(path).reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+    }
+
+    function hsvToHex(h, s, v){
+      s /= 100; v /= 100;
+      const c = v * s;
+      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      const m = v - c;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) [r,g,b] = [c,x,0];
+      else if (h < 120) [r,g,b] = [x,c,0];
+      else if (h < 180) [r,g,b] = [0,c,x];
+      else if (h < 240) [r,g,b] = [0,x,c];
+      else if (h < 300) [r,g,b] = [x,0,c];
+      else [r,g,b] = [c,0,x];
+      const toHex = n => Math.round((n + m) * 255).toString(16).padStart(2,'0');
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+
+    function lighten(hex, amount = 0.2){
+      const rgb = hexToRgb(hex);
+      if (!rgb) return hex;
+      const mix = (c) => Math.round(c + (255 - c) * amount);
+      return rgbToHex(mix(rgb.r), mix(rgb.g), mix(rgb.b));
+    }
+
+    function darken(hex, amount = 0.2){
+      const rgb = hexToRgb(hex);
+      if (!rgb) return hex;
+      const mix = (c) => Math.round(c * (1 - amount));
+      return rgbToHex(mix(rgb.r), mix(rgb.g), mix(rgb.b));
+    }
+
+    function hexToRgb(hex){
+      const s = String(hex).replace('#','').trim();
+      const normalized = s.length === 3 ? s.split('').map(ch => ch + ch).join('') : s;
+      if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return null;
+      const n = parseInt(normalized, 16);
+      return {r:(n >> 16) & 255, g:(n >> 8) & 255, b:n & 255};
+    }
+
+    function rgbToHex(r, g, b){
+      return '#' + [r,g,b].map(n => clamp(Math.round(n), 0, 255).toString(16).padStart(2,'0')).join('');
+    }
+
+    function rgba(hex, alpha){
+      const rgb = hexToRgb(hex) || {r:0,g:0,b:0};
+      return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    }
+
+    function gradientOutput(tool){
+      const s = tool;
+      const stops = s.stops.map(stop => `${stop.color} ${clamp(stop.pos,0,100)}%`);
+      if (s.type === 'radial') {
+        return `radial-gradient(circle at ${clamp(s.radialX,0,100)}% ${clamp(s.radialY,0,100)}%, ${stops.join(', ')})`;
+      }
+      if (s.type === 'conic') {
+        return `conic-gradient(from ${clamp(s.conicFrom,0,360)}deg at 50% 50%, ${stops.join(', ')})`;
+      }
+      return `linear-gradient(${clamp(s.angle,0,360)}deg, ${stops.join(', ')})`;
+    }
+
+    function gradientTailwind(tool){
+      const raw = gradientOutput(tool).replace(/\s+/g, ' ').trim();
+      return `bg-[${raw.replace(/ /g, '_')}]`;
+    }
+
+    function makeNoiseDataURI(opacity = 0.15){
+      const o = clamp(opacity, 0.02, 0.4).toFixed(2);
+      return `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="140" height="140" filter="url(#n)" opacity="${o}"/></svg>`)}`
+    }
+
+    function blobPath(seed, points, smoothness, size = 240){
+      const rnd = mulberry32(seed);
+      const count = clamp(Math.round(points), 5, 16);
+      const center = size / 2;
+      const radius = size * 0.34;
+      const pts = [];
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const jitter = 0.72 + rnd() * (smoothness / 100 * 0.72);
+        const r = radius * jitter;
+        pts.push([
+          center + Math.cos(angle) * r,
+          center + Math.sin(angle) * r
+        ]);
+      }
+      const path = [];
+      for (let i = 0; i < pts.length; i++) {
+        const p0 = pts[(i - 1 + pts.length) % pts.length];
+        const p1 = pts[i];
+        const p2 = pts[(i + 1) % pts.length];
+        const p3 = pts[(i + 2) % pts.length];
+        const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        if (i === 0) path.push(`M ${p1[0].toFixed(2)} ${p1[1].toFixed(2)}`);
+        path.push(`C ${c1[0].toFixed(2)} ${c1[1].toFixed(2)}, ${c2[0].toFixed(2)} ${c2[1].toFixed(2)}, ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`);
+      }
+      path.push('Z');
+      return path.join(' ');
+    }
+
+    function mulberry32(a){
+      return function(){
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    function blobSvgMarkup(s){
+      const size = clamp(s.size || 260, 180, 520);
+      const path = blobPath(s.seed, s.points, s.smoothness, size);
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${s.fill}"/><stop offset="100%" stop-color="${s.stroke}"/></linearGradient></defs><path d="${path}" fill="url(#g)" ${s.strokeWidth > 0 ? `stroke="${s.stroke}" stroke-width="${s.strokeWidth}"` : ''} /></svg>`;
+      return svg;
+    }
+
+    function patternBackground(s){
+      const type = s.type;
+      const size = clamp(s.size, 12, 96);
+      const a = s.colorA;
+      const b = s.colorB;
+      const c = s.colorC;
+      const opacity = clamp(s.opacity, 0.05, 1);
+      const angle = clamp(s.angle, 0, 360);
+      if (type === 'grid') {
+        return {
+          backgroundImage: `linear-gradient(rgba(255,255,255,${opacity * .4}) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,${opacity * .4}) 1px, transparent 1px), linear-gradient(${angle}deg, ${rgba(a, opacity)}, ${rgba(b, opacity)})`,
+          backgroundSize: `${size}px ${size}px, ${size}px ${size}px, cover`,
+          backgroundBlendMode: 'screen, screen, normal'
+        };
+      }
+      if (type === 'dots') {
+        return {
+          backgroundImage: `radial-gradient(circle, rgba(255,255,255,${opacity * .75}) 1.4px, transparent 1.6px), linear-gradient(${angle}deg, ${rgba(a, opacity)}, ${rgba(b, opacity)})`,
+          backgroundSize: `${size}px ${size}px, cover`,
+          backgroundPosition: `0 0, center`
+        };
+      }
+      if (type === 'noise') {
+        return {
+          backgroundImage: `url("${makeNoiseDataURI(opacity)}"), linear-gradient(${angle}deg, ${rgba(a, opacity)}, ${rgba(b, opacity)})`,
+          backgroundSize: '140px 140px, cover',
+          backgroundBlendMode: 'overlay, normal'
+        };
+      }
+      if (type === 'abstract') {
+        return {
+          backgroundImage: `radial-gradient(circle at 20% 20%, ${rgba(a, opacity)}, transparent 40%), radial-gradient(circle at 80% 30%, ${rgba(b, opacity)}, transparent 35%), radial-gradient(circle at 50% 75%, ${rgba(c, opacity)}, transparent 42%), linear-gradient(${angle}deg, ${rgba(a, opacity * .35)}, ${rgba(b, opacity * .35)})`,
+          backgroundSize: 'cover'
+        };
+      }
+      return {
+        backgroundImage: `radial-gradient(circle at 50% 50%, ${rgba(a, opacity)}, transparent 38%), linear-gradient(${angle}deg, ${rgba(a, opacity)}, ${rgba(b, opacity)})`,
+        backgroundSize: 'cover'
+      };
+    }
+
+    function saveRecent(toolId){
+      const arr = state.recent.filter(id => id !== toolId);
+      arr.unshift(toolId);
+      state.recent = arr.slice(0, 8);
+    }
+
+    function savePreset(){
+      const toolId = state.activeTool;
+      const list = state.presets[toolId] || [];
+      const preset = {
+        id: uid(),
+        name: `Preset ${state.presetCounter + 1}`,
+        ts: Date.now(),
+        state: safeClone(state.tools[toolId])
+      };
+      state.presetCounter += 1;
+      state.presets[toolId] = [preset, ...list].slice(0, 8);
+      scheduleSave();
+      render();
+      toast('Preset saved', preset.name);
+    }
+
+    function applyPreset(index){
+      const toolId = state.activeTool;
+      const list = state.presets[toolId] || [];
+      const preset = list[index];
+      if (!preset) return;
+      state.tools[toolId] = safeClone(preset.state);
+      saveRecent(toolId);
+      scheduleSave();
+      render();
+      toast('Preset loaded', preset.name);
+    }
+
+    function deletePreset(index){
+      const toolId = state.activeTool;
+      const list = state.presets[toolId] || [];
+      const preset = list[index];
+      if (!preset) return;
+      state.presets[toolId] = list.filter((_, i) => i !== index);
+      scheduleSave();
+      render();
+      toast('Preset deleted', preset.name);
+    }
+
+    function setTheme(theme){
+      state.theme = theme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', state.theme);
+      scheduleSave();
+    }
+
+    function randomColor(){
+      const hue = Math.floor(Math.random() * 360);
+      return hsvToHex(hue, 84, 98);
+    }
+
+    function randomizeTool(id){
+      const t = state.tools[id];
+      const set = (obj) => Object.assign(t, obj);
+      if (id === 'gradient') {
+        set({
+          type: ['linear','radial','conic'][Math.floor(Math.random()*3)],
+          angle: Math.floor(Math.random()*360),
+          radialX: Math.floor(20 + Math.random()*60),
+          radialY: Math.floor(20 + Math.random()*60),
+          radialSize: Math.floor(40 + Math.random()*45),
+          conicFrom: Math.floor(Math.random()*360),
+          stops: [
+            { color: randomColor(), pos: 0 },
+            { color: randomColor(), pos: 44 + Math.floor(Math.random()*14) },
+            { color: randomColor(), pos: 100 }
+          ]
+        });
+      } else if (id === 'glass') {
+        set({ bg: randomColor(), opacity: round(0.08 + Math.random() * 0.28, 2), blur: Math.floor(8 + Math.random()*30), border: Math.floor(Math.random()*3), shadow: Math.floor(10 + Math.random()*34), radius: Math.floor(16 + Math.random()*24), tint: randomColor() });
+      } else if (id === 'shadow') {
+        set({ x: Math.floor(-24 + Math.random()*48), y: Math.floor(8 + Math.random()*34), blur: Math.floor(16 + Math.random()*60), spread: Math.floor(-20 + Math.random()*22), opacity: round(0.12 + Math.random()*0.34, 2), inset: Math.random() > .7, color: '#000000' });
+      } else if (id === 'radius') {
+        set({ tl: Math.floor(Math.random()*80), tr: Math.floor(Math.random()*80), br: Math.floor(Math.random()*80), bl: Math.floor(Math.random()*80), blob: Math.random() > .5, blobness: Math.floor(18 + Math.random()*72), size: Math.floor(180 + Math.random()*120) });
+      } else if (id === 'neumorphism') {
+        set({ mode: Math.random() > .5 ? 'convex' : 'concave', base: state.theme === 'light' ? '#dde5f3' : '#1b2334', depth: Math.floor(12 + Math.random()*30), intensity: round(0.12 + Math.random()*0.25, 2), radius: Math.floor(18 + Math.random()*26), darkSurface: Math.random() > .5 });
+      } else if (id === 'blob') {
+        set({ points: Math.floor(6 + Math.random()*7), smoothness: Math.floor(40 + Math.random()*55), seed: Math.floor(Math.random()*999), fill: randomColor(), stroke: randomColor(), strokeWidth: Math.random() > .7 ? 2 : 0, size: Math.floor(210 + Math.random()*120) });
+      } else if (id === 'pattern') {
+        set({ type: ['grid','dots','mesh','noise','abstract'][Math.floor(Math.random()*5)], size: Math.floor(18 + Math.random()*34), opacity: round(0.08 + Math.random()*0.38, 2), angle: Math.floor(Math.random()*360), colorA: randomColor(), colorB: randomColor(), colorC: randomColor() });
+      } else if (id === 'animation') {
+        set({ duration: round(1.2 + Math.random()*3.4, 1), easing: ['cubic-bezier(.2,.85,.2,1)','ease','ease-in-out','cubic-bezier(.34,1.56,.64,1)'][Math.floor(Math.random()*4)], x: Math.floor(-30 + Math.random()*60), y: Math.floor(-20 + Math.random()*40), scale: round(0.85 + Math.random()*0.5, 2), rotate: Math.floor(-20 + Math.random()*40), opacity: round(0.5 + Math.random()*0.5, 2), delay: round(Math.random()*0.8, 1), alternate: Math.random() > .5 });
+      }
+      saveRecent(id);
+      scheduleSave();
+      render();
+      toast('Randomized', tools[id].title || id);
+    }
+
+    function resetTool(id){
+      state.tools[id] = safeClone(defaults.tools[id]);
+      saveRecent(id);
+      scheduleSave();
+      render();
+      toast('Reset complete', tools[id].title || id);
+    }
+
+    function setToolState(path, rawValue){
+      const tool = state.tools[state.activeTool];
+      const current = getByPath(tool, path);
+      let value = rawValue;
+      if (typeof current === 'number') {
+        value = Number(rawValue);
+        if (!Number.isFinite(value)) value = current;
+      }
+      if (typeof current === 'boolean') {
+        value = !!rawValue;
+      }
+      setByPath(tool, path, value);
+      saveRecent(state.activeTool);
+      scheduleSave();
+      render();
+    }
+
+    function ensureToolState(id){
+      if (!state.tools[id]) state.tools[id] = safeClone(defaults.tools[id]);
+    }
+
+    function svgDataUri(svg){
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function blobToPng(svg, filename='blob.png'){
+      try{
+        const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const size = img.naturalWidth || 512;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, size, size);
+          canvas.toBlob((png) => {
+            if (png) downloadFile(filename, png, 'image/png');
+            URL.revokeObjectURL(url);
+          });
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          toast('PNG export failed', 'SVG could not be rasterized.');
+        };
+        img.src = url;
+      } catch {
+        toast('PNG export failed', 'Browser API unavailable.');
+      }
+    }
+
+    function codeBlock(title, subtitle, code, extraClass=''){
+      return `
+        <div class="codeblock ${extraClass}">
+          <div class="codeHeader">
+            <div>
+              <strong>${esc(title)}</strong>
+              <div class="subtle">${esc(subtitle)}</div>
+            </div>
+          </div>
+          <textarea spellcheck="false" readonly>${esc(code)}</textarea>
+        </div>
+      `;
+    }
+
+    function controlRange(label, path, value, min, max, step, unit=''){
+      return `
+        <div class="control">
+          <div class="controlTop">
+            <label for="${path}">${esc(label)}</label>
+            <div class="value">${esc(value)}${esc(unit)}</div>
+          </div>
+          <input id="${path}" data-path="${path}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" />
+        </div>
+      `;
+    }
+
+    function controlColor(label, path, value){
+      return `
+        <div class="miniField">
+          <div class="controlTop">
+            <label for="${path}">${esc(label)}</label>
+            <div class="value">${esc(value)}</div>
+          </div>
+          <input id="${path}" data-path="${path}" type="color" value="${value}" />
+        </div>
+      `;
+    }
+
+    function controlSelect(label, path, value, options){
+      return `
+        <div class="miniField">
+          <div class="controlTop">
+            <label for="${path}">${esc(label)}</label>
+          </div>
+          <select id="${path}" data-path="${path}">
+            ${options.map(opt => `<option value="${esc(opt.value)}" ${opt.value === value ? 'selected' : ''}>${esc(opt.label)}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    }
+
+    function controlNumber(label, path, value, min, max, step){
+      return `
+        <div class="miniField">
+          <div class="controlTop">
+            <label for="${path}">${esc(label)}</label>
+          </div>
+          <input id="${path}" data-path="${path}" type="number" min="${min}" max="${max}" step="${step}" value="${value}" />
+        </div>
+      `;
+    }
+
+    function controlToggle(label, path, value, subtitle=''){
+      return `
+        <div class="toggle">
+          <div>
+            <div class="label">${esc(label)}</div>
+            <div class="subtle">${esc(subtitle)}</div>
+          </div>
+          <button class="switch ${value ? 'on' : ''}" type="button" data-path="${path}" data-toggle="1" aria-pressed="${value}">
+            <span class="switchKnob"></span>
+          </button>
+        </div>
+      `;
+    }
+
+    function actionPill(label, action, kind='ghostButton'){
+      return `<button class="${kind}" type="button" data-action="${action}">${esc(label)}</button>`;
+    }
+
+    function buildPresetRow(){
+      const list = state.presets[state.activeTool] || [];
+      if (!list.length) return `<div class="subtle">No presets saved yet.</div>`;
+      return list.map((preset, i) => `
+        <div class="chip" style="justify-content:space-between;min-width:0">
+          <button type="button" data-action="preset-load" data-index="${i}" title="Load ${esc(preset.name)}">${esc(preset.name)}</button>
+          <button type="button" data-action="preset-delete" data-index="${i}" aria-label="Delete ${esc(preset.name)}">✕</button>
+        </div>
+      `).join('');
+    }
+
+    const tools = {
+      gradient: {
+        id:'gradient',
+        title:'Gradient Generator',
+        subtitle:'Craft linear, radial, and conic gradients with CSS and Tailwind output.',
+        description:'Create polished CSS gradients with live preview and exportable code.',
+        render(s){
+          const gradient = gradientOutput(s);
+          const tw = gradientTailwind(s);
+          const previewStyle = `background:${gradient};`;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlSelect('Type', 'type', s.type, [
+                  {value:'linear', label:'Linear'},
+                  {value:'radial', label:'Radial'},
+                  {value:'conic', label:'Conic'}
+                ])}
+                ${controlNumber('Stops', 'stops.length', s.stops.length, 3, 5, 1)}
+              </div>
+              ${s.type === 'linear' ? controlRange('Angle', 'angle', s.angle, 0, 360, 1, '°') : ''}
+              ${s.type === 'radial' ? `
+                <div class="split">
+                  ${controlRange('Origin X', 'radialX', s.radialX, 0, 100, 1, '%')}
+                  ${controlRange('Origin Y', 'radialY', s.radialY, 0, 100, 1, '%')}
+                </div>
+                ${controlRange('Spread', 'radialSize', s.radialSize, 10, 100, 1, '%')}
+              ` : ''}
+              ${s.type === 'conic' ? controlRange('From angle', 'conicFrom', s.conicFrom, 0, 360, 1, '°') : ''}
+              <div class="groupTitle"><span>Color stops</span><span>live editing</span></div>
+              ${s.stops.map((stop, i) => `
+                <div class="row">
+                  ${controlColor(`Stop ${i+1} color`, `stops.${i}.color`, stop.color)}
+                  ${controlRange(`Stop ${i+1} position`, `stops.${i}.pos`, stop.pos, 0, 100, 1, '%')}
+                </div>
+              `).join('')}
+            </div>
+          `;
+          const code = {
+            css: `background: ${gradient};`,
+            tailwind: `${tw}\n/* Apply on a block using Tailwind arbitrary values */`
+          };
+          const preview = `
+            <div class="previewCard" style="${previewStyle}; min-height: 280px;">
+              <div class="content" style="background: rgba(8,10,16,.24); backdrop-filter: blur(12px); border-radius: 22px; border: 1px solid rgba(255,255,255,.10); color: white; box-shadow: 0 16px 36px rgba(0,0,0,.18)">
+                <h3>Gradient Preview</h3>
+                <p>${esc(gradient)}</p>
+              </div>
+            </div>
+          `;
+          return {controls, preview, css: code.css, tabs:[
+            {id:'css', title:'CSS', subtitle:'Paste directly into stylesheets.', code: code.css},
+            {id:'tailwind', title:'Tailwind', subtitle:'Arbitrary utility class.', code: code.tailwind}
+          ]};
+        }
+      },
+      glass: {
+        id:'glass',
+        title:'Glassmorphism Generator',
+        subtitle:'Build premium frosted surfaces with border, blur, and shadow tuning.',
+        description:'Design high-end glass cards with live CSS output.',
+        render(s){
+          const card = `
+            backdrop-filter: blur(${s.blur}px) saturate(160%);
+            -webkit-backdrop-filter: blur(${s.blur}px) saturate(160%);
+            background: linear-gradient(180deg, ${rgba(s.tint, s.opacity + 0.06)}, ${rgba(s.bg, s.opacity)});
+            border: ${s.border}px solid ${rgba('#ffffff', 0.14)};
+            box-shadow: 0 ${Math.round(s.shadow * .55)}px ${s.shadow * 2}px rgba(0,0,0,.28);
+            border-radius: ${s.radius}px;
+          `;
+          const preview = `
+            <div class="previewCard" style="min-height: 320px; background:
+              radial-gradient(circle at 18% 20%, ${rgba(s.tint, .28)}, transparent 34%),
+              radial-gradient(circle at 78% 24%, ${rgba('#22d3ee', .22)}, transparent 32%),
+              linear-gradient(135deg, ${rgba(s.bg, .85)}, ${rgba('#0f172a', .65)});">
+              <div class="content" style="${card}; max-width: 390px; background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));">
+                <h3>Glass Card</h3>
+                <p>Backdrops and blur create a refined frosted interface.</p>
+              </div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlColor('Tint color', 'tint', s.tint)}
+                ${controlColor('Base background', 'bg', s.bg)}
+              </div>
+              <div class="split">
+                ${controlRange('Opacity', 'opacity', s.opacity, 0.04, 0.42, 0.01)}
+                ${controlRange('Blur', 'blur', s.blur, 0, 40, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Border', 'border', s.border, 0, 4, 1, 'px')}
+                ${controlRange('Shadow', 'shadow', s.shadow, 0, 60, 1, 'px')}
+              </div>
+              ${controlRange('Radius', 'radius', s.radius, 0, 48, 1, 'px')}
+            </div>
+          `;
+          return {controls, preview, css: `.glass-card {\n  ${card.trim().split('\n').map(line => line.trim()).join('\n  ')}\n}`, tabs:[
+            {id:'css', title:'CSS', subtitle:'Glass card style.', code: `.glass-card {\n  ${card.trim().split('\n').map(line => line.trim()).join('\n  ')}\n}`}
+          ]};
+        }
+      },
+      shadow: {
+        id:'shadow',
+        title:'Box Shadow Generator',
+        subtitle:'Tune elevation, inset depth, and spread with instant feedback.',
+        description:'Generate smooth, production-ready shadows.',
+        render(s){
+          const shadow = `${s.inset ? 'inset ' : ''}${s.x}px ${s.y}px ${s.blur}px ${s.spread}px ${rgba(s.color, s.opacity)}`;
+          const preview = `
+            <div class="previewCard" style="background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03));">
+              <div class="content" style="width:min(100%, 360px); background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.07)); border-radius:24px; box-shadow:${shadow};">
+                <h3>Shadow Card</h3>
+                <p>High-quality depth with controlled softness.</p>
+              </div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlRange('X offset', 'x', s.x, -40, 40, 1, 'px')}
+                ${controlRange('Y offset', 'y', s.y, -40, 40, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Blur', 'blur', s.blur, 0, 90, 1, 'px')}
+                ${controlRange('Spread', 'spread', s.spread, -40, 40, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Opacity', 'opacity', s.opacity, 0, 0.8, 0.01)}
+                ${controlToggle('Inset', 'inset', s.inset, 'Inner shadow mode')}
+              </div>
+              ${controlColor('Shadow color', 'color', s.color)}
+            </div>
+          `;
+          return {controls, preview, css: `.shadow-card {\n  box-shadow: ${shadow};\n}`, tabs:[
+            {id:'css', title:'CSS', subtitle:'Use on any element.', code: `.shadow-card {\n  box-shadow: ${shadow};\n}`}
+          ]};
+        }
+      },
+      radius: {
+        id:'radius',
+        title:'Border Radius Generator',
+        subtitle:'Independent corner control with blob mode for organic shapes.',
+        description:'Shape precise or organic border radius values.',
+        render(s){
+          const radius = s.blob
+            ? `${clamp(s.tl + s.blobness * .5,0,100)}% ${clamp(s.tr + (100 - s.blobness) * .45,0,100)}% ${clamp(s.br + s.blobness * .4,0,100)}% ${clamp(s.bl + (100 - s.blobness) * .55,0,100)}% / ${clamp(100 - s.blobness * .4,0,100)}% ${clamp(s.blobness,0,100)}% ${clamp(100 - s.blobness * .3,0,100)}% ${clamp(s.blobness * .8,0,100)}%`
+            : `${s.tl}px ${s.tr}px ${s.br}px ${s.bl}px`;
+          const preview = `
+            <div class="previewCard" style="background: linear-gradient(135deg, rgba(139,92,246,.12), rgba(34,211,238,.07));">
+              <div style="width:${s.size}px;height:${s.size}px;border-radius:${radius};background:linear-gradient(135deg, rgba(139,92,246,.92), rgba(34,211,238,.86));box-shadow:0 24px 50px rgba(0,0,0,.24);transition: border-radius .18s ease;"></div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlRange('Top left', 'tl', s.tl, 0, 100, 1, 'px')}
+                ${controlRange('Top right', 'tr', s.tr, 0, 100, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Bottom right', 'br', s.br, 0, 100, 1, 'px')}
+                ${controlRange('Bottom left', 'bl', s.bl, 0, 100, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlToggle('Blob mode', 'blob', s.blob, 'Organic / liquid corners')}
+                ${controlRange('Blobness', 'blobness', s.blobness, 0, 100, 1, '%')}
+              </div>
+              ${controlRange('Preview size', 'size', s.size, 160, 320, 1, 'px')}
+            </div>
+          `;
+          return {controls, preview, css: `.shape {\n  border-radius: ${radius};\n}`, tabs:[
+            {id:'css', title:'CSS', subtitle:'Border radius declaration.', code: `.shape {\n  border-radius: ${radius};\n}`}
+          ]};
+        }
+      },
+      neumorphism: {
+        id:'neumorphism',
+        title:'Neumorphism Generator',
+        subtitle:'Soft UI depth for light and dark surfaces.',
+        description:'Generate convex and concave soft UI styles.',
+        render(s){
+          const base = s.base;
+          const isDark = s.darkSurface || state.theme === 'dark';
+          const light = lighten(base, isDark ? 0.22 : 0.14);
+          const dark = darken(base, isDark ? 0.28 : 0.20);
+          const mainShadow = s.mode === 'concave'
+            ? `inset ${s.depth}px ${s.depth}px ${Math.round(s.depth * 1.3)}px ${rgba(dark, s.intensity)}, inset ${-s.depth}px ${-s.depth}px ${Math.round(s.depth * 1.4)}px ${rgba('#ffffff', .85 * s.intensity)}`
+            : `${s.depth}px ${s.depth}px ${Math.round(s.depth * 1.3)}px ${rgba(dark, s.intensity)}, ${-s.depth}px ${-s.depth}px ${Math.round(s.depth * 1.2)}px ${rgba('#ffffff', .75 * s.intensity)}`;
+          const preview = `
+            <div class="previewCard" style="background:${base};">
+              <div class="content" style="width:min(100%, 360px); background:${base}; border-radius:${s.radius}px; box-shadow:${mainShadow}; color:${isDark ? '#d8e3f7' : '#0c1220'}">
+                <h3>Soft UI Panel</h3>
+                <p>Use minimal contrast and balanced depth for calm surfaces.</p>
+              </div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlSelect('Mode', 'mode', s.mode, [{value:'convex', label:'Convex'}, {value:'concave', label:'Concave'}])}
+                ${controlToggle('Dark surface', 'darkSurface', s.darkSurface, 'Bias shadows for dark themes')}
+              </div>
+              <div class="split">
+                ${controlColor('Base color', 'base', s.base)}
+                ${controlRange('Radius', 'radius', s.radius, 10, 48, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Depth', 'depth', s.depth, 4, 42, 1, 'px')}
+                ${controlRange('Intensity', 'intensity', s.intensity, 0.04, 0.5, 0.01)}
+              </div>
+            </div>
+          `;
+          return {controls, preview, css: `.soft-ui {\n  background: ${base};\n  border-radius: ${s.radius}px;\n  box-shadow: ${mainShadow};\n}`, tabs:[
+            {id:'css', title:'CSS', subtitle:'Soft UI style.', code: `.soft-ui {\n  background: ${base};\n  border-radius: ${s.radius}px;\n  box-shadow: ${mainShadow};\n}`}
+          ]};
+        }
+      },
+      blob: {
+        id:'blob',
+        title:'SVG Blob Generator',
+        subtitle:'Create organic vector blobs and export SVG or PNG.',
+        description:'Generate editable SVG blobs with export tools.',
+        render(s){
+          const svg = blobSvgMarkup(s);
+          const preview = `
+            <div class="blobSvgWrap">
+              ${svg}
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlRange('Points', 'points', s.points, 5, 16, 1)}
+                ${controlRange('Smoothness', 'smoothness', s.smoothness, 0, 100, 1)}
+              </div>
+              <div class="split">
+                ${controlNumber('Seed', 'seed', s.seed, 1, 9999, 1)}
+                ${controlRange('Stroke width', 'strokeWidth', s.strokeWidth, 0, 8, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlColor('Fill', 'fill', s.fill)}
+                ${controlColor('Stroke', 'stroke', s.stroke)}
+              </div>
+              ${controlRange('Preview size', 'size', s.size, 180, 420, 1, 'px')}
+            </div>
+          `;
+          return {controls, preview, css: svg, tabs:[
+            {id:'svg', title:'SVG', subtitle:'Editable vector markup.', code: svg},
+            {id:'css', title:'Markup use', subtitle:'Example image tag.', code: `<img src="${svgDataUri(svg)}" alt="Blob" />`}
+          ]};
+        }
+      },
+      pattern: {
+        id:'pattern',
+        title:'Pattern Generator',
+        subtitle:'Build grids, dots, mesh, noise, and abstract backgrounds.',
+        description:'Generate sleek repeatable or atmospheric patterns.',
+        render(s){
+          const style = patternBackground(s);
+          const css = Object.entries(style).map(([k,v]) => `${k}: ${v};`).join('\n  ');
+          const preview = `
+            <div class="patternPreview" style="background:${style.backgroundImage ? 'none' : ''}">
+              <div class="patternCanvas" style="${Object.entries(style).map(([k,v]) => `${k}:${v}`).join(';')}; --pattern-size:${s.size}px; min-height:280px"></div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlSelect('Type', 'type', s.type, [
+                  {value:'grid', label:'Grid'},
+                  {value:'dots', label:'Dots'},
+                  {value:'mesh', label:'Mesh'},
+                  {value:'noise', label:'Noise'},
+                  {value:'abstract', label:'Abstract'}
+                ])}
+                ${controlRange('Size', 'size', s.size, 12, 96, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Opacity', 'opacity', s.opacity, 0.03, 0.8, 0.01)}
+                ${controlRange('Angle', 'angle', s.angle, 0, 360, 1, '°')}
+              </div>
+              <div class="split">
+                ${controlColor('Color A', 'colorA', s.colorA)}
+                ${controlColor('Color B', 'colorB', s.colorB)}
+              </div>
+              ${s.type === 'abstract' ? controlColor('Color C', 'colorC', s.colorC) : controlColor('Accent', 'colorC', s.colorC)}
+            </div>
+          `;
+          return {controls, preview, css: `.pattern {\n  ${css.split('\n').map(line => line.trim()).join('\n  ')}\n}`, tabs:[
+            {id:'css', title:'CSS', subtitle:'Pattern background styles.', code: `.pattern {\n  ${css.split('\n').map(line => line.trim()).join('\n  ')}\n}`}
+          ]};
+        }
+      },
+      animation: {
+        id:'animation',
+        title:'CSS Animation Generator',
+        subtitle:'Create polished keyframes and animated transforms.',
+        description:'Build clean animation code with preview.',
+        render(s){
+          const transform = `translate3d(${s.x}px, ${s.y}px, 0) scale(${s.scale}) rotate(${s.rotate}deg)`;
+          const keyframes = `@keyframes motion-${state.activeTool} {\n  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; }\n  50% { transform: ${transform}; opacity: ${s.opacity}; }\n  100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; }\n}`;
+          const anim = `motion-${state.activeTool} ${s.duration}s ${s.easing} ${s.delay}s ${s.alternate ? 'infinite alternate' : 'infinite'} both`;
+          const preview = `
+            <div class="previewCard" style="background:linear-gradient(135deg, rgba(139,92,246,.08), rgba(34,211,238,.06));">
+              <div style="width:150px;height:150px;border-radius:32px;background:linear-gradient(135deg, rgba(139,92,246,.94), rgba(34,211,238,.85));box-shadow:0 24px 44px rgba(0,0,0,.24);animation:${anim};will-change:transform,opacity;"></div>
+            </div>
+          `;
+          const controls = `
+            <div class="controlGroup">
+              <div class="split">
+                ${controlRange('Duration', 'duration', s.duration, 0.6, 8, 0.1, 's')}
+                ${controlRange('Delay', 'delay', s.delay, 0, 2, 0.1, 's')}
+              </div>
+              ${controlSelect('Easing', 'easing', s.easing, [
+                {value:'ease', label:'ease'},
+                {value:'ease-in', label:'ease-in'},
+                {value:'ease-in-out', label:'ease-in-out'},
+                {value:'cubic-bezier(.2,.85,.2,1)', label:'premium'},
+                {value:'cubic-bezier(.34,1.56,.64,1)', label:'pop'}
+              ])}
+              <div class="split">
+                ${controlRange('Translate X', 'x', s.x, -80, 80, 1, 'px')}
+                ${controlRange('Translate Y', 'y', s.y, -80, 80, 1, 'px')}
+              </div>
+              <div class="split">
+                ${controlRange('Scale', 'scale', s.scale, 0.4, 1.8, 0.01)}
+                ${controlRange('Rotate', 'rotate', s.rotate, -180, 180, 1, '°')}
+              </div>
+              ${controlRange('Opacity', 'opacity', s.opacity, 0, 1, 0.01)}
+              ${controlToggle('Alternate', 'alternate', s.alternate, 'Ping-pong playback')}
+            </div>
+          `;
+          return {controls, preview, css: `${keyframes}\n\n.animated {\n  animation: ${anim};\n}`, tabs:[
+            {id:'css', title:'Keyframes', subtitle:'Generated animation code.', code: `${keyframes}\n\n.animated {\n  animation: ${anim};\n}`}
+          ]};
+        }
+      }
+    };
+
+    const toolMeta = {
+      gradient: 'Linear, radial, and conic gradients.',
+      glass: 'Frosted surfaces and glass panels.',
+      shadow: 'Depth, blur, spread, and inset shadows.',
+      radius: 'Independent corners and organic blobs.',
+      neumorphism: 'Soft UI with balanced highlights.',
+      blob: 'Procedural SVG blob creation.',
+      pattern: 'Grid, dots, mesh, noise, and abstract patterns.',
+      animation: 'Custom CSS motion and keyframes.'
+    };
+
+    Object.values(tools).forEach(tool => app.tools[tool.id] = tool);
+
+    function renderToolList(){
+      const q = state.search.trim().toLowerCase();
+      const container = $('#toolList');
+      container.innerHTML = toolOrder.filter(id => {
+        const tool = tools[id];
+        const hay = `${tool.title} ${tool.subtitle} ${toolMeta[id]}`.toLowerCase();
+        return !q || hay.includes(q);
+      }).map(id => {
+        const tool = tools[id];
+        const active = state.activeTool === id ? 'active' : '';
+        return `
+          <button class="toolItem ${active}" type="button" data-tool="${id}">
+            <div class="toolIcon">${icon[id] || '•'}</div>
+            <div style="min-width:0">
+              <strong>${esc(tool.title)}</strong>
+              <small>${esc(tool.subtitle)}</small>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderRecent(){
+      const row = $('#recentRow');
+      row.innerHTML = state.recent.length ? state.recent.map(id => `
+        <button class="chip" type="button" data-tool="${id}">
+          <span>${icon[id] || '•'}</span>
+          <span>${esc(tools[id].title)}</span>
+        </button>
+      `).join('') : '<div class="subtle">No recent tools yet.</div>';
+    }
+
+    function renderTheme(){
+      document.documentElement.setAttribute('data-theme', state.theme);
+      $('#themeSwitch').classList.toggle('on', state.theme === 'light');
+      $('#themeSwitch').setAttribute('aria-pressed', String(state.theme === 'light'));
+    }
+
+    function render(){
+      if (app.raf) cancelAnimationFrame(app.raf);
+      app.raf = requestAnimationFrame(() => {
+        const tool = tools[state.activeTool];
+        ensureToolState(state.activeTool);
+        $('#activeTitle').textContent = tool.title;
+        $('#activeSubtitle').textContent = tool.subtitle;
+        $('#previewHint').textContent = tool.description;
+        renderToolList();
+        renderRecent();
+        renderTheme();
+
+        const toolState = state.tools[state.activeTool];
+        const out = tool.render(toolState);
+
+        $('#previewInner').innerHTML = out.preview;
+        $('#controlsRoot').innerHTML = out.controls;
+
+        const tabs = $('#codeTabs');
+        const codes = out.tabs || [{id:'css', title:'CSS', subtitle:'Generated output', code: out.css || ''}];
+        if (!state.codeTab || !codes.find(c => c.id === state.codeTab)) state.codeTab = codes[0].id;
+        tabs.innerHTML = codes.map(c => `<button class="tabButton ${c.id === state.codeTab ? 'active' : ''}" type="button" data-code-tab="${c.id}">${esc(c.title)}</button>`).join('');
+        const selected = codes.find(c => c.id === state.codeTab) || codes[0];
+        $('#codeTitle').textContent = selected.title;
+        $('#codeSubtitle').textContent = selected.subtitle;
+        $('#codeOutput').value = selected.code;
+
+        const presetRow = $('#toolPresetRow');
+        const presets = state.presets[state.activeTool] || [];
+        presetRow.innerHTML = presets.length
+          ? `<button class="chip" type="button" data-action="preset-open">${esc(`${presets.length} preset${presets.length > 1 ? 's' : ''}`)}</button>`
+          : `<span class="subtle">No presets</span>`;
+        const existing = $('#presetPanel');
+        if (existing) existing.remove();
+        if (state.presetOpen) {
+          $('#controlsRoot').insertAdjacentHTML('afterbegin', `<div class="sidebarCard" id="presetPanel" style="margin-bottom:14px;display:grid;gap:10px"><div class="groupTitle"><span>Presets</span><span>load / delete</span></div>${buildPresetRow()}</div>`);
+        }
+      });
+    }
+
+    function persistAndRenderToolChange(id){
+      state.activeTool = id;
+      saveRecent(id);
+      state.presetOpen = false;
+      scheduleSave();
+      render();
+    }
+
+    function exportSession(){
+      const payload = {
+        version: APP_VERSION,
+        exportedAt: new Date().toISOString(),
+        state: {
+          theme: state.theme,
+          activeTool: state.activeTool,
+          search: state.search,
+          recent: state.recent,
+          presetCounter: state.presetCounter,
+          presets: state.presets,
+          tools: state.tools
+        }
+      };
+      downloadFile(`css-design-hub-session-${Date.now()}.json`, JSON.stringify(payload, null, 2), 'application/json');
+    }
+
+    function clearSession(){
+      try{
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {}
+      const fresh = safeClone(defaults);
+      Object.assign(state, fresh);
+      setTheme(state.theme);
+      toast('Session cleared', 'Local data was removed.');
+      scheduleSave();
+      render();
+    }
+
+    function handleControlsEvent(e){
+      const toolRoot = $('#controlsRoot');
+      const target = e.target.closest('[data-path], [data-action], [data-toggle], [data-code-tab], [data-tool]');
+      if (!target) return;
+
+      if (target.hasAttribute('data-tool')) {
+        persistAndRenderToolChange(target.getAttribute('data-tool'));
+        return;
+      }
+
+      if (target.hasAttribute('data-code-tab')) {
+        state.codeTab = target.getAttribute('data-code-tab');
+        render();
+        return;
+      }
+
+      if (target.hasAttribute('data-action')) {
+        const action = target.getAttribute('data-action');
+        const idx = target.getAttribute('data-index');
+        if (action === 'copy-css') {
+          const current = tools[state.activeTool].render(state.tools[state.activeTool]);
+          copyText(current.css || current.tabs?.[0]?.code || '', 'CSS copied');
+        } else if (action === 'copy-code') {
+          const current = tools[state.activeTool].render(state.tools[state.activeTool]);
+          const tabs = current.tabs || [];
+          const selected = tabs.find(t => t.id === state.codeTab) || tabs[0];
+          copyText(selected ? selected.code : '', 'Code copied');
+        } else if (action === 'download-code') {
+          const current = tools[state.activeTool].render(state.tools[state.activeTool]);
+          const tabs = current.tabs || [];
+          const selected = tabs.find(t => t.id === state.codeTab) || tabs[0];
+          const ext = selected?.id === 'svg' ? 'svg' : selected?.id === 'tailwind' ? 'txt' : 'css';
+          const file = state.activeTool === 'blob' && ext === 'svg' ? 'blob.svg' : `${state.activeTool}.${ext}`;
+          downloadFile(file, selected ? selected.code : '');
+        } else if (action === 'preset-open') {
+          state.presetOpen = !state.presetOpen;
+          render();
+        } else if (action === 'preset-load') {
+          applyPreset(Number(idx));
+        } else if (action === 'preset-delete') {
+          deletePreset(Number(idx));
+        }
+        return;
+      }
+
+      if (target.hasAttribute('data-toggle')) {
+        const path = target.getAttribute('data-path');
+        const current = !!getByPath(state.tools[state.activeTool], path);
+        setToolState(path, !current);
+        target.classList.toggle('on', !current);
+        target.setAttribute('aria-pressed', String(!current));
+        return;
+      }
+
+      if (target.hasAttribute('data-path')) {
+        const path = target.getAttribute('data-path');
+        const input = target;
+        if (path === 'stops.length') {
+          const current = state.tools.gradient.stops;
+          const desired = clamp(Number(input.value), 3, 5);
+          while (current.length < desired) current.push({color: randomColor(), pos: Math.round((current.length / (desired - 1)) * 100)});
+          while (current.length > desired) current.pop();
+          render();
+          scheduleSave();
+          return;
+        }
+        const value = input.type === 'checkbox' ? input.checked :
+                      input.type === 'range' || input.type === 'number' ? Number(input.value) :
+                      input.type === 'color' ? input.value :
+                      input.value;
+        setToolState(path, value);
+        return;
+      }
+    }
+
+    function handleClick(e){
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      if (btn.id === 'openSidebarBtn') {
+        document.body.classList.add('sidebar-open');
+      } else if (btn.id === 'closeSidebarBtn') {
+        document.body.classList.remove('sidebar-open');
+      } else if (btn.id === 'themeSwitch') {
+        setTheme(state.theme === 'dark' ? 'light' : 'dark');
+        render();
+      } else if (btn.id === 'savePresetBtn') {
+        savePreset();
+      } else if (btn.id === 'randomizeBtn') {
+        randomizeTool(state.activeTool);
+      } else if (btn.id === 'resetBtn') {
+        resetTool(state.activeTool);
+      } else if (btn.id === 'copyCssBtn') {
+        const out = tools[state.activeTool].render(state.tools[state.activeTool]);
+        copyText(out.css || out.tabs?.[0]?.code || '', 'CSS copied');
+      } else if (btn.id === 'copyCodeBtn') {
+        const out = tools[state.activeTool].render(state.tools[state.activeTool]);
+        const selected = (out.tabs || []).find(t => t.id === state.codeTab) || (out.tabs || [])[0];
+        copyText(selected ? selected.code : '', 'Code copied');
+      } else if (btn.id === 'downloadCodeBtn') {
+        const out = tools[state.activeTool].render(state.tools[state.activeTool]);
+        const selected = (out.tabs || []).find(t => t.id === state.codeTab) || (out.tabs || [])[0];
+        const extension = selected?.id === 'svg' ? 'svg' : selected?.id === 'tailwind' ? 'txt' : 'css';
+        downloadFile(`${state.activeTool}.${extension}`, selected ? selected.code : '');
+      } else if (btn.id === 'fullscreenPreviewBtn') {
+        toggleFullscreenPreview();
+      } else if (btn.id === 'exportSessionBtn') {
+        exportSession();
+      } else if (btn.id === 'clearSessionBtn') {
+        clearSession();
+      } else if (btn.id === 'toolList') {
+        return;
+      }
+    }
+
+    async function toggleFullscreenPreview(){
+      const el = $('#previewFrame');
+      if (!document.fullscreenElement && el.requestFullscreen) {
+        try{
+          await el.requestFullscreen();
+          toast('Fullscreen enabled', 'Preview expanded.');
+        } catch {
+          toast('Fullscreen unavailable', 'Browser blocked fullscreen mode.');
+        }
+      } else if (document.fullscreenElement && document.exitFullscreen) {
+        try{ await document.exitFullscreen(); } catch {}
+      }
+    }
+
+    function bindRootEvents(){
+      document.addEventListener('click', (e) => {
+        const toolButton = e.target.closest('[data-tool]');
+        if (toolButton && !e.target.closest('#toolList') && !e.target.closest('#recentRow')) {
+          // handled below by generic click
+        }
+        handleClick(e);
+        const toolBtn = e.target.closest('#toolList [data-tool], #recentRow [data-tool]');
+        if (toolBtn) {
+          persistAndRenderToolChange(toolBtn.getAttribute('data-tool'));
+        }
+      }, {passive:true});
+
+      document.addEventListener('input', (e) => {
+        const input = e.target.closest('#controlsRoot input, #controlsRoot select, #controlsRoot textarea, #toolSearch');
+        if (!input) return;
+        if (input.id === 'toolSearch') {
+          state.search = input.value;
+          renderToolList();
+          return;
+        }
+        const path = input.getAttribute('data-path');
+        if (path) {
+          const value = input.type === 'checkbox' ? input.checked :
+                        input.type === 'range' || input.type === 'number' ? Number(input.value) :
+                        input.value;
+          if (path === 'stops.length') {
+            const desired = clamp(Number(value), 3, 5);
+            const current = state.tools.gradient.stops;
+            while (current.length < desired) current.push({color: randomColor(), pos: Math.round((current.length / Math.max(1, desired - 1)) * 100)});
+            while (current.length > desired) current.pop();
+            saveRecent(state.activeTool);
+            scheduleSave();
+            render();
+          } else {
+            setToolState(path, value);
+          }
+        }
+      });
+      document.addEventListener('change', (e) => {
+        const input = e.target.closest('#controlsRoot input, #controlsRoot select');
+        if (!input) return;
+        const path = input.getAttribute('data-path');
+        if (!path) return;
+        const value = input.type === 'checkbox' ? input.checked :
+                      input.type === 'range' || input.type === 'number' ? Number(input.value) :
+                      input.value;
+        if (path === 'stops.length') {
+          const desired = clamp(Number(value), 3, 5);
+          const current = state.tools.gradient.stops;
+          while (current.length < desired) current.push({color: randomColor(), pos: Math.round((current.length / Math.max(1, desired - 1)) * 100)});
+          while (current.length > desired) current.pop();
+          saveRecent(state.activeTool);
+          scheduleSave();
+          render();
+        } else {
+          setToolState(path, value);
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') document.body.classList.remove('sidebar-open');
+      });
+    }
+
+    function attachPointerSpotlight(){
+      let raf = 0;
+      const update = (x, y) => {
+        document.documentElement.style.setProperty('--pointer-x', `${x}%`);
+        document.documentElement.style.setProperty('--pointer-y', `${y}%`);
+      };
+      document.addEventListener('pointermove', (e) => {
+        if (prefersReduced) return;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const x = (e.clientX / window.innerWidth) * 100;
+          const y = (e.clientY / window.innerHeight) * 100;
+          update(x, y);
+        });
+      }, {passive:true});
+    }
+
+    function init(){
+      setTheme(state.theme);
+      bindRootEvents();
+      attachPointerSpotlight();
+      $('#toolSearch').value = state.search || '';
+      saveRecent(state.activeTool);
+      render();
+      scheduleSave();
+      window.addEventListener('resize', () => {
+        document.body.classList.remove('sidebar-open');
+      }, {passive:true});
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>
