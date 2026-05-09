@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phiziks — Билеты 1–30</title>
+<style>
+  :root {
+    --bg: #08101f;
+    --panel: rgba(14, 20, 38, 0.86);
+    --panel-2: rgba(22, 31, 56, 0.92);
+    --card: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.08);
+    --text: #eef4ff;
+    --muted: rgba(238,244,255,0.72);
+    --accent: #6ea8ff;
+    --accent-2: #8a7dff;
+    --shadow: 0 18px 50px rgba(0,0,0,.35);
+    --input: rgba(255,255,255,0.08);
+  }
+  body[data-theme="light"] {
+    --bg: #eef3fb;
+    --panel: rgba(255,255,255,0.88);
+    --panel-2: rgba(255,255,255,0.94);
+    --card: rgba(255,255,255,0.88);
+    --card-border: rgba(16,24,40,0.09);
+    --text: #101828;
+    --muted: #475467;
+    --accent: #355cff;
+    --accent-2: #9b5cff;
+    --shadow: 0 18px 50px rgba(15,23,42,.12);
+    --input: rgba(16,24,40,0.06);
+  }
+  body[data-theme="neon"] {
+    --bg: #05060a;
+    --panel: rgba(7, 10, 18, 0.88);
+    --panel-2: rgba(13, 16, 28, 0.94);
+    --card: rgba(20, 24, 44, 0.86);
+    --card-border: rgba(79, 244, 255, 0.18);
+    --text: #effcff;
+    --muted: #93d5de;
+    --accent: #46f0ff;
+    --accent-2: #8b5dff;
+    --shadow: 0 0 0 1px rgba(70,240,255,.08), 0 24px 70px rgba(0,0,0,.55);
+    --input: rgba(70,240,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(110,168,255,0.20), transparent 28%),
+      radial-gradient(circle at top right, rgba(138,125,255,0.14), transparent 26%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 14px 42px;
+  }
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--panel) 92%, transparent), color-mix(in srgb, var(--panel) 76%, transparent));
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .top-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1.4fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .brand h1 {
+    margin: 0;
+    font-size: clamp(20px, 3vw, 30px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .brand p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .search-box {
+    display: grid;
+    gap: 10px;
+  }
+  .search-row {
+    display: grid;
+    grid-template-columns: 1.3fr 150px;
+    gap: 10px;
+  }
+  .search-row input, .search-row select {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    background: var(--input);
+    color: var(--text);
+    outline: none;
+    font-size: 15px;
+  }
+  .search-row input::placeholder { color: var(--muted); }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .btn, .theme-btn, .icon-btn, .title-btn {
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover, .theme-btn:hover, .icon-btn:hover, .title-btn:hover { transform: translateY(-1px); }
+  .btn {
+    padding: 12px 14px;
+    font-weight: 600;
+  }
+  .theme-btn {
+    padding: 12px 14px;
+    font-weight: 700;
+  }
+  .theme-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 10px 24px rgba(110,168,255,0.28);
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .pill {
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+  }
+  .cards {
+    display: grid;
+    gap: 12px;
+  }
+  .ticket {
+    border: 1px solid var(--card-border);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 95%, transparent), color-mix(in srgb, var(--panel) 96%, transparent));
+    border-radius: 22px;
+    overflow: clip;
+    box-shadow: var(--shadow);
+  }
+  .ticket.hidden { display: none; }
+  .ticket-head {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    padding: 12px;
+  }
+  .title-btn {
+    flex: 1;
+    padding: 14px 16px;
+    text-align: left;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .ticket-meta {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .chev {
+    transition: transform .22s ease;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .ticket.open .chev { transform: rotate(180deg); }
+  .ticket-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .ticket-body {
+    display: none;
+    padding: 0 16px 18px;
+    line-height: 1.65;
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  .ticket.open .ticket-body { display: block; }
+  .ticket-body p, .ticket-body li { margin: 0 0 10px; }
+  .ticket-body ol {
+    padding-left: 22px;
+    margin: 0;
+  }
+  .ticket-body li + li { margin-top: 8px; }
+  .ticket-foot {
+    padding: 0 16px 16px;
+    color: var(--muted);
+    font-size: 12px;
+    display: none;
+  }
+  .ticket.open .ticket-foot { display: block; }
+  mark {
+    background: rgba(255, 230, 97, 0.42);
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 4px;
+  }
+  .empty {
+    display: none;
+    margin-top: 18px;
+    padding: 26px;
+    text-align: center;
+    border: 1px dashed var(--card-border);
+    border-radius: 20px;
+    color: var(--muted);
+    background: var(--panel);
+  }
+  .empty.show { display: block; }
+  .footer-note {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  @media (max-width: 980px) {
+    .top-row {
+      grid-template-columns: 1fr;
+    }
+    .search-row {
+      grid-template-columns: 1fr;
+    }
+    .toolbar {
+      justify-content: flex-start;
+    }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 10px 10px 34px; }
+    .topbar { border-radius: 18px; }
+    .title-btn {
+      grid-template-columns: 1fr auto;
+      padding: 13px 14px;
+    }
+    .ticket-meta { display: none; }
+    .ticket-head {
+      flex-direction: column;
+    }
+    .ticket-actions {
+      justify-content: flex-end;
+    }
+    .icon-btn {
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+    }
+  }
+</style>
+</head>
+<body data-theme="dark">
+  <div class="wrap">
+    <header class="topbar">
+      <div class="top-row">
+        <div class="brand">
+          <h1>Phiziks · Билеты 1–30</h1>
+          <p>Темы, поиск, избранное, копирование, печать и быстрый переход к билету.</p>
+        </div>
+
+        <div class="search-box">
+          <div class="search-row">
+            <input id="search" type="search" placeholder="Поиск по билетам, терминам, формулам…">
+            <select id="jump">
+              <option value="">Перейти к билету…</option>
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option>
+            </select>
+          </div>
+          <div class="stats" id="stats">
+            <span class="pill" id="visibleCount">Показано: 30</span>
+            <span class="pill" id="favCount">Избранных: 0</span>
+            <span class="pill" id="themeLabel">Тема: тёмная</span>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="theme-btn active" data-theme="dark" type="button">Тёмная</button>
+          <button class="theme-btn" data-theme="light" type="button">Светлая</button>
+          <button class="theme-btn" data-theme="neon" type="button">Неоновая</button>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:12px; justify-content:flex-start;">
+        <button class="btn" id="expandAll" type="button">Развернуть всё</button>
+        <button class="btn" id="collapseAll" type="button">Свернуть всё</button>
+        <button class="btn" id="copyVisible" type="button">Копировать видимые</button>
+        <button class="btn" id="favOnly" type="button">Только избранные</button>
+        <button class="btn" id="printBtn" type="button">Печать</button>
+      </div>
+    </header>
+
+    <main class="cards" id="cards">
+      
+    <article class="ticket" data-number="1" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 1</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Молекулярное строение вещества. Молекулярно-кинетическая теория объясняет свойства веществ движением и взаимодействием молекул. Основные положения МКТ: все вещества состоят из частиц; частицы непрерывно движутся; частицы взаимодействуют. Доказательства: диффузия и броуновское движение. Диффузия — проникновение молекул одного вещества между молекулами другого, например запах духов. В твердых телах молекулы расположены плотно и колеблются около своих мест. В жидкостях молекулы близко расположены и могут перемещаться. В газах расстояния между молекулами большие, они движутся свободно. Температура связана со скоростью движения молекул: чем выше температура, тем быстрее движение. Применение: двигатели, холодильники, тепловые процессы. Типичная ошибка: считать, что молекулы в твердых телах не движутся. Нарисовать можно расположение молекул в твердом теле, жидкости и газе.</span></li><li><span class="s1">Электромагнитные колебания. Электромагнитные колебания — периодические изменения силы тока и напряжения. Возникают в колебательном контуре, состоящем из катушки и конденсатора. Энергия периодически переходит из электрической в магнитную и обратно. Электромагнитное поле — особая форма материи, через которую взаимодействуют электрические заряды. Оно состоит из электрического и магнитного полей. Электромагнитные волны распространяются даже в вакууме. Примеры: радиоволны, свет, рентгеновские лучи. Формулы: \nu=\frac{1}{T}, где ν — частота, T — период; v=\lambda\nu, где v — скорость волны, λ — длина волны. Единица частоты — герц (Гц). Применение: радио, телевидение, мобильная связь. Ошибка: путать электрическое и магнитное поле.</span></li><li><span class="s1">Задача. Найти количество теплоты для нагревания 2 кг воды от 20°C до 80°C. Дано: m=2 кг, t1=20°C, t2=80°C, c=4200 Дж/(кг·°C). Формула: Q=cm\Delta t. Δt=80−20=60°C. Q=4200·2·60=504000 Дж. Ответ: Q=504000 Дж или 504 кДж.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Молекулярное строение вещества. Молекулярно-кинетическая теория объясняет свойства веществ движением и взаимодействием молекул. Основные положения МКТ: все вещества состоят из част</div>
+    </article>
+    
+    <article class="ticket" data-number="2" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 2</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Внутренняя энергия — это энергия движения и взаимодействия частиц тела, обозначают U, единица — джоуль (Дж). Она зависит от температуры, массы и агрегатного состояния. Изменить внутреннюю энергию можно двумя способами: совершением работы и теплопередачей. Виды теплопередачи: теплопроводность — передача энергии при соприкосновении частиц, лучше всего в металлах; конвекция — перенос энергии потоками жидкости или газа; излучение — передача энергии электромагнитными волнами, например от Солнца. Важно: теплота всегда идет от более нагретого тела к менее нагретому. Ошибка: путать внутреннюю энергию и температуру.</span></li><li><span class="s1">Теория. Волна — это распространение колебаний в пространстве. Продольная волна: колебания частиц идут вдоль направления распространения, пример — звук. Поперечная волна: колебания перпендикулярны направлению распространения, пример — волна на веревке. Длина волны λ — расстояние, которое волна проходит за один период, единица — метр (м). Формула: v=λν, где v — скорость волны, λ — длина волны, ν — частота; также ν=1/T, где T — период. Волны переносят энергию, но не переносят вещество. Ошибка: путать длину волны с амплитудой.</span></li><li><span class="s1">Задача. Дано: F=40 Н, s=5 м. Найти A. Формула: A=Fs. Подстановка: A=40·5. Решение: A=200 Дж. Ответ: 200 Дж.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Внутренняя энергия — это энергия движения и взаимодействия частиц тела, обозначают U, единица — джоуль (Дж). Она зависит от температуры, массы и агрегатного состояния. Изме</div>
+    </article>
+    
+    <article class="ticket" data-number="3" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 3</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Сила — физическая величина, показывающая действие одного тела на другое; обозначают F, единица — ньютон (Н). Масса m — мера инертности тела, единица — килограмм (кг). Силы складывают как вектора: если направлены в одну сторону, складывают; если в разные, находят разность. Второй закон Ньютона: F=ma, где F — равнодействующая сила, m — масса, a — ускорение. Ускорение тем больше, чем больше сила, и тем меньше, чем больше масса. Ошибка: забывать, что берут именно равнодействующую силу.</span></li><li><span class="s1">Теория. Сила Архимеда действует на тело, погруженное в жидкость или газ, и направлена вверх. Формула: Fа=ρgV, где ρ — плотность жидкости или газа, g — ускорение свободного падения, V — объем погруженной части тела. Единица силы — Н. Условия плавания тел: если Fа=mg, тело плавает или находится в равновесии; если Fа&lt;mg, тело тонет; если Fа&gt;mg, тело всплывает. Если плотность тела меньше плотности жидкости, тело может плавать. Пример: корабль держится на воде благодаря большой выталкивающей силе. Ошибка: думать, что на тело в воде действует только сила тяжести.</span></li><li><span class="s1">Задача. Дополните реакцию: ²³⁵₉₂U+¹₀n→⁹²₃₆Kr+¹⁴¹₅₆Ba+3¹₀n. Дано: A слева 235+1=236, Z слева 92; справа 92+141+3·1=236, Z справа 36+56=92. Формула: при ядерных реакциях сохраняются массовое число A и зарядовое число Z. Подстановка: A и Z совпадают. Решение: уравнение уже уравнено. Ответ: ²³⁵₉₂U+¹₀n→⁹²₃₆Kr+¹⁴¹₅₆Ba+3¹₀n.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Сила — физическая величина, показывающая действие одного тела на другое; обозначают F, единица — ньютон (Н). Масса m — мера инертности тела, единица — килограмм (кг). Силы </div>
+    </article>
+    
+    <article class="ticket" data-number="4" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 4</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Прямолинейное равноускоренное движение — это движение по прямой с постоянным ускорением. Ускорение a показывает, как быстро изменяется скорость: a=(v−v0)/t, где v — конечная скорость, v0 — начальная скорость, t — время; единица — м/с². Основные формулы: v=v0+at; s=v0t+at²/2. Если v0=0, то s=at²/2. При равноускоренном движении скорость меняется одинаково за равные промежутки времени. Ошибка: путать скорость и ускорение.</span></li><li><span class="s1">Теория. Плавление — переход вещества из твердого состояния в жидкое, кристаллизация — обратный процесс. Температура плавления у каждого вещества своя. При плавлении температура чистого вещества не меняется, потому что энергия идет на разрушение связи между частицами. Формула: Q=λm, где Q — количество теплоты, λ — удельная теплота плавления, m — масса; λ измеряется в Дж/кг. Пример: таяние льда. Ошибка: думать, что при плавлении температура обязательно растет.</span></li><li><span class="s1">Задача. Дано: m1=0,2 кг, t1=80°C; m2=0,1 кг, t2=20°C. Найти t. Формула: m1c(t1−t)=m2c(t−t2). Подстановка: 0,2(80−t)=0,1(t−20). Решение: 16−0,2t=0,1t−2; 18=0,3t; t=60°C. Ответ: 60°C.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Прямолинейное равноускоренное движение — это движение по прямой с постоянным ускорением. Ускорение a показывает, как быстро изменяется скорость: a=(v−v0)/t, где v — конечна</div>
+    </article>
+    
+    <article class="ticket" data-number="5" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 5</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Материальная точка — тело, размерами которого в данной задаче можно пренебречь. Траектория — линия, по которой движется тело. Путь s — длина траектории, скалярная величина, единица — метр (м). Перемещение — направленный отрезок от начального положения к конечному, обозначают обычно вектором. Путь всегда больше или равен модулю перемещения. Пример: автомобиль едет по городу, его можно считать материальной точкой. Ошибка: путать путь и перемещение.</span></li><li><span class="s1">Теория. Криволинейное движение — движение по кривой. Движение по окружности — частный случай криволинейного движения. При таком движении меняется направление скорости. Центростремительное ускорение направлено к центру окружности, формула: a=v²/r, где v — скорость, r — радиус; единица — м/с². Пример: камень на веревке, который вращают по кругу. Ошибка: считать, что при равномерном движении по окружности ускорения нет; оно есть, потому что меняется направление скорости.</span></li><li><span class="s1">Задача. Дано: ρ=7800 кг/м³, V=0,02 м³. Найти m. Формула: m=ρV. Подстановка: m=7800·0,02. Решение: m=156 кг. Ответ: 156 кг.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Материальная точка — тело, размерами которого в данной задаче можно пренебречь. Траектория — линия, по которой движется тело. Путь s — длина траектории, скалярная величина,</div>
+    </article>
+    
+    <article class="ticket" data-number="6" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 6</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Электризация тел — это приобретение телом электрического заряда. Заряды бывают положительные и отрицательные. Закон сохранения заряда: в замкнутой системе алгебраическая сумма зарядов не меняется. Атом состоит из ядра и электронов. Ядро содержит протоны и нейтроны. Ион — это атом или группа атомов с электрическим зарядом; если электронов меньше, ион положительный, если больше — отрицательный. Заряд ядра равен +Ze, где Z — число протонов, e — элементарный заряд. Ошибка: думать, что тело получает заряд из ниоткуда.</span></li><li><span class="s1">Теория. Третий закон Ньютона: силы взаимодействия двух тел равны по модулю, противоположны по направлению и приложены к разным телам. Формула: F1=−F2. Принцип относительности: в инерциальных системах отсчета все механические явления происходят одинаково, если системы движутся равномерно и прямолинейно друг относительно друга. Пример: в поезде без рывков можно вести себя так же, как на станции. Ошибка: считать, что равные и противоположные силы уравновешивают друг друга, хотя они действуют на разные тела.</span></li><li><span class="s1">Задача. Дано: F=30 Н, s=4 м. Найти A. Формула: A=Fs. Подстановка: A=30·4. Решение: A=120 Дж. Ответ: 120 Дж.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Электризация тел — это приобретение телом электрического заряда. Заряды бывают положительные и отрицательные. Закон сохранения заряда: в замкнутой системе алгебраическая су</div>
+    </article>
+    
+    <article class="ticket" data-number="7" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 7</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Отражение света — это возвращение света от поверхности. Закон отражения света: падающий луч, отраженный луч и перпендикуляр к поверхности в точке падения лежат в одной плоскости, а угол падения равен углу отражения: α=β. Пример: зеркало. Ошибка: путать угол падения с углом между лучом и поверхностью.</span></li><li><span class="s1">Теория. Импульс тела p — векторная величина, равная произведению массы на скорость: p=mv; единица — кг·м/с. Закон сохранения импульса: в замкнутой системе полный импульс до взаимодействия равен полному импульсу после взаимодействия. Реактивное движение возникает при выбрасывании части массы тела с большой скоростью, например у ракеты. Пример: надувной шарик, из которого выходит воздух. Ошибка: забывать, что импульс — вектор.</span></li><li><span class="s1">Задача. Дано: I=2 А, t=150 с. Найти q. Формула: q=It. Подстановка: q=2·150. Решение: q=300 Кл. Ответ: 300 Кл.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Отражение света — это возвращение света от поверхности. Закон отражения света: падающий луч, отраженный луч и перпендикуляр к поверхности в точке падения лежат в одной плос</div>
+    </article>
+    
+    <article class="ticket" data-number="8" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 8</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Закон всемирного тяготения: любые два тела притягиваются друг к другу с силой F=Gm1m2/r², где G — гравитационная постоянная, m1 и m2 — массы тел, r — расстояние между их центрами. Единица силы — Н. Под действием силы тяжести тела падают на Землю; если сопротивлением воздуха пренебречь, это свободное падение с ускорением g≈9,8 м/с². Формулы: v=gt, h=gt²/2 при падении из состояния покоя. Ошибка: путать силу тяжести и вес тела.</span></li><li><span class="s1">Теория. Электрический ток в металлах создается движением электронов. В жидкостях ток создают ионы; такие вещества называют электролитами. В газах ток идет только после ионизации, там движутся ионы и электроны. В полупроводниках ток создают электроны и “дырки”. В вакууме ток может идти как поток электронов. Пример: электролиз в растворах, лампы, полупроводниковые приборы. Ошибка: думать, что ток всегда переносится только электронами.</span></li><li><span class="s1">Задача. Дано: U=12 В, R=4 Ом. Найти I. Формула: I=U/R. Подстановка: I=12/4. Решение: I=3 А. Ответ: 3 А.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Закон всемирного тяготения: любые два тела притягиваются друг к другу с силой F=Gm1m2/r², где G — гравитационная постоянная, m1 и m2 — массы тел, r — расстояние между их це</div>
+    </article>
+    
+    <article class="ticket" data-number="9" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 9</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Скорость v показывает, какой путь проходит тело за единицу времени: v=s/t; единица — м/с. Равномерное движение — движение с постоянной скоростью. Неравномерное движение — скорость изменяется. Инерция — свойство тела сохранять состояние покоя или равномерного прямолинейного движения, если на него не действуют другие тела или их действие скомпенсировано. Пример: при резком торможении пассажира “бросает” вперед. Ошибка: считать, что движение обязательно требует силы.</span></li><li><span class="s1">Теория. Колебательное движение — это движение, которое многократно повторяется около положения равновесия. Основные величины: амплитуда A — наибольшее отклонение; период T — время одного полного колебания; частота ν — число колебаний за 1 секунду; ν=1/T. При колебаниях энергия переходит из потенциальной в кинетическую и обратно. Пример: качели. Ошибка: путать амплитуду и период.</span></li><li><span class="s1">Задача. Дано: m1=1000 кг, m2=2000 кг, r=10 м, G=6,67·10⁻¹¹ Н·м²/кг². Найти F. Формула: F=Gm1m2/r². Подстановка: F=6,67·10⁻¹¹·1000·2000/10². Решение: F=6,67·10⁻¹¹·2·10⁶/100=1,334·10⁻⁶ Н. Ответ: 1,334·10⁻⁶ Н.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Скорость v показывает, какой путь проходит тело за единицу времени: v=s/t; единица — м/с. Равномерное движение — движение с постоянной скоростью. Неравномерное движение — с</div>
+    </article>
+    
+    <article class="ticket" data-number="10" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 10</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Математический маятник — маленькое тело на невесомой нерастяжимой нити. Пружинный маятник — груз на пружине. Для них период зависит от свойств системы: для математического маятника T=2π√(l/g), где l — длина нити; для пружинного T=2π√(m/k), где m — масса груза, k — жесткость пружины. Чем длиннее нить, тем больше период; чем жестче пружина, тем меньше период. Ошибка: думать, что период зависит от амплитуды при малых колебаниях.</span></li><li><span class="s1">Теория. Взаимодействие заряженных тел описывает закон Кулона: F=kq1q2/r², где q1 и q2 — заряды, r — расстояние между ними, k — коэффициент пропорциональности. Одноименные заряды отталкиваются, разноименные притягиваются. Единица заряда — кулон (Кл). Пример: наэлектризованная расческа притягивает бумажки. Ошибка: забывать, что сила зависит и от расстояния, и от величины зарядов.</span></li><li><span class="s1">Задача. Дано: m=2 кг, h=5 м, g=10 м/с². Найти v. Формула: mgh=mv²/2. Подстановка: 2·10·5=2v²/2. Решение: 100=v²; v=10 м/с. Ответ: 10 м/с.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Математический маятник — маленькое тело на невесомой нерастяжимой нити. Пружинный маятник — груз на пружине. Для них период зависит от свойств системы: для математического </div>
+    </article>
+    
+    <article class="ticket" data-number="11" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 11</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Свободные колебания происходят после начального толчка без внешнего воздействия. Вынужденные колебания происходят под действием внешней периодической силы. Резонанс — резкое увеличение амплитуды вынужденных колебаний, если частота внешнего воздействия совпадает с собственной частотой системы. Пример: раскачивание качелей. Ошибка: считать резонанс всегда полезным; он может быть опасен для мостов и зданий.</span></li><li><span class="s1">Теория. Сила трения возникает при соприкосновении тел и препятствует их относительному движению. Трение покоя не дает телу сдвинуться. Трение скольжения действует при скольжении. Трение качения обычно меньше трения скольжения. Формула: Fтр=μN, где μ — коэффициент трения, N — сила реакции опоры; единица силы — Н. Трение полезно при ходьбе, торможении, письме, но мешает в механизмах. Ошибка: считать трение только вредным.</span></li><li><span class="s1">Задача. Дано: ρ=0,5 Ом·мм²/м, l=10 м, S=2 мм². Найти R. Формула: R=ρl/S. Подстановка: R=0,5·10/2. Решение: R=2,5 Ом. Ответ: 2,5 Ом.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Свободные колебания происходят после начального толчка без внешнего воздействия. Вынужденные колебания происходят под действием внешней периодической силы. Резонанс — резко</div>
+    </article>
+    
+    <article class="ticket" data-number="12" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 12</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Звуковые волны — это механические продольные волны в упругой среде. В вакууме звук не распространяется. Скорость звука зависит от среды: в твердых телах она больше, чем в жидкостях и газах. Громкость звука связана с амплитудой колебаний и измеряется в децибелах (дБ). Эхо — отраженный звук, который слышен отдельно, если задержка достаточна. Формула связи волны: v=λν. Пример: крик в горах. Ошибка: думать, что звук распространяется в пустоте.</span></li><li><span class="s1">Теория. Работа электрического тока: A=UIt=I²Rt=U²t/R, где A — работа, U — напряжение, I — сила тока, R — сопротивление, t — время. Мощность тока: P=A/t=UI=I²R=U²/R; единица мощности — ватт (Вт). Электронагревательные приборы используют тепловое действие тока: электрическая энергия превращается во внутреннюю. Пример: чайник, утюг. Ошибка: путать работу и мощность.</span></li><li><span class="s1">Задача. Дано: R1=2 Ом, R2=3 Ом. Найти Rпосл и Rпаралл. Формулы: Rпосл=R1+R2; 1/Rпаралл=1/R1+1/R2. Подстановка: Rпосл=2+3=5 Ом; 1/Rпаралл=1/2+1/3=5/6, значит Rпаралл=6/5=1,2 Ом. Ответ: при последовательном соединении 5 Ом, при параллельном 1,2 Ом.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Звуковые волны — это механические продольные волны в упругой среде. В вакууме звук не распространяется. Скорость звука зависит от среды: в твердых телах она больше, чем в ж</div>
+    </article>
+    
+    <article class="ticket" data-number="13" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 13</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Взаимодействие тел проявляется в том, что тела действуют друг на друга силами. Масса m показывает инертность тела и измеряется в килограммах. Плотность ρ — это масса единицы объема: ρ=m/V; единица — кг/м³. Формула массы: m=ρV. Чем больше плотность, тем больше масса одинакового объема вещества. Пример: у железа плотность больше, чем у воды. Ошибка: путать массу и вес.</span></li><li><span class="s1">Теория. Опыты Резерфорда показали, что атом имеет маленькое плотное положительно заряженное ядро и большую пустую область вокруг него. Большинство α-частиц проходит через фольгу, часть отклоняется, очень немногие отражаются назад. Так появилась планетарная модель атома: электроны движутся вокруг ядра. Ядро состоит из протонов и нейтронов. Число протонов определяет заряд ядра. Ошибка: считать, что положительный заряд распределен по всему атому.</span></li><li><span class="s1">Задача. Дано: v0=0, a=2 м/с², t=4 с. Найти v и s. Формулы: v=v0+at; s=v0t+at²/2. Подстановка: v=0+2·4=8 м/с; s=0·4+2·16/2=16 м. Ответ: v=8 м/с, s=16 м.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Взаимодействие тел проявляется в том, что тела действуют друг на друга силами. Масса m показывает инертность тела и измеряется в килограммах. Плотность ρ — это масса единиц</div>
+    </article>
+    
+    <article class="ticket" data-number="14" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 14</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. При прямолинейном равномерном движении скорость постоянна, а путь равен s=vt, где s — путь, v — скорость, t — время. Перемещение по направлению совпадает со скоростью, если движение идет в одну сторону. Единицы: м, м/с, с. Пример: поезд, идущий с постоянной скоростью по прямому участку. Ошибка: применять формулы равномерного движения к неравномерному без проверки.</span></li><li><span class="s1">Теория. Закон Джоуля—Ленца: количество теплоты, выделяемое током, Q=I²Rt, где I — сила тока, R — сопротивление, t — время; единица Q — джоуль (Дж). Чем больше ток, сопротивление и время, тем больше нагрев. Электронагревательные приборы работают на этом законе: чайник, плитка, утюг, фен. Ошибка: забывать, что тепло выделяется именно в проводнике с сопротивлением.</span></li><li><span class="s1">Задача. Дано: F=20 Н, k=200 Н/м. Найти x. Формула: F=kx. Подстановка: 20=200x. Решение: x=20/200=0,1 м. Ответ: 0,1 м или 10 см.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. При прямолинейном равномерном движении скорость постоянна, а путь равен s=vt, где s — путь, v — скорость, t — время. Перемещение по направлению совпадает со скоростью, если</div>
+    </article>
+    
+    <article class="ticket" data-number="15" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 15</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Деформация — изменение формы или размеров тела. Виды деформации: растяжение, сжатие, изгиб, кручение, сдвиг. При упругой деформации тело после снятия силы возвращается в исходное состояние. Закон Гука: Fупр=kx, где Fупр — сила упругости, k — жесткость, x — удлинение; единица k — Н/м. Пример: растяжение пружины. Ошибка: путать упругую и пластическую деформацию.</span></li><li><span class="s1">Теория. Магнитное поле катушки с током сильнее, чем у прямого проводника, и похоже на поле полосового магнита. Катушка с током называется соленоидом. Полюса соленоида определяют по правилу правой руки или по направлению тока. Электромагнит — это катушка с железным сердечником; он усиливает магнитное поле. Применение: реле, звонки, подъемные краны, двигатели. Ошибка: забывать, что без тока электромагнит почти не действует.</span></li><li><span class="s1">Задача. Дано: v0=1 м/с, a=2 м/с², t=5 с. Найти v и s. Формулы: v=v0+at; s=v0t+at²/2. Подстановка: v=1+2·5=11 м/с; s=1·5+2·25/2=30 м. Ответ: v=11 м/с, s=30 м.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Деформация — изменение формы или размеров тела. Виды деформации: растяжение, сжатие, изгиб, кручение, сдвиг. При упругой деформации тело после снятия силы возвращается в ис</div>
+    </article>
+    
+    <article class="ticket" data-number="16" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 16</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Сила тяжести — сила, с которой Земля притягивает тело, формула: Fтяж=mg, где m — масса тела, g — ускорение свободного падения. Вес тела — сила, с которой тело действует на опору или подвес. Вес и сила тяжести не всегда равны. Невесомость — состояние, когда вес тела равен нулю, например при свободном падении. Пример: космонавты в орбитальном полете. Ошибка: путать вес и силу тяжести.</span></li><li><span class="s1">Теория. Электрический ток — это упорядоченное движение заряженных частиц. Закон Ома для участка цепи: I=U/R, где I — сила тока, U — напряжение, R — сопротивление. При последовательном соединении проводников ток одинаковый, а напряжения складываются: R=R1+R2+… При параллельном соединении напряжение одинаковое, а общее сопротивление находится по формуле 1/R=1/R1+1/R2+…. Пример: гирлянда и домашняя проводка. Ошибка: путать формулы для последовательного и параллельного соединения.</span></li><li><span class="s1">Задача. Дано: r=2 м, v=6 м/с. Найти a. Формула: a=v²/r. Подстановка: a=6²/2. Решение: a=36/2=18 м/с². Ответ: 18 м/с².</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Сила тяжести — сила, с которой Земля притягивает тело, формула: Fтяж=mg, где m — масса тела, g — ускорение свободного падения. Вес тела — сила, с которой тело действует на </div>
+    </article>
+    
+    <article class="ticket" data-number="17" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 17</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Давление — это величина, равная отношению силы к площади: p=F/S, где p — давление, F — сила, S — площадь; единица — паскаль (Па). Атмосферное давление создается весом воздуха. Давление в жидкостях и газах передается во все стороны одинаково, закон Паскаля. Формула давления жидкости: p=ρgh, где ρ — плотность жидкости, g — ускорение свободного падения, h — глубина. Пример: шприц, гидравлический пресс. Ошибка: путать давление и силу.</span></li><li><span class="s1">Теория. Состав атомного ядра: протоны и нейтроны. Ядерные силы удерживают нуклоны в ядре и действуют на очень малых расстояниях. Дефект массы — это разность между суммой масс свободных нуклонов и массой ядра. Он связан с энергией связи ядра. Чем больше энергия связи, тем устойчивее ядро. Ошибка: думать, что масса ядра равна просто сумме масс протонов и нейтронов.</span></li><li><span class="s1">Задача. Дано: R1=4 Ом, R2=6 Ом. Найти Rпосл и Rпаралл. Формулы: Rпосл=R1+R2; 1/Rпаралл=1/R1+1/R2. Подстановка: Rпосл=4+6=10 Ом; 1/Rпаралл=1/4+1/6=5/12, значит Rпаралл=12/5=2,4 Ом. Ответ: при последовательном соединении 10 Ом, при параллельном 2,4 Ом.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Давление — это величина, равная отношению силы к площади: p=F/S, где p — давление, F — сила, S — площадь; единица — паскаль (Па). Атмосферное давление создается весом возду</div>
+    </article>
+    
+    <article class="ticket" data-number="18" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 18</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Линза — прозрачное тело, ограниченное двумя преломляющими поверхностями. Собирающая линза собирает параллельные лучи в фокусе, рассеивающая — раздвигает их. Построение изображения в тонких линзах выполняют с помощью главных лучей. Формула линзы: 1/F=1/d+1/f, где F — фокусное расстояние, d — расстояние до предмета, f — расстояние до изображения. Оптическая сила линзы D=1/F, единица — диоптрия. Ошибка: путать фокус и фокусное расстояние.</span></li><li><span class="s1">Теория. Механическая работа: A=Fs, где F — сила, s — путь; единица — джоуль (Дж). Мощность: P=A/t, единица — ватт (Вт). Энергия — способность тела совершать работу. КПД механизма η=Aполезн/Aзатрач·100%. Пример: подъемный кран, наклонная плоскость. Ошибка: забывать, что КПД всегда меньше 100%.</span></li><li><span class="s1">Задача. Дано: U=24 В, R=8 Ом. Найти I. Формула: I=U/R. Подстановка: I=24/8. Решение: I=3 А. Ответ: 3 А.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Линза — прозрачное тело, ограниченное двумя преломляющими поверхностями. Собирающая линза собирает параллельные лучи в фокусе, рассеивающая — раздвигает их. Построение изоб</div>
+    </article>
+    
+    <article class="ticket" data-number="19" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 19</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Первый закон Ньютона: в инерциальной системе отсчета тело сохраняет состояние покоя или равномерного прямолинейного движения, если на него не действуют другие тела или их действие скомпенсировано. Инерциальная система отсчета — система, в которой выполняется первый закон Ньютона. Сила — мера взаимодействия тел, обозначают F, единица — Н. Ошибка: считать, что если тело движется, на него обязательно действует сила.</span></li><li><span class="s1">Теория. Магнитное поле возникает вокруг проводника с током и действует на магнитную стрелку и на движущиеся заряды. Магнитная индукция — характеристика магнитного поля, обозначают B, единица — тесла (Тл). Направление магнитных линий вокруг прямого тока определяют по правилу буравчика: если буравчик вращается по направлению тока, то его поступательное движение показывает направление магнитных линий. Ошибка: путать направление тока и направление магнитных линий.</span></li><li><span class="s1">Задача. Дано: предмет находится между линзой и фокусом собирающей линзы. Найти изображение. Ответ: изображение будет мнимым, прямым, увеличенным и располагаться по ту же сторону линзы, что и предмет.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Первый закон Ньютона: в инерциальной системе отсчета тело сохраняет состояние покоя или равномерного прямолинейного движения, если на него не действуют другие тела или их д</div>
+    </article>
+    
+    <article class="ticket" data-number="20" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 20</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol start="1"><li><span class="s1">Теория. Преломление света — это изменение направления света при переходе из одного вещества в другое. Физический смысл показателя преломления: он показывает, во сколько раз скорость света в среде меньше, чем в вакууме. Абсолютный показатель преломления: n=c/v, где c — скорость света в вакууме, v — скорость света в среде. Относительный показатель преломления показывает отношение скоростей или показателей двух сред. Ошибка: считать, что при преломлении меняется только направление, но не скорость.</span></li><li><span class="s1">Теория. Магнитное поле действует на проводник с током. Сила Ампера F=BIl sin α, где B — магнитная индукция, I — сила тока, l — длина проводника, α — угол между проводником и линиями магнитного поля. Направление силы определяют по правилу левой руки: если линии магнитного поля входят в ладонь, а четыре пальца направлены по току, то отогнутый большой палец показывает направление силы. Пример: электродвигатель. Ошибка: путать правило левой руки с правой.</span></li><li><span class="s1">Задача. Электромагнитная волна распространяется со скоростью 3·10⁸ м/с, частота 5·10¹⁴ Гц. Найти длину волны. Формула: λ=v/ν. Подстановка: λ=3·10⁸ / 5·10¹⁴. Решение: λ=6·10⁻⁷ м. Ответ: 6·10⁻⁷ м, или 600 нм.</span></li></ol>
+      </div>
+      <div class="ticket-foot">Теория. Преломление света — это изменение направления света при переходе из одного вещества в другое. Физический смысл показателя преломления: он показывает, во сколько раз скорост</div>
+    </article>
+    
+    <article class="ticket" data-number="21" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 21</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Энергия связи ядра — это энергия, которую нужно
+затратить, чтобы разъединить ядро на отдельные протоны и нейтроны. Она
+связана с дефектом массы: Eсв=Δmc², где Δm — дефект массы, c — скорость
+света. Чем больше энергия связи, тем устойчивее ядро. Цепная ядерная
+реакция — это реакция деления ядер, в которой нейтроны, возникшие при
+одном делении, вызывают новые деления. Пример: уран-235. В ядерном
+реакторе реакция идет управляемо, в бомбе — неуправляемо. Ошибка: путать
+энергию связи с энергией излучения.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. При прямолинейном равномерном движении скорость
+постоянна, а перемещение направлено так же, как движение. Формулы: v=s/t
+и s=vt, где v — скорость, s — путь, t — время. Если движение в одну
+сторону, путь равен модулю перемещения. Единицы: м, м/с, с. Пример:
+поезд едет по прямой с постоянной скоростью. Ошибка: путать путь и
+перемещение.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: m1=2 кг, v1=3 м/с, m2=1 кг, v2=0. Найти v. Формула:
+m1v1+m2v2=(m1+m2)v. Подстановка: 2·3+1·0=(2+1)v. Решение: 6=3v, v=2 м/с.
+Ответ: 2 м/с.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Энергия связи ядра — это энергия, которую нужно затратить, чтобы разъединить ядро на отдельные протоны и нейтроны. Она связана с дефектом массы: Eсв=Δmc², где Δm — дефект м</div>
+    </article>
+    
+    <article class="ticket" data-number="22" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 22</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Сила — физическая величина, характеризующая действие
+одного тела на другое, обозначают F, единица — ньютон (Н).
+Равнодействующая сил — это одна сила, которая заменяет действие
+нескольких сил. Если силы направлены в одну сторону, их складывают; если
+в разные — находят разность. Если силы взаимно перпендикулярны,
+равнодействующую находят по правилу параллелограмма. Ошибка: забывать,
+что сила — векторная величина.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Термоядерные реакции — это реакции слияния легких ядер в
+более тяжелые при очень высокой температуре. При этом выделяется
+огромная энергия. Пример: реакции в Солнце. Ядерная энергия применяется
+в атомных электростанциях, термоядерная энергия пока изучается и
+разрабатывается. Преимущество ядерной энергии — большая мощность;
+недостаток — радиоактивные отходы и опасность аварий. Ошибка: путать
+деление ядер и слияние ядер.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: U=220 В, I=2 А, t=60 с. Найти A. Формула: A=UIt.
+Подстановка: A=220·2·60. Решение: A=26400 Дж. Ответ: 26400 Дж.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Сила — физическая величина, характеризующая действие одного тела на другое, обозначают F, единица — ньютон (Н). Равнодействующая сил — это одна сила, которая заменяет дейст</div>
+    </article>
+    
+    <article class="ticket" data-number="23" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 23</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Свободное падение — это движение тела только под
+действием силы тяжести, без учета сопротивления воздуха. Ускорение
+свободного падения обозначают g, оно примерно равно 9,8 м/с², часто
+берут 10 м/с². Формулы: v=gt, s=gt²/2, если тело падает из состояния
+покоя. При движении вверх скорость уменьшается, при движении вниз
+увеличивается. Ошибка: считать, что все тела падают с разной скоростью
+из-за массы, если сопротивлением воздуха пренебречь.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Электромагнитные волны — это распространение
+электромагнитных колебаний в пространстве. Они могут распространяться в
+вакууме. Радиосвязь основана на передаче информации с помощью радиоволн.
+Передающий радиоприбор создает высокочастотные колебания, которые
+модулируют звуковой сигнал, а приемник принимает и выделяет нужный
+сигнал. Применение: радио, телевидение, связь, Wi-Fi. Ошибка: думать,
+что радиоволны не относятся к электромагнитным волнам.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: I=3 А, R=5 Ом, t=10 с. Найти Q. Формула: Q=I²Rt.
+Подстановка: Q=3²·5·10. Решение: Q=9·5·10=450 Дж. Ответ: 450 Дж.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Свободное падение — это движение тела только под действием силы тяжести, без учета сопротивления воздуха. Ускорение свободного падения обозначают g, оно примерно равно 9,8 </div>
+    </article>
+    
+    <article class="ticket" data-number="24" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 24</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Простые механизмы — это приспособления, которые помогают
+изменять силу или ее направление. К ним относятся рычаг, блок, наклонная
+плоскость, ворот, клин, винт. «Золотое правило механики»: во сколько раз
+выигрываем в силе, во столько же раз проигрываем в расстоянии. Поэтому
+работа не увеличивается: Aполезн≤Aзатрач, а в идеальном механизме
+Aполезн=Aзатрач. Пример: наклонная плоскость облегчает подъем тела.
+Ошибка: думать, что простой механизм дает выигрыш и в силе, и в работе
+одновременно.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Радиоактивные изотопы — это атомы одного элемента с
+разным числом нейтронов, которые самопроизвольно распадаются. Их
+применяют в медицине для диагностики и лечения, в науке для
+исследований, в промышленности для контроля толщины и поиска утечек, в
+археологии для определения возраста. Радиоактивность опасна, поэтому
+нужна защита. Ошибка: путать изотопы с разными химическими
+элементами.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: ρ=1000 кг/м³, g=10 м/с², h=2 м. Найти p. Формула:
+p=ρgh. Подстановка: p=1000·10·2. Решение: p=20000 Па. Ответ: 20000
+Па.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Простые механизмы — это приспособления, которые помогают изменять силу или ее направление. К ним относятся рычаг, блок, наклонная плоскость, ворот, клин, винт. «Золотое пра</div>
+    </article>
+    
+    <article class="ticket" data-number="25" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 25</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Скалярные величины имеют только числовое значение: масса,
+время, температура, путь. Векторные величины имеют модуль и направление:
+сила, скорость, ускорение, перемещение. Векторы складывают по правилу
+треугольника или параллелограмма. При вычитании векторов прибавляют
+противоположный вектор. Если векторы направлены вдоль одной прямой, их
+можно складывать алгебраически. Ошибка: путать путь и перемещение,
+скорость и модуль скорости.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Переменный ток — это ток, который периодически изменяется
+по величине и направлению. Его получают на электростанциях с помощью
+генераторов. Для передачи на большие расстояния используют трансформатор
+— устройство, изменяющее напряжение переменного тока. Формула
+трансформатора: U1/U2=N1/N2, где U — напряжение, N — число витков.
+Повышающий трансформатор увеличивает напряжение, понижающий — уменьшает.
+Ошибка: считать, что трансформатор работает на постоянном токе.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: m1=2 кг, v1=4 м/с, m2=3 кг, v2=0. Найти v. Формула:
+m1v1+m2v2=(m1+m2)v. Подстановка: 2·4+3·0=5v. Решение: 8=5v, v=1,6 м/с.
+Ответ: 1,6 м/с.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Скалярные величины имеют только числовое значение: масса, время, температура, путь. Векторные величины имеют модуль и направление: сила, скорость, ускорение, перемещение. В</div>
+    </article>
+    
+    <article class="ticket" data-number="26" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 26</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Вещество может находиться в твердом, жидком и
+газообразном состояниях. В твердом теле частицы расположены очень близко
+и только колеблются около своих мест, поэтому тело сохраняет форму. В
+жидкости частицы тоже близко, но могут перемещаться, поэтому жидкость
+течет и принимает форму сосуда. В газе расстояния между частицами
+большие, частицы движутся свободно, поэтому газ заполняет весь объем.
+Ошибка: считать, что в жидкостях молекулы расположены как в твердых
+телах.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Электромагнитные колебания получают в колебательном
+контуре, который состоит из конденсатора и катушки. При колебаниях
+энергия периодически переходит из электрической в магнитную и обратно.
+Формула Томсона: T=2π√(LC), где T — период, L — индуктивность катушки, C
+— емкость конденсатора. Чем больше L и C, тем больше период. Ошибка:
+забывать, что в реальном контуре есть потери энергии.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: k=200 Н/м, x=0,05 м. Найти F. Формула: F=kx.
+Подстановка: F=200·0,05. Решение: F=10 Н. Ответ: 10 Н.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Вещество может находиться в твердом, жидком и газообразном состояниях. В твердом теле частицы расположены очень близко и только колеблются около своих мест, поэтому тело со</div>
+    </article>
+    
+    <article class="ticket" data-number="27" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 27</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Дисперсия света — это зависимость показателя преломления
+вещества от цвета света. Из-за дисперсии белый свет разлагается в
+спектр, например в призме. Цвет тела зависит от того, какие лучи оно
+отражает и какие поглощает: белое тело отражает почти все цвета, черное
+почти все поглощает, цветное отражает в основном свой цвет. Ошибка:
+думать, что тело имеет цвет само по себе без света.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Индукционный ток возникает в замкнутом проводнике при
+изменении магнитного поля или при движении проводника в магнитном поле.
+Направление индукционного тока определяют по правилу Ленца: индукционный
+ток всегда препятствует причине, его вызвавшей. Это значит, что
+магнитное поле, созданное током, противодействует изменению магнитного
+потока. Ошибка: путать правило Ленца с правилом буравчика.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: v0=2 м/с, a=3 м/с², t=4 с. Найти v и s. Формулы:
+v=v0+at, s=v0t+at²/2. Подстановка: v=2+3·4=14 м/с; s=2·4+3·16/2=8+24=32
+м. Ответ: v=14 м/с, s=32 м.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Дисперсия света — это зависимость показателя преломления вещества от цвета света. Из-за дисперсии белый свет разлагается в спектр, например в призме. Цвет тела зависит от т</div>
+    </article>
+    
+    <article class="ticket" data-number="28" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 28</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Сила тока — это физическая величина, равная заряду,
+проходящему через поперечное сечение проводника за 1 секунду: I=q/t.
+Единица силы тока — ампер (А). Для измерения используют амперметр,
+который включают последовательно. Если через проводник проходит заряд 1
+кулон за 1 секунду, то сила тока равна 1 амперу. Ошибка: путать силу
+тока с напряжением.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Спектр — это совокупность цветов или линий, на которые
+разлагается свет. Бывают непрерывные спектры, линейчатые спектры
+излучения и линейчатые спектры поглощения. Непрерывный спектр дают
+нагретые твердые тела и жидкости, линейчатый — разреженные газы. Спектры
+используют для определения состава веществ. Ошибка: считать, что у всех
+источников света одинаковый спектр.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: m1=5 кг, m2=10 кг, r=2 м, G=6,67·10⁻¹¹ Н·м²/кг².
+Найти F. Формула: F=Gm1m2/r². Подстановка: F=6,67·10⁻¹¹·5·10/2².
+Решение: F=6,67·10⁻¹¹·50/4=8,34·10⁻¹⁰ Н. Ответ: 8,34·10⁻¹⁰ Н.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Сила тока — это физическая величина, равная заряду, проходящему через поперечное сечение проводника за 1 секунду: I=q/t. Единица силы тока — ампер (А). Для измерения исполь</div>
+    </article>
+    
+    <article class="ticket" data-number="29" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 29</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Напряжение — это физическая величина, равная работе
+электрического поля по перемещению заряда: U=A/q. Единица напряжения —
+вольт (В). Напряжение измеряют вольтметром, который включают параллельно
+участку цепи. Чем больше напряжение, тем больше работа электрического
+поля при переносе заряда. Ошибка: путать напряжение и силу
+тока.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Если тело бросить вертикально вверх, оно сначала
+поднимается, затем останавливается в верхней точке и падает вниз. При
+подъеме ускорение направлено вниз и равно g, поэтому скорость
+уменьшается. Формулы: v=v0−gt, h=v0t−gt²/2. В верхней точке v=0. Пример:
+подброшенный мяч. Ошибка: думать, что в верхней точке ускорение тоже
+равно нулю.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: m1=1 кг, v1=6 м/с, m2=2 кг, v2=0. Найти v. Формула:
+m1v1+m2v2=(m1+m2)v. Подстановка: 1·6+2·0=3v. Решение: 6=3v, v=2 м/с.
+Ответ: 2 м/с.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Напряжение — это физическая величина, равная работе электрического поля по перемещению заряда: U=A/q. Единица напряжения — вольт (В). Напряжение измеряют вольтметром, котор</div>
+    </article>
+    
+    <article class="ticket" data-number="30" data-fav="0">
+      <div class="ticket-head">
+        <button class="title-btn" type="button" aria-expanded="false">
+          <span class="ticket-no">Билет 30</span>
+          <span class="ticket-meta">Открыть</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ticket-actions">
+          <button class="icon-btn fav-btn" type="button" aria-label="Добавить в избранное" title="Избранное">☆</button>
+          <button class="icon-btn copy-btn" type="button" aria-label="Скопировать билет" title="Копировать">⧉</button>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <ol type="1">
+<li><p>Теория. Основные положения молекулярно-кинетической теории: все
+вещества состоят из частиц; частицы непрерывно и хаотично движутся;
+частицы взаимодействуют друг с другом. Эти положения объясняют диффузию,
+броуновское движение, различие агрегатных состояний и зависимость
+свойств веществ от температуры. Ошибка: считать, что молекулы в твердом
+теле неподвижны.</p></li>
+</ol><ol start="2" type="1">
+<li><p>Теория. Конденсатор — устройство для накопления электрического
+заряда и энергии. Основная характеристика — емкость C, единица — фарад
+(Ф). Формулы: C=q/U, где q — заряд, U — напряжение; энергия конденсатора
+W=qU/2=CU²/2=q²/(2C). Чем больше емкость, тем больше заряд может
+накопить конденсатор при том же напряжении. Ошибка: путать емкость с
+энергией.</p></li>
+</ol><ol start="3" type="1">
+<li><p>Задача. Дано: v=3·10⁸ м/с, ν=5·10¹⁴ Гц. Найти λ. Формула: λ=v/ν.
+Подстановка: λ=3·10⁸/5·10¹⁴. Решение: λ=6·10⁻⁷ м. Ответ: 6·10⁻⁷ м или
+600 нм.</p></li>
+</ol>
+      </div>
+      <div class="ticket-foot">Теория. Основные положения молекулярно-кинетической теории: все вещества состоят из частиц; частицы непрерывно и хаотично движутся; частицы взаимодействуют друг с другом. Эти полож</div>
+    </article>
+    
+    </main>
+
+    <div class="empty" id="emptyState">Ничего не найдено. Сбрось поиск или отключи фильтр избранного.</div>
+    <div class="footer-note">Все билеты собраны из исправленного файла с 1–30 и оформлены в одном HTML.</div>
+  </div>
+
+<script>
+(() => {
+  const root = document.body;
+  const cards = [...document.querySelectorAll('.ticket')];
+  const search = document.getElementById('search');
+  const jump = document.getElementById('jump');
+  const visibleCount = document.getElementById('visibleCount');
+  const favCount = document.getElementById('favCount');
+  const themeLabel = document.getElementById('themeLabel');
+  const emptyState = document.getElementById('emptyState');
+  const favOnlyBtn = document.getElementById('favOnly');
+  const favoriteSet = new Set(JSON.parse(localStorage.getItem('favTickets') || '[]'));
+  let favOnly = false;
+
+  function saveFavorites() {
+    localStorage.setItem('favTickets', JSON.stringify([...favoriteSet]));
+  }
+
+  function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function applyTheme(theme) {
+    root.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    themeLabel.textContent = 'Тема: ' + ({
+      dark: 'тёмная',
+      light: 'светлая',
+      neon: 'неоновая'
+    })[theme];
+  }
+
+  function setOpen(card, open) {
+    card.classList.toggle('open', open);
+    const btn = card.querySelector('.title-btn');
+    btn.setAttribute('aria-expanded', String(open));
+  }
+
+  function renderFavorites() {
+    cards.forEach(card => {
+      const num = Number(card.dataset.number);
+      const favBtn = card.querySelector('.fav-btn');
+      const isFav = favoriteSet.has(num);
+      card.dataset.fav = isFav ? '1' : '0';
+      favBtn.textContent = isFav ? '★' : '☆';
+      favBtn.setAttribute('aria-label', isFav ? 'Убрать из избранного' : 'Добавить в избранное');
+    });
+    favCount.textContent = 'Избранных: ' + favoriteSet.size;
+  }
+
+  function highlightHtml(text, query) {
+    if (!query) return text;
+    const parts = query.trim().split(/\s+/).filter(Boolean).slice(0, 6);
+    if (!parts.length) return text;
+    const re = new RegExp('(' + parts.map(escapeRegExp).join('|') + ')', 'ig');
+    return text.replace(re, '<mark>$1</mark>');
+  }
+
+  function filterCards() {
+    const q = search.value.trim().toLowerCase();
+    let visible = 0;
+
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const matchesQuery = !q || text.includes(q);
+      const matchesFav = !favOnly || card.dataset.fav === '1';
+      const show = matchesQuery && matchesFav;
+
+      card.classList.toggle('hidden', !show);
+      if (show) {
+        visible++;
+        if (q) setOpen(card, true);
+      }
+
+      const body = card.querySelector('.ticket-body');
+      if (q) {
+        body.innerHTML = highlightHtml(body.dataset.originalHtml, q);
+      } else {
+        body.innerHTML = body.dataset.originalHtml;
+      }
+    });
+
+    visibleCount.textContent = 'Показано: ' + visible;
+    emptyState.classList.toggle('show', visible === 0);
+  }
+
+  cards.forEach(card => {
+    const body = card.querySelector('.ticket-body');
+    body.dataset.originalHtml = body.innerHTML;
+
+    const titleBtn = card.querySelector('.title-btn');
+    titleBtn.addEventListener('click', () => {
+      setOpen(card, !card.classList.contains('open'));
+    });
+
+    card.querySelector('.fav-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const num = Number(card.dataset.number);
+      if (favoriteSet.has(num)) favoriteSet.delete(num);
+      else favoriteSet.add(num);
+      saveFavorites();
+      renderFavorites();
+      filterCards();
+    });
+
+    card.querySelector('.copy-btn').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const text = card.innerText.replace(/\n{3,}/g, '\n\n').trim();
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = card.querySelector('.copy-btn');
+        const old = btn.textContent;
+        btn.textContent = '✓';
+        setTimeout(() => btn.textContent = old, 900);
+      } catch {
+        alert('Не удалось скопировать текст.');
+      }
+    });
+  });
+
+  document.getElementById('expandAll').addEventListener('click', () => {
+    cards.forEach(card => {
+      if (!card.classList.contains('hidden')) setOpen(card, true);
+    });
+  });
+
+  document.getElementById('collapseAll').addEventListener('click', () => {
+    cards.forEach(card => setOpen(card, false));
+  });
+
+  document.getElementById('copyVisible').addEventListener('click', async () => {
+    const text = cards
+      .filter(card => !card.classList.contains('hidden'))
+      .map(card => card.innerText.replace(/\n{3,}/g, '\n\n').trim())
+      .join('\n\n' + '='.repeat(20) + '\n\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copyVisible');
+      const old = btn.textContent;
+      btn.textContent = 'Скопировано';
+      setTimeout(() => btn.textContent = old, 1100);
+    } catch {
+      alert('Не удалось скопировать видимые билеты.');
+    }
+  });
+
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  favOnlyBtn.addEventListener('click', () => {
+    favOnly = !favOnly;
+    favOnlyBtn.textContent = favOnly ? 'Все билеты' : 'Только избранные';
+    favOnlyBtn.classList.toggle('active', favOnly);
+    filterCards();
+  });
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+  });
+
+  jump.addEventListener('change', () => {
+    const val = jump.value;
+    if (!val) return;
+    const card = document.querySelector('.ticket[data-number="' + val + '"]');
+    if (!card) return;
+    favOnly = false;
+    favOnlyBtn.textContent = 'Только избранные';
+    favOnlyBtn.classList.remove('active');
+    search.value = '';
+    filterCards();
+    setOpen(card, true);
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    jump.value = '';
+  });
+
+  search.addEventListener('input', filterCards);
+
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  applyTheme(savedTheme);
+  renderFavorites();
+  filterCards();
+
+  // default: open first ticket only
+  setOpen(cards[0], true);
+})();
+</script>
+</body>
+</html>
