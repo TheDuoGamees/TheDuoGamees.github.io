@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<meta name="theme-color" content="#0b1020" />
+<title>NeuroIQ — Premium IQ Test</title>
+<style>
+:root{--bg:#070b15;--bg2:#0d1326;--panel:rgba(16,23,42,.68);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.1);--txt:#eef3ff;--mut:#97a3c4;--acc:#6ee7ff;--acc2:#8b5cf6;--good:#59ffa7;--bad:#ff708a;--warn:#ffd36e;--shadow:0 22px 80px rgba(0,0,0,.42);--radius:24px;--blur:18px;--speed:.28s;--font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+[data-theme=classic]{--bg:#07101c;--bg2:#0d1727;--panel:rgba(14,21,35,.7);--panel2:rgba(255,255,255,.05);--line:rgba(255,255,255,.08);--txt:#eef3ff;--mut:#95a2c4;--acc:#72d6ff;--acc2:#8b7bff;--good:#55f0ad;--bad:#ff6f88;--warn:#ffcf62}
+[data-theme=cyber]{--bg:#041018;--bg2:#091a29;--panel:rgba(6,22,35,.64);--panel2:rgba(0,255,255,.06);--line:rgba(108,230,255,.14);--txt:#e8fbff;--mut:#7ab2c4;--acc:#20f6ff;--acc2:#4f8dff;--good:#49ffa5;--bad:#ff5f93;--warn:#ffe16a}
+[data-theme=purple]{--bg:#12081b;--bg2:#1b1230;--panel:rgba(31,20,48,.66);--panel2:rgba(255,255,255,.07);--line:rgba(219,190,255,.14);--txt:#faf5ff;--mut:#c1b0da;--acc:#ce9bff;--acc2:#7c5cff;--good:#63ffb4;--bad:#ff7b9e;--warn:#ffd46b}
+[data-theme=light]{--bg:#eef2fb;--bg2:#dfe7f4;--panel:rgba(255,255,255,.76);--panel2:rgba(255,255,255,.88);--line:rgba(20,30,50,.08);--txt:#111827;--mut:#5d6b85;--acc:#2563eb;--acc2:#7c3aed;--good:#0ea56e;--bad:#d63c5b;--warn:#c08500;--shadow:0 18px 50px rgba(20,30,50,.12)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 10% 10%,rgba(110,231,255,.12),transparent 45%),radial-gradient(1000px 650px at 90% 20%,rgba(139,92,246,.13),transparent 42%),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--txt);font-family:var(--font);overflow-x:hidden}body{min-height:100%;-webkit-tap-highlight-color:transparent;transition:background .45s,color .45s}
+body.anim-off *,body.anim-off *::before,body.anim-off *::after{animation:none!important;transition:none!important}
+#bgfx,#particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}#bgfx::before,#bgfx::after{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.08),transparent 32%),radial-gradient(circle at 80% 30%,rgba(255,255,255,.06),transparent 25%),radial-gradient(circle at 50% 80%,rgba(255,255,255,.05),transparent 28%);filter:blur(30px);animation:floatBg 18s ease-in-out infinite alternate;opacity:.5}#bgfx::after{animation-duration:24s;opacity:.35;transform:scale(1.1)}@keyframes floatBg{from{transform:translate3d(-1%,0,0) scale(1)}to{transform:translate3d(1%,1.5%,0) scale(1.05)}}
+.particle{position:absolute;width:5px;height:5px;border-radius:999px;background:radial-gradient(circle,var(--acc),transparent 70%);opacity:.4;filter:blur(1px);animation:drift linear infinite,twinkle 5s ease-in-out infinite alternate}.particle.s2{background:radial-gradient(circle,var(--acc2),transparent 70%)}.particle.s3{background:radial-gradient(circle,var(--good),transparent 70%)}@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-120vh,0)}}@keyframes twinkle{from{opacity:.15}to{opacity:.55}}
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}.shell{width:min(1280px,calc(100vw - 24px));margin:0 auto;padding:14px 0 22px;display:flex;flex-direction:column;gap:14px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:24px;background:var(--panel);backdrop-filter:blur(var(--blur));box-shadow:var(--shadow)}.brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 25px rgba(110,231,255,.24),inset 0 1px 1px rgba(255,255,255,.35);position:relative;flex:none}.logo::before,.logo::after{content:"";position:absolute;inset:10px;border:2px solid rgba(255,255,255,.78);border-radius:11px;transform:rotate(8deg)}.logo::after{inset:15px;transform:rotate(-12deg);opacity:.55}.brand h1{margin:0;font-size:clamp(1rem,2vw,1.15rem);line-height:1.1;letter-spacing:.02em}.brand p{margin:2px 0 0;color:var(--mut);font-size:clamp(.72rem,1.4vw,.86rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.chip,.btn,.opt,.mode,.seg{appearance:none;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),rgba(255,255,255,.02));color:var(--txt);border-radius:16px;min-height:42px;padding:10px 14px;font:600 clamp(.82rem,1.6vw,.95rem)/1 var(--font);cursor:pointer;transition:transform var(--speed),border-color var(--speed),background var(--speed),box-shadow var(--speed),opacity var(--speed)}.chip:hover,.btn:hover,.opt:hover,.mode:hover,.seg:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.12)}.chip{display:inline-flex;align-items:center;gap:8px}.chip small{font-weight:700;color:var(--mut)}.grid{display:grid;gap:14px}.home,.test,.results{display:none;animation:fadeIn .28s ease}.active{display:grid}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.card{position:relative;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),rgba(255,255,255,.03));backdrop-filter:blur(var(--blur));box-shadow:var(--shadow);overflow:hidden}.heroMain{padding:28px;min-height:360px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}.kicker{display:inline-flex;align-items:center;gap:10px;width:fit-content;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mut);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}.kicker i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 14px var(--good)}.heroTitle{font-size:clamp(2rem,5vw,4.3rem);line-height:.95;margin:0;letter-spacing:-.04em}.heroTitle span{background:linear-gradient(90deg,var(--txt),var(--acc) 65%,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}.heroText{max-width:58ch;color:var(--mut);font-size:clamp(.95rem,2vw,1.08rem);line-height:1.6}.ctaRow{display:flex;gap:10px;flex-wrap:wrap}.btn.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-color:transparent;box-shadow:0 16px 40px rgba(80,120,255,.28)}.btn.primary:hover{box-shadow:0 20px 46px rgba(80,120,255,.36)}.btn.ghost{background:rgba(255,255,255,.03)}.heroMeta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04)}.stat b{display:block;font-size:1.4rem;letter-spacing:-.02em}.stat span{color:var(--mut);font-size:.8rem}.side{padding:18px;display:grid;gap:12px}.panelTitle{display:flex;align-items:center;justify-content:space-between;gap:12px}.panelTitle h3{margin:0;font-size:1rem}.panelTitle small{color:var(--mut)}.segWrap{display:flex;gap:8px;flex-wrap:wrap}.seg{flex:1 1 0;min-width:92px;text-align:center}.seg.active,.mode.active{border-color:rgba(110,231,255,.38);background:linear-gradient(180deg,rgba(110,231,255,.14),rgba(255,255,255,.03));box-shadow:0 0 0 1px rgba(110,231,255,.08) inset}.modeGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mode{padding:16px;text-align:left;min-height:92px;display:flex;flex-direction:column;gap:6px}.mode b{font-size:1rem}.mode span{font-size:.82rem;color:var(--mut);line-height:1.45}.settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.settingBox{padding:12px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03)}.settingBox label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.84rem;color:var(--mut);margin-bottom:8px}.settingBox input[type=range]{width:100%}.settingBox select,.settingBox input[type=number]{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:11px 12px;outline:none;font:600 .94rem var(--font)}.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);font-size:.86rem;color:var(--mut)}.check input{accent-color:var(--acc)}
+.headerRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px}.progressWrap{padding:16px}.progressTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.bar{height:12px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid var(--line)}.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:inherit;transition:width .35s ease}.timerRow{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:.88rem}.timerDot{width:10px;height:10px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 0 rgba(255,211,110,.28);animation:pulse 1.2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,211,110,.28)}70%{box-shadow:0 0 0 14px rgba(255,211,110,0)}100%{box-shadow:0 0 0 0 rgba(255,211,110,0)}}
+.question{padding:18px;min-height:540px;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px}.qTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.qMeta{display:flex;gap:8px;flex-wrap:wrap}.tag{font-size:.77rem;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--mut)}.qTitle{font-size:clamp(1.2rem,2.8vw,1.8rem);line-height:1.2;margin:0;letter-spacing:-.02em}.qPrompt{color:var(--mut);line-height:1.65;font-size:1rem;max-width:72ch}.visualWrap{display:grid;place-items:center;padding:8px 0;min-height:240px}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.opt{padding:14px;text-align:left;display:flex;gap:12px;align-items:center;min-height:64px}.opt .idx{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06);font-weight:800;flex:none}.opt.correct{border-color:rgba(89,255,167,.55);box-shadow:0 0 0 1px rgba(89,255,167,.14) inset}.opt.wrong{border-color:rgba(255,112,138,.55);box-shadow:0 0 0 1px rgba(255,112,138,.16) inset}.feedback{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);display:none}.feedback.show{display:block;animation:fadeIn .25s ease}.feedback b{display:block;margin-bottom:4px}.feedback p{margin:0;color:var(--mut);line-height:1.55}.footRow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.mono{font-variant-numeric:tabular-nums}.svgCard{width:min(100%,340px);padding:12px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}.svgCard svg{display:block;width:100%;height:auto}.matrixGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(100%,420px)}.mCell{aspect-ratio:1;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.03);display:grid;place-items:center}.memoryBox{display:grid;place-items:center;gap:14px}.memSeq{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.symbol{width:52px;height:52px;border-radius:16px;border:1px solid var(--line);display:grid;place-items:center;background:rgba(255,255,255,.04);font-size:1.6rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}.reactionBox{display:grid;place-items:center;min-height:260px}.goZone{width:min(100%,460px);height:220px;border-radius:28px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));display:grid;place-items:center;text-align:center;padding:18px}.goZone.go{background:linear-gradient(135deg,rgba(89,255,167,.18),rgba(110,231,255,.12));box-shadow:0 0 0 1px rgba(89,255,167,.12) inset}.goBtn{padding:16px 24px;font-size:1.12rem;border-radius:18px;min-width:160px}.results{padding-bottom:22px}.dash{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.scoreCard{padding:22px}.bigScore{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.ring{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--acc) 0,var(--acc) 0,var(--panel2) 0);display:grid;place-items:center;box-shadow:inset 0 0 0 16px rgba(255,255,255,.03)}.ring b{font-size:2rem}.ring span{color:var(--mut);font-size:.8rem}.bigNum{font-size:clamp(3rem,7vw,4.5rem);line-height:1;margin:0;letter-spacing:-.05em}.subgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.mini{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04)}.mini small{display:block;color:var(--mut);margin-bottom:8px}.mini b{font-size:1.2rem}.chartCard{padding:18px}.chartWrap{height:280px;position:relative}.chartWrap canvas{width:100%;height:100%;display:block}.listGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bullet{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mut);line-height:1.55}.footerBar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.hidden{display:none!important}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);padding:12px 16px;border-radius:16px;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+@media (max-width:1100px){.hero,.dash{grid-template-columns:1fr}.heroMain{min-height:unset}.subgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.heroMeta{grid-template-columns:1fr}.settings{grid-template-columns:1fr}.listGrid{grid-template-columns:1fr}}
+@media (max-width:760px){.shell{width:calc(100vw - 14px);padding-top:8px}.topbar{padding:10px 12px;border-radius:18px}.actions{gap:6px}.chip,.btn,.seg,.mode,.opt{min-height:40px;padding:10px 12px}.question{min-height:unset;padding:14px}.options{grid-template-columns:1fr}.matrixGrid{width:100%}.goZone{height:190px}.subgrid{grid-template-columns:1fr 1fr}.bigNum{font-size:clamp(2.6rem,14vw,3.8rem)}}
+</style>
+</head>
+<body>
+<div id="bgfx"></div><div id="particles"></div>
+<div class="app">
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="logo"></div><div><h1 id="appName">NeuroIQ</h1><p id="appTag">Premium adaptive cognitive test</p></div></div>
+      <div class="actions">
+        <button class="chip" id="themeBtn" type="button"></button>
+        <button class="chip" id="langBtn" type="button"></button>
+        <button class="chip" id="soundBtn" type="button"></button>
+        <button class="chip" id="animBtn" type="button"></button>
+        <button class="chip" id="fsBtn" type="button"></button>
+      </div>
+    </header>
+
+    <section id="home" class="home active grid">
+      <div class="hero">
+        <div class="card heroMain">
+          <div>
+            <div class="kicker"><i></i><span data-t="heroKicker"></span></div>
+            <h2 class="heroTitle"><span data-t="heroTitleA"></span> <span data-t="heroTitleB"></span></h2>
+            <p class="heroText" data-t="heroText"></p>
+          </div>
+          <div class="ctaRow">
+            <button class="btn primary" id="startFixed" type="button" data-t="startFixed"></button>
+            <button class="btn ghost" id="startCustom" type="button" data-t="startCustom"></button>
+            <button class="btn ghost" id="viewStatsBtn" type="button" data-t="viewStats"></button>
+          </div>
+          <div class="heroMeta">
+            <div class="stat"><b id="bestIq">--</b><span data-t="bestIq"></span></div>
+            <div class="stat"><b id="testsDone">0</b><span data-t="testsDone"></span></div>
+            <div class="stat"><b id="accRate">--</b><span data-t="accRate"></span></div>
+          </div>
+        </div>
+        <div class="card side">
+          <div class="panelTitle"><h3 data-t="testMode"></h3><small data-t="balanced"></small></div>
+          <div class="segWrap" id="modeSegs"></div>
+          <div class="panelTitle"><h3 data-t="difficulty"></h3><small data-t="adaptiveLabel"></small></div>
+          <div class="segWrap" id="difficultySegs"></div>
+          <div class="panelTitle"><h3 data-t="theme"></h3><small data-t="instant"></small></div>
+          <div class="segWrap" id="themeSegs"></div>
+          <div class="panelTitle"><h3 data-t="language"></h3><small data-t="saved"></small></div>
+          <div class="segWrap" id="langSegs"></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:18px">
+        <div class="panelTitle"><h3 data-t="customConfig"></h3><small data-t="premiumMode"></small></div>
+        <div class="settings" style="margin-top:12px">
+          <div class="settingBox"><label><span data-t="questionCount"></span><b class="mono" id="countLabel">20</b></label><input id="countRange" type="range" min="10" max="60" step="10" value="20"></div>
+          <div class="settingBox"><label><span data-t="timerPerQ"></span><b class="mono" id="timerLabel">15s</b></label><input id="timerRange" type="range" min="0" max="30" step="1" value="15"></div>
+          <div class="settingBox"><label><span data-t="adaptiveMode"></span><b id="adaptLabel">ON</b></label><button class="btn ghost" id="adaptiveToggle" type="button" style="width:100%"></button></div>
+          <div class="settingBox"><label><span data-t="fullscreen"></span><b id="fsLabel">OFF</b></label><button class="btn ghost" id="fsToggle" type="button" style="width:100%"></button></div>
+        </div>
+        <div class="panelTitle" style="margin-top:14px"><h3 data-t="enabledTypes"></h3><small data-t="chooseAll"></small></div>
+        <div class="checks" id="typeChecks"></div>
+      </div>
+    </section>
+
+    <section id="test" class="test card question">
+      <div class="qTop">
+        <div>
+          <div class="qMeta" id="testTags"></div>
+          <h3 class="qTitle" id="qTitle"></h3>
+          <div class="qPrompt" id="qPrompt"></div>
+        </div>
+        <div class="timerRow"><span class="timerDot"></span><span class="mono" id="timeLeft">0</span></div>
+      </div>
+      <div class="progressWrap card" style="padding:14px">
+        <div class="progressTop"><strong id="progressText">0/0</strong><span class="mono" id="streakText">0</span></div>
+        <div class="bar"><i id="progressBar"></i></div>
+      </div>
+      <div class="visualWrap" id="visualArea"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="footRow">
+        <div class="mono" id="scoreLine">0</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn ghost" id="skipBtn" type="button" data-t="skip"></button>
+          <button class="btn primary hidden" id="nextBtn" type="button" data-t="next"></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results grid">
+      <div class="dash">
+        <div class="card scoreCard">
+          <div class="panelTitle"><h3 data-t="results"></h3><small data-t="sessionSummary"></small></div>
+          <div class="bigScore" style="margin-top:14px">
+            <div class="ring" id="ring"><div style="text-align:center"><b id="iqNum">--</b><span data-t="iq"></span></div></div>
+            <div style="flex:1;min-width:220px">
+              <p class="bigNum" id="iqBig">--</p>
+              <div class="mono" id="iqBand" style="color:var(--mut);font-size:1rem;margin-top:-6px"></div>
+              <div class="listGrid" style="margin-top:14px">
+                <div class="mini"><small data-t="score"></small><b id="finalScore">0</b></div>
+                <div class="mini"><small data-t="accuracy"></small><b id="finalAcc">0%</b></div>
+                <div class="mini"><small data-t="percentile"></small><b id="percentile">--</b></div>
+                <div class="mini"><small data-t="avgTime"></small><b id="avgTime">--</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="subgrid" style="margin-top:14px">
+            <div class="mini"><small data-t="strongest"></small><b id="strongest">--</b></div>
+            <div class="mini"><small data-t="weakest"></small><b id="weakest">--</b></div>
+            <div class="mini"><small data-t="bestCombo"></small><b id="bestCombo">--</b></div>
+            <div class="mini"><small data-t="bestIq"></small><b id="bestIqResult">--</b></div>
+          </div>
+        </div>
+        <div class="card chartCard">
+          <div class="panelTitle"><h3 data-t="analytics"></h3><small data-t="chartNote"></small></div>
+          <div class="chartWrap"><canvas id="chart"></canvas></div>
+          <div class="listGrid" style="margin-top:12px">
+            <div class="bullet" id="insight1"></div>
+            <div class="bullet" id="insight2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:18px">
+        <div class="panelTitle"><h3 data-t="history"></h3><small data-t="localSaved"></small></div>
+        <div class="listGrid" id="historyList" style="margin-top:12px"></div>
+        <div class="footerBar" style="margin-top:14px">
+          <button class="btn ghost" id="homeBtn" type="button" data-t="home"></button>
+          <button class="btn primary" id="restartBtn" type="button" data-t="retake"></button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+  const $ = (s, p = document) => p.querySelector(s);
+  const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+  const load = (k, fallback) => { try { const v = localStorage.getItem(k); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const ri = (a, b) => Math.floor(rand(a, b + 1));
+  const pick = arr => arr[ri(0, arr.length - 1)];
+  const shuffle = arr => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+  const fmt = ms => ms < 1000 ? `${Math.round(ms)}ms` : `${(ms / 1000).toFixed(1)}s`;
+
+  const THEME_LIST = [
+    ['classic', 'Classic Dark'],
+    ['cyber', 'Neon Cyber'],
+    ['purple', 'Purple Glass'],
+    ['light', 'Light Minimal']
+  ];
+  const ALL_TYPES = ['sequence', 'logic', 'matrix', 'rotation', 'memory', 'reaction'];
+  const defaultSettings = { mode: 'fixed', count: 20, timer: 15, difficulty: 'adaptive', types: Object.fromEntries(ALL_TYPES.map(t => [t, true])) };
+  const state = Object.assign({ theme: 'classic', lang: 'en', sound: true, animations: true, adaptive: true, bestIq: 0, history: [], stats: { tests: 0, answers: 0, correct: 0, totalTime: 0 }, settings: defaultSettings }, load('iq-state', {}));
+  state.settings = Object.assign({}, defaultSettings, state.settings || {});
+  state.settings.types = Object.assign({}, defaultSettings.types, state.settings.types || {});
+  const ui = { view: 'home', questions: [], index: 0, locked: false, startAt: 0, endAt: 0, timer: null, reactionGoAt: 0, memSwapTimer: null, session: null, summary: null };
+
+  const I18N = {
+    en: { appTag: 'Premium adaptive cognitive test', heroKicker: 'Adaptive intelligence assessment', heroTitleA: 'Measure', heroTitleB: 'your cognitive profile', heroText: 'Procedural IQ testing with adaptive difficulty, visual matrices, reaction tasks, memory checks, analytics and a polished premium dashboard.', startFixed: 'Start fixed test', startCustom: 'Custom mode', viewStats: 'Open results', bestIq: 'Best IQ', testsDone: 'Tests completed', accRate: 'Accuracy', testMode: 'Test mode', balanced: 'balanced set', difficulty: 'Difficulty', adaptiveLabel: 'adaptive engine', theme: 'Theme', instant: 'instant switch', language: 'Language', saved: 'saved', customConfig: 'Custom configuration', premiumMode: 'premium layout', questionCount: 'Question count', timerPerQ: 'Timer per question', adaptiveMode: 'Adaptive mode', fullscreen: 'Fullscreen', enabledTypes: 'Question types', chooseAll: 'toggle freely', skip: 'Skip', next: 'Next', results: 'Results', sessionSummary: 'session analytics', iq: 'Estimated IQ', score: 'Score', accuracy: 'Accuracy', percentile: 'Percentile', avgTime: 'Avg time', strongest: 'Strongest category', weakest: 'Weakest category', bestCombo: 'Best streak', analytics: 'Analytics', chartNote: 'category performance', history: 'History', localSaved: 'stored locally', home: 'Home', retake: 'Retake', loading: 'Generating test…', sequence: 'Sequence', logic: 'Logic', matrix: 'Matrix', rotation: 'Rotation', memory: 'Memory', reaction: 'Reaction', correct: 'Correct', wrong: 'Incorrect', timeout: 'Time expired', ready: 'Get ready', go: 'GO', memoryPhase: 'Memorize the sequence', recallPhase: 'Pick the missing symbol', reactionPhase: 'Click as fast as possible', below: 'Below Average', avg: 'Average', above: 'Above Average', high: 'Highly Intelligent', exc: 'Exceptional', adaptiveOn: 'ON', adaptiveOff: 'OFF', soundOn: 'Sound on', soundOff: 'Sound off', animOn: 'Animations on', animOff: 'Animations off', fsOn: 'Fullscreen on', fsOff: 'Fullscreen off', insightA: 'Speed, accuracy and difficulty are combined into a weighted estimate.', insightB: 'Adaptive balancing becomes stronger after streaks and penalties.', memoryHint: 'A short symbol sequence was shown before recall.', reactionHint: 'Reaction timing is measured from the GO cue.', strong: 'Strong', weak: 'Weak' },
+    ru: { appTag: 'Премиальный адаптивный когнитивный тест', heroKicker: 'Адаптивная оценка интеллекта', heroTitleA: 'Измерьте', heroTitleB: 'свой когнитивный профиль', heroText: 'Процедурный IQ-тест с адаптивной сложностью, визуальными матрицами, реакцией, памятью, аналитикой и премиальным дашбордом.', startFixed: 'Старт фикс. теста', startCustom: 'Своя настройка', viewStats: 'Открыть результаты', bestIq: 'Лучший IQ', testsDone: 'Тестов пройдено', accRate: 'Точность', testMode: 'Режим теста', balanced: 'сбалансированный набор', difficulty: 'Сложность', adaptiveLabel: 'адаптивный движок', theme: 'Тема', instant: 'мгновенное переключение', language: 'Язык', saved: 'сохранено', customConfig: 'Пользовательская настройка', premiumMode: 'премиум интерфейс', questionCount: 'Количество вопросов', timerPerQ: 'Таймер на вопрос', adaptiveMode: 'Адаптивный режим', fullscreen: 'Полный экран', enabledTypes: 'Типы вопросов', chooseAll: 'включайте свободно', skip: 'Пропустить', next: 'Далее', results: 'Результаты', sessionSummary: 'аналитика сессии', iq: 'Оценка IQ', score: 'Баллы', accuracy: 'Точность', percentile: 'Перцентиль', avgTime: 'Среднее время', strongest: 'Сильнейшая категория', weakest: 'Слабейшая категория', bestCombo: 'Лучший стрик', analytics: 'Аналитика', chartNote: 'эффективность по категориям', history: 'История', localSaved: 'сохранено локально', home: 'Домой', retake: 'Пройти ещё раз', loading: 'Генерируем тест…', sequence: 'Последовательность', logic: 'Логика', matrix: 'Матрица', rotation: 'Поворот', memory: 'Память', reaction: 'Реакция', correct: 'Верно', wrong: 'Неверно', timeout: 'Время вышло', ready: 'Приготовьтесь', go: 'СТАРТ', memoryPhase: 'Запомните последовательность', recallPhase: 'Выберите недостающий символ', reactionPhase: 'Нажмите как можно быстрее', below: 'Ниже среднего', avg: 'Средний', above: 'Выше среднего', high: 'Высокий', exc: 'Выдающийся', adaptiveOn: 'ВКЛ', adaptiveOff: 'ВЫКЛ', soundOn: 'Звук вкл', soundOff: 'Звук выкл', animOn: 'Анимация вкл', animOff: 'Анимация выкл', fsOn: 'Полный экран вкл', fsOff: 'Полный экран выкл', insightA: 'Скорость, точность и сложность объединяются в взвешенную оценку.', insightB: 'Адаптивная балансировка усиливается после серий успехов и ошибок.', memoryHint: 'Сначала показывалась короткая последовательность символов.', reactionHint: 'Время реакции измеряется от сигнала СТАРТ.', strong: 'Сильная', weak: 'Слабая' }
+  };
+  const t = key => (I18N[state.lang] && I18N[state.lang][key]) || I18N.en[key] || key;
+
+  function persist() {
+    save('iq-state', { theme: state.theme, lang: state.lang, sound: state.sound, animations: state.animations, adaptive: state.adaptive, bestIq: state.bestIq, history: state.history, stats: state.stats, settings: state.settings });
+  }
+  function toast(msg) {
+    const el = $('#toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 1400);
+  }
+  function applyTheme() { document.documentElement.dataset.theme = state.theme; document.body.classList.toggle('anim-off', !state.animations); }
+  function setTheme(theme) { state.theme = theme; persist(); applyTheme(); renderTop(); renderResultsIfVisible(); }
+  function setLang(lang) { state.lang = lang; persist(); renderAll(); }
+  function nextTheme() { const i = THEME_LIST.findIndex(([k]) => k === state.theme); setTheme(THEME_LIST[(i + 1) % THEME_LIST.length][0]); }
+  function nextLang() { setLang(state.lang === 'en' ? 'ru' : 'en'); }
+  function toggleFs() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); setTimeout(renderTop, 50); }
+  function playTone(kind) {
+    if (!state.sound) return;
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    playTone.ctx ||= new AC(); const ctx = playTone.ctx;
+    const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination);
+    const now = ctx.currentTime, f = kind === 'good' ? 660 : kind === 'bad' ? 180 : kind === 'go' ? 880 : 480;
+    o.type = 'sine'; o.frequency.setValueAtTime(f, now); o.frequency.exponentialRampToValueAtTime(f * 1.15, now + 0.08);
+    g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.08, now + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    o.start(now); o.stop(now + 0.2);
+  }
+  function makeParticles() {
+    const p = $('#particles'); p.innerHTML = ''; for (let i = 0; i < 28; i++) { const d = document.createElement('div'); d.className = `particle s${(i % 3) + 1}`; d.style.left = `${Math.random() * 100}%`; d.style.top = `${Math.random() * 100}%`; const s = 2 + Math.random() * 4; d.style.width = d.style.height = `${s}px`; d.style.animationDuration = `${12 + Math.random() * 14}s,5s`; d.style.animationDelay = `${-Math.random() * 10}s,0s`; p.appendChild(d); }
+  }
+  function renderTop() {
+    $('#appTag').textContent = t('appTag');
+    $('#themeBtn').innerHTML = `<small>${t('theme')}</small> ${THEME_LIST.find(([k]) => k === state.theme)?.[1] || state.theme}`;
+    $('#langBtn').innerHTML = `<small>${t('language')}</small> ${state.lang.toUpperCase()}`;
+    $('#soundBtn').innerHTML = `<small>${state.sound ? t('soundOn') : t('soundOff')}</small>`;
+    $('#animBtn').innerHTML = `<small>${state.animations ? t('animOn') : t('animOff')}</small>`;
+    $('#fsBtn').innerHTML = `<small>${document.fullscreenElement ? t('fsOn') : t('fsOff')}</small>`;
+    $('#bestIq').textContent = state.bestIq ? Math.round(state.bestIq) : '--';
+    $('#testsDone').textContent = state.stats.tests || 0;
+    $('#accRate').textContent = state.stats.answers ? `${Math.round((state.stats.correct / state.stats.answers) * 100)}%` : '--';
+    $('#countLabel').textContent = state.settings.count;
+    $('#timerLabel').textContent = `${state.settings.timer}s`;
+    $('#adaptLabel').textContent = state.adaptive ? t('adaptiveOn') : t('adaptiveOff');
+    $('#fsLabel').textContent = document.fullscreenElement ? t('fsOn') : t('fsOff');
+    $('#adaptiveToggle').textContent = state.adaptive ? t('adaptiveOn') : t('adaptiveOff');
+    $('#fsToggle').textContent = document.fullscreenElement ? t('fsOn') : t('fsOff');
+  }
+  function setView(name) { ['home', 'test', 'results'].forEach(id => $('#'+id).classList.toggle('active', id === name)); ui.view = name; }
+  function syncTexts() { Object.keys(I18N.en).forEach(k => $$(`[data-t="${k}"]`).forEach(el => el.textContent = t(k))); }
+  function renderSegments() {
+    const modes = [['fixed', state.lang === 'ru' ? 'Фикс' : 'Fixed'], ['custom', state.lang === 'ru' ? 'Своя' : 'Custom']];
+    const diffMap = { easy: state.lang === 'ru' ? 'Легко' : 'Easy', medium: state.lang === 'ru' ? 'Средне' : 'Medium', hard: state.lang === 'ru' ? 'Сложно' : 'Hard', expert: state.lang === 'ru' ? 'Эксперт' : 'Expert', adaptive: state.lang === 'ru' ? 'Адаптивно' : 'Adaptive' };
+    const modeSeg = $('#modeSegs'); modeSeg.innerHTML = '';
+    modes.forEach(([k, label]) => { const b = document.createElement('button'); b.className = `seg${state.settings.mode === k ? ' active' : ''}`; b.textContent = label; b.onclick = () => { state.settings.mode = k; persist(); renderHome(); }; modeSeg.appendChild(b); });
+    const dSeg = $('#difficultySegs'); dSeg.innerHTML = '';
+    ['easy', 'medium', 'hard', 'expert', 'adaptive'].forEach(k => { const b = document.createElement('button'); b.className = `seg${state.settings.difficulty === k ? ' active' : ''}`; b.textContent = diffMap[k]; b.onclick = () => { state.settings.difficulty = k; state.adaptive = k === 'adaptive'; persist(); renderHome(); }; dSeg.appendChild(b); });
+    const themeSeg = $('#themeSegs'); themeSeg.innerHTML = '';
+    THEME_LIST.forEach(([k, label]) => { const b = document.createElement('button'); b.className = `seg${state.theme === k ? ' active' : ''}`; b.textContent = label; b.onclick = () => setTheme(k); themeSeg.appendChild(b); });
+    const langSeg = $('#langSegs'); langSeg.innerHTML = '';
+    [['en', 'EN'], ['ru', 'RU']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = `seg${state.lang === k ? ' active' : ''}`; b.textContent = label; b.onclick = () => setLang(k); langSeg.appendChild(b); });
+  }
+  function renderTypes() {
+    const wrap = $('#typeChecks'); wrap.innerHTML = '';
+    ALL_TYPES.forEach(type => { const label = document.createElement('label'); label.className = 'check'; label.innerHTML = `<input type="checkbox" ${state.settings.types[type] ? 'checked' : ''}><span>${t(type)}</span>`; label.querySelector('input').onchange = e => { state.settings.types[type] = e.target.checked; persist(); }; wrap.appendChild(label); });
+  }
+  function renderHome() {
+    setView('home'); syncTexts(); renderSegments(); renderTypes(); renderTop();
+    $('#startFixed').textContent = t('startFixed'); $('#startCustom').textContent = t('startCustom'); $('#viewStatsBtn').textContent = t('viewStats');
+    $('#skipBtn').textContent = t('skip'); $('#nextBtn').textContent = t('next');
+    $('#homeBtn').textContent = t('home'); $('#restartBtn').textContent = t('retake');
+    $('#countRange').value = state.settings.count; $('#timerRange').value = state.settings.timer;
+    $('#countRange').oninput = e => { state.settings.count = +e.target.value; $('#countLabel').textContent = e.target.value; persist(); };
+    $('#timerRange').oninput = e => { state.settings.timer = +e.target.value; $('#timerLabel').textContent = `${e.target.value}s`; persist(); };
+    $('#adaptiveToggle').onclick = () => { state.adaptive = !state.adaptive; if (state.adaptive) state.settings.difficulty = 'adaptive'; persist(); renderHome(); };
+    $('#fsToggle').onclick = toggleFs;
+    $('#startFixed').onclick = () => { state.settings.mode = 'fixed'; state.settings.count = 20; persist(); startTest(); };
+    $('#startCustom').onclick = () => { state.settings.mode = 'custom'; persist(); startTest(); };
+    $('#viewStatsBtn').onclick = () => { if (state.history[0]) showResults(state.history[0].summary, true); else toast(t('loading')); };
+    $('#bestIq').textContent = state.bestIq ? Math.round(state.bestIq) : '--';
+    $('#testsDone').textContent = state.stats.tests || 0;
+    $('#accRate').textContent = state.stats.answers ? `${Math.round((state.stats.correct / state.stats.answers) * 100)}%` : '--';
+  }
+
+  function activeTypes() { const arr = ALL_TYPES.filter(type => state.settings.types[type]); return arr.length ? arr : ALL_TYPES.slice(); }
+  function nextDifficulty() { return state.settings.difficulty === 'adaptive' ? (ui.session?.adaptive ?? 2) : ({ easy: 1, medium: 2, hard: 3, expert: 4, adaptive: 2 }[state.settings.difficulty] || 2); }
+  function buildQuestions() {
+    const count = state.settings.count || 20; const types = activeTypes(); const pool = Array.from({ length: count }, (_, i) => types[i % types.length]); shuffle(pool);
+    ui.session = { score: 0, correct: 0, total: 0, streak: 0, bestStreak: 0, adaptive: state.settings.difficulty === 'adaptive' ? 2 : nextDifficulty(), times: [], cats: Object.fromEntries(ALL_TYPES.map(t => [t, { c: 0, t: 0, s: 0, total: 0 }])), timeline: [] };
+    return shuffle(pool).map((type, idx) => makeQuestion(type, idx + 1, count));
+  }
+  function makeQuestion(type, idx, total) {
+    const diff = nextDifficulty(); const base = { id: `${type}-${Date.now()}-${idx}`, type, category: type, difficulty: diff, timer: state.settings.timer || 0, scoreValue: 100 + Math.round(diff * 35), explanation: '', prompt: '' };
+    if (type === 'sequence') return Object.assign(base, genSequence(diff));
+    if (type === 'logic') return Object.assign(base, genLogic(diff));
+    if (type === 'matrix') return Object.assign(base, genMatrix(diff));
+    if (type === 'rotation') return Object.assign(base, genRotation(diff));
+    if (type === 'memory') return Object.assign(base, genMemory(diff));
+    return Object.assign(base, genReaction(diff));
+  }
+
+  function genSequence(diff) {
+    const variant = pick(['arith', 'geom', 'alt', 'mix']);
+    let seq = [], answer = 0, hint = '';
+    if (variant === 'arith') { const start = ri(1, 9), step = ri(2, 5) + Math.floor(diff / 2); seq = [start, start + step, start + step * 2, start + step * 3]; answer = start + step * 4; hint = `+${step}`; }
+    if (variant === 'geom') { const start = ri(1, 5), ratio = pick([2, 3]); seq = [start, start * ratio, start * ratio * ratio, start * ratio * ratio * ratio]; answer = start * ratio ** 4; hint = `×${ratio}`; }
+    if (variant === 'alt') { const a = ri(2, 8), b = ri(1, 5), c = ri(2, 7); seq = [a, b, a + c, b + c]; answer = a + 2 * c; hint = 'alternating'; }
+    if (variant === 'mix') { const start = ri(1, 8), x = ri(2, 4), y = ri(5, 9); seq = [start, start + x, start + x + y, start + 2 * x + y]; answer = start + 3 * x + 2 * y; hint = 'mixed'; }
+    const options = shuffle([answer, answer + ri(1, 4), Math.max(1, answer - ri(1, 4)), answer + ri(5, 9)]);
+    return { prompt: `${t('sequence')}: ${seq.join(' • ')} ?`, options, correct: options.indexOf(answer), explanation: hint, generated: { seq, answer, options } };
+  }
+  function genLogic(diff) {
+    const bank = [
+      { type: 'yn', en: 'If all A are B and all B are C, can A be C?', ru: 'Если все A — это B, а все B — это C, может ли A быть C?', correct: 0, explanation: 'Transitive inclusion.' },
+      { type: 'yn', en: 'If no cats are dogs and all dogs are pets, can a cat be a pet?', ru: 'Если кошки не собаки, а все собаки — питомцы, может ли кошка быть питомцем?', correct: 2, explanation: 'No direct relation between cats and pets is guaranteed.' },
+      { type: 'yn', en: 'Some x are y. All y are z. Must some x be z?', ru: 'Некоторые x — это y. Все y — это z. Обязательно ли некоторые x — это z?', correct: 2, explanation: 'Not necessarily.' },
+      { type: 'num', en: 'Three people shake hands once with each other. How many handshakes?', ru: 'Три человека пожимают друг другу руки по одному разу. Сколько рукопожатий?', correct: 1, explanation: '3 handshakes.' }
+    ];
+    const q = pick(bank);
+    if (q.type === 'num') {
+      const options = shuffle(['2', '3', '4', '6']);
+      return { prompt: state.lang === 'ru' ? q.ru : q.en, options, correct: options.indexOf('3'), explanation: q.explanation, generated: { bank: q } };
+    }
+    const labels = state.lang === 'ru' ? ['Да', 'Нет', 'Нельзя определить', 'Всегда'] : ['Yes', 'No', 'Cannot tell', 'Always'];
+    const options = shuffle(labels);
+    return { prompt: state.lang === 'ru' ? q.ru : q.en, options, correct: options.indexOf(labels[q.correct]), explanation: q.explanation, generated: { bank: q } };
+  }
+
+  function svgCell(obj) {
+    const shapes = obj.shapes.map(s => {
+      const rot = s.r || 0, x = s.x, y = s.y, size = s.s || 10;
+      if (s.t === 'circle') return `<circle cx="${x}" cy="${y}" r="${size}" fill="none" stroke="var(--txt)" stroke-width="4"/>`;
+      if (s.t === 'tri') return `<polygon points="${x},${y - size} ${x - size},${y + size} ${x + size},${y + size}" fill="none" stroke="var(--txt)" stroke-width="4" transform="rotate(${rot} ${x} ${y})"/>`;
+      if (s.t === 'square') return `<rect x="${x - size}" y="${y - size}" width="${size * 2}" height="${size * 2}" rx="${size * 0.25}" fill="none" stroke="var(--txt)" stroke-width="4" transform="rotate(${rot} ${x} ${y})"/>`;
+      return `<line x1="${x - size}" y1="${y}" x2="${x + size}" y2="${y}" stroke="var(--txt)" stroke-width="4" stroke-linecap="round" transform="rotate(${rot} ${x} ${y})"/>`;
+    }).join('');
+    return `<svg viewBox="0 0 80 80" width="80" height="80">${shapes}</svg>`;
+  }
+  function makeShape() { return { t: pick(['circle', 'tri', 'square', 'line']), x: ri(22, 58), y: ri(22, 58), s: ri(8, 15), r: ri(0, 3) * 30 }; }
+  function transformCell(obj, rule) { const out = JSON.parse(JSON.stringify(obj)); if (rule === 'rot') out.shapes.forEach(s => s.r = (s.r + 90) % 360); if (rule === 'count') out.shapes.push(makeShape()); if (rule === 'grow') out.shapes.forEach(s => s.s += 2); if (rule === 'mirror') out.shapes.forEach(s => s.x = 80 - s.x); return out; }
+  function genMatrix(diff) {
+    const base = { shapes: [makeShape()] };
+    const rowRule = pick(['count', 'grow', 'mirror']);
+    const colRule = pick(['rot', 'count', 'grow']);
+    const a = base, b = transformCell(base, colRule), c = transformCell(base, rowRule), d = transformCell(transformCell(base, rowRule), colRule);
+    const options = shuffle([d, transformCell(d, 'rot'), transformCell(d, 'count'), transformCell(d, 'mirror')]);
+    const correct = options.findIndex(o => JSON.stringify(o) === JSON.stringify(d));
+    return { prompt: state.lang === 'ru' ? 'Заполните недостающую ячейку матрицы.' : 'Choose the missing matrix cell.', options, correct, explanation: `${rowRule} + ${colRule}`, generated: { cells: [a, b, c, d], options, rowRule, colRule } };
+  }
+  function rotationSVG(kind, rot) {
+    if (kind === 'arrow') return `<svg viewBox="0 0 80 80" width="160" height="160"><path d="M18 40h28V26l16 14-16 14V40H18z" fill="none" stroke="var(--txt)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(${rot} 40 40)"/></svg>`;
+    if (kind === 'chev') return `<svg viewBox="0 0 80 80" width="160" height="160"><path d="M22 28l18 18 18-18" fill="none" stroke="var(--txt)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(${rot} 40 40)"/></svg>`;
+    return `<svg viewBox="0 0 80 80" width="160" height="160"><polygon points="40,16 64,40 40,64 16,40" fill="none" stroke="var(--txt)" stroke-width="5" transform="rotate(${rot / 2} 40 40)"/></svg>`;
+  }
+  function genRotation(diff) {
+    const kind = pick(['arrow', 'chev', 'diamond']);
+    const rot = pick([90, 180, 270]);
+    const options = shuffle([0, 90, 180, 270]);
+    return { prompt: state.lang === 'ru' ? 'Определите угол поворота фигуры.' : 'Identify the rotation angle.', options: options.map(v => `${v}°`), correct: options.indexOf(rot), explanation: `${rot}°`, generated: { kind, rot, options } };
+  }
+  function genMemory(diff) {
+    const symbols = ['●', '▲', '■', '◆', '✦', '✚', '⬟', '⬢'];
+    const seq = shuffle(symbols).slice(0, 5); const target = pick(seq);
+    const options = shuffle([target, ...shuffle(symbols.filter(s => s !== target)).slice(0, 3)]);
+    return { prompt: t('memoryPhase'), options, correct: options.indexOf(target), explanation: t('memoryHint'), generated: { seq, target, options } };
+  }
+  function genReaction(diff) { return { prompt: t('reactionPhase'), options: ['GO'], correct: 0, explanation: t('reactionHint'), generated: { kind: 'reaction' } }; }
+
+  function renderQuestion() {
+    const q = ui.questions[ui.index]; if (!q) return finishTest();
+    clearInterval(ui.timer); clearTimeout(ui.memSwapTimer); ui.locked = false;
+    $('#feedback').className = 'feedback'; $('#nextBtn').classList.add('hidden'); $('#skipBtn').disabled = false;
+    $('#progressText').textContent = `${ui.index + 1}/${ui.questions.length}`; $('#progressBar').style.width = `${(ui.index / ui.questions.length) * 100}%`;
+    $('#streakText').textContent = `🔥 ${ui.session.streak}`; $('#scoreLine').textContent = `${t('score')}: ${Math.round(ui.session.score)}`;
+    $('#qTitle').textContent = t(q.type); $('#qPrompt').textContent = q.prompt;
+    $('#testTags').innerHTML = `<span class="tag">${t(q.type)}</span><span class="tag">D${Math.round(q.difficulty)}</span><span class="tag">${q.timer ? `${t('timerPerQ')}: ${q.timer}s` : '∞'}</span>`;
+    $('#options').innerHTML = ''; $('#visualArea').innerHTML = ''; $('#timeLeft').textContent = q.timer || '∞';
+    if (q.type === 'sequence') renderSequence(q);
+    if (q.type === 'logic') renderLogic(q);
+    if (q.type === 'matrix') renderMatrix(q);
+    if (q.type === 'rotation') renderRotation(q);
+    if (q.type === 'memory') renderMemory(q);
+    if (q.type === 'reaction') renderReaction(q);
+    ui.startAt = performance.now(); ui.endAt = ui.startAt + ((q.timer || 0) * 1000);
+    startTimer();
+  }
+  function renderSequence(q) { $('#visualArea').innerHTML = `<div class="svgCard"><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">${q.generated.seq.map(n => `<div class="symbol" style="width:58px;height:58px">${n}</div>`).join('')}<div class="symbol" style="width:58px;height:58px">?</div></div></div>`; renderOptions(q.options); }
+  function renderLogic(q) { $('#visualArea').innerHTML = `<div class="bullet" style="max-width:760px">${q.prompt}</div>`; renderOptions(q.options); }
+  function renderRotation(q) { $('#visualArea').innerHTML = `<div class="svgCard" style="display:grid;place-items:center">${rotationSVG(q.generated.kind, q.generated.rot)}</div>`; renderOptions(q.options); }
+  function renderMatrix(q) {
+    const grid = document.createElement('div'); grid.className = 'matrixGrid';
+    q.generated.cells.slice(0, 3).forEach(c => { const cell = document.createElement('div'); cell.className = 'mCell'; cell.innerHTML = svgCell(c); grid.appendChild(cell); });
+    const missing = document.createElement('div'); missing.className = 'mCell'; missing.innerHTML = '<span style="font-size:2rem;color:var(--mut)">?</span>'; grid.appendChild(missing);
+    $('#visualArea').appendChild(grid);
+    $('#options').innerHTML = q.options.map((o, i) => `<button class="opt" type="button" data-i="${i}"><span class="idx">${i + 1}</span><span>${svgCell(o)}</span></button>`).join('');
+    $$('.opt').forEach(btn => btn.onclick = () => submitAnswer(+btn.dataset.i));
+  }
+  function renderMemory(q) {
+    const box = document.createElement('div'); box.className = 'memoryBox'; box.innerHTML = `<div class="bullet" id="memMsg" style="max-width:520px;text-align:center">${t('memoryPhase')}</div><div class="memSeq" id="memSeq"></div>`;
+    $('#visualArea').appendChild(box); const seqBox = $('#memSeq', box); seqBox.innerHTML = q.generated.seq.map(s => `<div class="symbol">${s}</div>`).join('');
+    $('#options').innerHTML = '';
+    ui.memSwapTimer = setTimeout(() => {
+      if (!ui.questions[ui.index] || ui.questions[ui.index].id !== q.id) return;
+      $('#memMsg', box).textContent = t('recallPhase'); seqBox.innerHTML = '';
+      renderOptions(q.options);
+      ui.startAt = performance.now(); ui.endAt = ui.startAt + ((q.timer || 0) * 1000);
+      clearInterval(ui.timer); startTimer();
+    }, 2200);
+  }
+  function renderReaction(q) {
+    $('#visualArea').innerHTML = `<div class="reactionBox"><div class="goZone" id="goZone"><div><div class="qTitle" style="margin-bottom:10px">${t('ready')}</div><button class="btn primary goBtn" id="goBtn" type="button" disabled>${t('ready')}</button><div style="color:var(--mut);margin-top:10px">${t('reactionPhase')}</div></div></div></div>`;
+    const zone = $('#goZone'), btn = $('#goBtn');
+    const wait = ri(900, 2200);
+    setTimeout(() => {
+      if (!ui.questions[ui.index] || ui.questions[ui.index].id !== q.id) return;
+      zone.classList.add('go'); btn.disabled = false; btn.textContent = t('go'); ui.reactionGoAt = performance.now(); ui.startAt = ui.reactionGoAt; ui.endAt = ui.startAt + ((q.timer || 0) * 1000); clearInterval(ui.timer); startTimer(); btn.onclick = () => submitAnswer(performance.now() - ui.reactionGoAt);
+    }, wait);
+  }
+  function renderOptions(options) { $('#options').innerHTML = options.map((o, i) => `<button class="opt" type="button" data-i="${i}"><span class="idx">${i + 1}</span><span>${typeof o === 'string' ? o : svgCell(o)}</span></button>`).join(''); $$('.opt').forEach(btn => btn.onclick = () => submitAnswer(+btn.dataset.i)); }
+  function startTimer() {
+    clearInterval(ui.timer);
+    const limit = state.settings.timer || 0; $('#timeLeft').textContent = limit ? String(limit) : '∞'; if (!limit) return;
+    ui.timer = setInterval(() => { const left = Math.max(0, Math.ceil((ui.endAt - performance.now()) / 1000)); $('#timeLeft').textContent = left; if (left <= 0) { clearInterval(ui.timer); timeoutCurrent(); } }, 100);
+  }
+  function scoreFor(q, correct, rt) {
+    const base = q.scoreValue || 100; const speed = q.type === 'reaction' ? clamp(1 - (rt / 1200), 0, 1) : clamp(1 - (rt / ((q.timer || 15) * 1000)), 0, 1); const difficulty = q.difficulty || 2; const streak = 1 + Math.min(ui.session.streak, 8) * 0.05; const multiplier = (correct ? 1 : -0.28) * (0.7 + speed * 0.7) * (1 + difficulty * 0.09) * streak; return Math.round(base * multiplier);
+  }
+  function applyAdaptive(correct, rt) {
+    if (state.settings.difficulty !== 'adaptive') return;
+    if (correct && rt < 700) ui.session.adaptive = clamp(ui.session.adaptive + 0.3, 1, 5);
+    else if (!correct || rt > 2500) ui.session.adaptive = clamp(ui.session.adaptive - 0.35, 1, 5);
+  }
+  function submitAnswer(answer) {
+    if (ui.locked) return; ui.locked = true; clearInterval(ui.timer); clearTimeout(ui.memSwapTimer);
+    const q = ui.questions[ui.index]; const rt = Math.max(0, performance.now() - ui.startAt);
+    let correct = false, delta = 0;
+    if (q.type === 'reaction') { correct = true; delta = Math.max(20, Math.round(280 - rt / 8)); }
+    else { correct = answer === q.correct; delta = scoreFor(q, correct, rt); $$('.opt').forEach((b, i) => { b.classList.toggle('correct', i === q.correct); b.classList.toggle('wrong', i === answer && !correct); }); }
+    ui.session.score += delta; ui.session.correct += correct ? 1 : 0; ui.session.total += 1; ui.session.streak = correct ? ui.session.streak + 1 : 0; ui.session.bestStreak = Math.max(ui.session.bestStreak, ui.session.streak); ui.session.times.push(rt); ui.session.timeline.push({ type: q.type, correct, rt, score: delta });
+    ui.session.cats[q.category].c += correct ? 1 : 0; ui.session.cats[q.category].t += rt; ui.session.cats[q.category].s += delta; ui.session.cats[q.category].total += 1;
+    state.stats.answers += 1; state.stats.correct += correct ? 1 : 0; state.stats.totalTime += rt;
+    applyAdaptive(correct, rt);
+    const txt = correct ? t('correct') : t('wrong');
+    $('#feedback').className = 'feedback show'; $('#feedback').innerHTML = `<b style="color:${correct ? 'var(--good)' : 'var(--bad)'}">${txt}</b><p>${q.explanation || ''}<br>${fmt(rt)}</p>`;
+    $('#scoreLine').textContent = `${t('score')}: ${Math.round(ui.session.score)}`; $('#streakText').textContent = `🔥 ${ui.session.streak}`; $('#progressBar').style.width = `${((ui.index + 1) / ui.questions.length) * 100}%`;
+    playTone(correct ? 'good' : 'bad'); ui.index += 1; persist();
+    setTimeout(() => { if (ui.index < ui.questions.length) { $('#nextBtn').classList.remove('hidden'); $('#nextBtn').onclick = nextQuestion; } else finishTest(); }, 520);
+  }
+  function timeoutCurrent() { if (ui.locked) return; ui.locked = true; const q = ui.questions[ui.index]; ui.session.total += 1; ui.session.streak = 0; ui.session.times.push((q.timer || 0) * 1000); ui.session.timeline.push({ type: q.type, correct: false, rt: (q.timer || 0) * 1000, score: 0 }); ui.session.cats[q.category].t += (q.timer || 0) * 1000; state.stats.answers += 1; ui.index += 1; $('#feedback').className = 'feedback show'; $('#feedback').innerHTML = `<b style="color:var(--bad)">${t('timeout')}</b><p>${q.explanation || ''}</p>`; setTimeout(() => { if (ui.index < ui.questions.length) { $('#nextBtn').classList.remove('hidden'); $('#nextBtn').onclick = nextQuestion; } else finishTest(); }, 520); }
+  function nextQuestion() { $('#nextBtn').classList.add('hidden'); renderQuestion(); }
+  function startTest() { setView('test'); syncTexts(); renderTop(); ui.questions = buildQuestions(); ui.index = 0; ui.locked = false; ui.summary = null; toast(t('loading')); renderQuestion(); playTone('go'); }
+
+  function estimateIQ() {
+    const total = Math.max(1, ui.session.total); const acc = ui.session.correct / total; const avg = ui.session.times.reduce((a, b) => a + b, 0) / Math.max(1, ui.session.times.length); const speed = clamp(1 - avg / 3500, 0, 1); const diff = clamp((ui.session.adaptive - 1) / 4, 0, 1); const consistency = clamp(1 - Math.abs(acc - 0.72) * 1.5, 0, 1); const value = Math.round(clamp(88 + acc * 34 + speed * 18 + diff * 12 + consistency * 10, 60, 160)); const band = value < 90 ? t('below') : value < 110 ? t('avg') : value < 125 ? t('above') : value < 142 ? t('high') : t('exc'); const percentile = Math.round(clamp(50 + (value - 100) * 1.5, 1, 99)); const cats = Object.entries(ui.session.cats).map(([k, v]) => ({ k, acc: v.c / Math.max(1, v.c + Math.max(0, state.stats.tests ? 0 : 0)), time: v.t / Math.max(1, v.c || 1), score: v.s }));
+    const ranked = Object.entries(ui.session.cats).map(([k, v]) => ({ k, acc: v.c / Math.max(1, v.total || 1), time: v.t / Math.max(1, v.c || 1), score: v.s })).sort((a, b) => b.acc - a.acc || a.time - b.time);
+    return { value, band, percentile, strongest: ranked[0]?.k || 'sequence', weakest: ranked[ranked.length - 1]?.k || 'sequence', cats, insights: [acc > 0.8 ? (state.lang === 'ru' ? 'Точность заметно выше средней.' : 'Accuracy is notably above average.') : (state.lang === 'ru' ? 'Профиль сбалансирован.' : 'The profile is balanced.'), avg < 1500 ? (state.lang === 'ru' ? 'Высокая скорость принятия решений.' : 'Fast decision-making speed.') : (state.lang === 'ru' ? 'Скорость реакции и решения можно усилить.' : 'Reaction and decision speed can improve.')] };
+  }
+  function drawChart(summary) {
+    const canvas = $('#chart'); const ctx = canvas.getContext('2d'); const dpr = devicePixelRatio || 1; const w = canvas.clientWidth, h = canvas.clientHeight; canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    const style = getComputedStyle(document.documentElement), txt = style.getPropertyValue('--txt').trim(), mut = style.getPropertyValue('--mut').trim(), acc = style.getPropertyValue('--acc').trim(), acc2 = style.getPropertyValue('--acc2').trim(), line = style.getPropertyValue('--line').trim();
+    const sourceCats = summary.cats || (ui.session && ui.session.cats) || {}; const data = Object.entries(sourceCats).map(([k, v]) => ({ k, acc: v.c / Math.max(1, v.total || 1), time: v.t / Math.max(1, v.c || 1) }));
+    if (!data.length) return;
+    const pad = 24, gap = (w - pad * 2) / data.length, barW = gap * 0.62, maxH = h - 54;
+    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.font = `12px ${getComputedStyle(document.body).fontFamily}`;
+    data.forEach((d, i) => {
+      const x = pad + i * gap + gap * 0.18; const barH = maxH * d.acc; const y = h - 24 - barH;
+      ctx.fillStyle = acc; ctx.fillRect(x, y, barW, barH);
+      ctx.fillStyle = txt; ctx.fillText(t(d.k), x, h - 8);
+      ctx.fillStyle = mut; ctx.fillText(`${Math.round(d.acc * 100)}%`, x, y - 8);
+    });
+    ctx.beginPath(); ctx.strokeStyle = acc2; ctx.lineWidth = 2;
+    data.forEach((d, i) => { const x = pad + i * gap + gap * 0.18 + barW / 2; const y = h - 24 - clamp(d.time / 3000, 0, 1) * maxH; if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }); ctx.stroke();
+    data.forEach((d, i) => { const x = pad + i * gap + gap * 0.18 + barW / 2; const y = h - 24 - clamp(d.time / 3000, 0, 1) * maxH; ctx.fillStyle = acc2; ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill(); });
+  }
+  function renderHistory() {
+    const wrap = $('#historyList'); wrap.innerHTML = '';
+    state.history.slice(0, 6).forEach(item => { const s = item.summary; const el = document.createElement('div'); el.className = 'bullet'; el.innerHTML = `<b style="color:var(--txt)">IQ ${Math.round(s.iq)} · ${s.band}</b><div>${new Date(item.date).toLocaleString(state.lang === 'ru' ? 'ru-RU' : 'en-US')} · ${s.accuracy}% · ${s.score}</div>`; wrap.appendChild(el); });
+  }
+  function showResults(summary, preview = false) {
+    setView('results'); ui.summary = summary; renderTop();
+    $('#iqNum').textContent = Math.round(summary.iq); $('#iqBig').textContent = Math.round(summary.iq); $('#iqBand').textContent = summary.band; $('#percentile').textContent = `${summary.percentile}%`; $('#finalScore').textContent = summary.score; $('#finalAcc').textContent = `${summary.accuracy}%`; $('#avgTime').textContent = fmt(summary.avgTime); $('#strongest').textContent = t(summary.strongest); $('#weakest').textContent = t(summary.weakest); $('#bestCombo').textContent = `x${ui.session?.bestStreak || summary.bestStreak || 0}`; $('#bestIqResult').textContent = Math.round(state.bestIq);
+    $('#ring').style.background = `conic-gradient(var(--acc) ${clamp((summary.iq - 60) / 100, 0, 1) * 360}deg, var(--panel2) 0)`;
+    $('#insight1').textContent = summary.insights[0] || t('insightA'); $('#insight2').textContent = summary.insights[1] || t('insightB'); renderHistory(); drawChart(summary); if (!preview) playTone('good');
+  }
+  function finishTest() {
+    clearInterval(ui.timer); ui.session.score = Math.round(ui.session.score); state.stats.tests += 1; const total = Math.max(1, ui.session.total); const acc = ui.session.correct / total; const avg = ui.session.times.reduce((a, b) => a + b, 0) / Math.max(1, ui.session.times.length); const iq = estimateIQ(); const summary = { iq: iq.value, band: iq.band, percentile: iq.percentile, score: ui.session.score, accuracy: Math.round(acc * 100), avgTime: avg, bestStreak: ui.session.bestStreak, strongest: iq.strongest, weakest: iq.weakest, insights: iq.insights, cats: ui.session.cats, date: Date.now() };
+    state.bestIq = Math.max(state.bestIq || 0, iq.value); state.history = [{ date: Date.now(), summary }, ...state.history].slice(0, 8); persist(); showResults(summary, false); state.phase = 'results';
+  }
+  function renderResultsIfVisible() { if (ui.view === 'results' && ui.summary) showResults(ui.summary, true); }
+  function bind() {
+    $('#themeBtn').onclick = nextTheme; $('#langBtn').onclick = nextLang; $('#soundBtn').onclick = () => { state.sound = !state.sound; persist(); renderTop(); toast(state.sound ? t('soundOn') : t('soundOff')); }; $('#animBtn').onclick = () => { state.animations = !state.animations; persist(); applyTheme(); renderTop(); toast(state.animations ? t('animOn') : t('animOff')); }; $('#fsBtn').onclick = toggleFs;
+    $('#skipBtn').onclick = () => { if (!ui.locked) { ui.locked = true; clearInterval(ui.timer); clearTimeout(ui.memSwapTimer); $('#feedback').className = 'feedback show'; $('#feedback').innerHTML = `<b style="color:var(--bad)">${t('timeout')}</b><p></p>`; ui.index += 1; setTimeout(() => { if (ui.index < ui.questions.length) { $('#nextBtn').classList.remove('hidden'); $('#nextBtn').onclick = nextQuestion; } else finishTest(); }, 350); } };
+    $('#nextBtn').onclick = nextQuestion; $('#homeBtn').onclick = () => { renderHome(); }; $('#restartBtn').onclick = () => { state.settings.mode = 'custom'; persist(); startTest(); };
+    window.addEventListener('resize', () => { if (ui.view === 'results' && ui.summary) drawChart(ui.summary); });
+    document.addEventListener('keydown', e => {
+      if (ui.view === 'test') {
+        const n = +e.key;
+        if (n >= 1 && n <= 4 && $$('.opt')[n - 1] && !ui.locked) $$('.opt')[n - 1].click();
+        if (e.key === 'Enter' && !$('#nextBtn').classList.contains('hidden')) $('#nextBtn').click();
+        if (e.key === ' ' && ui.questions[ui.index]?.type === 'reaction' && !ui.locked) { e.preventDefault(); $('#goBtn')?.click(); }
+      }
+    });
+  }
+  function renderAll() { applyTheme(); makeParticles(); syncTexts(); renderHome(); renderTop(); }
+  persist(); applyTheme(); bind(); renderAll();
+})();
+
+</script>
+</body>
+</html>
