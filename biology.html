@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>Биология • Билеты для подготовки</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg-2: #0b1020;
+      --surface: rgba(15, 22, 42, 0.72);
+      --surface-2: rgba(22, 30, 52, 0.8);
+      --surface-3: rgba(255,255,255,0.04);
+      --text: #eef3ff;
+      --muted: #a8b2d1;
+      --soft: #6f7aa2;
+      --border: rgba(255,255,255,0.08);
+      --border-2: rgba(255,255,255,0.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --shadow-soft: 0 12px 34px rgba(0,0,0,.22);
+      --accent: #8b5cf6;
+      --accent-2: #22d3ee;
+      --accent-3: #f472b6;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --mark: rgba(255, 233, 112, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --blur: blur(22px);
+      --topbar-h: 74px;
+    }
+
+    html[data-theme="light"] {
+      --bg: #f5f7fb;
+      --bg-2: #eef3ff;
+      --surface: rgba(255,255,255,0.75);
+      --surface-2: rgba(255,255,255,0.92);
+      --surface-3: rgba(15, 23, 42, 0.03);
+      --text: #101628;
+      --muted: #4c5872;
+      --soft: #6b7280;
+      --border: rgba(16, 22, 40, 0.08);
+      --border-2: rgba(16, 22, 40, 0.12);
+      --shadow: 0 22px 60px rgba(31, 41, 55, .12);
+      --shadow-soft: 0 12px 30px rgba(31, 41, 55, .08);
+      --accent: #2563eb;
+      --accent-2: #06b6d4;
+      --accent-3: #db2777;
+      --mark: rgba(250, 204, 21, 0.42);
+    }
+
+    html[data-theme="neon"] {
+      --bg: #04050b;
+      --bg-2: #0b1022;
+      --surface: rgba(6, 10, 24, 0.78);
+      --surface-2: rgba(11, 17, 38, 0.9);
+      --surface-3: rgba(255,255,255,0.04);
+      --text: #f4f7ff;
+      --muted: #9db0ff;
+      --soft: #7280bd;
+      --border: rgba(95, 121, 255, 0.14);
+      --border-2: rgba(95, 121, 255, 0.2);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 12px 35px rgba(0, 0, 0, 0.28);
+      --accent: #22d3ee;
+      --accent-2: #a78bfa;
+      --accent-3: #fb7185;
+      --mark: rgba(34, 211, 238, 0.24);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(139,92,246,.15), transparent 30%),
+        radial-gradient(circle at 80% 10%, rgba(34,211,238,.12), transparent 28%),
+        radial-gradient(circle at 75% 85%, rgba(244,114,182,.12), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.05));
+      opacity: .22;
+      z-index: 0;
+    }
+
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(36px);
+      opacity: .55;
+      mix-blend-mode: screen;
+      animation: float 16s ease-in-out infinite;
+    }
+    html[data-theme="light"] .blob { mix-blend-mode: multiply; opacity: .35; }
+    .blob.one { width: 340px; height: 340px; background: rgba(139,92,246,.35); left: -80px; top: 90px; animation-duration: 18s; }
+    .blob.two { width: 260px; height: 260px; background: rgba(34,211,238,.28); right: -60px; top: 140px; animation-duration: 20s; animation-delay: -5s; }
+    .blob.three { width: 380px; height: 380px; background: rgba(244,114,182,.18); right: 18%; bottom: -120px; animation-duration: 24s; animation-delay: -9s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(0,-30px,0) scale(1.07); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139,92,246,.24); }
+      50% { box-shadow: 0 0 0 18px rgba(139,92,246,0); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: calc(env(safe-area-inset-top) + 12px) 16px 40px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      margin: 0 auto 18px;
+      width: 100%;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      background: linear-gradient(180deg, rgba(15, 22, 42, 0.84), rgba(15, 22, 42, 0.62));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    html[data-theme="light"] .topbar,
+    html[data-theme="neon"] .topbar {
+      background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 84%, transparent), color-mix(in oklab, var(--surface) 72%, transparent));
+    }
+
+    .topbar-inner {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      color: white;
+      box-shadow: 0 12px 28px rgba(139,92,246,.28);
+      flex: 0 0 auto;
+      animation: pulseGlow 4.5s ease-in-out infinite;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .search-area {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .field {
+      position: relative;
+      min-width: 0;
+    }
+
+    .input, .select, .btn, .chip, .icon-btn {
+      font: inherit;
+      border: 0;
+      outline: none;
+      border-radius: 18px;
+      transition: transform .22s ease, background .22s ease, border-color .22s ease, box-shadow .22s ease, opacity .22s ease, color .22s ease;
+    }
+
+    .input, .select {
+      width: 100%;
+      color: var(--text);
+      background: color-mix(in oklab, var(--surface-2) 80%, transparent);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      padding: 13px 15px;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+    .input::placeholder { color: color-mix(in oklab, var(--muted) 78%, transparent); }
+
+    .input:focus, .select:focus {
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+    }
+
+    .icon-btn, .btn, .chip {
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background: color-mix(in oklab, var(--surface-2) 82%, transparent);
+      border: 1px solid var(--border);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+    .icon-btn:hover, .btn:hover, .chip:hover {
+      transform: translateY(-1px);
+      border-color: color-mix(in oklab, var(--accent) 30%, var(--border));
+      box-shadow: 0 10px 24px rgba(0,0,0,.10);
+    }
+
+    .btn {
+      padding: 12px 16px;
+      color: var(--text);
+      background: color-mix(in oklab, var(--surface-2) 84%, transparent);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 14px 30px rgba(139,92,246,.20);
+    }
+    .btn.good {
+      background: linear-gradient(135deg, color-mix(in oklab, var(--good) 72%, black), color-mix(in oklab, var(--accent) 24%, var(--good)));
+      color: white;
+      border-color: transparent;
+    }
+    .btn.ghost { background: transparent; }
+    .btn.small { padding: 10px 12px; border-radius: 14px; font-size: .92rem; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      background: color-mix(in oklab, var(--surface-2) 84%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .theme-switch .chip {
+      padding: 8px 11px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .theme-switch .chip.active {
+      background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 26%, transparent), color-mix(in oklab, var(--accent-3) 18%, transparent));
+      border-color: color-mix(in oklab, var(--accent) 34%, var(--border));
+      color: var(--text);
+    }
+
+    .hero {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.35fr .95fr;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 90%, transparent), color-mix(in oklab, var(--surface-2) 92%, transparent));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+
+    .hero-card {
+      padding: 22px;
+      min-height: 190px;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-card::after {
+      content:"";
+      position:absolute;
+      inset:auto -16% -35% auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, color-mix(in oklab, var(--accent) 32%, transparent), transparent 70%);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .hero-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .hero-title h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2vw, 2.2rem);
+      letter-spacing: -0.03em;
+    }
+    .hero-title .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--accent) 16%, transparent);
+      border: 1px solid color-mix(in oklab, var(--accent) 25%, var(--border));
+      color: var(--text);
+      font-size: .88rem;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 70ch;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      background: color-mix(in oklab, var(--surface-3) 78%, transparent);
+      border: 1px solid var(--border);
+      min-height: 92px;
+    }
+    .stat .k {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .stat .v {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .stat .s {
+      margin-top: 4px;
+      color: var(--soft);
+      font-size: .84rem;
+    }
+
+    .progress-wrap {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
+    .progress-meta {
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: .92rem;
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--surface-3) 74%, transparent);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      box-shadow: 0 12px 24px rgba(34,211,238,.16);
+      transition: width .35s ease;
+    }
+
+    .tools-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+    .tool-title {
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .tool-title h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .tool-title span {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .sidebar-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .study-panel {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+    .study-header {
+      display:flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .study-header h3 {
+      margin: 0 0 4px;
+      font-size: 1.06rem;
+      letter-spacing: -0.02em;
+    }
+    .study-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: .94rem;
+    }
+    .study-card {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--surface-2) 92%, transparent), color-mix(in oklab, var(--surface-3) 95%, transparent));
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .study-card .ticket-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .study-card .ticket-num {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--accent) 17%, transparent);
+      border: 1px solid color-mix(in oklab, var(--accent) 25%, var(--border));
+      font-weight: 700;
+    }
+    .study-card .status {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .study-content {
+      display: grid;
+      gap: 10px;
+    }
+    .study-point {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--surface-3) 82%, transparent);
+      overflow: hidden;
+    }
+    .study-point-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding: 13px 14px;
+      cursor: default;
+    }
+    .study-point-head strong {
+      font-size: .95rem;
+    }
+    .pill {
+      font-size: .78rem;
+      color: var(--muted);
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .study-point-body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .34s ease;
+    }
+    .study-point.open .study-point-body { grid-template-rows: 1fr; }
+    .study-point-body > div {
+      overflow: hidden;
+      padding: 0 14px 14px;
+      color: var(--text);
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+    .study-point.hidden-answer .study-point-body > div {
+      color: transparent;
+      text-shadow: 0 0 14px rgba(255,255,255,.6);
+      user-select: none;
+    }
+
+    .study-actions {
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .content-section {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .section-head {
+      display:flex;
+      align-items:end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .section-head h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .tickets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .ticket-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 90%, transparent), color-mix(in oklab, var(--surface-2) 92%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+      animation: fadeUp .45s ease both;
+    }
+    .ticket-card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in oklab, var(--accent) 26%, var(--border));
+      box-shadow: 0 18px 44px rgba(0,0,0,.18);
+    }
+
+    .ticket-head {
+      padding: 18px 18px 16px;
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .ticket-head-left {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .ticket-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--accent) 15%, transparent);
+      border: 1px solid color-mix(in oklab, var(--accent) 24%, var(--border));
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+    .ticket-sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: .93rem;
+      line-height: 1.5;
+    }
+    .ticket-meta {
+      display:flex;
+      flex-direction: column;
+      align-items: end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .mini-stats {
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: end;
+    }
+    .mini-chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--surface-3) 80%, transparent);
+      color: var(--muted);
+      font-size: .8rem;
+    }
+    .learned-chip {
+      background: color-mix(in oklab, var(--good) 18%, transparent);
+      border-color: color-mix(in oklab, var(--good) 28%, var(--border));
+      color: var(--text);
+    }
+
+    .ticket-actions {
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .card-body-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .36s ease;
+    }
+    .ticket-card.open .card-body-wrap { grid-template-rows: 1fr; }
+    .card-body {
+      overflow: hidden;
+      padding: 0 18px 18px;
+    }
+
+    .ticket-rows {
+      display: grid;
+      gap: 12px;
+    }
+
+    .qa {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--surface-3) 84%, transparent);
+      overflow: hidden;
+    }
+    .qa-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+    }
+    .qa-index {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+    .qa-index .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 12%, transparent);
+    }
+    .qa-body {
+      padding: 0 14px 14px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .ticket-card.hidden {
+      display: none;
+    }
+
+    mark {
+      background: var(--mark);
+      color: var(--text);
+      padding: 0 .12em;
+      border-radius: .28em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .empty-state {
+      padding: 28px;
+      border-radius: var(--radius-xl);
+      border: 1px dashed var(--border-2);
+      background: color-mix(in oklab, var(--surface-3) 84%, transparent);
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--surface) 92%, transparent);
+      color: var(--muted);
+      box-shadow: var(--shadow-soft);
+      line-height: 1.7;
+    }
+
+    .kbd-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .kbd {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--surface-3) 84%, transparent);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: .82rem;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      gap: 10px;
+      z-index: 70;
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: none;
+      min-width: 240px;
+      max-width: min(380px, calc(100vw - 32px));
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: color-mix(in oklab, var(--surface-2) 92%, transparent);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      opacity: 0;
+      transform: translateY(12px) scale(.98);
+      transition: opacity .24s ease, transform .24s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .toast small {
+      display:block;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(139,92,246,.22), transparent 22%),
+        radial-gradient(circle at 80% 10%, rgba(34,211,238,.18), transparent 20%),
+        linear-gradient(180deg, #05070e, #0a1020);
+      transition: opacity .45s ease, visibility .45s ease;
+    }
+    .loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-card {
+      width: min(420px, calc(100vw - 32px));
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 24px 70px rgba(0,0,0,.35);
+      backdrop-filter: blur(22px);
+      color: white;
+      text-align: center;
+    }
+    .loader-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-3));
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+    .loader-title {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: -.02em;
+    }
+    .loader-sub {
+      margin: 8px 0 18px;
+      color: rgba(255,255,255,.72);
+      line-height: 1.6;
+    }
+    .loader-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .loader-bar span {
+      display:block;
+      height: 100%;
+      width: 50%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      animation: slide 1.2s ease-in-out infinite;
+    }
+    @keyframes slide {
+      0% { transform: translateX(-40%); }
+      50% { transform: translateX(80%); }
+      100% { transform: translateX(-40%); }
+    }
+
+    .mobile-only { display: none; }
+
+    .drawer {
+      position: fixed;
+      inset: 0 0 0 auto;
+      width: min(390px, 92vw);
+      z-index: 60;
+      transform: translateX(105%);
+      transition: transform .35s ease;
+      pointer-events: none;
+    }
+    .drawer.open {
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .drawer-panel {
+      height: 100%;
+      margin: 0;
+      border-radius: 28px 0 0 28px;
+      background: color-mix(in oklab, var(--surface-2) 88%, transparent);
+      border-left: 1px solid var(--border);
+      box-shadow: -18px 0 48px rgba(0,0,0,.25);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      padding: 16px;
+      overflow: auto;
+    }
+    .drawer-head {
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .drawer-grid {
+      display:grid;
+      gap: 12px;
+    }
+    .drawer .theme-switch {
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.34);
+      z-index: 55;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+    .overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .toggle-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--surface-3) 82%, transparent);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    /* Scrollbar */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: color-mix(in oklab, var(--surface-3) 60%, transparent); }
+    *::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 60%, #666), color-mix(in oklab, var(--accent-3) 60%, #666));
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    @media (max-width: 1120px) {
+      .hero { grid-template-columns: 1fr; }
+      .tickets-grid { grid-template-columns: 1fr; }
+      .topbar-inner { grid-template-columns: 1fr; }
+      .search-area { grid-template-columns: 1fr auto auto; }
+      .nav-actions { justify-content: space-between; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --radius-xl: 24px; --radius-lg: 18px; }
+      .app { padding-left: 12px; padding-right: 12px; }
+      .topbar { border-radius: 22px; top: 8px; }
+      .topbar-inner { padding: 12px; gap: 10px; }
+      .search-area { grid-template-columns: 1fr; }
+      .nav-actions { display: none; }
+      .mobile-only { display: inline-flex; }
+      .hero-card, .tools-card, .study-panel, .footer { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+      .ticket-head { padding: 16px; }
+      .card-body { padding: 0 16px 16px; }
+      .ticket-actions { gap: 8px; }
+      .btn { width: fit-content; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-card">
+      <div class="loader-logo">Б</div>
+      <h2 class="loader-title">Подготовка билетов по биологии</h2>
+      <p class="loader-sub">Загружаю билеты, прогресс и режим повторения. Всё работает офлайн.</p>
+      <div class="loader-bar"><span></span></div>
+    </div>
+  </div>
+
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <div>
+          <div style="font-weight:800; font-size:1.02rem;">Меню</div>
+          <div style="color:var(--muted); font-size:.9rem;">Быстрые настройки и действия</div>
+        </div>
+        <button class="icon-btn" id="closeDrawerBtn" aria-label="Закрыть меню">✕</button>
+      </div>
+      <div class="drawer-grid">
+        <div class="panel" style="padding:14px;">
+          <div class="tool-title"><h3>Тема</h3><span>Выбор оформления</span></div>
+          <div class="theme-switch" id="themeSwitchDrawer">
+            <button class="chip" data-theme="dark">Тёмная</button>
+            <button class="chip" data-theme="light">Светлая</button>
+            <button class="chip" data-theme="neon">Неоновая</button>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:14px;">
+          <div class="tool-title"><h3>Навигация</h3><span>Номер и поиск</span></div>
+          <div style="display:grid; gap:10px;">
+            <input class="input" id="searchInputDrawer" placeholder="Поиск по билетам…" />
+            <input class="input" id="numFilterDrawer" type="number" min="1" placeholder="Номер билета" />
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn primary" id="goToDrawer">Найти билет</button>
+              <button class="btn" id="clearFiltersDrawer">Сбросить</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:14px;">
+          <div class="tool-title"><h3>Данные</h3><span>Прогресс и экспорт</span></div>
+          <div style="display:grid; gap:10px;">
+            <button class="btn good" id="exportBtnDrawer">Экспорт прогресса</button>
+            <button class="btn" id="collapseAllBtnDrawer">Свернуть все билеты</button>
+            <button class="btn" id="studyNextBtnDrawer">Следующий билет</button>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:14px;">
+          <div class="tool-title"><h3>Подсказки</h3><span>Клавиши</span></div>
+          <div class="kbd-row" style="margin-top:0;">
+            <span class="kbd">/ поиск</span>
+            <span class="kbd">Enter открыть</span>
+            <span class="kbd">Space ответ</span>
+            <span class="kbd">← → билет</span>
+            <span class="kbd">E экспорт</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark">Б</div>
+          <div style="min-width:0;">
+            <h1>Билеты по биологии</h1>
+            <p id="subtitle">35 билетов • офлайн-подготовка • тёмная тема</p>
+          </div>
+        </div>
+
+        <div class="search-area">
+          <div class="field">
+            <input class="input" id="searchInput" placeholder="Поиск по словам, фразам и билетам…" autocomplete="off" />
+          </div>
+          <div class="field" style="max-width:150px;">
+            <input class="input" id="numFilter" type="number" min="1" placeholder="№ билета" />
+          </div>
+          <button class="btn primary" id="goToBtn">Найти</button>
+        </div>
+
+        <div class="nav-actions">
+          <div class="theme-switch" id="themeSwitch">
+            <button class="chip" data-theme="dark">Тёмная</button>
+            <button class="chip" data-theme="light">Светлая</button>
+            <button class="chip" data-theme="neon">Неоновая</button>
+          </div>
+          <button class="icon-btn mobile-only" id="menuBtn" aria-label="Открыть меню">☰</button>
+          <button class="btn" id="collapseAllBtn">Свернуть все</button>
+          <button class="btn good" id="exportBtn">Экспорт</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="panel hero-card">
+        <div class="hero-title">
+          <h2>Заучивание билетов без лишнего шума</h2>
+          <span class="badge" id="ticketsCountBadge">Всего: 35</span>
+        </div>
+        <p>
+          Сайт сам распарсит текст билетов, покажет карточки, случайный режим повторения, сохранит изученное в браузере и не потребует интернета после открытия файла.
+        </p>
+
+        <div class="stats-grid" style="margin-top:18px;">
+          <div class="stat">
+            <div class="k">Изучено</div>
+            <div class="v" id="learnedCount">0</div>
+            <div class="s">Сохраняется в localStorage</div>
+          </div>
+          <div class="stat">
+            <div class="k">Прогресс</div>
+            <div class="v" id="progressText">0%</div>
+            <div class="s">От всех билетов</div>
+          </div>
+          <div class="stat">
+            <div class="k">Показано в поиске</div>
+            <div class="v" id="filteredCount">35</div>
+            <div class="s">По текущему фильтру</div>
+          </div>
+          <div class="stat">
+            <div class="k">Режим карточек</div>
+            <div class="v" id="studyModeState">Вкл.</div>
+            <div class="s">Быстрое повторение</div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span>Индикатор общего прогресса</span>
+              <span id="progressMeta">0 из 35</span>
+            </div>
+            <div class="progress-bar"><span id="progressBar"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel tools-card">
+        <div class="tool-title">
+          <h3>Быстрые действия</h3>
+          <span>один тап</span>
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" id="randomBtn">Случайный билет</button>
+          <button class="btn" id="showAnswerBtn">Показать ответ</button>
+          <button class="btn good" id="learnedBtn">Выучено</button>
+          <button class="btn" id="copyStudyBtn">Скопировать билет</button>
+        </div>
+
+        <div class="panel study-panel" style="margin-top:2px;">
+          <div class="study-header">
+            <div>
+              <h3>Режим подготовки</h3>
+              <p>Сначала попытайся вспомнить сам, потом открой ответ и отметь билет как изученный.</p>
+            </div>
+            <span class="pill" id="randomHint">Билет №1</span>
+          </div>
+
+          <div class="study-card" id="studyCard">
+            <div class="ticket-top">
+              <div class="ticket-num" id="studyTicketLabel">Билет №1</div>
+              <div class="status" id="studyStatus">Ответ скрыт</div>
+            </div>
+            <div class="study-content" id="studyContent"></div>
+          </div>
+
+          <div class="study-actions">
+            <button class="btn primary" id="nextBtn">Следующий билет</button>
+            <button class="btn" id="toggleSelfCheckBtn">Режим самопроверки: Вкл.</button>
+            <button class="btn" id="scrollToListBtn">К списку билетов</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <div>
+          <h3>Все билеты</h3>
+          <p>Раскрывай нужные карточки, копируй билеты и отмечай изученное.</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <span class="toggle-pill" id="activeFilterText">Фильтр: нет</span>
+          <button class="btn small" id="scrollTopBtn">Наверх</button>
+        </div>
+      </div>
+
+      <div id="ticketsList" class="tickets-grid" aria-live="polite"></div>
+      <div id="emptyState" class="empty-state" style="display:none;">
+        Ничего не найдено. Сбрось поиск или фильтр по номеру.
+      </div>
+    </section>
+
+    <section class="footer">
+      <strong style="display:block; margin-bottom:6px; color:var(--text);">Краткая инструкция запуска</strong>
+      Открой этот файл <code>index.html</code> простым двойным нажатием в проводнике или файловом менеджере. Сайт работает полностью офлайн, прогресс сохраняется в браузере.
+      <div class="kbd-row">
+        <span class="kbd">Двойной клик → открыть</span>
+        <span class="kbd">localStorage → прогресс</span>
+        <span class="kbd">HTML/CSS/JS → один файл</span>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const RAW_SOURCE = "Билет №1\n\n\t1.\tСердце — полый мышечный орган, обеспечивающий движение крови по организму. Оно находится в грудной полости и состоит из четырёх камер: правого и левого предсердий, правого и левого желудочков. Между предсердиями и желудочками расположены клапаны, препятствующие обратному току крови. Стенка сердца состоит из эндокарда, миокарда и эпикарда. Правая половина сердца направляет венозную кровь в лёгкие, а левая — артериальную кровь ко всем органам.\n\t2.\tЖирорастворимые витамины — это витамины A, D, E и K. Они растворяются в жирах и могут накапливаться в организме. Витамин A важен для зрения и роста, витамин D регулирует обмен кальция и фосфора, витамин E защищает клетки организма, а витамин K участвует в свёртывании крови. Основные источники — печень, рыбий жир, яйца, масло, орехи и зелёные овощи.\n\t3.\tНаследственные заболевания передаются через гены от родителей к детям. Примеры: гемофилия и дальтонизм. Врождённые заболевания возникают во время развития плода под воздействием инфекций, вредных привычек матери или нарушений развития органов. Примеры: пороки сердца и заячья губа. Для профилактики важно соблюдать здоровый образ жизни и наблюдаться у врача во время беременности.\n\n⸻\n\nБилет №2\n\n\t1.\tОрганы размножения обеспечивают продолжение рода. Мужская половая система включает яички, семявыносящие протоки, предстательную железу и половой член. В яичках образуются сперматозоиды и мужские гормоны. Женская половая система состоит из яичников, маточных труб, матки и влагалища. В яичниках созревают яйцеклетки, а в матке развивается плод.\n\t2.\tЛейкоциты — белые клетки крови, защищающие организм от микробов и вирусов. Они уничтожают бактерии и вырабатывают антитела. Иммунитет — способность организма защищаться от инфекций. Он бывает врождённым и приобретённым. Приобретённый иммунитет формируется после болезни или прививки.\n\t3.\tЧеловек относится к царству Животные, типу Хордовые, классу Млекопитающие и отряду Приматы. С животными человека объединяют клеточное строение, наличие органов и систем органов. Главные особенности человека — развитый мозг, речь, мышление и трудовая деятельность.\n\n⸻\n\nБилет №3\n\n\t1.\tКожа — наружный покров тела человека. Она состоит из эпидермиса, дермы и подкожной жировой клетчатки. В коже находятся потовые и сальные железы, кровеносные сосуды, нервные окончания и волосы. Кожа выполняет защитную, выделительную, чувствительную и терморегуляторную функции.\n\t2.\tВодорастворимые витамины — это витамин C и витамины группы B. Они не накапливаются в организме и должны постоянно поступать с пищей. Витамин C укрепляет иммунитет и содержится в цитрусах и шиповнике. Витамины группы B необходимы для работы нервной системы и обмена веществ.\n\t3.\tРост — это увеличение размеров тела, а развитие — формирование органов и их функций. На рост и развитие ребёнка влияют наследственность, питание, сон, физическая активность и условия жизни. Для нормального развития необходимы правильный режим дня и здоровый образ жизни.\n\n⸻\n\nБилет №4\n\n\t1.\tЭритроциты — красные клетки крови, содержащие гемоглобин. Они образуются в красном костном мозге и выполняют функцию переноса кислорода и углекислого газа. Недостаток эритроцитов приводит к малокровию.\n\t2.\tСон — физиологическое состояние отдыха организма, во время которого восстанавливается нервная система и снижается активность органов. Сон необходим для отдыха мозга, восстановления сил и укрепления памяти. Бодрствование — состояние активной деятельности организма. Недостаток сна вызывает утомление и ухудшение здоровья.\n\t3.\tК глазным болезням относятся близорукость, дальнозоркость и конъюнктивит. При близорукости человек плохо видит вдаль, а при дальнозоркости — вблизи. Для профилактики глазных болезней необходимы хорошее освещение, правильная посадка при чтении, ограничение времени за экраном и гимнастика для глаз.\n\n⸻\n\nБилет №5\n\n\t1.\tЧеловек относится к царству Животные, типу Хордовые, классу Млекопитающие и отряду Приматы. Общими признаками человека и животных являются клеточное строение, наличие позвоночника, теплокровность и вскармливание детёнышей молоком. Основные отличия человека — сознание, речь, мышление и трудовая деятельность.\n\t2.\tМышцы обеспечивают движение тела и работу внутренних органов. Они выполняют функции движения, поддержания позы и образования тепла. Различают гладкую, поперечно-полосатую скелетную и сердечную мышечную ткань. Основные свойства мышц — возбудимость, сокращаемость и эластичность.\n\t3.\tК болезням органов дыхания относятся грипп, бронхит, пневмония и туберкулёз. Причинами этих заболеваний могут быть инфекции, переохлаждение и курение. Для профилактики необходимы закаливание, физическая активность, проветривание помещений, соблюдение гигиены и отказ от курения\n\nБилет №6\n\n\t1.\tЭволюция человека — это длительный процесс исторического развития человека от древних предков до современного вида. Современный человек относится к виду Человек разумный. Раса — это исторически сложившаяся группа людей, отличающаяся внешними признаками, но все расы равны и принадлежат к одному виду. Основные расы: европеоидная, монголоидная и негроидная.\n\t2.\tДвижение крови по сосудам обеспечивается работой сердца. Кровь движется по артериям, капиллярам и венам. В артериях кровь движется от сердца, в венах — к сердцу. Давление крови помогает движению крови по организму. Кровообращение обеспечивает доставку кислорода и питательных веществ к органам и удаление углекислого газа и продуктов обмена.\n\t3.\tЗдоровье человека зависит от образа жизни, питания, режима дня, физической активности и условий окружающей среды. Для его защиты необходимо соблюдать личную гигиену, правильно питаться, заниматься физкультурой, закаляться и избегать вредных привычек. Важно также своевременно обращаться к врачу и делать профилактические прививки.\n\nБилет №7\n\n\t1.\tЖизненные свойства клетки — это обмен веществ, рост, размножение, раздражимость, движение и дыхание. Клетка реагирует на изменения среды, получает вещества и энергию, растёт и делится. Эти свойства обеспечивают жизнь организма в целом.\n\t2.\tИзменение пищевых веществ в организме начинается в органах пищеварения. В пищеварительном тракте пища подвергается механической и химической обработке. Под действием ферментов белки, жиры и углеводы расщепляются на более простые вещества, которые всасываются в кровь и лимфу. Это необходимо для питания клеток и получения энергии.\n\t3.\tНарушения высшей нервной деятельности могут проявляться как переутомление, бессонница, раздражительность, снижение памяти и внимания. Причинами могут быть стресс, недосыпание, неправильный режим дня, вредные привычки. Профилактика состоит в соблюдении режима труда и отдыха, полноценном сне, физической активности и спокойной обстановке.\n\nБилет №8\n\n\t1.\tТкани — это группы клеток и межклеточного вещества, сходные по строению и выполняющие общие функции. У человека выделяют эпителиальную, соединительную, мышечную и нервную ткани. Каждая ткань имеет своё строение и значение в организме.\n\t2.\tОсязание — это способность воспринимать прикосновение, давление, боль и температуру. Осязательные рецепторы находятся в коже. С их помощью человек получает информацию о предметах, их форме, твёрдости, температуре и поверхности.\n\t3.\tВ экстремальных условиях человек испытывает сильное воздействие холода, жары, голода, жажды, нехватки кислорода или стресса. Для выживания важно сохранять спокойствие, экономить силы, защищать тело от перегрева и переохлаждения, обеспечивать себя водой и питанием и соблюдать правила безопасности.\n\nБилет №9\n\n\t1.\tСкелет человека выполняет опорную, защитную и двигательную функции. Он состоит из костей, соединённых между собой различными способами. Основные отделы скелета — скелет головы, туловища, верхних и нижних конечностей. Скелет защищает внутренние органы и вместе с мышцами обеспечивает движение.\n\t2.\tОбоняние — это чувство, позволяющее различать запахи. Обонятельные рецепторы расположены в слизистой оболочке носовой полости. Благодаря обонянию человек распознаёт запах пищи, цветов, дыма и других веществ.\n\t3.\tЗдоровье человека зависит от образа жизни, питания, режима дня, физической активности и гигиены. Для его защиты важно закаляться, не курить, не употреблять алкоголь, соблюдать чистоту, правильно питаться и вовремя лечить болезни. Профилактика всегда лучше лечения.\n\nБилет №10\n\n\t1.\tСтроение клетки включает оболочку, цитоплазму и ядро. В клетке находятся органоиды, которые выполняют различные функции: митохондрии обеспечивают энергию, рибосомы участвуют в синтезе белка, а ядро управляет жизнедеятельностью клетки. Клетка — основная структурная и функциональная единица живого организма.\n\t2.\tЛимфообращение — это движение лимфы по лимфатическим сосудам. Лимфа образуется из тканевой жидкости, собирается в лимфатические сосуды и возвращается в кровь. Лимфатическая система участвует в защите организма и поддержании постоянства внутренней среды.\n\t3.\tСпиртные напитки вредно влияют на нервную систему и поведение человека. Алкоголь замедляет работу мозга, ухудшает память, внимание, координацию движений и может вызывать агрессивность и неадекватное поведение. Употребление алкоголя опасно для здоровья и развития личности.\n\nБилет №11\n\n\t1.\tОбмен энергии — это процесс, при котором организм получает энергию из пищи и расходует её на работу органов, движение, рост и поддержание температуры тела. Энергия в организме образуется при расщеплении органических веществ. Правильное питание необходимо для нормального обмена энергии.\n\t2.\tСлуховой орган — ухо. Он состоит из наружного, среднего и внутреннего уха. Слуховые рецепторы находятся в улитке внутреннего уха. Ухо воспринимает звуковые колебания и передаёт их в нервную систему, где они превращаются в слуховые ощущения.\n\t3.\tНаркомания — это тяжёлое заболевание, вызванное употреблением наркотических веществ. Она разрушает здоровье, психику, поведение и социальную жизнь человека. Последствия наркомании — зависимость, истощение организма, поражение внутренних органов и высокий риск смерти. Профилактика заключается в отказе от наркотиков и здоровом образе жизни.\n\nБилет №12\n\n\t1.\tАнатомия изучает строение организма, физиология — его функции, гигиена — условия сохранения здоровья. Развитие этих наук связано с накоплением знаний о человеке, наблюдениями и исследованиями. Они помогают понять строение и работу организма, а также сохранить здоровье.\n\t2.\tКровь выполняет транспортную, защитную и регуляторную функции. Плазма крови — это жидкая часть крови, в которой находятся соли, питательные вещества, гормоны и продукты обмена. Плазма обеспечивает перенос веществ по организму.\n\t3.\tУсловные рефлексы — это приобретённые рефлексы, которые формируются в течение жизни. Они вырабатываются на основе опыта и могут угасать без подкрепления. Условные рефлексы играют важную роль в обучении, привычках и поведении человека.\n\nБилет №13\n\n\t1.\tВирус СПИДа поражает иммунную систему человека. Он вызывает тяжёлое заболевание, при котором организм становится беззащитным перед инфекциями. ВИЧ передаётся через кровь, при половом контакте и от матери к ребёнку. Профилактика заключается в соблюдении правил безопасности и здоровом поведении.\n\t2.\tБезусловные рефлексы — это врождённые, наследственно закреплённые реакции организма. Они обеспечивают жизненно важные функции: дыхание, сосание, глотание, мигание. Их значение состоит в том, что они помогают организму выживать с первых дней жизни.\n\t3.\tСпиртные напитки и никотин вредно влияют на переваривание пищи. Они нарушают работу желудка, печени, поджелудочной железы и кишечника, ухудшают выделение пищеварительных соков и всасывание питательных веществ. Это приводит к расстройствам пищеварения и болезням органов пищеварения.\n\nБилет №14\n\n\t1.\tОрган вкуса — язык. На его поверхности расположены вкусовые рецепторы, которые воспринимают сладкое, солёное, кислое и горькое. Вкусовые ощущения помогают человеку выбирать пищу и распознавать её качество.\n\t2.\tПамять — это способность запоминать, сохранять и воспроизводить информацию. Она бывает кратковременной и долговременной. Память необходима для обучения, мышления и практической деятельности человека.\n\t3.\tГлистные инвазии — это заражение организма паразитическими червями. Заражение происходит через немытые руки, грязную воду, плохо обработанные продукты и контакт с животными. Профилактика включает соблюдение гигиены, мытьё рук, чистоту пищи и воды.\n\nБилет №15\n\n\t1.\tКора больших полушарий — наружный слой головного мозга, отвечающий за высшую нервную деятельность. Она участвует в мышлении, речи, памяти, восприятии и управлении движениями. Кора больших полушарий обеспечивает сознательную деятельность человека.\n\t2.\tЧувство равновесия обеспечивает вестибулярный аппарат, расположенный во внутреннем ухе. Он помогает человеку сохранять положение тела в пространстве, удерживать равновесие и координировать движения.\n\t3.\tУмственная форма труда связана с работой мозга, мышлением, памятью и вниманием. Для её успешного выполнения нужны хорошее освещение, правильная организация рабочего места, режим труда и отдыха, а также чередование умственной и физической нагрузки.\n\nБилет №16\n\n\t1.\tГоловной мозг — часть центральной нервной системы, расположенная в черепе. Он состоит из отделов: продолговатого мозга, моста, мозжечка, среднего мозга, промежуточного мозга и больших полушарий. Головной мозг управляет всеми процессами организма, обеспечивает мышление, память, речь, движения и работу внутренних органов.\n\t2.\tДвижение лимфы происходит по лимфатическим сосудам в одном направлении — к венозной крови. Лимфа образуется из тканевой жидкости, попадает в лимфатические капилляры, затем в сосуды и протоки, после чего возвращается в кровеносную систему. Лимфатическая система участвует в защите организма и поддержании постоянства внутренней среды.\n\t3.\tНадпочечники — это железы внутренней секреции, расположенные над почками. Они вырабатывают гормоны, которые регулируют обмен веществ, работу сердца, сосудов и реакцию организма на стресс. Надпочечники помогают организму приспосабливаться к различным условиям.\n\nБилет №17\n\n\t1.\tСпинной мозг находится в позвоночном канале и является частью центральной нервной системы. Он имеет серое и белое вещество. От спинного мозга отходят нервы, которые обеспечивают связь мозга с органами тела. Спинной мозг выполняет рефлекторную и проводниковую функции.\n\t2.\tОплодотворение — это слияние сперматозоида и яйцеклетки, в результате которого образуется зигота. Далее начинается развитие зародыша. Зародыш прикрепляется к стенке матки и постепенно развивается в плод. Развитие человека до рождения проходит внутри организма матери.\n\t3.\tОрганизм как единое целое — это система, в которой все органы и системы органов связаны между собой и работают согласованно. Нервная и гуморальная регуляция обеспечивают согласованную деятельность всех частей тела. Нарушение работы одного органа влияет на весь организм.\n\nБилет №18\n\n\t1.\tРасщепление в ротовой полости начинается под действием слюны. Пища измельчается зубами, смачивается слюной и образует пищевой комок. В слюне содержится фермент, который начинает расщепление крахмала. Это облегчает дальнейшее переваривание пищи.\n\t2.\tОсновные свойства высшей нервной деятельности — это возбуждение, торможение, образование условных рефлексов, память, мышление и речь. Они обеспечивают сложное поведение человека и его приспособление к окружающей среде. Благодаря этим свойствам человек может обучаться, запоминать и сознательно действовать.\n\t3.\tЭндокринная система состоит из желез внутренней секреции, которые выделяют гормоны прямо в кровь. К ним относятся гипофиз, щитовидная железа, надпочечники, поджелудочная железа и половые железы. Гормоны регулируют рост, развитие, обмен веществ и работу органов.\n\nБилет №19\n\n\t1.\tОрганы чувств воспринимают раздражения из внешней среды и передают информацию в нервную систему. К ним относятся органы зрения, слуха, обоняния, вкуса, равновесия и осязания. Они помогают человеку ориентироваться в окружающем мире и защищаться от опасности.\n\t2.\tЩитовидная железа — железа внутренней секреции, расположенная на шее. Она вырабатывает гормоны, которые влияют на обмен веществ, рост и развитие организма. При нарушении работы щитовидной железы могут возникать болезни, связанные с недостатком или избытком гормонов.\n\t3.\tОбмен газов в тканях происходит между кровью и клетками организма. Кислород переходит из крови в ткани, а углекислый газ — из тканей в кровь. Этот процесс обеспечивает дыхание клеток и получение энергии.\n\nБилет №20\n\n\t1.\tПищеварительная система состоит из пищеварительного канала и пищеварительных желез. К ней относятся ротовая полость, глотка, пищевод, желудок, кишечник, печень и поджелудочная железа. Она обеспечивает измельчение пищи, её расщепление и всасывание питательных веществ.\n\t2.\tМалый круг кровообращения начинается в правом желудочке сердца. Венозная кровь поступает в лёгкие, где отдаёт углекислый газ и насыщается кислородом, после чего возвращается в левое предсердие. Малый круг обеспечивает газообмен в лёгких.\n\t3.\tГигиена нервной системы включает соблюдение режима дня, полноценный сон, чередование труда и отдыха, прогулки на свежем воздухе и отказ от вредных привычек. Для сохранения здоровья нервной системы важно избегать переутомления, стрессов и длительного перенапряжения.\n\nБилет №21\n\n\t1.\tВегетативные нервы относятся к автономной нервной системе и регулируют работу внутренних органов. Они управляют деятельностью сердца, сосудов, желудка, кишечника, желез и других органов без участия сознания. Вегетативная нервная система обеспечивает согласованную работу организма.\n\t2.\tПоджелудочная железа выполняет двойную функцию: выделяет пищеварительный сок и вырабатывает гормоны. Пищеварительный сок участвует в расщеплении пищи в кишечнике, а гормоны, например инсулин, регулируют уровень сахара в крови. Это важный орган пищеварительной и эндокринной систем.\n\t3.\tОбмен газов в лёгких происходит между воздухом в лёгочных пузырьках и кровью капилляров. Кислород переходит из воздуха в кровь, а углекислый газ — из крови в воздух. Этот процесс обеспечивает насыщение крови кислородом.\n\nБилет №22\n\n\t1.\tСистема выделения мочи состоит из почек, мочеточников, мочевого пузыря и мочеиспускательного канала. Почки образуют мочу, которая удаляет из организма лишнюю воду, соли и продукты обмена. Выделительная система поддерживает постоянство внутренней среды.\n\t2.\tКровообращение — это движение крови по организму. Оно обеспечивается работой сердца и кровеносных сосудов. Кровь переносит кислород, питательные вещества, гормоны и уносит продукты обмена. Благодаря кровообращению клетки получают всё необходимое для жизни.\n\t3.\tК болезням органов дыхания относятся грипп, бронхит, пневмония и туберкулёз. Их причиной могут быть инфекции, переохлаждение и курение. Для профилактики необходимо закаливание, соблюдение гигиены, проветривание помещений, физическая активность и отказ от курения.\n\nБилет №23\n\n\t1.\tКожа — наружный покров тела человека. Она состоит из эпидермиса, дермы и подкожной жировой клетчатки. Кожа выполняет защитную, чувствительную, выделительную и терморегуляторную функции. В ней находятся потовые и сальные железы, сосуды и нервные окончания.\n\t2.\tОсновные свойства нервной системы — это возбудимость и проводимость. Нервная система воспринимает раздражения, передаёт сигналы и отвечает на них. Благодаря этим свойствам организм быстро реагирует на изменения окружающей среды.\n\t3.\tПрофилактика болезней желудка и кишечника включает правильное питание, соблюдение режима, употребление качественной пищи и чистой воды, а также мытьё рук перед едой. Важно не переедать, не злоупотреблять жирной и острой пищей и вовремя лечить заболевания пищеварительной системы.\n\nБилет №24\n\n\t1.\tКости образуются и развиваются постепенно. В детском возрасте они содержат больше органических веществ и отличаются гибкостью, а с возрастом в них увеличивается количество минеральных солей и прочность. Рост костей происходит за счёт деления клеток надкостницы и зон роста. Для нормального развития костей нужны кальций, фосфор, витамин D и физическая активность.\n\t2.\tБольшой круг кровообращения начинается в левом желудочке. Артериальная кровь поступает ко всем органам, где отдаёт кислород и питательные вещества, а затем венозная кровь возвращается в правое предсердие. Большой круг обеспечивает питание тканей и удаление продуктов обмена.\n\t3.\tТуберкулёз — инфекционное заболевание, чаще всего поражающее лёгкие. Возбудителем является палочка Коха. Болезнь передаётся воздушно-капельным путём и опасна для здоровья человека. Профилактика включает прививки, обследования, соблюдение гигиены и укрепление организма.\n\nБилет №25\n\n\t1.\tАвтоматизм сердца — это способность сердца сокращаться самостоятельно, без внешних сигналов. Импульсы возникают в самом сердце, в особых участках проводящей системы. Благодаря этому сердце работает ритмично и непрерывно.\n\t2.\tРасщепление пищи — это процесс, при котором сложные вещества пищи превращаются в более простые под действием ферментов. Оно начинается в ротовой полости, продолжается в желудке и кишечнике. В результате питательные вещества всасываются в кровь и лимфу.\n\t3.\tФизическая культура играет важную роль в правильном развитии скелета и мышц. Регулярные упражнения укрепляют мышцы, формируют правильную осанку, улучшают координацию движений и способствуют укреплению костей. Физическая активность помогает сохранить здоровье и предотвратить нарушения опорно-двигательного аппарата.\n\nБилет №26\n\n\t1.\tГрипп — это острое инфекционное заболевание дыхательных путей, вызываемое вирусами. Оно передаётся воздушно-капельным путём и проявляется высокой температурой, слабостью, головной болью, кашлем и насморком. Профилактика гриппа включает закаливание, соблюдение гигиены, проветривание помещений и вакцинацию.\n\t2.\tПищеварение в тонком кишечнике происходит под действием кишечного, панкреатического сока и желчи. Здесь заканчивается расщепление белков, жиров и углеводов на простые вещества, которые всасываются в кровь и лимфу через ворсинки кишечника. Тонкий кишечник является главным отделом, где происходит переваривание и всасывание пищи.\n\t3.\tВнутренняя среда организма — это кровь, лимфа и тканевая жидкость. Она обеспечивает обмен веществ между клетками и органами, перенос кислорода, питательных веществ и удаление продуктов обмена. Постоянство внутренней среды необходимо для нормальной работы организма.\n\nБилет №27\n\n\t1.\tХимический состав клетки включает воду, неорганические вещества и органические вещества. К органическим веществам относятся белки, жиры, углеводы и нуклеиновые кислоты. Вода играет важную роль в обмене веществ, а органические вещества обеспечивают строение клетки и её жизнедеятельность.\n\t2.\tДеятельность сердца заключается в ритмических сокращениях и расслаблениях, благодаря которым кровь движется по сосудам. Сердечный цикл включает сокращение предсердий, сокращение желудочков и общее расслабление. Работа сердца обеспечивает кровообращение и снабжение органов кислородом и питательными веществами.\n\t3.\tЗначение витаминов состоит в том, что они необходимы для нормального роста, развития, обмена веществ и работы органов. Витамины не являются источником энергии, но без них организм не может нормально функционировать. Недостаток витаминов вызывает авитаминозы и ухудшение здоровья.\n\nБилет №28\n\n\t1.\tОрганы и системы органов образуют организм человека. Органы состоят из тканей и выполняют определённые функции, а системы органов работают согласованно. К основным системам относятся опорно-двигательная, кровеносная, дыхательная, пищеварительная, выделительная, нервная и эндокринная.\n\t2.\tМалокровие — это заболевание, при котором в крови уменьшается количество эритроцитов или гемоглобина. При этом ухудшается снабжение тканей кислородом, появляется слабость, утомляемость, бледность. Причинами могут быть недостаток железа, кровопотери или болезни. Профилактика включает полноценное питание и лечение заболеваний.\n\t3.\tПрофилактика болезней желудка и кишечника заключается в соблюдении правил личной гигиены, правильном питании, употреблении качественной пищи и чистой воды. Важно не переедать, не злоупотреблять жирной и острой пищей, мыть руки перед едой и своевременно лечить заболевания пищеварительной системы.\n\nБилет №29\n\n\t1.\tФункции опорно-двигательного аппарата — это опора, движение, защита внутренних органов и участие в кроветворении. Он состоит из костей, суставов и мышц. Благодаря ему человек может сохранять форму тела, передвигаться и выполнять различные движения.\n\t2.\tКровеносные сосуды бывают артерии, вены и капилляры. Артерии несут кровь от сердца, вены — к сердцу, а капилляры соединяют артерии и вены и обеспечивают обмен веществ между кровью и тканями. Сосуды вместе с сердцем образуют кровеносную систему.\n\t3.\tОрганизм и его основные свойства — это единое живое целое, обладающее обменом веществ, ростом, развитием, раздражимостью, движением, размножением и приспособляемостью. Все органы и системы работают согласованно, обеспечивая жизнь человека.\n\nБилет №30\n\n\t1.\tОсновные свойства нервной системы — это возбудимость, проводимость и способность регулировать работу органов. Нервная система воспринимает раздражения, передаёт сигналы и обеспечивает быструю реакцию организма на изменения окружающей среды.\n\t2.\tОбмен органических веществ включает превращение белков, жиров и углеводов в организме. Белки идут на построение клеток, жиры служат источником энергии и запасом питательных веществ, а углеводы — главным источником энергии. В процессе обмена вещества расщепляются и используются организмом.\n\t3.\tПричины болезней системы сердца и сосудов — неправильное питание, малоподвижный образ жизни, стресс, курение, алкоголь и наследственность. Эти факторы могут привести к гипертонии, атеросклерозу и другим заболеваниям. Для профилактики нужны физическая активность, правильное питание, отказ от вредных привычек и регулярные обследования.\n\nБилет №31\n\n\t1.\tРефлекс — это ответ организма на раздражение. Рефлекторная дуга включает рецептор, чувствительный нерв, нервный центр, двигательный нерв и рабочий орган. Рефлексы обеспечивают быструю и точную реакцию организма на изменения среды.\n\t2.\tОбмен неорганических веществ связан с водой, минеральными солями и газами. Вода необходима для всех жизненных процессов, минеральные соли участвуют в строении тканей и регуляции функций организма, а кислород и углекислый газ обеспечивают дыхание клеток.\n\t3.\tРегуляция деятельности сердца осуществляется нервной системой и гормонами. Нервная система может ускорять или замедлять работу сердца, а гормоны усиливают сердечные сокращения. Это обеспечивает приспособление организма к нагрузкам и состоянию покоя.\n\nБилет №32\n\n\t1.\tПереливание крови применяется при больших кровопотерях и некоторых болезнях. Для успешного переливания важно, чтобы кровь донора и реципиента была совместима по группе и резус-фактору. Переливание может спасти жизнь, но требует строгой проверки совместимости.\n\t2.\tХимический состав костей включает органические и неорганические вещества. Органические вещества придают костям упругость, а минеральные соли, главным образом соли кальция и фосфора, обеспечивают твёрдость. Благодаря такому составу кости прочные и в то же время не слишком хрупкие.\n\t3.\tПищеварение в тонком кишечнике продолжается под действием ферментов кишечного и панкреатического сока, а также желчи. Здесь завершается расщепление питательных веществ и происходит их всасывание в кровь и лимфу через ворсинки кишечника.\n\nБилет №33\n\n\t1.\tСостав крови включает плазму и форменные элементы: эритроциты, лейкоциты и тромбоциты. Плазма переносит растворённые вещества, а форменные элементы выполняют транспортную, защитную и свёртывающую функции.\n\t2.\tЭмоции — это переживания человека, отражающие его отношение к происходящему. Они бывают положительными и отрицательными. Эмоции влияют на поведение, работоспособность и здоровье человека.\n\t3.\tСтроение лёгких включает правое и левое лёгкое, состоящие из долей. Лёгкие расположены в грудной полости и покрыты плеврой. Внутри они состоят из бронхов, бронхиол и множества лёгочных пузырьков — альвеол, где происходит газообмен.\n\nБилет №34\n\n\t1.\tРабота мышц основана на их способности сокращаться и расслабляться. При сокращении мышцы укорачиваются и тянут кости, вызывая движение. Работа мышц зависит от нервной системы, кровоснабжения и питания.\n\t2.\tИммунитет — это способность организма защищаться от чужеродных тел, микробов и вирусов. Он бывает врождённым и приобретённым, а приобретённый — естественным и искусственным. Иммунитет защищает организм от инфекций и помогает сохранять здоровье.\n\t3.\tОбмен газов в лёгких происходит между воздухом в альвеолах и кровью капилляров. Кислород переходит из воздуха в кровь, а углекислый газ — из крови в воздух. Этот процесс обеспечивает насыщение крови кислородом.\n\nБилет №35\n\n\t1.\tСвёртывание крови — это защитная реакция организма, предотвращающая кровопотерю при повреждении сосудов. В процессе свёртывания образуется кровяной сгусток, который закрывает рану. Важную роль в этом процессе играют тромбоциты и белки плазмы.\n\t2.\tРасщепление пищи в желудке происходит под действием желудочного сока. В желудке пища перемешивается, частично расщепляются белки, а также уничтожается часть микробов. Затем пища переходит в тонкий кишечник для дальнейшего переваривания.\n\t3.\tПредупреждение искривления позвоночника и плоскостопия включает правильную осанку, удобную мебель, умеренную физическую нагрузку, ношение подходящей обуви и контроль за положением тела при сидении и ходьбе. Важны также упражнения для укрепления мышц спины и стоп.\n";
+  </script>
+  <script>
+    (() => {
+      const STORAGE = {
+        progress: 'bio_exam_progress_v1',
+        theme: 'bio_exam_theme_v1',
+        settings: 'bio_exam_settings_v1'
+      };
+
+      const state = {
+        tickets: [],
+        learned: new Set(),
+        openTickets: new Set(),
+        theme: 'dark',
+        search: '',
+        numFilter: '',
+        activeIndex: 0,
+        revealAnswer: false,
+        selfCheck: true,
+        pendingScrollTo: null,
+      };
+
+      const els = {
+        subtitle: document.getElementById('subtitle'),
+        ticketsCountBadge: document.getElementById('ticketsCountBadge'),
+        learnedCount: document.getElementById('learnedCount'),
+        progressText: document.getElementById('progressText'),
+        filteredCount: document.getElementById('filteredCount'),
+        progressMeta: document.getElementById('progressMeta'),
+        progressBar: document.getElementById('progressBar'),
+        studyModeState: document.getElementById('studyModeState'),
+        studyTicketLabel: document.getElementById('studyTicketLabel'),
+        studyStatus: document.getElementById('studyStatus'),
+        randomHint: document.getElementById('randomHint'),
+        studyContent: document.getElementById('studyContent'),
+        ticketsList: document.getElementById('ticketsList'),
+        emptyState: document.getElementById('emptyState'),
+        activeFilterText: document.getElementById('activeFilterText'),
+        loader: document.getElementById('loader'),
+        toastWrap: document.getElementById('toastWrap'),
+        searchInput: document.getElementById('searchInput'),
+        searchInputDrawer: document.getElementById('searchInputDrawer'),
+        numFilter: document.getElementById('numFilter'),
+        numFilterDrawer: document.getElementById('numFilterDrawer'),
+        goToBtn: document.getElementById('goToBtn'),
+        goToDrawer: document.getElementById('goToDrawer'),
+        collapseAllBtn: document.getElementById('collapseAllBtn'),
+        collapseAllBtnDrawer: document.getElementById('collapseAllBtnDrawer'),
+        exportBtn: document.getElementById('exportBtn'),
+        exportBtnDrawer: document.getElementById('exportBtnDrawer'),
+        randomBtn: document.getElementById('randomBtn'),
+        showAnswerBtn: document.getElementById('showAnswerBtn'),
+        learnedBtn: document.getElementById('learnedBtn'),
+        copyStudyBtn: document.getElementById('copyStudyBtn'),
+        nextBtn: document.getElementById('nextBtn'),
+        studyNextBtnDrawer: document.getElementById('studyNextBtnDrawer'),
+        toggleSelfCheckBtn: document.getElementById('toggleSelfCheckBtn'),
+        scrollToListBtn: document.getElementById('scrollToListBtn'),
+        scrollTopBtn: document.getElementById('scrollTopBtn'),
+        menuBtn: document.getElementById('menuBtn'),
+        drawer: document.getElementById('drawer'),
+        overlay: document.getElementById('overlay'),
+        closeDrawerBtn: document.getElementById('closeDrawerBtn'),
+        themeSwitch: document.getElementById('themeSwitch'),
+        themeSwitchDrawer: document.getElementById('themeSwitchDrawer'),
+      };
+
+      function toast(title, subtitle = '') {
+        const node = document.createElement('div');
+        node.className = 'toast';
+        node.innerHTML = `<strong>${escapeHTML(title)}</strong>${subtitle ? `<small>${escapeHTML(subtitle)}</small>` : ''}`;
+        els.toastWrap.appendChild(node);
+        requestAnimationFrame(() => node.classList.add('show'));
+        setTimeout(() => {
+          node.classList.remove('show');
+          setTimeout(() => node.remove(), 250);
+        }, 1800);
+      }
+
+      function escapeHTML(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function parseTickets(raw) {
+        const chunks = raw.split(/(?=Билет №\d+)/g).map(s => s.trim()).filter(Boolean);
+        return chunks.map(chunk => {
+          const numMatch = chunk.match(/^Билет №(\d+)/);
+          const num = numMatch ? Number(numMatch[1]) : 0;
+          let body = chunk.replace(/^Билет №\d+\s*/, '').trim();
+          body = body.replace(/\n\s*⸻\s*$/u, '').trim();
+          const starts = [];
+          const re = /(?:^|\n)\s*(\d+)\.\s/g;
+          let m;
+          while ((m = re.exec(body)) !== null) {
+            starts.push({ idx: m.index, after: re.lastIndex, qnum: Number(m[1]) });
+          }
+          const items = starts.map((s, i) => {
+            const end = i + 1 < starts.length ? starts[i + 1].idx : body.length;
+            return body.slice(s.after, end).trim();
+          }).filter(Boolean);
+          return {
+            num,
+            items,
+            raw: chunk.trim()
+          };
+        }).sort((a, b) => a.num - b.num);
+      }
+
+      function normalize(text) {
+        return String(text).toLowerCase().replace(/\s+/g, ' ').trim();
+      }
+
+      function highlightText(text, query) {
+        const safe = escapeHTML(text);
+        const q = String(query || '').trim().replace(/\s+/g, ' ');
+        if (!q) return safe;
+        const terms = q.split(' ').filter(Boolean).slice(0, 6).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        if (!terms.length) return safe;
+        const re = new RegExp(`(${terms.join('|')})`, 'gi');
+        return safe.replace(re, '<mark>$1</mark>');
+      }
+
+      function formatTicketText(ticket) {
+        return `Билет №${ticket.num}\n\n` + ticket.items.map((item, idx) => `${idx + 1}. ${item}`).join('\n\n');
+      }
+
+      function saveProgress() {
+        localStorage.setItem(STORAGE.progress, JSON.stringify({
+          learned: [...state.learned],
+          openTickets: [...state.openTickets],
+          revealAnswer: state.revealAnswer,
+          selfCheck: state.selfCheck
+        }));
+      }
+
+      function saveTheme() {
+        localStorage.setItem(STORAGE.theme, state.theme);
+      }
+
+      function loadState() {
+        try {
+          const storedTheme = localStorage.getItem(STORAGE.theme);
+          if (storedTheme) state.theme = storedTheme;
+        } catch {}
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE.progress) || '{}');
+          if (Array.isArray(parsed.learned)) state.learned = new Set(parsed.learned.map(Number));
+          if (Array.isArray(parsed.openTickets)) state.openTickets = new Set(parsed.openTickets.map(Number));
+          state.revealAnswer = Boolean(parsed.revealAnswer);
+          state.selfCheck = parsed.selfCheck !== false;
+        } catch {}
+      }
+
+      function applyTheme(theme) {
+        state.theme = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        saveTheme();
+        updateThemeButtons();
+      }
+
+      function updateThemeButtons() {
+        document.querySelectorAll('[data-theme]').forEach(btn => {
+          if (btn.closest('.theme-switch')) {
+            btn.classList.toggle('active', btn.dataset.theme === state.theme);
+          }
+        });
+      }
+
+      function setDrawer(open) {
+        els.drawer.classList.toggle('open', open);
+        els.overlay.classList.toggle('show', open);
+        els.drawer.setAttribute('aria-hidden', String(!open));
+      }
+
+      function filteredTickets() {
+        const q = normalize(state.search);
+        const num = String(state.numFilter || '').trim();
+        return state.tickets.filter(ticket => {
+          if (num && String(ticket.num) !== String(Number(num))) return false;
+          if (!q) return true;
+          const hay = normalize(`Билет №${ticket.num} ` + ticket.items.join(' '));
+          return q.split(' ').filter(Boolean).every(term => hay.includes(term));
+        });
+      }
+
+      function scrollToTicket(num) {
+        const el = document.querySelector(`[data-ticket="${num}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.animate([
+            { transform: 'translateY(0) scale(1)' },
+            { transform: 'translateY(-2px) scale(1.01)' },
+            { transform: 'translateY(0) scale(1)' }
+          ], { duration: 450, easing: 'ease-out' });
+        }
+      }
+
+      function toggleOpen(num) {
+        if (state.openTickets.has(num)) state.openTickets.delete(num);
+        else state.openTickets.add(num);
+        saveProgress();
+        renderTickets();
+      }
+
+      function toggleLearned(num) {
+        if (state.learned.has(num)) state.learned.delete(num);
+        else state.learned.add(num);
+        saveProgress();
+        renderStats();
+        renderTickets();
+        renderStudyCard();
+        toast(state.learned.has(num) ? `Билет №${num} отмечен как изученный` : `Билет №${num} убран из изученных`);
+      }
+
+      function currentStudyTicket() {
+        if (!state.tickets.length) return null;
+        return state.tickets[Math.max(0, Math.min(state.activeIndex, state.tickets.length - 1))];
+      }
+
+      function pickRandomTicket() {
+        if (!state.tickets.length) return;
+        let idx = Math.floor(Math.random() * state.tickets.length);
+        if (state.tickets.length > 1 && idx === state.activeIndex) idx = (idx + 1) % state.tickets.length;
+        state.activeIndex = idx;
+        state.revealAnswer = false;
+        saveProgress();
+        renderStudyCard();
+        toast(`Открыт билет №${state.tickets[idx].num}`, 'Попробуй ответить до нажатия на кнопку ответа.');
+      }
+
+      function nextTicket() {
+        if (!state.tickets.length) return;
+        state.activeIndex = (state.activeIndex + 1) % state.tickets.length;
+        state.revealAnswer = false;
+        renderStudyCard();
+        saveProgress();
+      }
+
+      function setSearch(value) {
+        state.search = value;
+        state.pendingScrollTo = null;
+        renderAll();
+      }
+
+      function setNumFilter(value) {
+        state.numFilter = value;
+        renderAll();
+      }
+
+      function renderStats() {
+        const total = state.tickets.length || 1;
+        const learned = state.learned.size;
+        const percent = Math.round((learned / total) * 100);
+        els.learnedCount.textContent = learned;
+        els.progressText.textContent = percent + '%';
+        els.progressMeta.textContent = `${learned} из ${state.tickets.length}`;
+        els.progressBar.style.width = percent + '%';
+        els.filteredCount.textContent = filteredTickets().length;
+        els.ticketsCountBadge.textContent = `Всего: ${state.tickets.length}`;
+        els.studyModeState.textContent = state.selfCheck ? 'Вкл.' : 'Выкл.';
+        els.activeFilterText.textContent = `Фильтр: ${state.search || state.numFilter ? [state.search && `текст "${state.search}"`, state.numFilter && `№ ${state.numFilter}`].filter(Boolean).join(' • ') : 'нет'}`;
+        els.subtitle.textContent = `${state.tickets.length} билетов • офлайн-подготовка • ${themeLabel(state.theme)} тема`;
+      }
+
+      function themeLabel(theme) {
+        return theme === 'light' ? 'светлая' : theme === 'neon' ? 'неоновая' : 'тёмная';
+      }
+
+      function renderStudyCard() {
+        const ticket = currentStudyTicket();
+        if (!ticket) return;
+        els.studyTicketLabel.textContent = `Билет №${ticket.num}`;
+        els.randomHint.textContent = `Билет №${ticket.num}`;
+        els.studyStatus.textContent = state.revealAnswer
+          ? 'Ответ открыт'
+          : state.selfCheck
+            ? 'Ответ скрыт'
+            : 'Показан текст';
+
+        const learned = state.learned.has(ticket.num);
+        const content = ticket.items.map((item, idx) => {
+          const open = state.revealAnswer || !state.selfCheck;
+          return `
+            <div class="study-point ${open ? 'open' : 'hidden-answer'}">
+              <div class="study-point-head">
+                <strong>Пункт ${idx + 1}</strong>
+                <span class="pill">${learned ? 'изучено' : 'не изучено'}</span>
+              </div>
+              <div class="study-point-body"><div>${highlightText(item, state.search)}</div></div>
+            </div>
+          `;
+        }).join('');
+        els.studyContent.innerHTML = content;
+        els.showAnswerBtn.textContent = state.revealAnswer ? 'Скрыть ответ' : 'Показать ответ';
+        els.toggleSelfCheckBtn.textContent = `Режим самопроверки: ${state.selfCheck ? 'Вкл.' : 'Выкл.'}`;
+      }
+
+      function renderTickets() {
+        const list = filteredTickets();
+        els.filteredCount.textContent = list.length;
+        const q = state.search;
+        els.ticketsList.innerHTML = list.map(ticket => {
+          const open = state.openTickets.has(ticket.num) || (q && list.length <= 6);
+          const learned = state.learned.has(ticket.num);
+          return `
+            <article class="ticket-card ${open ? 'open' : ''}" data-ticket="${ticket.num}">
+              <div class="ticket-head" role="button" tabindex="0" aria-expanded="${open ? 'true' : 'false'}">
+                <div class="ticket-head-left">
+                  <div class="ticket-name">Билет №${ticket.num}</div>
+                  <p class="ticket-sub">${ticket.items.length} пункта для повторения • удобная карточка для заучивания</p>
+                </div>
+                <div class="ticket-meta">
+                  <div class="mini-stats">
+                    <span class="mini-chip ${learned ? 'learned-chip' : ''}">${learned ? 'Выучено' : 'Не выучено'}</span>
+                    <span class="mini-chip">${ticket.items.length} п.</span>
+                  </div>
+                  <button class="icon-btn toggle-open" data-action="toggle-open" data-num="${ticket.num}" aria-label="${open ? 'Свернуть' : 'Раскрыть'} билет">${open ? '−' : '+'}</button>
+                </div>
+              </div>
+
+              <div class="card-body-wrap">
+                <div class="card-body">
+                  <div class="ticket-rows">
+                    ${ticket.items.map((item, idx) => `
+                      <div class="qa">
+                        <div class="qa-head">
+                          <div class="qa-index"><span class="dot"></span>Пункт ${idx + 1}</div>
+                          <span class="pill">номер ${ticket.num}</span>
+                        </div>
+                        <div class="qa-body">${highlightText(item, q)}</div>
+                      </div>
+                    `).join('')}
+                    <div class="ticket-actions">
+                      <button class="btn small" data-action="copy" data-num="${ticket.num}">Скопировать билет</button>
+                      <button class="btn small ${learned ? 'good' : ''}" data-action="learned" data-num="${ticket.num}">${learned ? 'Выучено' : 'Выучено ✓'}</button>
+                      <button class="btn small" data-action="toggle-open" data-num="${ticket.num}">${open ? 'Свернуть' : 'Раскрыть'}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        els.emptyState.style.display = list.length ? 'none' : 'block';
+
+        if (state.pendingScrollTo !== null) {
+          const num = state.pendingScrollTo;
+          state.pendingScrollTo = null;
+          setTimeout(() => scrollToTicket(num), 60);
+        }
+      }
+
+      function renderAll() {
+        renderStats();
+        renderStudyCard();
+        renderTickets();
+      }
+
+      function exportProgress() {
+        const payload = {
+          app: 'biology-tickets-prep',
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          learned: [...state.learned],
+          theme: state.theme,
+          selfCheck: state.selfCheck
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `biology-progress-${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast('Прогресс экспортирован', 'Файл JSON скачан на устройство.');
+      }
+
+      function clearFilters() {
+        state.search = '';
+        state.numFilter = '';
+        els.searchInput.value = '';
+        els.searchInputDrawer.value = '';
+        els.numFilter.value = '';
+        els.numFilterDrawer.value = '';
+        renderAll();
+        toast('Фильтры сброшены');
+      }
+
+      function syncInputs() {
+        els.searchInput.value = state.search;
+        els.searchInputDrawer.value = state.search;
+        els.numFilter.value = state.numFilter;
+        els.numFilterDrawer.value = state.numFilter;
+      }
+
+      function currentTicketText() {
+        const ticket = currentStudyTicket();
+        return ticket ? formatTicketText(ticket) : '';
+      }
+
+      function copyText(text, label = 'Скопировано') {
+        if (!text) return;
+        navigator.clipboard?.writeText(text).then(() => {
+          toast(label);
+        }).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          toast(label);
+        });
+      }
+
+      function init() {
+        loadState();
+        state.tickets = parseTickets(RAW_SOURCE);
+        document.documentElement.setAttribute('data-theme', state.theme);
+        updateThemeButtons();
+        syncInputs();
+        els.ticketsCountBadge.textContent = `Всего: ${state.tickets.length}`;
+        if (!state.tickets.length) {
+          toast('Не удалось распарсить билеты', 'Проверь содержимое TXT-файла.');
+        }
+        if (state.activeIndex >= state.tickets.length) state.activeIndex = 0;
+        renderAll();
+        setTimeout(() => els.loader.classList.add('hide'), 380);
+      }
+
+      // Events
+      document.querySelectorAll('#themeSwitch [data-theme], #themeSwitchDrawer [data-theme]').forEach(btn => {
+        btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+      });
+
+      els.searchInput.addEventListener('input', e => {
+        state.search = e.target.value;
+        els.searchInputDrawer.value = e.target.value;
+        renderAll();
+      });
+      els.searchInputDrawer.addEventListener('input', e => {
+        state.search = e.target.value;
+        els.searchInput.value = e.target.value;
+        renderAll();
+      });
+
+      els.numFilter.addEventListener('input', e => {
+        state.numFilter = e.target.value;
+        els.numFilterDrawer.value = e.target.value;
+        renderAll();
+      });
+      els.numFilterDrawer.addEventListener('input', e => {
+        state.numFilter = e.target.value;
+        els.numFilter.value = e.target.value;
+        renderAll();
+      });
+
+      els.goToBtn.addEventListener('click', () => {
+        const num = Number(state.numFilter || state.search);
+        if (!num) return toast('Введите номер билета');
+        const ticket = state.tickets.find(t => t.num === num);
+        if (!ticket) return toast('Билет не найден', `№${num} отсутствует в файле`);
+        state.openTickets.add(num);
+        state.pendingScrollTo = num;
+        saveProgress();
+        renderTickets();
+        toast(`Переход к билету №${num}`);
+      });
+      els.goToDrawer.addEventListener('click', () => els.goToBtn.click());
+
+      els.collapseAllBtn.addEventListener('click', () => {
+        state.openTickets.clear();
+        saveProgress();
+        renderTickets();
+        toast('Все билеты свернуты');
+      });
+      els.collapseAllBtnDrawer.addEventListener('click', () => els.collapseAllBtn.click());
+
+      els.exportBtn.addEventListener('click', exportProgress);
+      els.exportBtnDrawer.addEventListener('click', exportProgress);
+
+      els.randomBtn.addEventListener('click', pickRandomTicket);
+      els.nextBtn.addEventListener('click', nextTicket);
+      els.studyNextBtnDrawer.addEventListener('click', nextTicket);
+      els.showAnswerBtn.addEventListener('click', () => {
+        state.revealAnswer = !state.revealAnswer;
+        saveProgress();
+        renderStudyCard();
+      });
+      els.learnedBtn.addEventListener('click', () => {
+        const ticket = currentStudyTicket();
+        if (ticket) toggleLearned(ticket.num);
+      });
+      els.copyStudyBtn.addEventListener('click', () => copyText(currentTicketText(), 'Билет скопирован'));
+      els.toggleSelfCheckBtn.addEventListener('click', () => {
+        state.selfCheck = !state.selfCheck;
+        saveProgress();
+        renderStudyCard();
+        renderStats();
+      });
+
+      els.scrollToListBtn.addEventListener('click', () => {
+        document.getElementById('ticketsList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      els.scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      els.menuBtn?.addEventListener('click', () => setDrawer(true));
+      els.closeDrawerBtn.addEventListener('click', () => setDrawer(false));
+      els.overlay.addEventListener('click', () => setDrawer(false));
+
+      document.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]');
+        if (!action) return;
+        const num = Number(action.dataset.num);
+        if (action.dataset.action === 'toggle-open') {
+          toggleOpen(num);
+        } else if (action.dataset.action === 'learned') {
+          toggleLearned(num);
+        } else if (action.dataset.action === 'copy') {
+          const ticket = state.tickets.find(t => t.num === num);
+          if (ticket) copyText(formatTicketText(ticket), `Билет №${num} скопирован`);
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement?.tagName?.toLowerCase();
+        const isTyping = ['input', 'textarea', 'select'].includes(activeTag);
+        if (e.key === '/' && !isTyping) {
+          e.preventDefault();
+          els.searchInput.focus();
+          return;
+        }
+        if (e.key.toLowerCase() === 'e' && !isTyping) {
+          e.preventDefault();
+          exportProgress();
+          return;
+        }
+        if (e.key === 'Escape') {
+          setDrawer(false);
+        }
+        if (isTyping) return;
+
+        const ticket = currentStudyTicket();
+        if (e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          state.revealAnswer = !state.revealAnswer;
+          saveProgress();
+          renderStudyCard();
+        } else if (e.key === 'Enter') {
+          if (ticket) toggleLearned(ticket.num);
+        } else if (e.key === 'ArrowRight') {
+          nextTicket();
+        } else if (e.key === 'ArrowLeft') {
+          if (!state.tickets.length) return;
+          state.activeIndex = (state.activeIndex - 1 + state.tickets.length) % state.tickets.length;
+          state.revealAnswer = false;
+          saveProgress();
+          renderStudyCard();
+        } else if (e.key.toLowerCase() === 'n') {
+          pickRandomTicket();
+        }
+      });
+
+      // Card keyboard support
+      document.addEventListener('keydown', (e) => {
+        const card = e.target.closest?.('.ticket-card');
+        if (!card) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          const num = Number(card.dataset.ticket);
+          if (num) {
+            e.preventDefault();
+            toggleOpen(num);
+          }
+        }
+      });
+
+      // Toggle open on header click
+      document.addEventListener('click', (e) => {
+        const head = e.target.closest('.ticket-head');
+        if (!head) return;
+        if (e.target.closest('button')) return;
+        const card = head.closest('.ticket-card');
+        if (!card) return;
+        const num = Number(card.dataset.ticket);
+        toggleOpen(num);
+      });
+
+      // Search submit on Enter
+      [els.searchInput, els.searchInputDrawer].forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            els.goToBtn.click();
+          }
+        });
+      });
+      [els.numFilter, els.numFilterDrawer].forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            els.goToBtn.click();
+          }
+        });
+      });
+
+      window.addEventListener('beforeunload', saveProgress);
+
+      init();
+    })();
+  </script>
+</body>
+</html>
