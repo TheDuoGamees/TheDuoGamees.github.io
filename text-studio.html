@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <title>Text Studio</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-tertiary: #e8e8ed;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-tertiary: #aeaeb2;
+            --border-color: #d2d2d7;
+            --accent: #0071e3;
+            --accent-hover: #005bbf;
+            --accent-light: #e8f2fd;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
+            --toolbar-bg: #fbfbfd;
+            --editor-bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-hover: #f8f8fa;
+            --tag-bg: #f0f0f3;
+            --tag-text: #1d1d1f;
+            --danger: #e53935;
+            --danger-hover: #c62828;
+            --success: #2e7d32;
+            --success-light: #e8f5e9;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --transition-fast: 150ms ease;
+            --transition-normal: 200ms ease;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+        }
+        [data-theme="dark"] {
+            --bg-primary: #1c1c1e;
+            --bg-secondary: #2c2c2e;
+            --bg-tertiary: #3a3a3c;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --border-color: #48484a;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --accent-light: #1a3a5c;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --toolbar-bg: #2c2c2e;
+            --editor-bg: #1c1c1e;
+            --card-bg: #2c2c2e;
+            --card-hover: #3a3a3c;
+            --tag-bg: #3a3a3c;
+            --tag-text: #f5f5f7;
+            --danger: #ff453a;
+            --danger-hover: #ff6961;
+            --success: #30d158;
+            --success-light: #1a3a2a;
+            --warning: #ffd60a;
+            --warning-light: #3a3520;
+        }
+        [data-theme="amoled"] {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #707070;
+            --border-color: #2a2a2a;
+            --accent: #4da6ff;
+            --accent-hover: #7abfff;
+            --accent-light: #0d2137;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.7);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.8);
+            --toolbar-bg: #080808;
+            --editor-bg: #000000;
+            --card-bg: #0a0a0a;
+            --card-hover: #141414;
+            --tag-bg: #1a1a1a;
+            --tag-text: #ffffff;
+            --danger: #ff453a;
+            --danger-hover: #ff6961;
+            --success: #30d158;
+            --success-light: #0a1a10;
+            --warning: #ffd60a;
+            --warning-light: #1a1800;
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            transition: background var(--transition-normal), color var(--transition-normal);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: -webkit-fill-available;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+        }
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 10px;
+            background: var(--toolbar-bg);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            z-index: 10;
+            min-height: 48px;
+        }
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .toolbar-sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border-color);
+            margin: 0 6px;
+            flex-shrink: 0;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-right: 8px;
+            white-space: nowrap;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logo svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            min-height: 36px;
+            min-width: 36px;
+            position: relative;
+            outline: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .btn:hover {
+            background: var(--bg-tertiary);
+        }
+        .btn:active {
+            transform: scale(0.95);
+            background: var(--bg-tertiary);
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+        .btn-icon-only {
+            padding: 7px;
+            min-width: 36px;
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn-accent:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+        .btn-danger {
+            color: var(--danger);
+        }
+        .btn-danger:hover {
+            background: #fce4e4;
+        }
+        [data-theme="dark"] .btn-danger:hover,
+        [data-theme="amoled"] .btn-danger:hover {
+            background: #2a1010;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            min-height: 30px;
+            border-radius: 6px;
+        }
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+        }
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .main-textarea {
+            width: 100%;
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            background: var(--editor-bg);
+            color: var(--text-primary);
+            transition: background var(--transition-normal), color var(--transition-normal);
+            min-height: 100px;
+            tab-size: 2;
+            -moz-tab-size: 2;
+        }
+        .main-textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+        .preview-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            display: none;
+            word-wrap: break-word;
+        }
+        .preview-panel.active {
+            display: block;
+        }
+        .preview-panel h1,
+        .preview-panel h2,
+        .preview-panel h3 {
+            margin-top: 0.8em;
+            margin-bottom: 0.4em;
+        }
+        .preview-panel h1 {
+            font-size: 1.6rem;
+        }
+        .preview-panel h2 {
+            font-size: 1.3rem;
+        }
+        .preview-panel h3 {
+            font-size: 1.1rem;
+        }
+        .preview-panel p {
+            margin-bottom: 0.6em;
+        }
+        .preview-panel code {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+        }
+        .preview-panel pre {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            margin-bottom: 0.6em;
+        }
+        .preview-panel pre code {
+            background: none;
+            padding: 0;
+        }
+        .preview-panel blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+            color: var(--text-secondary);
+            margin: 0.6em 0;
+        }
+        .preview-panel ul,
+        .preview-panel ol {
+            padding-left: 1.5em;
+            margin-bottom: 0.6em;
+        }
+        .preview-panel a {
+            color: var(--accent);
+        }
+        .preview-panel table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 0.6em;
+        }
+        .preview-panel th,
+        .preview-panel td {
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            text-align: left;
+        }
+        .preview-panel th {
+            background: var(--bg-tertiary);
+        }
+        .tabs-container {
+            flex-shrink: 0;
+            border-top: 1px solid var(--border-color);
+            background: var(--toolbar-bg);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            z-index: 5;
+        }
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+        .tabs-row {
+            display: flex;
+            gap: 0;
+            padding: 0 8px;
+            min-width: max-content;
+        }
+        .tab-btn {
+            padding: 10px 13px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: var(--font-sans);
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-fast);
+            outline: none;
+            touch-action: manipulation;
+            flex-shrink: 0;
+            letter-spacing: -0.01em;
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 600;
+        }
+        .tab-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
+            border-radius: 4px 4px 0 0;
+        }
+        .tool-panel {
+            flex-shrink: 0;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            overflow-y: auto;
+            max-height: 45vh;
+            z-index: 4;
+            transition: all var(--transition-fast);
+        }
+        .tool-panel:empty {
+            display: none;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            width: 100%;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+        .stat-card:hover {
+            background: var(--card-hover);
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .pill-btn {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-family: var(--font-sans);
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            touch-action: manipulation;
+            outline: none;
+        }
+        .pill-btn:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .pill-btn:active {
+            transform: scale(0.95);
+        }
+        .pill-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .input-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .input-field {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--editor-bg);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: var(--font-sans);
+            outline: none;
+            transition: all var(--transition-fast);
+            flex: 1;
+            min-width: 100px;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .highlight-match {
+            background: var(--warning);
+            color: #000;
+            border-radius: 2px;
+            padding: 1px 2px;
+        }
+        .diff-added {
+            background: #d4edda;
+            color: #155724;
+        }
+        .diff-removed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .diff-unchanged {
+            color: var(--text-secondary);
+        }
+        [data-theme="dark"] .diff-added {
+            background: #1a3a2a;
+            color: #30d158;
+        }
+        [data-theme="dark"] .diff-removed {
+            background: #3a1a1a;
+            color: #ff453a;
+        }
+        [data-theme="amoled"] .diff-added {
+            background: #0a2a10;
+            color: #30d158;
+        }
+        [data-theme="amoled"] .diff-removed {
+            background: #2a0a0a;
+            color: #ff453a;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1000;
+            pointer-events: none;
+            transition: transform var(--transition-normal);
+            box-shadow: var(--shadow-lg);
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .split-view {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            overflow: hidden;
+        }
+        .split-textarea {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: var(--editor-bg);
+            color: var(--text-primary);
+            resize: none;
+            outline: none;
+            min-height: 80px;
+            transition: all var(--transition-fast);
+        }
+        .split-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .diff-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 60px;
+            max-height: 250px;
+        }
+        @media (min-width:768px) {
+            .toolbar {
+                padding: 8px 16px;
+                gap: 6px;
+            }
+            .btn {
+                padding: 8px 14px;
+                font-size: 0.88rem;
+            }
+            .main-textarea {
+                padding: 20px 24px;
+                font-size: 1rem;
+            }
+            .tabs-row {
+                padding: 0 12px;
+            }
+            .tab-btn {
+                padding: 11px 16px;
+                font-size: 0.84rem;
+            }
+            .tool-panel {
+                padding: 12px 16px;
+                gap: 8px;
+            }
+            .stat-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+            }
+            .preview-panel {
+                padding: 20px 24px;
+                border-left: 1px solid var(--border-color);
+                border-top: none;
+            }
+            .editor-area.split-horizontal {
+                flex-direction: row;
+            }
+            .editor-area.split-horizontal .main-textarea {
+                flex: 1;
+                border-right: 1px solid var(--border-color);
+            }
+            .editor-area.split-horizontal .preview-panel {
+                flex: 1;
+                border-top: none;
+                border-left: none;
+            }
+            .split-view {
+                flex-direction: row;
+            }
+            .diff-output {
+                max-height: none;
+            }
+        }
+        @media (min-width:1024px) {
+            .app-container {
+                border-left: 1px solid var(--border-color);
+                border-right: 1px solid var(--border-color);
+            }
+            .stat-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        @media (max-width:360px) {
+            .toolbar {
+                gap: 1px;
+                padding: 4px 6px;
+            }
+            .btn {
+                padding: 5px 7px;
+                font-size: 0.75rem;
+                min-height: 30px;
+                min-width: 30px;
+                gap: 2px;
+            }
+            .btn svg {
+                width: 15px;
+                height: 15px;
+            }
+            .logo {
+                font-size: 0.95rem;
+                margin-right: 2px;
+            }
+            .tab-btn {
+                padding: 8px 9px;
+                font-size: 0.7rem;
+            }
+            .toolbar-sep {
+                margin: 0 2px;
+                height: 18px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="app-container" id="appContainer">
+        <nav class="toolbar" id="toolbar" aria-label="Main toolbar">
+            <span class="logo" aria-label="Text Studio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/><line x1="7" y1="17" x2="11" y2="17"/></svg>
+                Text Studio
+            </span>
+            <span class="toolbar-sep" aria-hidden="true"></span>
+            <button class="btn btn-icon-only" id="btnUndo" aria-label="Undo" title="Undo (Ctrl+Z)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.5 16A9 9 0 1 0 2 11"/></svg>
+            </button>
+            <button class="btn btn-icon-only" id="btnRedo" aria-label="Redo" title="Redo (Ctrl+Shift+Z)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.5 16A9 9 0 1 1 22 11"/></svg>
+            </button>
+            <span class="toolbar-sep" aria-hidden="true"></span>
+            <button class="btn btn-icon-only" id="btnTheme" aria-label="Switch theme" title="Switch theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="iconTheme"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+            <button class="btn btn-icon-only" id="btnLang" aria-label="Switch language" title="Switch language (English/Русский)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+            </button>
+            <span class="toolbar-sep" aria-hidden="true"></span>
+            <button class="btn btn-icon-only" id="btnCopy" aria-label="Copy all" title="Copy all text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button class="btn btn-icon-only" id="btnPaste" aria-label="Paste" title="Paste from clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="16" rx="2"/><path d="M9 3h6v3H9z"/></svg>
+            </button>
+            <button class="btn btn-icon-only" id="btnClear" aria-label="Clear" title="Clear editor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
+            <button class="btn btn-icon-only" id="btnDownload" aria-label="Download" title="Download as TXT">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+        </nav>
+        <div class="editor-wrapper" id="editorWrapper">
+            <div class="editor-area" id="editorArea">
+                <textarea class="main-textarea" id="mainTextarea" placeholder="Start typing or paste your text here..." aria-label="Main text editor" spellcheck="false"></textarea>
+                <div class="preview-panel" id="previewPanel" aria-label="Preview"></div>
+            </div>
+            <div class="tabs-container" id="tabsContainer">
+                <div class="tabs-row" id="tabsRow" role="tablist" aria-label="Tool categories"></div>
+            </div>
+            <div class="tool-panel" id="toolPanel" aria-label="Tool options"></div>
+        </div>
+    </div>
+    <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+    <input type="file" id="hiddenFileInput" style="display:none" accept=".txt,.md,.html,.csv,.json">
+    <script>
+        (function() {
+            const CATEGORIES = [
+                { id: 'statistics', icon: '📊', labelKey: 'catStats' },
+                { id: 'case', icon: '🔤', labelKey: 'catCase' },
+                { id: 'cleaning', icon: '🧹', labelKey: 'catClean' },
+                { id: 'transform', icon: '🔀', labelKey: 'catTransform' },
+                { id: 'formatting', icon: '📝', labelKey: 'catFormat' },
+                { id: 'search', icon: '🔍', labelKey: 'catSearch' },
+                { id: 'markdown', icon: '📄', labelKey: 'catMarkdown' },
+                { id: 'html', icon: '🌐', labelKey: 'catHtml' },
+                { id: 'encoding', icon: '🔐', labelKey: 'catEncode' },
+                { id: 'json', icon: '📋', labelKey: 'catJson' },
+                { id: 'csv', icon: '📑', labelKey: 'catCsv' },
+                { id: 'regex', icon: '🔎', labelKey: 'catRegex' },
+                { id: 'diff', icon: '⚖', labelKey: 'catDiff' },
+                { id: 'generate', icon: '🎲', labelKey: 'catGen' },
+                { id: 'settings', icon: '⚙', labelKey: 'catSettings' },
+            ];
+            const LANGUAGES = {
+                en: {
+                    appTitle: 'Text Studio',
+                    placeholder: 'Start typing or paste your text here...',
+                    catStats: 'Statistics',
+                    catCase: 'Case',
+                    catClean: 'Clean',
+                    catTransform: 'Transform',
+                    catFormat: 'Format',
+                    catSearch: 'Search',
+                    catMarkdown: 'Markdown',
+                    catHtml: 'HTML',
+                    catEncode: 'Encode',
+                    catJson: 'JSON',
+                    catCsv: 'CSV',
+                    catRegex: 'Regex',
+                    catDiff: 'Diff',
+                    catGen: 'Generate',
+                    catSettings: 'Settings',
+                    chars: 'Characters',
+                    charsNoSpace: 'Chars (no spaces)',
+                    words: 'Words',
+                    sentences: 'Sentences',
+                    paragraphs: 'Paragraphs',
+                    uniqueWords: 'Unique words',
+                    avgWordLen: 'Avg word length',
+                    avgSentLen: 'Avg sentence length',
+                    readTime: 'Reading time',
+                    speakTime: 'Speaking time',
+                    topWords: 'Top frequent words',
+                    minutes: 'min',
+                    undo: 'Undo',
+                    redo: 'Redo',
+                    copy: 'Copy',
+                    paste: 'Paste',
+                    clear: 'Clear',
+                    download: 'Download',
+                    theme: 'Theme',
+                    language: 'Language',
+                    copied: 'Copied!',
+                    cleared: 'Cleared!',
+                    pasted: 'Pasted!',
+                    downloaded: 'Downloaded!',
+                    noText: 'No text to process',
+                    find: 'Find',
+                    replace: 'Replace',
+                    replaceAll: 'Replace All',
+                    matchCount: 'Matches:',
+                    highlight: 'Highlight',
+                    caseUppercase: 'UPPERCASE',
+                    caseLowercase: 'lowercase',
+                    caseTitle: 'Title Case',
+                    caseSentence: 'Sentence case',
+                    caseCamel: 'camelCase',
+                    casePascal: 'PascalCase',
+                    caseSnake: 'snake_case',
+                    caseKebab: 'kebab-case',
+                    caseTrain: 'Train-Case',
+                    caseConstant: 'CONSTANT_CASE',
+                    cleanExtraSpaces: 'Remove extra spaces',
+                    cleanDupSpaces: 'Remove duplicate spaces',
+                    cleanEmptyLines: 'Remove empty lines',
+                    cleanDupLines: 'Remove duplicate lines',
+                    cleanDupWords: 'Remove dup. consecutive words',
+                    cleanTrimLines: 'Trim lines',
+                    cleanTabs: 'Remove tabs',
+                    cleanHtmlTags: 'Remove HTML tags',
+                    cleanNormalize: 'Normalize whitespace',
+                    transReverse: 'Reverse text',
+                    transReverseWords: 'Reverse words',
+                    transReverseLines: 'Reverse lines',
+                    transShuffleWords: 'Shuffle words',
+                    transShuffleLines: 'Shuffle lines',
+                    transRandomCase: 'Random case',
+                    formatSortAZ: 'Sort lines A-Z',
+                    formatSortZA: 'Sort lines Z-A',
+                    formatNumberLines: 'Number lines',
+                    formatRemoveDupLines: 'Remove duplicate lines',
+                    searchFind: 'Find',
+                    searchReplace: 'Replace',
+                    searchReplaceAll: 'Replace All',
+                    searchHighlight: 'Highlight matches',
+                    searchCount: 'Count matches',
+                    mdPreview: 'Live Markdown Preview',
+                    htmlEscape: 'HTML Escape',
+                    htmlUnescape: 'HTML Unescape',
+                    htmlPreview: 'Safe HTML Preview',
+                    base64Encode: 'Base64 Encode',
+                    base64Decode: 'Base64 Decode',
+                    urlEncode: 'URL Encode',
+                    urlDecode: 'URL Decode',
+                    jsonFormat: 'Format JSON',
+                    jsonValidate: 'Validate JSON',
+                    jsonPretty: 'Pretty Print',
+                    jsonError: 'JSON Error:',
+                    jsonValid: 'Valid JSON ✓',
+                    csvToTable: 'CSV → HTML Table',
+                    tableToCsv: 'HTML Table → CSV',
+                    regexTest: 'Test Regex',
+                    regexHighlight: 'Highlight matches',
+                    regexCount: 'Count matches',
+                    regexPattern: 'Pattern:',
+                    regexFlags: 'Flags:',
+                    diffCompare: 'Compare',
+                    diffTextB: 'Comparison text:',
+                    diffAdded: 'Added',
+                    diffRemoved: 'Removed',
+                    genLorem: 'Lorem Ipsum',
+                    genWords: 'Random Words',
+                    genSentences: 'Random Sentences',
+                    genNickname: 'Nickname Generator',
+                    genCount: 'Count:',
+                    settingsFontSize: 'Font Size:',
+                    settingsTabSize: 'Tab Size:',
+                    settingsAutosave: 'Autosave',
+                    settingsOn: 'On',
+                    settingsOff: 'Off',
+                    importFile: 'Import file',
+                    dropFile: 'Drop file here',
+                    downloadTxt: 'Download TXT',
+                    downloadMd: 'Download Markdown',
+                    downloadHtml: 'Download HTML',
+                },
+                ru: {
+                    appTitle: 'Text Studio',
+                    placeholder: 'Начните печатать или вставьте текст...',
+                    catStats: 'Статистика',
+                    catCase: 'Регистр',
+                    catClean: 'Очистка',
+                    catTransform: 'Трансформ',
+                    catFormat: 'Формат',
+                    catSearch: 'Поиск',
+                    catMarkdown: 'Markdown',
+                    catHtml: 'HTML',
+                    catEncode: 'Кодирование',
+                    catJson: 'JSON',
+                    catCsv: 'CSV',
+                    catRegex: 'Regex',
+                    catDiff: 'Сравнение',
+                    catGen: 'Генерация',
+                    catSettings: 'Настройки',
+                    chars: 'Символов',
+                    charsNoSpace: 'Символов (без пробелов)',
+                    words: 'Слов',
+                    sentences: 'Предложений',
+                    paragraphs: 'Абзацев',
+                    uniqueWords: 'Уникальных слов',
+                    avgWordLen: 'Средняя длина слова',
+                    avgSentLen: 'Средняя длина предложения',
+                    readTime: 'Время чтения',
+                    speakTime: 'Время речи',
+                    topWords: 'Частые слова',
+                    minutes: 'мин',
+                    undo: 'Отменить',
+                    redo: 'Повторить',
+                    copy: 'Копировать',
+                    paste: 'Вставить',
+                    clear: 'Очистить',
+                    download: 'Скачать',
+                    theme: 'Тема',
+                    language: 'Язык',
+                    copied: 'Скопировано!',
+                    cleared: 'Очищено!',
+                    pasted: 'Вставлено!',
+                    downloaded: 'Скачано!',
+                    noText: 'Нет текста',
+                    find: 'Найти',
+                    replace: 'Заменить',
+                    replaceAll: 'Заменить всё',
+                    matchCount: 'Совпадений:',
+                    highlight: 'Подсветить',
+                    caseUppercase: 'ВЕРХНИЙ РЕГИСТР',
+                    caseLowercase: 'нижний регистр',
+                    caseTitle: 'Заглавные Буквы',
+                    caseSentence: 'Регистр предложений',
+                    caseCamel: 'camelCase',
+                    casePascal: 'PascalCase',
+                    caseSnake: 'snake_case',
+                    caseKebab: 'kebab-case',
+                    caseTrain: 'Train-Case',
+                    caseConstant: 'CONSTANT_CASE',
+                    cleanExtraSpaces: 'Убрать лишние пробелы',
+                    cleanDupSpaces: 'Убрать двойные пробелы',
+                    cleanEmptyLines: 'Убрать пустые строки',
+                    cleanDupLines: 'Убрать дубликаты строк',
+                    cleanDupWords: 'Убрать дубл. слова подряд',
+                    cleanTrimLines: 'Обрезать строки',
+                    cleanTabs: 'Убрать табуляции',
+                    cleanHtmlTags: 'Убрать HTML-теги',
+                    cleanNormalize: 'Нормализовать пробелы',
+                    transReverse: 'Перевернуть текст',
+                    transReverseWords: 'Перевернуть слова',
+                    transReverseLines: 'Перевернуть строки',
+                    transShuffleWords: 'Перемешать слова',
+                    transShuffleLines: 'Перемешать строки',
+                    transRandomCase: 'Случайный регистр',
+                    formatSortAZ: 'Сортировать А-Я',
+                    formatSortZA: 'Сортировать Я-А',
+                    formatNumberLines: 'Нумеровать строки',
+                    formatRemoveDupLines: 'Убрать дубликаты строк',
+                    searchFind: 'Найти',
+                    searchReplace: 'Заменить',
+                    searchReplaceAll: 'Заменить всё',
+                    searchHighlight: 'Подсветить совпадения',
+                    searchCount: 'Посчитать совпадения',
+                    mdPreview: 'Предпросмотр Markdown',
+                    htmlEscape: 'Экранировать HTML',
+                    htmlUnescape: 'Деэкранировать HTML',
+                    htmlPreview: 'Безопасный просмотр HTML',
+                    base64Encode: 'Base64 Кодировать',
+                    base64Decode: 'Base64 Декодировать',
+                    urlEncode: 'URL Кодировать',
+                    urlDecode: 'URL Декодировать',
+                    jsonFormat: 'Форматировать JSON',
+                    jsonValidate: 'Проверить JSON',
+                    jsonPretty: 'Pretty Print',
+                    jsonError: 'Ошибка JSON:',
+                    jsonValid: 'JSON корректен ✓',
+                    csvToTable: 'CSV → HTML таблица',
+                    tableToCsv: 'HTML таблица → CSV',
+                    regexTest: 'Тест Regex',
+                    regexHighlight: 'Подсветить',
+                    regexCount: 'Посчитать',
+                    regexPattern: 'Шаблон:',
+                    regexFlags: 'Флаги:',
+                    diffCompare: 'Сравнить',
+                    diffTextB: 'Текст для сравнения:',
+                    diffAdded: 'Добавлено',
+                    diffRemoved: 'Удалено',
+                    genLorem: 'Lorem Ipsum',
+                    genWords: 'Случайные слова',
+                    genSentences: 'Случайные предложения',
+                    genNickname: 'Генератор никнеймов',
+                    genCount: 'Количество:',
+                    settingsFontSize: 'Размер шрифта:',
+                    settingsTabSize: 'Размер таба:',
+                    settingsAutosave: 'Автосохранение',
+                    settingsOn: 'Вкл',
+                    settingsOff: 'Выкл',
+                    importFile: 'Импорт файла',
+                    dropFile: 'Перетащите файл',
+                    downloadTxt: 'Скачать TXT',
+                    downloadMd: 'Скачать Markdown',
+                    downloadHtml: 'Скачать HTML',
+                }
+            };
+            const state = {
+                text: '',
+                comparisonText: '',
+                theme: 'light',
+                language: 'en',
+                activeCategory: 'statistics',
+                activeTool: null,
+                undoStack: [],
+                redoStack: [],
+                maxUndo: 200,
+                fontSize: 16,
+                tabSize: 2,
+                autosave: true,
+            };
+            const STORAGE_KEY = 'textstudio_state_v2';
+            const dom = {
+                appContainer: document.getElementById('appContainer'),
+                toolbar: document.getElementById('toolbar'),
+                mainTextarea: document.getElementById('mainTextarea'),
+                previewPanel: document.getElementById('previewPanel'),
+                editorArea: document.getElementById('editorArea'),
+                tabsRow: document.getElementById('tabsRow'),
+                toolPanel: document.getElementById('toolPanel'),
+                toast: document.getElementById('toast'),
+                hiddenFileInput: document.getElementById('hiddenFileInput'),
+                btnUndo: document.getElementById('btnUndo'),
+                btnRedo: document.getElementById('btnRedo'),
+                btnTheme: document.getElementById('btnTheme'),
+                btnLang: document.getElementById('btnLang'),
+                btnCopy: document.getElementById('btnCopy'),
+                btnPaste: document.getElementById('btnPaste'),
+                btnClear: document.getElementById('btnClear'),
+                btnDownload: document.getElementById('btnDownload'),
+                iconTheme: document.getElementById('iconTheme'),
+            };
+
+            function t(key) { return (LANGUAGES[state.language] && LANGUAGES[state.language][key]) || key; }
+
+            function saveState() {
+                if (!state.autosave) return;
+                try {
+                    const toSave = {
+                        text: state.text,
+                        comparisonText: state.comparisonText,
+                        theme: state.theme,
+                        language: state.language,
+                        activeCategory: state.activeCategory,
+                        fontSize: state.fontSize,
+                        tabSize: state.tabSize,
+                        autosave: state.autosave,
+                    };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+                } catch (e) {}
+            }
+
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const saved = JSON.parse(raw);
+                        if (typeof saved.text === 'string') state.text = saved.text;
+                        if (typeof saved.comparisonText === 'string') state.comparisonText = saved.comparisonText;
+                        if (['light', 'dark', 'amoled'].includes(saved.theme)) state.theme = saved.theme;
+                        if (['en', 'ru'].includes(saved.language)) state.language = saved.language;
+                        if (CATEGORIES.some(c => c.id === saved.activeCategory)) state.activeCategory =
+                            saved.activeCategory;
+                        if (typeof saved.fontSize === 'number' && saved.fontSize >= 10 && saved.fontSize <= 32) state
+                            .fontSize = saved.fontSize;
+                        if (typeof saved.tabSize === 'number' && saved.tabSize >= 1 && saved.tabSize <= 8) state.tabSize =
+                            saved.tabSize;
+                        if (typeof saved.autosave === 'boolean') state.autosave = saved.autosave;
+                    }
+                } catch (e) {}
+                if (!state.theme || !['light', 'dark', 'amoled'].includes(state.theme)) {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+                    state.theme = prefersDark ? 'dark' : 'light';
+                }
+            }
+
+            function applyTheme() {
+                document.body.setAttribute('data-theme', state.theme);
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) {
+                    const colors = { light: '#ffffff', dark: '#1c1c1e', amoled: '#000000' };
+                    metaTheme.setAttribute('content', colors[state.theme] || '#ffffff');
+                }
+                updateThemeIcon();
+            }
+
+            function updateThemeIcon() {
+                const svg = dom.iconTheme;
+                if (state.theme === 'light') {
+                    svg.innerHTML =
+                        '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+                } else {
+                    svg.innerHTML =
+                        '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+                }
+            }
+
+            function showToast(msg) {
+                dom.toast.textContent = msg;
+                dom.toast.classList.add('show');
+                clearTimeout(dom.toast._timeout);
+                dom.toast._timeout = setTimeout(() => dom.toast.classList.remove('show'), 1800);
+            }
+
+            function pushUndo() {
+                if (state.undoStack.length >= state.maxUndo) state.undoStack.shift();
+                state.undoStack.push(state.text);
+                state.redoStack = [];
+            }
+
+            function undo() {
+                if (state.undoStack.length === 0) return;
+                state.redoStack.push(state.text);
+                state.text = state.undoStack.pop();
+                dom.mainTextarea.value = state.text;
+                onTextChanged(false);
+            }
+
+            function redo() {
+                if (state.redoStack.length === 0) return;
+                state.undoStack.push(state.text);
+                state.text = state.redoStack.pop();
+                dom.mainTextarea.value = state.text;
+                onTextChanged(false);
+            }
+
+            function setText(newText, pushHistory = true) {
+                if (newText === state.text) return;
+                if (pushHistory) pushUndo();
+                state.text = newText;
+                dom.mainTextarea.value = state.text;
+                onTextChanged(false);
+            }
+
+            function onTextChanged(pushHistory = true) {
+                if (pushHistory && state.text !== dom.mainTextarea.value) {
+                    pushUndo();
+                    state.text = dom.mainTextarea.value;
+                    state.redoStack = [];
+                }
+                state.text = dom.mainTextarea.value;
+                autoResizeTextarea();
+                updateLivePreview();
+                updateToolPanel();
+                debouncedSave();
+            }
+
+            function autoResizeTextarea() {
+                const ta = dom.mainTextarea;
+                ta.style.height = 'auto';
+                ta.style.height = Math.max(100, ta.scrollHeight) + 'px';
+            }
+
+            function updateLivePreview() {
+                if (state.activeCategory === 'markdown') {
+                    renderMarkdownPreview();
+                } else if (state.activeCategory === 'html' && state.activeTool === 'htmlPreview') {
+                    renderHtmlPreview();
+                } else {
+                    dom.previewPanel.classList.remove('active');
+                    dom.editorArea.classList.remove('split-horizontal');
+                }
+            }
+
+            function renderMarkdownPreview() {
+                dom.previewPanel.classList.add('active');
+                if (window.innerWidth >= 768) dom.editorArea.classList.add('split-horizontal');
+                else dom.editorArea.classList.remove('split-horizontal');
+                dom.previewPanel.innerHTML = parseMarkdown(state.text);
+            }
+
+            function renderHtmlPreview() {
+                dom.previewPanel.classList.add('active');
+                if (window.innerWidth >= 768) dom.editorArea.classList.add('split-horizontal');
+                else dom.editorArea.classList.remove('split-horizontal');
+                const safeHtml = state.text;
+                dom.previewPanel.innerHTML =
+                    '<iframe sandbox="allow-scripts" style="width:100%;height:100%;min-height:300px;border:none;background:#fff;" srcdoc="' +
+                    safeHtml.replace(/"/g, '&quot;') + '"></iframe>';
+            }
+
+            function parseMarkdown(md) {
+                if (!md) return '<p style="color:var(--text-tertiary)">' + t('noText') + '</p>';
+                let html = md;
+                html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+                html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+                html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+                html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+                html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+                html = html.replace(/^---$/gm, '<hr>');
+                html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+                html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+                html = html.replace(/\n\n/g, '</p><p>');
+                html = html.replace(/\n/g, '<br>');
+                html = '<p>' + html + '</p>';
+                html = html.replace(/<p><\/p>/g, '');
+                html = html.replace(/<p>(<h[1-4]>)/g, '$1');
+                html = html.replace(/(<\/h[1-4]>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<ul>)/g, '$1');
+                html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<blockquote>)/g, '$1');
+                html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<pre>)/g, '$1');
+                html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<hr>)<\/p>/g, '$1');
+                return html;
+            }
+
+            function updateToolPanel() {
+                dom.toolPanel.innerHTML = '';
+                const cat = state.activeCategory;
+                if (cat === 'statistics') renderStatistics();
+                else if (cat === 'case') renderCaseTools();
+                else if (cat === 'cleaning') renderCleaningTools();
+                else if (cat === 'transform') renderTransformTools();
+                else if (cat === 'formatting') renderFormattingTools();
+                else if (cat === 'search') renderSearchTools();
+                else if (cat === 'markdown') renderMarkdownTools();
+                else if (cat === 'html') renderHtmlTools();
+                else if (cat === 'encoding') renderEncodingTools();
+                else if (cat === 'json') renderJsonTools();
+                else if (cat === 'csv') renderCsvTools();
+                else if (cat === 'regex') renderRegexTools();
+                else if (cat === 'diff') renderDiffTools();
+                else if (cat === 'generate') renderGenerateTools();
+                else if (cat === 'settings') renderSettingsTools();
+                updateLivePreview();
+            }
+
+            function renderStatistics() {
+                const text = state.text;
+                const chars = text.length;
+                const charsNoSpace = text.replace(/\s/g, '').length;
+                const wordsArr = text.trim() ? text.trim().split(/\s+/) : [];
+                const wordCount = wordsArr.length;
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim()).length;
+                const paragraphs = text.split(/\n\n+/).filter(p => p.trim()).length;
+                const uniqueWords = new Set(wordsArr.map(w => w.toLowerCase().replace(/[^a-zа-яё0-9]/gi, ''))).size;
+                const avgWordLen = wordCount > 0 ? (charsNoSpace / wordCount).toFixed(1) : '0';
+                const avgSentLen = sentences > 0 ? (wordCount / sentences).toFixed(1) : '0';
+                const readTime = Math.max(1, Math.ceil(wordCount / 200));
+                const speakTime = Math.max(1, Math.ceil(wordCount / 130));
+                const freq = {};
+                wordsArr.forEach(w => {
+                    const cw = w.toLowerCase().replace(/[^a-zа-яё0-9]/gi, '');
+                    if (cw && cw.length > 1) freq[cw] = (freq[cw] || 0) + 1;
+                });
+                const topWords = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 8).map(e => e[0]).join(', ');
+                const stats = [
+                    { v: chars, l: t('chars') }, { v: charsNoSpace, l: t('charsNoSpace') }, { v: wordCount, l: t('words') },
+                    { v: sentences, l: t('sentences') }, { v: paragraphs, l: t('paragraphs') }, { v: uniqueWords,
+                        l: t('uniqueWords') },
+                    { v: avgWordLen, l: t('avgWordLen') }, { v: avgSentLen, l: t('avgSentLen') }, { v: readTime + ' ' + t(
+                            'minutes'), l: t('readTime') },
+                    { v: speakTime + ' ' + t('minutes'), l: t('speakTime') },
+                ];
+                let gridHtml = '<div class="stat-grid">';
+                stats.forEach(s => { gridHtml +=
+                        '<div class="stat-card"><div class="stat-value">' + s.v +
+                        '</div><div class="stat-label">' + s.l + '</div></div>'; });
+                if (topWords) gridHtml +=
+                    '<div class="stat-card" style="grid-column:span 2"><div class="stat-value" style="font-size:1rem;word-break:break-all;">' +
+                    topWords + '</div><div class="stat-label">' + t('topWords') + '</div></div>';
+                gridHtml += '</div>';
+                dom.toolPanel.innerHTML = gridHtml;
+            }
+
+            function renderCaseTools() {
+                const tools = ['caseUppercase', 'caseLowercase', 'caseTitle', 'caseSentence', 'caseCamel', 'casePascal',
+                    'caseSnake', 'caseKebab', 'caseTrain', 'caseConstant'
+                ];
+                dom.toolPanel.innerHTML = tools.map(tk => '<button class="pill-btn" data-tool="' + tk + '">' + t(tk) +
+                    '</button>').join('');
+                bindPillClicks({
+                    caseUppercase: () => setText(state.text.toUpperCase()),
+                    caseLowercase: () => setText(state.text.toLowerCase()),
+                    caseTitle: () => setText(state.text.replace(/\b\w/g, c => c.toUpperCase())),
+                    caseSentence: () => setText(state.text.replace(/(^\s*\w|[.!?]\s+\w)/g, c => c.toUpperCase())),
+                    caseCamel: () => setText(state.text.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() :
+                        '').replace(/^./, c => c.toLowerCase())),
+                    casePascal: () => setText(state.text.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() :
+                        '').replace(/^./, c => c.toUpperCase())),
+                    caseSnake: () => setText(state.text.replace(/[\s-]+/g, '_').replace(/([A-Z])/g, '_$1').replace(
+                        /__+/g, '_').replace(/^_|_$/g, '').toLowerCase()),
+                    caseKebab: () => setText(state.text.replace(/[\s_]+/g, '-').replace(/([A-Z])/g, '-$1').replace(
+                        /--+/g, '-').replace(/^-|-$/g, '').toLowerCase()),
+                    caseTrain: () => setText(state.text.replace(/[\s_]+/g, '-').replace(/([A-Z])/g, '-$1').replace(
+                        /--+/g, '-').replace(/^-|-$/g, '').replace(/\b\w/g, c => c.toUpperCase())),
+                    caseConstant: () => setText(state.text.replace(/[\s-]+/g, '_').replace(/([A-Z])/g, '_$1').replace(
+                        /__+/g, '_').replace(/^_|_$/g, '').toUpperCase()),
+                });
+            }
+
+            function renderCleaningTools() {
+                const tools = ['cleanExtraSpaces', 'cleanDupSpaces', 'cleanEmptyLines', 'cleanDupLines', 'cleanDupWords',
+                    'cleanTrimLines', 'cleanTabs', 'cleanHtmlTags', 'cleanNormalize'
+                ];
+                dom.toolPanel.innerHTML = tools.map(tk => '<button class="pill-btn" data-tool="' + tk + '">' + t(tk) +
+                    '</button>').join('');
+                bindPillClicks({
+                    cleanExtraSpaces: () => setText(state.text.replace(/\s{2,}/g, ' ').trim()),
+                    cleanDupSpaces: () => setText(state.text.replace(/ {2,}/g, ' ')),
+                    cleanEmptyLines: () => setText(state.text.replace(/^\s*\n/gm, '').replace(/\n{3,}/g, '\n\n').trim()),
+                    cleanDupLines: () => {
+                        const lines = state.text.split('\n');
+                        const seen = new Set();
+                        setText(lines.filter(l => { const t2 = l.trim(); if (seen.has(t2)) return false;
+                            seen.add(t2); return true; }).join('\n'));
+                    },
+                    cleanDupWords: () => setText(state.text.replace(/\b(\w+)\s+\1\b/gi, '$1')),
+                    cleanTrimLines: () => setText(state.text.split('\n').map(l => l.trim()).join('\n')),
+                    cleanTabs: () => setText(state.text.replace(/\t/g, ' ')),
+                    cleanHtmlTags: () => setText(state.text.replace(/<[^>]*>/g, '')),
+                    cleanNormalize: () => setText(state.text.replace(/\s+/g, ' ').trim()),
+                });
+            }
+
+            function renderTransformTools() {
+                const tools = ['transReverse', 'transReverseWords', 'transReverseLines', 'transShuffleWords',
+                    'transShuffleLines', 'transRandomCase'
+                ];
+                dom.toolPanel.innerHTML = tools.map(tk => '<button class="pill-btn" data-tool="' + tk + '">' + t(tk) +
+                    '</button>').join('');
+                bindPillClicks({
+                    transReverse: () => setText(state.text.split('').reverse().join('')),
+                    transReverseWords: () => setText(state.text.split(/\b/).reverse().join('')),
+                    transReverseLines: () => setText(state.text.split('\n').reverse().join('\n')),
+                    transShuffleWords: () => {
+                        const words2 = state.text.split(/\b/);
+                        for (let i = words2.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i +
+                            1));
+                            [words2[i], words2[j]] = [words2[j], words2[i]]; }
+                        setText(words2.join(''));
+                    },
+                    transShuffleLines: () => {
+                        const lines2 = state.text.split('\n');
+                        for (let i = lines2.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i +
+                            1));
+                            [lines2[i], lines2[j]] = [lines2[j], lines2[i]]; }
+                        setText(lines2.join('\n'));
+                    },
+                    transRandomCase: () => setText(state.text.split('').map(c => Math.random() > 0.5 ? c.toUpperCase() :
+                        c.toLowerCase()).join('')),
+                });
+            }
+
+            function renderFormattingTools() {
+                const tools = ['formatSortAZ', 'formatSortZA', 'formatNumberLines', 'formatRemoveDupLines'];
+                dom.toolPanel.innerHTML = tools.map(tk => '<button class="pill-btn" data-tool="' + tk + '">' + t(tk) +
+                    '</button>').join('');
+                bindPillClicks({
+                    formatSortAZ: () => setText(state.text.split('\n').sort((a, b) => a.localeCompare(b)).join('\n')),
+                    formatSortZA: () => setText(state.text.split('\n').sort((a, b) => b.localeCompare(a)).join('\n')),
+                    formatNumberLines: () => setText(state.text.split('\n').map((l, i) => (i + 1) + '. ' + l).join('\n')),
+                    formatRemoveDupLines: () => {
+                        const lines3 = state.text.split('\n');
+                        const seen2 = new Set();
+                        setText(lines3.filter(l => { const t3 = l.trim(); if (seen2.has(t3)) return false;
+                            seen2.add(t3); return true; }).join('\n'));
+                    },
+                });
+            }
+
+            function renderSearchTools() {
+                dom.toolPanel.innerHTML =
+                    '<div class="input-row"><input class="input-field" id="searchQuery" placeholder="' + t('find') +
+                    '..." value="' + htmlEscapeAttr(state._searchQuery || '') + '">' +
+                    '<input class="input-field" id="replaceQuery" placeholder="' + t('replace') +
+                    '..." value="' + htmlEscapeAttr(state._replaceQuery || '') + '">' +
+                    '<button class="btn btn-sm btn-accent" id="btnSearchFind">' + t('searchFind') + '</button>' +
+                    '<button class="btn btn-sm" id="btnSearchReplace">' + t('searchReplace') + '</button>' +
+                    '<button class="btn btn-sm" id="btnSearchReplaceAll">' + t('searchReplaceAll') + '</button>' +
+                    '<button class="btn btn-sm" id="btnSearchCount">' + t('searchCount') + '</button>' +
+                    '<span id="searchResult" style="font-size:0.82rem;color:var(--text-secondary)"></span></div>';
+                const sq = document.getElementById('searchQuery');
+                const rq = document.getElementById('replaceQuery');
+                const resultSpan = document.getElementById('searchResult');
+                if (sq) sq.addEventListener('input', () => { state._searchQuery = sq.value;
+                    saveState(); });
+                if (rq) rq.addEventListener('input', () => { state._replaceQuery = rq.value;
+                    saveState(); });
+                document.getElementById('btnSearchFind')?.addEventListener('click', () => {
+                    const q = state._searchQuery || '';
+                    if (!q) return;
+                    const count = (state.text.match(new RegExp(escapeRegex(q), 'g')) || []).length;
+                    if (resultSpan) resultSpan.textContent = t('matchCount') + ' ' + count;
+                    highlightInTextarea(q);
+                });
+                document.getElementById('btnSearchReplace')?.addEventListener('click', () => {
+                    const q = state._searchQuery || '';
+                    if (!q) return;
+                    setText(state.text.replace(new RegExp(escapeRegex(q), ''), state._replaceQuery || ''));
+                });
+                document.getElementById('btnSearchReplaceAll')?.addEventListener('click', () => {
+                    const q = state._searchQuery || '';
+                    if (!q) return;
+                    setText(state.text.replace(new RegExp(escapeRegex(q), 'g'), state._replaceQuery || ''));
+                });
+                document.getElementById('btnSearchCount')?.addEventListener('click', () => {
+                    const q = state._searchQuery || '';
+                    const count = q ? (state.text.match(new RegExp(escapeRegex(q), 'g')) || []).length : 0;
+                    if (resultSpan) resultSpan.textContent = t('matchCount') + ' ' + count;
+                });
+            }
+
+            function highlightInTextarea(query) {
+                const ta = dom.mainTextarea;
+                const idx = state.text.indexOf(query);
+                if (idx >= 0) {
+                    ta.focus();
+                    ta.setSelectionRange(idx, idx + query.length);
+                }
+            }
+
+            function renderMarkdownTools() {
+                dom.toolPanel.innerHTML = '<span style="font-size:0.85rem;color:var(--text-secondary)">' + t('mdPreview') +
+                    '</span>';
+                renderMarkdownPreview();
+            }
+
+            function renderHtmlTools() {
+                dom.toolPanel.innerHTML =
+                    '<button class="pill-btn" data-tool="htmlEscape">' + t('htmlEscape') + '</button>' +
+                    '<button class="pill-btn" data-tool="htmlUnescape">' + t('htmlUnescape') + '</button>' +
+                    '<button class="pill-btn" data-tool="htmlPreview">' + t('htmlPreview') + '</button>';
+                bindPillClicks({
+                    htmlEscape: () => setText(state.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g,
+                        '&gt;').replace(/"/g, '&quot;')),
+                    htmlUnescape: () => setText(state.text.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g,
+                        '>').replace(/&amp;/g, '&')),
+                    htmlPreview: () => {
+                        state.activeTool = 'htmlPreview';
+                        renderHtmlPreview();
+                        state.activeTool = 'htmlPreview';
+                    },
+                });
+                if (state.activeTool === 'htmlPreview') renderHtmlPreview();
+            }
+
+            function renderEncodingTools() {
+                dom.toolPanel.innerHTML =
+                    '<button class="pill-btn" data-tool="base64Encode">' + t('base64Encode') + '</button>' +
+                    '<button class="pill-btn" data-tool="base64Decode">' + t('base64Decode') + '</button>' +
+                    '<button class="pill-btn" data-tool="urlEncode">' + t('urlEncode') + '</button>' +
+                    '<button class="pill-btn" data-tool="urlDecode">' + t('urlDecode') + '</button>';
+                bindPillClicks({
+                    base64Encode: () => {
+                        try { setText(btoa(unescape(encodeURIComponent(state.text)))); } catch (e) {
+                            setText(btoa(state.text));
+                        }
+                    },
+                    base64Decode: () => {
+                        try { setText(decodeURIComponent(escape(atob(state.text)))); } catch (e) { try { setText(
+                                atob(state.text)); } catch (e2) { showToast('Invalid Base64'); } }
+                    },
+                    urlEncode: () => setText(encodeURIComponent(state.text)),
+                    urlDecode: () => { try { setText(decodeURIComponent(state.text)); } catch (e) { showToast(
+                            'Invalid URL encoding'); } },
+                });
+            }
+
+            function renderJsonTools() {
+                dom.toolPanel.innerHTML =
+                    '<button class="pill-btn" data-tool="jsonFormat">' + t('jsonFormat') + '</button>' +
+                    '<button class="pill-btn" data-tool="jsonValidate">' + t('jsonValidate') + '</button>' +
+                    '<span id="jsonResult" style="font-size:0.82rem;margin-left:8px;"></span>';
+                bindPillClicks({
+                    jsonFormat: () => {
+                        try {
+                            const obj = JSON.parse(state.text);
+                            setText(JSON.stringify(obj, null, 2));
+                            const el = document.getElementById('jsonResult');
+                            if (el) el.textContent = t('jsonValid');
+                            if (el) el.style.color = 'var(--success)';
+                        } catch (e) {
+                            const el = document.getElementById('jsonResult');
+                            if (el) el.textContent = t('jsonError') + ' ' + e.message;
+                            if (el) el.style.color = 'var(--danger)';
+                        }
+                    },
+                    jsonValidate: () => {
+                        const el = document.getElementById('jsonResult');
+                        try { JSON.parse(state.text);
+                            if (el) el.textContent = t('jsonValid');
+                            if (el) el.style.color = 'var(--success)'; } catch (e) { if (el) el.textContent = t(
+                                'jsonError') + ' ' + e.message;
+                            if (el) el.style.color = 'var(--danger)'; }
+                    },
+                });
+            }
+
+            function renderCsvTools() {
+                dom.toolPanel.innerHTML =
+                    '<button class="pill-btn" data-tool="csvToTable">' + t('csvToTable') + '</button>' +
+                    '<button class="pill-btn" data-tool="tableToCsv">' + t('tableToCsv') + '</button>' +
+                    '<div id="csvOutput" style="width:100%;overflow-x:auto;max-height:300px;overflow-y:auto;margin-top:8px;"></div>';
+                bindPillClicks({
+                    csvToTable: () => {
+                        const rows = parseCSV(state.text);
+                        if (rows.length === 0) return;
+                        let tableHtml =
+                            '<table style="border-collapse:collapse;width:100%;font-size:0.82rem;"><thead><tr>';
+                        const headers = rows[0];
+                        headers.forEach(h => { tableHtml +=
+                                '<th style="border:1px solid var(--border-color);padding:6px 10px;background:var(--bg-tertiary);text-align:left;">' +
+                                h + '</th>'; });
+                        tableHtml += '</tr></thead><tbody>';
+                        for (let i = 1; i < rows.length; i++) {
+                            tableHtml += '<tr>';
+                            rows[i].forEach(c => { tableHtml +=
+                                    '<td style="border:1px solid var(--border-color);padding:5px 8px;">' + c +
+                                    '</td>'; });
+                            tableHtml += '</tr>';
+                        }
+                        tableHtml += '</tbody></table>';
+                        const out = document.getElementById('csvOutput');
+                        if (out) out.innerHTML = tableHtml;
+                    },
+                    tableToCsv: () => {
+                        const csvData = htmlTableToCsv(state.text);
+                        if (csvData !== null) setText(csvData);
+                        else showToast('No valid HTML table found');
+                    },
+                });
+            }
+
+            function parseCSV(text) {
+                const rows = [];
+                let row = [];
+                let field = '';
+                let inQuotes = false;
+                for (let i = 0; i < text.length; i++) {
+                    const ch = text[i];
+                    if (inQuotes) {
+                        if (ch === '"') {
+                            if (i + 1 < text.length && text[i + 1] === '"') { field += '"';
+                                i++; } else { inQuotes = false; }
+                        } else { field += ch; }
+                    } else {
+                        if (ch === '"') { inQuotes = true; } else if (ch === ',') { row.push(field);
+                            field = ''; } else if (ch === '\n') { row.push(field);
+                            rows.push(row);
+                            row = [];
+                            field = ''; } else if (ch === '\r') {} else { field += ch; }
+                    }
+                }
+                row.push(field);
+                if (row.some(f => f !== '') || rows.length === 0) rows.push(row);
+                return rows.filter(r => r.some(f => f.trim() !== ''));
+            }
+
+            function htmlTableToCsv(html) {
+                const match = html.match(/<table[^>]*>([\s\S]*?)<\/table>/i);
+                if (!match) return null;
+                const tableContent = match[1];
+                const rows = [];
+                const trMatches = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi);
+                if (!trMatches) return null;
+                trMatches.forEach(tr => {
+                    const cells = [];
+                    const cellMatches = tr.match(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi);
+                    if (cellMatches) {
+                        cellMatches.forEach(tc => {
+                            const content = tc.replace(/<[^>]*>/g, '').replace(/"/g, '""').trim();
+                            cells.push('"' + content + '"');
+                        });
+                    }
+                    if (cells.length > 0) rows.push(cells.join(','));
+                });
+                return rows.join('\n');
+            }
+
+            function renderRegexTools() {
+                dom.toolPanel.innerHTML =
+                    '<div class="input-row"><input class="input-field" id="regexPattern" placeholder="' + t(
+                        'regexPattern') + '" value="' + htmlEscapeAttr(state._regexPattern || '') + '">' +
+                    '<input class="input-field" id="regexFlags" placeholder="' + t('regexFlags') +
+                    '" value="' + htmlEscapeAttr(state._regexFlags || 'g') + '" style="max-width:80px;">' +
+                    '<button class="btn btn-sm btn-accent" id="btnRegexTest">' + t('regexTest') + '</button>' +
+                    '<button class="btn btn-sm" id="btnRegexCount">' + t('regexCount') + '</button>' +
+                    '<span id="regexResult" style="font-size:0.82rem;color:var(--text-secondary)"></span></div>';
+                document.getElementById('regexPattern')?.addEventListener('input', function() { state._regexPattern = this
+                        .value;
+                    saveState(); });
+                document.getElementById('regexFlags')?.addEventListener('input', function() { state._regexFlags = this
+                    .value;
+                    saveState(); });
+                document.getElementById('btnRegexTest')?.addEventListener('click', () => {
+                    try {
+                        const re = new RegExp(state._regexPattern || '', state._regexFlags || 'g');
+                        const matches = state.text.match(re);
+                        const resultSpan = document.getElementById('regexResult');
+                        if (resultSpan) resultSpan.textContent = t('matchCount') + ' ' + (matches ? matches
+                            .length : 0);
+                        if (matches && matches.length > 0 && resultSpan) resultSpan.style.color =
+                            'var(--success)';
+                    } catch (e) {
+                        const resultSpan = document.getElementById('regexResult');
+                        if (resultSpan) resultSpan.textContent = 'Error: ' + e.message;
+                        if (resultSpan) resultSpan.style.color = 'var(--danger)';
+                    }
+                });
+                document.getElementById('btnRegexCount')?.addEventListener('click', () => {
+                    try {
+                        const re = new RegExp(state._regexPattern || '', state._regexFlags || 'g');
+                        const matches = state.text.match(re);
+                        const resultSpan = document.getElementById('regexResult');
+                        if (resultSpan) resultSpan.textContent = t('matchCount') + ' ' + (matches ? matches
+                            .length : 0);
+                    } catch (e) {
+                        const resultSpan = document.getElementById('regexResult');
+                        if (resultSpan) resultSpan.textContent = 'Error: ' + e.message;
+                        if (resultSpan) resultSpan.style.color = 'var(--danger)';
+                    }
+                });
+            }
+
+            function renderDiffTools() {
+                dom.toolPanel.innerHTML =
+                    '<div class="split-view" style="width:100%"><textarea class="split-textarea" id="diffTextB" placeholder="' +
+                    t('diffTextB') + '">' + htmlEscapeText(state.comparisonText) + '</textarea>' +
+                    '<button class="btn btn-sm btn-accent" id="btnDiffCompare" style="align-self:flex-start;margin:4px 0;">' +
+                    t('diffCompare') + '</button>' +
+                    '<div class="diff-output" id="diffOutput"></div></div>';
+                const diffTA = document.getElementById('diffTextB');
+                if (diffTA) diffTA.addEventListener('input', function() {
+                    state.comparisonText = this.value;
+                    saveState();
+                });
+                document.getElementById('btnDiffCompare')?.addEventListener('click', runDiff);
+            }
+
+            function runDiff() {
+                const linesA = state.text.split('\n');
+                const linesB = state.comparisonText.split('\n');
+                const maxLen = Math.max(linesA.length, linesB.length);
+                let resultHtml = '';
+                for (let i = 0; i < maxLen; i++) {
+                    const a = linesA[i] || '';
+                    const b = linesB[i] || '';
+                    if (a === b) resultHtml +=
+                        '<div class="diff-unchanged">  ' + htmlEscapeText(a || '&nbsp;') + '</div>';
+                    else {
+                        if (a && !b) resultHtml += '<div class="diff-removed">- ' + htmlEscapeText(a) + '</div>';
+                        else if (!a && b) resultHtml += '<div class="diff-added">+ ' + htmlEscapeText(b) + '</div>';
+                        else {
+                            resultHtml += '<div class="diff-removed">- ' + htmlEscapeText(a) + '</div>';
+                            resultHtml += '<div class="diff-added">+ ' + htmlEscapeText(b) + '</div>';
+                        }
+                    }
+                }
+                const out = document.getElementById('diffOutput');
+                if (out) out.innerHTML = resultHtml || '<div style="color:var(--text-tertiary)">' + t('noText') + '</div>';
+            }
+
+            function renderGenerateTools() {
+                dom.toolPanel.innerHTML =
+                    '<div class="input-row"><span style="font-size:0.82rem;">' + t('genCount') +
+                    '</span><input class="input-field" id="genCount" type="number" min="1" max="500" value="5" style="max-width:70px;">' +
+                    '<button class="pill-btn" data-tool="genLorem">' + t('genLorem') + '</button>' +
+                    '<button class="pill-btn" data-tool="genWords">' + t('genWords') + '</button>' +
+                    '<button class="pill-btn" data-tool="genSentences">' + t('genSentences') + '</button>' +
+                    '<button class="pill-btn" data-tool="genNickname">' + t('genNickname') + '</button></div>';
+                bindPillClicks({
+                    genLorem: () => setText(generateLorem(getGenCount())),
+                    genWords: () => setText(generateRandomWords(getGenCount())),
+                    genSentences: () => setText(generateRandomSentences(getGenCount())),
+                    genNickname: () => setText(generateNicknames(getGenCount())),
+                });
+            }
+
+            function getGenCount() {
+                const el = document.getElementById('genCount');
+                const val = el ? parseInt(el.value) : 5;
+                return Math.max(1, Math.min(500, isNaN(val) ? 5 : val));
+            }
+
+            function generateLorem(count) {
+                const words = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit', 'sed', 'do',
+                    'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore', 'magna', 'aliqua', 'enim', 'ad',
+                    'minim', 'veniam', 'quis', 'nostrud', 'exercitation', 'ullamco', 'laboris', 'nisi', 'ut', 'aliquip',
+                    'ex', 'ea', 'commodo', 'consequat', 'duis', 'aute', 'irure', 'dolor', 'in', 'reprehenderit',
+                    'voluptate', 'velit', 'esse', 'cillum', 'dolore', 'eu', 'fugiat', 'nulla', 'pariatur'
+                ];
+                const paragraphs = [];
+                for (let p = 0; p < Math.ceil(count / 40); p++) {
+                    const len = Math.min(40, count - p * 40);
+                    if (len <= 0) break;
+                    let para = '';
+                    for (let i = 0; i < len; i++) { para += words[Math.floor(Math.random() * words.length)] + ' '; }
+                    paragraphs.push(para.trim().charAt(0).toUpperCase() + para.trim().slice(1) + '.');
+                }
+                return paragraphs.join('\n\n');
+            }
+
+            function generateRandomWords(count) {
+                const base = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa',
+                    'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi',
+                    'omega', 'aurora', 'breeze', 'crystal', 'dawn', 'echo', 'flame', 'glacier', 'horizon', 'iris',
+                    'jungle', 'kaleido', 'lunar', 'mist', 'nebula', 'ocean', 'prism', 'quartz', 'rift', 'storm'
+                ];
+                const result = [];
+                for (let i = 0; i < count; i++) { result.push(base[Math.floor(Math.random() * base.length)]); }
+                return result.join(' ');
+            }
+
+            function generateRandomSentences(count) {
+                const subjects = ['The cat', 'A developer', 'The system', 'Our team', 'The algorithm', 'A user', 'The
+                    server ', 'Nature ', 'Science ', 'Technology '
+                ];
+                const verbs = ['runs', 'builds', 'analyzes', 'creates', 'optimizes', 'processes', 'generates', 'explores',
+                    'transforms', 'simplifies'
+                ];
+                const objects = ['the code', 'a solution', 'the data', 'new features', 'the interface', 'complex
+                    problems ', 'beautiful designs ', 'efficient workflows ', 'the application ', 'innovative ideas '
+                ];
+                const result = [];
+                for (let i = 0; i < count; i++) {
+                    result.push(subjects[Math.floor(Math.random() * subjects.length)] + verbs[Math.floor(Math.random() *
+                        verbs.length)] + ' ' + objects[Math.floor(Math.random() * objects.length)] + '.');
+                }
+                return result.join(' ');
+            }
+
+            function generateNicknames(count) {
+                const prefixes = ['Shadow', 'Cyber', 'Neon', 'Pixel', 'Quantum', 'Turbo', 'Mega', 'Ultra', 'Hyper',
+                    'Crypto', 'Blaze', 'Storm', 'Frost', 'Thunder', 'Solar'
+                ];
+                const suffixes = ['Wolf', 'Phoenix', 'Dragon', 'Hawk', 'Tiger', 'Viper', 'Raven', 'Ghost', 'Knight',
+                    'Wizard', 'Ninja', 'Samurai', 'Hunter', 'Legend', 'Master'
+                ];
+                const result = [];
+                for (let i = 0; i < count; i++) {
+                    result.push(prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() *
+                        suffixes.length)] + Math.floor(Math.random() * 100));
+                }
+                return result.join('\n');
+            }
+
+            function renderSettingsTools() {
+                dom.toolPanel.innerHTML =
+                    '<div class="input-row" style="gap:12px;">' +
+                    '<span style="font-size:0.82rem;">' + t('settingsFontSize') +
+                    '</span><input class="input-field" id="settingFontSize" type="number" min="10" max="32" value="' +
+                    state.fontSize + '" style="max-width:70px;">' +
+                    '<span style="font-size:0.82rem;">' + t('settingsTabSize') +
+                    '</span><input class="input-field" id="settingTabSize" type="number" min="1" max="8" value="' + state
+                    .tabSize + '" style="max-width:60px;">' +
+                    '<button class="pill-btn" id="btnToggleAutosave">' + t('settingsAutosave') + ': ' + (state.autosave ? t(
+                        'settingsOn') : t('settingsOff')) + '</button>' +
+                    '<button class="btn btn-sm" id="btnImportFile">' + t('importFile') + '</button>' +
+                    '</div>';
+                document.getElementById('settingFontSize')?.addEventListener('change', function() {
+                    const val = parseInt(this.value);
+                    if (val >= 10 && val <= 32) { state.fontSize = val;
+                        dom.mainTextarea.style.fontSize = val + 'px';
+                        saveState(); }
+                });
+                document.getElementById('settingTabSize')?.addEventListener('change', function() {
+                    const val = parseInt(this.value);
+                    if (val >= 1 && val <= 8) { state.tabSize = val;
+                        dom.mainTextarea.style.tabSize = val;
+                        dom.mainTextarea.style.MozTabSize = val;
+                        saveState(); }
+                });
+                document.getElementById('btnToggleAutosave')?.addEventListener('click', function() {
+                    state.autosave = !state.autosave;
+                    this.textContent = t('settingsAutosave') + ': ' + (state.autosave ? t('settingsOn') : t(
+                        'settingsOff'));
+                    saveState();
+                });
+                document.getElementById('btnImportFile')?.addEventListener('click', () => dom.hiddenFileInput.click());
+            }
+
+            function bindPillClicks(handlers) {
+                dom.toolPanel.querySelectorAll('.pill-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tool = this.dataset.tool;
+                        if (handlers[tool]) handlers[tool]();
+                    });
+                });
+            }
+
+            function escapeRegex(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+            function htmlEscapeAttr(str) { return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g,
+                    '&lt;').replace(/>/g, '&gt;'); }
+
+            function htmlEscapeText(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+            function renderTabs() {
+                dom.tabsRow.innerHTML = CATEGORIES.map(c =>
+                    '<button class="tab-btn' + (c.id === state.activeCategory ? ' active' : '') + '" data-cat="' + c
+                    .id + '" role="tab" aria-selected="' + (c.id === state.activeCategory ? 'true' : 'false') +
+                    '">' + c.icon + ' ' + t(c.labelKey) + '</button>'
+                ).join('');
+                dom.tabsRow.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        state.activeCategory = this.dataset.cat;
+                        state.activeTool = null;
+                        dom.previewPanel.classList.remove('active');
+                        dom.editorArea.classList.remove('split-horizontal');
+                        dom.previewPanel.innerHTML = '';
+                        renderTabs();
+                        updateToolPanel();
+                        saveState();
+                    });
+                });
+            }
+
+            function debouncedSave() {
+                clearTimeout(debouncedSave._timer);
+                debouncedSave._timer = setTimeout(saveState, 400);
+            }
+
+            function init() {
+                loadState();
+                applyTheme();
+                dom.mainTextarea.value = state.text;
+                dom.mainTextarea.style.fontSize = state.fontSize + 'px';
+                dom.mainTextarea.style.tabSize = state.tabSize;
+                dom.mainTextarea.style.MozTabSize = state.tabSize;
+                dom.mainTextarea.placeholder = t('placeholder');
+                renderTabs();
+                updateToolPanel();
+                autoResizeTextarea();
+                dom.mainTextarea.addEventListener('input', () => onTextChanged(true));
+                dom.mainTextarea.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault();
+                        undo(); }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) { e.preventDefault();
+                        redo(); }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Z') { e.preventDefault();
+                        redo(); }
+                });
+                dom.btnUndo.addEventListener('click', undo);
+                dom.btnRedo.addEventListener('click', redo);
+                dom.btnTheme.addEventListener('click', () => {
+                    const themes = ['light', 'dark', 'amoled'];
+                    const idx = themes.indexOf(state.theme);
+                    state.theme = themes[(idx + 1) % 3];
+                    applyTheme();
+                    saveState();
+                });
+                dom.btnLang.addEventListener('click', () => {
+                    state.language = state.language === 'en' ? 'ru' : 'en';
+                    dom.mainTextarea.placeholder = t('placeholder');
+                    renderTabs();
+                    updateToolPanel();
+                    saveState();
+                });
+                dom.btnCopy.addEventListener('click', () => {
+                    if (!state.text) { showToast(t('noText')); return; }
+                    navigator.clipboard.writeText(state.text).then(() => showToast(t('copied'))).catch(() => {
+                        dom.mainTextarea.select();
+                        document.execCommand('copy');
+                        showToast(t('copied'));
+                    });
+                });
+                dom.btnPaste.addEventListener('click', async () => {
+                    try {
+                        const clipText = await navigator.clipboard.readText();
+                        if (clipText) { setText(state.text + clipText);
+                            showToast(t('pasted')); }
+                    } catch (e) { showToast('Could not paste'); }
+                });
+                dom.btnClear.addEventListener('click', () => {
+                    if (state.text) { setText('');
+                        showToast(t('cleared')); }
+                });
+                dom.btnDownload.addEventListener('click', () => {
+                    if (!state.text) { showToast(t('noText')); return; }
+                    downloadFile('textstudio.txt', state.text, 'text/plain');
+                    showToast(t('downloaded'));
+                });
+                dom.hiddenFileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(e) { setText(e.target.result); };
+                    reader.readAsText(file);
+                    this.value = '';
+                });
+                const editorWrapper = document.getElementById('editorWrapper');
+                editorWrapper.addEventListener('dragover', function(e) { e.preventDefault();
+                    e.stopPropagation(); });
+                editorWrapper.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) { setText(ev.target.result); };
+                        reader.readAsText(file);
+                    }
+                });
+                window.addEventListener('resize', () => { updateLivePreview();
+                    autoResizeTextarea(); });
+                window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(e) {
+                    if (!localStorage.getItem(STORAGE_KEY) || !JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+                        .theme) {
+                        state.theme = e.matches ? 'dark' : 'light';
+                        applyTheme();
+                        saveState();
+                    }
+                });
+                updateThemeIcon();
+            }
+
+            function downloadFile(filename, content, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            init();
+        })();
+    </script>
+</body>
+</html>
