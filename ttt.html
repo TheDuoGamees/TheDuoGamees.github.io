@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TextStudio</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --surface2: #f0f0f2;
+            --border: #e0e0e5;
+            --text: #1d1d1f;
+            --text2: #6e6e73;
+            --text3: #999;
+            --accent: #0071e3;
+            --accent-hover: #0077ed;
+            --accent-light: #e8f4fd;
+            --danger: #d93025;
+            --danger-hover: #c5221f;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-xs: 6px;
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --mono: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+            --transition: 180ms ease;
+            --toolbar-h: 48px;
+            --tab-h: 44px;
+            --textarea-min-h: 280px;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        [data-theme="dark"] {
+            --bg: #1c1c1e;
+            --surface: #2c2c2e;
+            --surface2: #3a3a3c;
+            --border: #48484a;
+            --text: #f5f5f7;
+            --text2: #a1a1a6;
+            --text3: #6e6e73;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --accent-light: #1a3a5c;
+            --danger: #ff453a;
+            --danger-hover: #ff6961;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        [data-theme="amoled"] {
+            --bg: #000000;
+            --surface: #111111;
+            --surface2: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #f0f0f0;
+            --text2: #888;
+            --text3: #555;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --accent-light: #0d1f33;
+            --danger: #ff453a;
+            --danger-hover: #ff6961;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100%;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: var(--safe-bottom);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .app {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 8px 12px 16px;
+            gap: 8px;
+        }
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 6px 8px;
+            box-shadow: var(--shadow);
+            min-height: var(--toolbar-h);
+            transition: background var(--transition), box-shadow var(--transition);
+            z-index: 10;
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+        .toolbar-divider {
+            width: 1px;
+            height: 22px;
+            background: var(--border);
+            margin: 0 6px;
+            flex-shrink: 0;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-xs);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font);
+            white-space: nowrap;
+            transition: all var(--transition);
+            min-height: 34px;
+            min-width: 34px;
+            outline: none;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .btn:hover {
+            background: var(--surface2);
+        }
+        .btn:active {
+            transform: scale(0.96);
+            opacity: 0.85;
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .btn.icon-only {
+            padding: 7px 9px;
+            min-width: 34px;
+        }
+        .btn.accent {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 500;
+        }
+        .btn.accent:hover {
+            background: var(--accent-hover);
+        }
+        .btn.danger {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+        .btn.danger:hover {
+            background: var(--danger-hover);
+        }
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+        .btn-label {
+            pointer-events: none;
+        }
+        .textarea-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: var(--textarea-min-h);
+            position: relative;
+        }
+        .textarea-wrap textarea {
+            flex: 1;
+            width: 100%;
+            min-height: var(--textarea-min-h);
+            resize: vertical;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            font-family: var(--mono);
+            font-size: 14px;
+            line-height: 1.65;
+            background: var(--surface);
+            color: var(--text);
+            outline: none;
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+            tab-size: 4;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .textarea-wrap textarea:focus {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg), 0 0 0 3px var(--accent-light);
+        }
+        .textarea-wrap textarea::placeholder {
+            color: var(--text3);
+        }
+        .drop-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: var(--accent-light);
+            border: 3px dashed var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity var(--transition);
+            z-index: 5;
+        }
+        .drop-overlay.active {
+            opacity: 1;
+        }
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 2px 0;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-btn {
+            padding: 9px 14px;
+            border-radius: var(--radius-xs);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 12.5px;
+            font-family: var(--font);
+            white-space: nowrap;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            font-weight: 500;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .tab-btn:hover {
+            color: var(--text);
+            background: var(--surface2);
+        }
+        .tab-btn.active {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
+            box-shadow: var(--shadow);
+            font-weight: 600;
+        }
+        .tab-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            transition: background var(--transition), box-shadow var(--transition);
+            max-height: 400px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .panel.active {
+            display: flex;
+        }
+        .panel-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text2);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+        }
+        .stat-card {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            transition: background var(--transition);
+        }
+        .stat-card .stat-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+            font-family: var(--mono);
+            letter-spacing: -0.02em;
+        }
+        .stat-card .stat-lbl {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 2px;
+        }
+        .freq-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .freq-tag {
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .btn-row .btn {
+            font-size: 12px;
+            padding: 6px 11px;
+            min-height: 30px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+        }
+        .btn-row .btn:hover {
+            background: var(--border);
+        }
+        .search-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .search-row input {
+            padding: 8px 12px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            min-width: 140px;
+            flex: 1;
+            max-width: 220px;
+            outline: none;
+            transition: all var(--transition);
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .search-row input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+        .match-badge {
+            font-size: 12px;
+            color: var(--text2);
+            font-weight: 500;
+            min-width: 70px;
+            text-align: center;
+        }
+        .preview-box {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            font-family: var(--font);
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            color: var(--text);
+            transition: background var(--transition);
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .preview-box h1,
+        .preview-box h2,
+        .preview-box h3 {
+            margin: 12px 0 6px;
+            font-weight: 700;
+        }
+        .preview-box h1 {
+            font-size: 1.5em;
+        }
+        .preview-box h2 {
+            font-size: 1.3em;
+        }
+        .preview-box h3 {
+            font-size: 1.1em;
+        }
+        .preview-box p {
+            margin: 4px 0 8px;
+        }
+        .preview-box ul,
+        .preview-box ol {
+            margin: 4px 0 8px;
+            padding-left: 20px;
+        }
+        .preview-box code {
+            background: var(--border);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: var(--mono);
+            font-size: 0.9em;
+        }
+        .preview-box pre {
+            background: var(--border);
+            padding: 10px 14px;
+            border-radius: var(--radius-xs);
+            overflow-x: auto;
+            font-family: var(--mono);
+            font-size: 0.88em;
+            margin: 6px 0;
+        }
+        .preview-box blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+            color: var(--text2);
+            margin: 6px 0;
+        }
+        .preview-box a {
+            color: var(--accent);
+        }
+        .preview-box hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 12px 0;
+        }
+        .json-error {
+            color: var(--danger);
+            font-weight: 600;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+        .json-success {
+            color: #30b358;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 280px;
+            border: 1px solid var(--border);
+        }
+        .settings-panel.open {
+            display: flex;
+        }
+        .settings-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 99;
+            display: none;
+            cursor: pointer;
+        }
+        .settings-backdrop.open {
+            display: block;
+        }
+        .settings-panel h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .settings-panel label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text);
+        }
+        .settings-panel input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1d1d1f;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 200;
+            pointer-events: none;
+            transition: transform 250ms ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        [data-theme="dark"] .toast,
+        [data-theme="amoled"] .toast {
+            background: #f5f5f7;
+            color: #1d1d1f;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        @media (max-width: 600px) {
+            .app {
+                padding: 4px 6px 12px;
+                gap: 5px;
+            }
+            .toolbar {
+                padding: 4px 5px;
+                gap: 1px;
+                border-radius: var(--radius-sm);
+            }
+            .btn {
+                padding: 6px 8px;
+                font-size: 11px;
+                min-height: 28px;
+                min-width: 28px;
+            }
+            .btn.icon-only {
+                padding: 6px 7px;
+                min-width: 28px;
+            }
+            .btn svg {
+                width: 14px;
+                height: 14px;
+            }
+            .btn-label {
+                display: none;
+            }
+            .btn.icon-only .btn-label {
+                display: inline;
+            }
+            .toolbar-divider {
+                margin: 0 2px;
+                height: 16px;
+            }
+            .tab-btn {
+                padding: 7px 10px;
+                font-size: 11px;
+            }
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
+            .stat-card {
+                padding: 8px 10px;
+            }
+            .stat-card .stat-val {
+                font-size: 18px;
+            }
+            .textarea-wrap textarea {
+                padding: 10px 12px;
+                font-size: 13px;
+                min-height: 200px;
+            }
+            .panel {
+                padding: 10px;
+                max-height: 300px;
+                gap: 7px;
+            }
+            .search-row input {
+                max-width: 120px;
+            }
+        }
+        @media (max-width: 380px) {
+            .btn {
+                padding: 5px 6px;
+                font-size: 10px;
+                min-height: 26px;
+                min-width: 26px;
+                border-radius: 5px;
+            }
+            .btn svg {
+                width: 12px;
+                height: 12px;
+            }
+            .tab-btn {
+                padding: 6px 8px;
+                font-size: 10px;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+            }
+            .toolbar {
+                padding: 3px 3px;
+                gap: 0;
+            }
+            .toolbar-divider {
+                margin: 0 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <div class="toolbar" id="toolbar" role="toolbar" aria-label="TextStudio toolbar">
+            <div class="toolbar-group">
+                <button class="btn icon-only" id="btn-theme" aria-label="Switch theme" title="Theme">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+                <button class="btn icon-only" id="btn-lang" aria-label="Switch language" title="Language">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                </button>
+            </div>
+            <span class="toolbar-divider"></span>
+            <div class="toolbar-group">
+                <button class="btn" id="btn-copy" aria-label="Copy text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><span class="btn-label">Copy</span></button>
+                <button class="btn" id="btn-paste" aria-label="Paste text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg><span class="btn-label">Paste</span></button>
+                <button class="btn" id="btn-download" aria-label="Download as TXT"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="btn-label">Export</span></button>
+                <button class="btn" id="btn-import" aria-label="Import file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span class="btn-label">Import</span></button>
+                <button class="btn" id="btn-undo" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.5 18a9 9 0 0014.8-6.3"/></svg></button>
+                <button class="btn" id="btn-redo" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.5 18a9 9 0 00-14.8-6.3"/></svg></button>
+            </div>
+            <span class="toolbar-divider"></span>
+            <button class="btn" id="btn-clear" aria-label="Clear text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg><span class="btn-label">Clear</span></button>
+            <button class="btn" id="btn-settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+        </div>
+
+        <div class="textarea-wrap" id="textarea-wrap">
+            <textarea id="textarea" placeholder="Start typing or paste text here..." aria-label="Text editor"></textarea>
+            <div class="drop-overlay" id="drop-overlay">Drop file here</div>
+        </div>
+
+        <div class="tab-nav" id="tab-nav" role="tablist"></div>
+
+        <div class="panel" id="panel-statistics"></div>
+        <div class="panel" id="panel-case"></div>
+        <div class="panel" id="panel-clean"></div>
+        <div class="panel" id="panel-transform"></div>
+        <div class="panel" id="panel-format"></div>
+        <div class="panel" id="panel-search"></div>
+        <div class="panel" id="panel-markdown"></div>
+        <div class="panel" id="panel-html"></div>
+        <div class="panel" id="panel-encode"></div>
+        <div class="panel" id="panel-json"></div>
+        <div class="panel" id="panel-generate"></div>
+    </div>
+
+    <div class="settings-backdrop" id="settings-backdrop"></div>
+    <div class="settings-panel" id="settings-panel" role="dialog" aria-label="Settings">
+        <h3 id="settings-title">Settings</h3>
+        <label><input type="checkbox" id="setting-autosave" checked><span id="settings-autosave-label">Autosave text</span></label>
+        <button class="btn accent" id="btn-settings-close">Close</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <input type="file" id="file-input" accept=".txt,.md,.html,.htm,.json,.csv" style="display:none;">
+
+    <script>
+        (function() {
+            const TRANSLATIONS = {
+                en: {
+                    placeholder: 'Start typing or paste text here...',
+                    copy: 'Copy',
+                    paste: 'Paste',
+                    export: 'Export',
+                    import: 'Import',
+                    clear: 'Clear',
+                    undo: 'Undo',
+                    redo: 'Redo',
+                    theme: 'Theme',
+                    language: 'Language',
+                    settings: 'Settings',
+                    close: 'Close',
+                    autosave: 'Autosave text',
+                    copied: 'Copied!',
+                    pasted: 'Pasted!',
+                    cleared: 'Cleared',
+                    imported: 'Imported!',
+                    exported: 'Exported!',
+                    dropFile: 'Drop file here',
+                    noMatches: 'No matches',
+                    matchOf: 'Match %d of %d',
+                    replaced: 'Replaced %d occurrence(s)',
+                    jsonValid: 'Valid JSON',
+                    jsonInvalid: 'Invalid JSON: %s',
+                    tabStats: 'Statistics',
+                    tabCase: 'Case',
+                    tabClean: 'Clean',
+                    tabTransform: 'Transform',
+                    tabFormat: 'Format',
+                    tabSearch: 'Search',
+                    tabMarkdown: 'Markdown',
+                    tabHtml: 'HTML',
+                    tabEncode: 'Encode',
+                    tabJson: 'JSON',
+                    tabGenerate: 'Generate',
+                    chars: 'Characters',
+                    charsNoSpaces: 'Chars (no spaces)',
+                    words: 'Words',
+                    sentences: 'Sentences',
+                    paragraphs: 'Paragraphs',
+                    uniqueWords: 'Unique words',
+                    avgWordLen: 'Avg word length',
+                    avgSentLen: 'Avg sentence length',
+                    readingTime: 'Reading time',
+                    speakingTime: 'Speaking time',
+                    topFreq: 'Top frequent',
+                    uppercase: 'UPPERCASE',
+                    lowercase: 'lowercase',
+                    titlecase: 'Title Case',
+                    sentencecase: 'Sentence case',
+                    camelcase: 'camelCase',
+                    pascalcase: 'PascalCase',
+                    snakecase: 'snake_case',
+                    kebabcase: 'kebab-case',
+                    traincase: 'Train-Case',
+                    constantcase: 'CONSTANT_CASE',
+                    removeExtraSpaces: 'Remove extra spaces',
+                    removeDupSpaces: 'Remove duplicate spaces',
+                    removeEmptyLines: 'Remove empty lines',
+                    removeDupLines: 'Remove duplicate lines',
+                    removeDupWords: 'Remove dup. consecutive words',
+                    trimLines: 'Trim lines',
+                    removeTabs: 'Remove tabs',
+                    removeHtmlTags: 'Remove HTML tags',
+                    normalizeWhitespace: 'Normalize whitespace',
+                    reverseText: 'Reverse text',
+                    reverseWords: 'Reverse words',
+                    reverseLines: 'Reverse lines',
+                    shuffleWords: 'Shuffle words',
+                    shuffleLines: 'Shuffle lines',
+                    randomCase: 'Random case',
+                    sortAZ: 'Sort lines A-Z',
+                    sortZA: 'Sort lines Z-A',
+                    numberLines: 'Number lines',
+                    find: 'Find',
+                    replace: 'Replace',
+                    replaceAll: 'Replace All',
+                    next: 'Next',
+                    prev: 'Prev',
+                    highlight: 'Highlight',
+                    livePreview: 'Live Preview',
+                    htmlEscape: 'Escape HTML',
+                    htmlUnescape: 'Unescape HTML',
+                    htmlSafePreview: 'Safe Preview',
+                    base64Encode: 'Base64 Encode',
+                    base64Decode: 'Base64 Decode',
+                    urlEncode: 'URL Encode',
+                    urlDecode: 'URL Decode',
+                    jsonFormat: 'Format JSON',
+                    jsonValidate: 'Validate',
+                    jsonPretty: 'Pretty Print',
+                    loremIpsum: 'Lorem Ipsum',
+                    randomWords: 'Random Words',
+                    randomSentences: 'Random Sentences',
+                    nicknameGen: 'Nickname Generator',
+                    minRead: 'min read',
+                    minSpeak: 'min speak',
+                },
+                ru: {
+                    placeholder: 'Начните печатать или вставьте текст...',
+                    copy: 'Копировать',
+                    paste: 'Вставить',
+                    export: 'Экспорт',
+                    import: 'Импорт',
+                    clear: 'Очистить',
+                    undo: 'Отменить',
+                    redo: 'Вернуть',
+                    theme: 'Тема',
+                    language: 'Язык',
+                    settings: 'Настройки',
+                    close: 'Закрыть',
+                    autosave: 'Автосохранение',
+                    copied: 'Скопировано!',
+                    pasted: 'Вставлено!',
+                    cleared: 'Очищено',
+                    imported: 'Импортировано!',
+                    exported: 'Экспортировано!',
+                    dropFile: 'Перетащите файл',
+                    noMatches: 'Совпадений нет',
+                    matchOf: 'Совпадение %d из %d',
+                    replaced: 'Заменено: %d',
+                    jsonValid: 'Валидный JSON',
+                    jsonInvalid: 'Ошибка JSON: %s',
+                    tabStats: 'Статистика',
+                    tabCase: 'Регистр',
+                    tabClean: 'Очистка',
+                    tabTransform: 'Трансформ',
+                    tabFormat: 'Формат',
+                    tabSearch: 'Поиск',
+                    tabMarkdown: 'Markdown',
+                    tabHtml: 'HTML',
+                    tabEncode: 'Кодирование',
+                    tabJson: 'JSON',
+                    tabGenerate: 'Генерация',
+                    chars: 'Символов',
+                    charsNoSpaces: 'Символов (без проб.)',
+                    words: 'Слов',
+                    sentences: 'Предложений',
+                    paragraphs: 'Абзацев',
+                    uniqueWords: 'Уникальных слов',
+                    avgWordLen: 'Сред. длина слова',
+                    avgSentLen: 'Сред. длина предл.',
+                    readingTime: 'Время чтения',
+                    speakingTime: 'Время речи',
+                    topFreq: 'Частые слова',
+                    uppercase: 'ЗАГЛАВНЫЕ',
+                    lowercase: 'строчные',
+                    titlecase: 'Заглавные Первые',
+                    sentencecase: 'Предложения с заглавной',
+                    camelcase: 'верблюжьяНотация',
+                    pascalcase: 'ВерблюжьяНотация',
+                    snakecase: 'змеиный_регистр',
+                    kebabcase: 'кебаб-регистр',
+                    traincase: 'Поезд-Регистр',
+                    constantcase: 'КОНСТАНТНЫЙ_РЕГИСТР',
+                    removeExtraSpaces: 'Убрать лишние пробелы',
+                    removeDupSpaces: 'Убрать двойные пробелы',
+                    removeEmptyLines: 'Удалить пустые строки',
+                    removeDupLines: 'Удалить дубли строк',
+                    removeDupWords: 'Удалить дубли слов подряд',
+                    trimLines: 'Обрезать строки',
+                    removeTabs: 'Удалить табуляции',
+                    removeHtmlTags: 'Удалить HTML-теги',
+                    normalizeWhitespace: 'Нормализовать пробелы',
+                    reverseText: 'Перевернуть текст',
+                    reverseWords: 'Перевернуть слова',
+                    reverseLines: 'Перевернуть строки',
+                    shuffleWords: 'Перемешать слова',
+                    shuffleLines: 'Перемешать строки',
+                    randomCase: 'Случайный регистр',
+                    sortAZ: 'Сортировать А-Я',
+                    sortZA: 'Сортировать Я-А',
+                    numberLines: 'Нумеровать строки',
+                    find: 'Найти',
+                    replace: 'Заменить',
+                    replaceAll: 'Заменить всё',
+                    next: 'Далее',
+                    prev: 'Назад',
+                    highlight: 'Выделить',
+                    livePreview: 'Предпросмотр',
+                    htmlEscape: 'Экранировать HTML',
+                    htmlUnescape: 'Деэкранировать HTML',
+                    htmlSafePreview: 'Безопасный просмотр',
+                    base64Encode: 'Base64 Кодировать',
+                    base64Decode: 'Base64 Декодировать',
+                    urlEncode: 'URL Кодировать',
+                    urlDecode: 'URL Декодировать',
+                    jsonFormat: 'Формат JSON',
+                    jsonValidate: 'Проверить',
+                    jsonPretty: 'Pretty Print',
+                    loremIpsum: 'Lorem Ipsum',
+                    randomWords: 'Случайные слова',
+                    randomSentences: 'Случайные предложения',
+                    nicknameGen: 'Генератор никнеймов',
+                    minRead: 'мин чтения',
+                    minSpeak: 'мин речи',
+                }
+            };
+
+            const LOREM_TEXT =
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+            const NICKNAME_ADJECTIVES = [
+                'Swift', 'Brave', 'Clever', 'Mighty', 'Shadow', 'Frost', 'Blaze', 'Storm', 'Iron', 'Silent',
+                'Rapid', 'Golden', 'Silver', 'Crimson', 'Azure', 'Noble', 'Wild', 'Dark', 'Bright', 'Cosmic'
+            ];
+            const NICKNAME_NOUNS = [
+                'Fox', 'Wolf', 'Hawk', 'Bear', 'Lion', 'Tiger', 'Eagle', 'Phoenix', 'Dragon', 'Raven',
+                'Panther', 'Falcon', 'Lynx', 'Cobra', 'Viper', 'Jaguar', 'Owl', 'Shark', 'Ghost', 'Knight'
+            ];
+
+            const state = {
+                text: '',
+                theme: 'light',
+                language: 'en',
+                activeTab: 'statistics',
+                undoStack: [],
+                redoStack: [],
+                maxUndo: 500,
+                autosave: true,
+                searchQuery: '',
+                replaceText: '',
+                searchMatches: [],
+                currentMatchIndex: -1,
+                toastTimer: null,
+            };
+
+            function t(key, ...args) {
+                const dict = TRANSLATIONS[state.language] || TRANSLATIONS['en'];
+                let str = dict[key] || TRANSLATIONS['en'][key] || key;
+                args.forEach((arg, i) => { str = str.replace('%d', arg).replace('%s', arg); });
+                return str;
+            }
+
+            function updateAllTranslations() {
+                document.getElementById('textarea').placeholder = t('placeholder');
+                document.querySelector('#btn-copy .btn-label').textContent = t('copy');
+                document.querySelector('#btn-paste .btn-label').textContent = t('paste');
+                document.querySelector('#btn-download .btn-label').textContent = t('export');
+                document.querySelector('#btn-import .btn-label').textContent = t('import');
+                document.querySelector('#btn-clear .btn-label').textContent = t('clear');
+                document.getElementById('btn-undo').setAttribute('aria-label', t('undo'));
+                document.getElementById('btn-redo').setAttribute('aria-label', t('redo'));
+                document.getElementById('btn-theme').setAttribute('aria-label', t('theme'));
+                document.getElementById('btn-lang').setAttribute('aria-label', t('language'));
+                document.getElementById('btn-settings').setAttribute('aria-label', t('settings'));
+                document.getElementById('settings-title').textContent = t('settings');
+                document.getElementById('settings-autosave-label').textContent = t('autosave');
+                document.getElementById('btn-settings-close').textContent = t('close');
+                document.getElementById('drop-overlay').textContent = t('dropFile');
+                renderTabNav();
+                renderActivePanel();
+            }
+
+            function showToast(msg) {
+                const el = document.getElementById('toast');
+                el.textContent = msg;
+                el.classList.add('show');
+                if (state.toastTimer) clearTimeout(state.toastTimer);
+                state.toastTimer = setTimeout(() => { el.classList.remove('show'); }, 1800);
+            }
+
+            function pushUndo() {
+                if (state.undoStack.length >= state.maxUndo) state.undoStack.shift();
+                state.undoStack.push(state.text);
+                state.redoStack = [];
+            }
+
+            function undo() {
+                if (state.undoStack.length === 0) return;
+                state.redoStack.push(state.text);
+                state.text = state.undoStack.pop();
+                syncTextarea();
+                saveAll();
+                renderActivePanel();
+            }
+
+            function redo() {
+                if (state.redoStack.length === 0) return;
+                state.undoStack.push(state.text);
+                state.text = state.redoStack.pop();
+                syncTextarea();
+                saveAll();
+                renderActivePanel();
+            }
+
+            function setText(newText) {
+                if (newText === state.text) return;
+                pushUndo();
+                state.text = newText;
+                syncTextarea();
+                saveAll();
+                renderActivePanel();
+            }
+
+            function syncTextarea() {
+                const ta = document.getElementById('textarea');
+                if (ta.value !== state.text) {
+                    ta.value = state.text;
+                }
+            }
+
+            function saveAll() {
+                if (!state.autosave) return;
+                try {
+                    const data = {
+                        text: state.text,
+                        theme: state.theme,
+                        language: state.language,
+                        activeTab: state.activeTab,
+                        autosave: state.autosave,
+                    };
+                    localStorage.setItem('textstudio', JSON.stringify(data));
+                } catch (e) {}
+            }
+
+            function loadAll() {
+                try {
+                    const raw = localStorage.getItem('textstudio');
+                    if (raw) {
+                        const data = JSON.parse(raw);
+                        if (typeof data.text === 'string') state.text = data.text;
+                        if (['light', 'dark', 'amoled'].includes(data.theme)) state.theme = data.theme;
+                        if (['en', 'ru'].includes(data.language)) state.language = data.language;
+                        if (typeof data.activeTab === 'string') state.activeTab = data.activeTab;
+                        if (typeof data.autosave === 'boolean') state.autosave = data.autosave;
+                    }
+                } catch (e) {}
+                if (!state.text && state.autosave === true) {
+                    try {
+                        const old = localStorage.getItem('textstudio_text');
+                        if (old && typeof old === 'string') state.text = old;
+                    } catch (e) {}
+                }
+            }
+
+            function applyTheme() {
+                document.documentElement.setAttribute('data-theme', state.theme);
+                try { localStorage.setItem('textstudio_theme', state.theme); } catch (e) {}
+            }
+
+            function detectTheme() {
+                try {
+                    const saved = localStorage.getItem('textstudio_theme');
+                    if (saved && ['light', 'dark', 'amoled'].includes(saved)) return saved;
+                } catch (e) {}
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+                return 'light';
+            }
+
+            function cycleTheme() {
+                const themes = ['light', 'dark', 'amoled'];
+                const idx = themes.indexOf(state.theme);
+                state.theme = themes[(idx + 1) % themes.length];
+                applyTheme();
+                saveAll();
+                showToast(state.theme.charAt(0).toUpperCase() + state.theme.slice(1));
+            }
+
+            function cycleLanguage() {
+                state.language = state.language === 'en' ? 'ru' : 'en';
+                updateAllTranslations();
+                saveAll();
+                showToast(state.language === 'en' ? 'English' : 'Русский');
+            }
+
+            function getWords(text) {
+                return text.match(/[\p{L}\p{N}]+/gu) || [];
+            }
+            function getSentences(text) {
+                return text.match(/[^.!?…\n]+[.!?…]+/g) || [];
+            }
+            function getParagraphs(text) {
+                const trimmed = text.trim();
+                if (!trimmed) return [];
+                return trimmed.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+            }
+
+            function computeStats() {
+                const txt = state.text;
+                const chars = txt.length;
+                const charsNoSpaces = txt.replace(/\s/g, '').length;
+                const words = getWords(txt);
+                const wordCount = words.length;
+                const sentences = getSentences(txt);
+                const sentCount = sentences.length;
+                const paragraphs = getParagraphs(txt);
+                const paraCount = paragraphs.length;
+                const uniqueWords = new Set(words.map(w => w.toLowerCase()));
+                const uniqueCount = uniqueWords.size;
+                const avgWordLen = wordCount > 0 ? (words.reduce((s, w) => s + w.length, 0) / wordCount) : 0;
+                const avgSentLen = sentCount > 0 ? (sentences.reduce((s, sent) => s + sent.trim().split(/\s+/).length,
+                    0) / sentCount) : 0;
+                const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+                const speakingTime = Math.max(1, Math.ceil(wordCount / 130));
+                const freqMap = new Map();
+                words.forEach(w => {
+                    const lw = w.toLowerCase();
+                    freqMap.set(lw, (freqMap.get(lw) || 0) + 1);
+                });
+                const topFreq = [...freqMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+                return {
+                    chars,
+                    charsNoSpaces,
+                    wordCount,
+                    sentCount,
+                    paraCount,
+                    uniqueCount,
+                    avgWordLen,
+                    avgSentLen,
+                    readingTime,
+                    speakingTime,
+                    topFreq
+                };
+            }
+
+            function renderStatsPanel() {
+                const panel = document.getElementById('panel-statistics');
+                const stats = computeStats();
+                panel.innerHTML = `
+                    <div class="stat-grid">
+                        <div class="stat-card"><div class="stat-val">${stats.chars.toLocaleString()}</div><div class="stat-lbl">${t('chars')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.charsNoSpaces.toLocaleString()}</div><div class="stat-lbl">${t('charsNoSpaces')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.wordCount.toLocaleString()}</div><div class="stat-lbl">${t('words')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.sentCount.toLocaleString()}</div><div class="stat-lbl">${t('sentences')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.paraCount.toLocaleString()}</div><div class="stat-lbl">${t('paragraphs')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.uniqueCount.toLocaleString()}</div><div class="stat-lbl">${t('uniqueWords')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.avgWordLen.toFixed(1)}</div><div class="stat-lbl">${t('avgWordLen')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.avgSentLen.toFixed(1)}</div><div class="stat-lbl">${t('avgSentLen')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.readingTime} ${t('minRead')}</div><div class="stat-lbl">${t('readingTime')}</div></div>
+                        <div class="stat-card"><div class="stat-val">${stats.speakingTime} ${t('minSpeak')}</div><div class="stat-lbl">${t('speakingTime')}</div></div>
+                    </div>
+                    <div class="panel-title">${t('topFreq')}</div>
+                    <div class="freq-list">${stats.topFreq.map(([w, c]) => `<span class="freq-tag">${w} (${c})</span>`).join('') || '<span style="font-size:12px;color:var(--text3)">—</span>'}</div>
+                `;
+            }
+
+            function renderCasePanel() {
+                const panel = document.getElementById('panel-case');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn case-btn" data-action="upper">${t('uppercase')}</button>
+                        <button class="btn case-btn" data-action="lower">${t('lowercase')}</button>
+                        <button class="btn case-btn" data-action="title">${t('titlecase')}</button>
+                        <button class="btn case-btn" data-action="sentence">${t('sentencecase')}</button>
+                        <button class="btn case-btn" data-action="camel">${t('camelcase')}</button>
+                        <button class="btn case-btn" data-action="pascal">${t('pascalcase')}</button>
+                        <button class="btn case-btn" data-action="snake">${t('snakecase')}</button>
+                        <button class="btn case-btn" data-action="kebab">${t('kebabcase')}</button>
+                        <button class="btn case-btn" data-action="train">${t('traincase')}</button>
+                        <button class="btn case-btn" data-action="constant">${t('constantcase')}</button>
+                    </div>
+                `;
+                panel.querySelectorAll('.case-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = btn.dataset.action;
+                        applyCase(action);
+                    });
+                });
+            }
+
+            function applyCase(action) {
+                let result = state.text;
+                const words = getWords(state.text);
+                switch (action) {
+                    case 'upper':
+                        result = state.text.toUpperCase();
+                        break;
+                    case 'lower':
+                        result = state.text.toLowerCase();
+                        break;
+                    case 'title':
+                        result = state.text.replace(/\b\p{L}[\p{L}\p{N}']*/gu, w => w.charAt(0).toUpperCase() +
+                            w.slice(1).toLowerCase());
+                        break;
+                    case 'sentence':
+                        result = state.text.replace(/(^\s*|[.!?…]\s+)(\p{L})/gu, (m, p, c) => p + c.toUpperCase())
+                            .replace(/\b(?!^)\p{L}+/gu, w => w.toLowerCase());
+                        break;
+                    case 'camel':
+                        result = words.map((w, i) => i === 0 ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1)
+                            .toLowerCase()).join('');
+                        break;
+                    case 'pascal':
+                        result = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+                        break;
+                    case 'snake':
+                        result = words.map(w => w.toLowerCase()).join('_');
+                        break;
+                    case 'kebab':
+                        result = words.map(w => w.toLowerCase()).join('-');
+                        break;
+                    case 'train':
+                        result = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('-');
+                        break;
+                    case 'constant':
+                        result = words.map(w => w.toUpperCase()).join('_');
+                        break;
+                    default:
+                        return;
+                }
+                setText(result);
+            }
+
+            function renderCleanPanel() {
+                const panel = document.getElementById('panel-clean');
+                const actions = [
+                    { id: 'extraSpaces', label: 'removeExtraSpaces', fn: () => state.text.replace(/\s{2,}/g, ' ')
+                            .trim() },
+                    { id: 'dupSpaces', label: 'removeDupSpaces', fn: () => state.text.replace(/( )\1+/g, ' ') },
+                    { id: 'emptyLines', label: 'removeEmptyLines', fn: () => state.text.replace(/\n\s*\n\s*\n/g,
+                            '\n\n').replace(/^\n+/, '').replace(/\n+$/, '') },
+                    { id: 'dupLines', label: 'removeDupLines', fn: () => {
+                            const lines = state.text.split('\n');
+                            const seen = new Set();
+                            return lines.filter(l => { const t = l.trim(); if (seen.has(t)) return false;
+                                seen.add(t); return true; }).join('\n');
+                        } },
+                    { id: 'dupWords', label: 'removeDupWords', fn: () => state.text.replace(/\b(\p{L}+)\s+\1\b/gu,
+                            '$1') },
+                    { id: 'trimLines', label: 'trimLines', fn: () => state.text.split('\n').map(l => l.trim()).join(
+                            '\n') },
+                    { id: 'removeTabs', label: 'removeTabs', fn: () => state.text.replace(/\t/g, ' ') },
+                    { id: 'removeHtml', label: 'removeHtmlTags', fn: () => state.text.replace(/<[^>]*>/g, '') },
+                    { id: 'normalize', label: 'normalizeWhitespace', fn: () => state.text.replace(/[\s\n]+/g, ' ')
+                            .trim() },
+                ];
+                panel.innerHTML = `<div class="btn-row">${actions.map(a => `<button class="btn clean-btn" data-id="${a.id}">${t(a.label)}</button>`).join('')}</div>`;
+                panel.querySelectorAll('.clean-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = actions.find(a => a.id === btn.dataset.id);
+                        if (action) setText(action.fn());
+                    });
+                });
+            }
+
+            function renderTransformPanel() {
+                const panel = document.getElementById('panel-transform');
+                const actions = [
+                    { id: 'revText', label: 'reverseText', fn: () => [...state.text].reverse().join('') },
+                    { id: 'revWords', label: 'reverseWords',
+                        fn: () => state.text.split(/(\s+)/).map(s => /^\s+$/.test(s) ? s : [...s].reverse().join(
+                            '')).join('') },
+                    { id: 'revLines', label: 'reverseLines',
+                    fn: () => state.text.split('\n').reverse().join('\n') },
+                    { id: 'shufWords', label: 'shuffleWords', fn: () => {
+                            const parts = state.text.split(/(\s+)/);
+                            const wordIdx = [];
+                            parts.forEach((p, i) => { if (!/^\s+$/.test(p) && p.length > 0) wordIdx.push(i); });
+                            const shuffled = [...wordIdx];
+                            for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (
+                                    i + 1));
+                                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+                            wordIdx.forEach((orig, i) => { parts[orig] = parts[shuffled[i]]; });
+                            return parts.join('');
+                        } },
+                    { id: 'shufLines', label: 'shuffleLines', fn: () => {
+                            const lines = state.text.split('\n');
+                            for (let i = lines.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i +
+                                    1));
+                                [lines[i], lines[j]] = [lines[j], lines[i]]; }
+                            return lines.join('\n');
+                        } },
+                    { id: 'randCase', label: 'randomCase', fn: () => [...state.text].map(c => Math.random() < 0.5 ? c
+                            .toUpperCase() : c.toLowerCase()).join('') },
+                ];
+                panel.innerHTML =
+                    `<div class="btn-row">${actions.map(a => `<button class="btn trans-btn" data-id="${a.id}">${t(a.label)}</button>`).join('')}</div>`;
+                panel.querySelectorAll('.trans-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = actions.find(a => a.id === btn.dataset.id);
+                        if (action) setText(action.fn());
+                    });
+                });
+            }
+
+            function renderFormatPanel() {
+                const panel = document.getElementById('panel-format');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn fmt-btn" data-action="sortAZ">${t('sortAZ')}</button>
+                        <button class="btn fmt-btn" data-action="sortZA">${t('sortZA')}</button>
+                        <button class="btn fmt-btn" data-action="numberLines">${t('numberLines')}</button>
+                    </div>
+                `;
+                panel.querySelectorAll('.fmt-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const action = btn.dataset.action;
+                        let result = state.text;
+                        if (action === 'sortAZ') result = state.text.split('\n').sort((a, b) => a.localeCompare(
+                            b)).join('\n');
+                        if (action === 'sortZA') result = state.text.split('\n').sort((a, b) => b.localeCompare(
+                            a)).join('\n');
+                        if (action === 'numberLines') {
+                            const lines = state.text.split('\n');
+                            const digits = String(lines.length).length;
+                            result = lines.map((l, i) => `${String(i + 1).padStart(digits, ' ')}. ${l}`).join(
+                                '\n');
+                        }
+                        setText(result);
+                    });
+                });
+            }
+
+            function updateSearchMatches() {
+                if (!state.searchQuery) {
+                    state.searchMatches = [];
+                    state.currentMatchIndex = -1;
+                    return;
+                }
+                const regex = new RegExp(state.searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                state.searchMatches = [];
+                let match;
+                while ((match = regex.exec(state.text)) !== null) {
+                    state.searchMatches.push({ start: match.index, end: match.index + match[0].length });
+                    if (state.searchMatches.length > 10000) break;
+                }
+                if (state.currentMatchIndex >= state.searchMatches.length) state.currentMatchIndex = state
+            .searchMatches.length - 1;
+                if (state.searchMatches.length > 0 && state.currentMatchIndex < 0) state.currentMatchIndex = 0;
+            }
+
+            function highlightCurrentMatch() {
+                const ta = document.getElementById('textarea');
+                if (state.searchMatches.length === 0 || state.currentMatchIndex < 0) {
+                    ta.setSelectionRange(0, 0);
+                    return;
+                }
+                const m = state.searchMatches[state.currentMatchIndex];
+                ta.focus();
+                ta.setSelectionRange(m.start, m.end);
+                ta.scrollTop = Math.max(0, (ta.scrollHeight / (state.text.length || 1)) * m.start - ta.clientHeight /
+                    3);
+            }
+
+            function renderSearchPanel() {
+                const panel = document.getElementById('panel-search');
+                updateSearchMatches();
+                const matchInfo = state.searchMatches.length > 0 ?
+                    t('matchOf', state.currentMatchIndex + 1, state.searchMatches.length) :
+                    t('noMatches');
+                panel.innerHTML = `
+                    <div class="search-row">
+                        <input type="text" id="search-find" placeholder="${t('find')}..." value="${escapeHtmlAttr(state.searchQuery)}">
+                        <span class="match-badge" id="match-badge">${matchInfo}</span>
+                    </div>
+                    <div class="search-row">
+                        <input type="text" id="search-replace" placeholder="${t('replace')}..." value="${escapeHtmlAttr(state.replaceText)}">
+                        <button class="btn" id="search-replace-btn">${t('replace')}</button>
+                        <button class="btn" id="search-replaceall-btn">${t('replaceAll')}</button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn" id="search-prev">◀ ${t('prev')}</button>
+                        <button class="btn" id="search-next">${t('next')} ▶</button>
+                        <button class="btn" id="search-highlight">${t('highlight')}</button>
+                    </div>
+                `;
+                document.getElementById('search-find').addEventListener('input', function() {
+                    state.searchQuery = this.value;
+                    state.currentMatchIndex = state.searchMatches.length > 0 ? 0 : -1;
+                    updateSearchMatches();
+                    highlightCurrentMatch();
+                    renderSearchPanel();
+                });
+                document.getElementById('search-replace').addEventListener('input', function() {
+                    state.replaceText = this.value;
+                });
+                document.getElementById('search-replace-btn').addEventListener('click', () => {
+                    if (state.searchMatches.length === 0 || state.currentMatchIndex < 0) return;
+                    const m = state.searchMatches[state.currentMatchIndex];
+                    pushUndo();
+                    state.text = state.text.slice(0, m.start) + state.replaceText + state.text.slice(m.end);
+                    syncTextarea();
+                    saveAll();
+                    updateSearchMatches();
+                    if (state.currentMatchIndex >= state.searchMatches.length && state.searchMatches.length >
+                        0) state.currentMatchIndex = state.searchMatches.length - 1;
+                    highlightCurrentMatch();
+                    renderSearchPanel();
+                    renderActivePanelExcept('search');
+                });
+                document.getElementById('search-replaceall-btn').addEventListener('click', () => {
+                    if (!state.searchQuery) return;
+                    const regex = new RegExp(state.searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                    const count = (state.text.match(regex) || []).length;
+                    pushUndo();
+                    state.text = state.text.replace(regex, state.replaceText);
+                    syncTextarea();
+                    saveAll();
+                    state.searchMatches = [];
+                    state.currentMatchIndex = -1;
+                    updateSearchMatches();
+                    highlightCurrentMatch();
+                    renderSearchPanel();
+                    renderActivePanelExcept('search');
+                    showToast(t('replaced', count));
+                });
+                document.getElementById('search-prev').addEventListener('click', () => {
+                    if (state.searchMatches.length === 0) return;
+                    state.currentMatchIndex = (state.currentMatchIndex - 1 + state.searchMatches.length) % state
+                        .searchMatches.length;
+                    highlightCurrentMatch();
+                    renderSearchPanel();
+                });
+                document.getElementById('search-next').addEventListener('click', () => {
+                    if (state.searchMatches.length === 0) return;
+                    state.currentMatchIndex = (state.currentMatchIndex + 1) % state.searchMatches.length;
+                    highlightCurrentMatch();
+                    renderSearchPanel();
+                });
+                document.getElementById('search-highlight').addEventListener('click', () => {
+                    highlightCurrentMatch();
+                });
+                setTimeout(() => {
+                    const fi = document.getElementById('search-find');
+                    if (fi && document.activeElement !== fi && state.searchQuery) {
+                        updateSearchMatches();
+                        highlightCurrentMatch();
+                    }
+                }, 50);
+            }
+
+            function escapeHtmlAttr(str) {
+                return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            function simpleMarkdownToHtml(md) {
+                let html = md;
+                html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+                html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+                html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+                html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+                html = html.replace(/^---$/gm, '<hr>');
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+                html = html.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+                html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+                html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+                html = html.replace(/<li>(\d+\.\s?.+)<\/li>/g, '<li>$1</li>');
+                html = html.replace(/\n\n/g, '</p><p>');
+                html = html.replace(/\n/g, '<br>');
+                html = '<p>' + html + '</p>';
+                html = html.replace(/<p><h(\d)>/g, '<h$1>').replace(/<\/h(\d)><\/p>/g, '</h$1>');
+                html = html.replace(/<p><pre>/g, '<pre>').replace(/<\/pre><\/p>/g, '</pre>');
+                html = html.replace(/<p><blockquote>/g, '<blockquote>').replace(/<\/blockquote><\/p>/g, '</blockquote>');
+                html = html.replace(/<p><ul>/g, '<ul>').replace(/<\/ul><\/p>/g, '</ul>');
+                html = html.replace(/<p><hr><\/p>/g, '<hr>');
+                html = html.replace(/<p>\s*<\/p>/g, '');
+                return html;
+            }
+
+            function renderMarkdownPanel() {
+                const panel = document.getElementById('panel-markdown');
+                const previewHtml = simpleMarkdownToHtml(state.text);
+                panel.innerHTML = `
+                    <div class="panel-title">${t('livePreview')}</div>
+                    <div class="preview-box">${previewHtml || '<span style="color:var(--text3)">' + t('placeholder') + '</span>'}</div>
+                `;
+            }
+
+            function renderHtmlPanel() {
+                const panel = document.getElementById('panel-html');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn" id="html-escape-btn">${t('htmlEscape')}</button>
+                        <button class="btn" id="html-unescape-btn">${t('htmlUnescape')}</button>
+                        <button class="btn" id="html-preview-btn">${t('htmlSafePreview')}</button>
+                    </div>
+                    <div id="html-preview-container"></div>
+                `;
+                document.getElementById('html-escape-btn').addEventListener('click', () => {
+                    setText(state.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;').replace(/'/g, '&#39;'));
+                });
+                document.getElementById('html-unescape-btn').addEventListener('click', () => {
+                    const txt = document.createElement('textarea');
+                    txt.innerHTML = state.text;
+                    setText(txt.value);
+                });
+                document.getElementById('html-preview-btn').addEventListener('click', () => {
+                    const container = document.getElementById('html-preview-container');
+                    container.innerHTML =
+                        `<iframe sandbox="allow-scripts" style="width:100%;height:200px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;" srcdoc="${state.text.replace(/"/g,'&quot;')}"></iframe>`;
+                });
+            }
+
+            function renderEncodePanel() {
+                const panel = document.getElementById('panel-encode');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn" id="b64enc">${t('base64Encode')}</button>
+                        <button class="btn" id="b64dec">${t('base64Decode')}</button>
+                        <button class="btn" id="urlenc">${t('urlEncode')}</button>
+                        <button class="btn" id="urldec">${t('urlDecode')}</button>
+                    </div>
+                `;
+                document.getElementById('b64enc').addEventListener('click', () => {
+                    try { setText(btoa(unescape(encodeURIComponent(state.text))); } catch (e) {
+                        setText(btoa(state.text)); }
+                    });
+                document.getElementById('b64dec').addEventListener('click', () => {
+                    try { setText(decodeURIComponent(escape(atob(state.text)))); } catch (e) {
+                        try { setText(atob(state.text)); } catch (e2) { showToast('Invalid Base64'); } }
+                    });
+                document.getElementById('urlenc').addEventListener('click', () => {
+                    setText(encodeURIComponent(state.text));
+                });
+                document.getElementById('urldec').addEventListener('click', () => {
+                    try { setText(decodeURIComponent(state.text)); } catch (e) { showToast('Invalid URL encoding'); }
+                });
+            }
+
+            function renderJsonPanel() {
+                const panel = document.getElementById('panel-json');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn" id="json-format">${t('jsonFormat')}</button>
+                        <button class="btn" id="json-validate">${t('jsonValidate')}</button>
+                    </div>
+                    <div id="json-result"></div>
+                `;
+                document.getElementById('json-format').addEventListener('click', () => {
+                    try {
+                        const parsed = JSON.parse(state.text);
+                        setText(JSON.stringify(parsed, null, 2));
+                        document.getElementById('json-result').innerHTML =
+                            '<span class="json-success">✓ ' + t('jsonValid') + '</span>';
+                    } catch (e) {
+                        document.getElementById('json-result').innerHTML = '<span class="json-error">' + t(
+                            'jsonInvalid', e.message) + '</span>';
+                    }
+                });
+                document.getElementById('json-validate').addEventListener('click', () => {
+                    try {
+                        JSON.parse(state.text);
+                        document.getElementById('json-result').innerHTML =
+                            '<span class="json-success">✓ ' + t('jsonValid') + '</span>';
+                    } catch (e) {
+                        document.getElementById('json-result').innerHTML = '<span class="json-error">' + t(
+                            'jsonInvalid', e.message) + '</span>';
+                    }
+                });
+            }
+
+            function renderGeneratePanel() {
+                const panel = document.getElementById('panel-generate');
+                panel.innerHTML = `
+                    <div class="btn-row">
+                        <button class="btn" id="gen-lorem">${t('loremIpsum')}</button>
+                        <button class="btn" id="gen-words">${t('randomWords')}</button>
+                        <button class="btn" id="gen-sentences">${t('randomSentences')}</button>
+                        <button class="btn" id="gen-nickname">${t('nicknameGen')}</button>
+                    </div>
+                `;
+                document.getElementById('gen-lorem').addEventListener('click', () => {
+                    let out = '';
+                    const targetWords = 150;
+                    while (out.split(/\s+/).filter(Boolean).length < targetWords) {
+                        out += LOREM_TEXT + ' ';
+                    }
+                    setText(out.trim());
+                });
+                document.getElementById('gen-words').addEventListener('click', () => {
+                    const words = LOREM_TEXT.replace(/[^a-zA-Z\s]/g, '').split(/\s+/).filter(Boolean);
+                    const unique = [...new Set(words.map(w => w.toLowerCase()))];
+                    const out = [];
+                    for (let i = 0; i < 30; i++) {
+                        out.push(unique[Math.floor(Math.random() * unique.length)]);
+                    }
+                    setText(out.join(' '));
+                });
+                document.getElementById('gen-sentences').addEventListener('click', () => {
+                    const sentences = LOREM_TEXT.match(/[^.!?]+[.!?]+/g) || [];
+                    const out = [];
+                    for (let i = 0; i < 6; i++) {
+                        out.push(sentences[Math.floor(Math.random() * sentences.length)].trim());
+                    }
+                    setText(out.join(' '));
+                });
+                document.getElementById('gen-nickname').addEventListener('click', () => {
+                    const out = [];
+                    for (let i = 0; i < 8; i++) {
+                        const adj = NICKNAME_ADJECTIVES[Math.floor(Math.random() * NICKNAME_ADJECTIVES.length)];
+                        const noun = NICKNAME_NOUNS[Math.floor(Math.random() * NICKNAME_NOUNS.length)];
+                        out.push(adj + noun + (Math.random() < 0.4 ? String(Math.floor(Math.random() * 999)) :
+                            ''));
+                    }
+                    setText(out.join('\n'));
+                });
+            }
+
+            const tabConfigs = [
+                { id: 'statistics', panelId: 'panel-statistics', render: renderStatsPanel },
+                { id: 'case', panelId: 'panel-case', render: renderCasePanel },
+                { id: 'clean', panelId: 'panel-clean', render: renderCleanPanel },
+                { id: 'transform', panelId: 'panel-transform', render: renderTransformPanel },
+                { id: 'format', panelId: 'panel-format', render: renderFormatPanel },
+                { id: 'search', panelId: 'panel-search', render: renderSearchPanel },
+                { id: 'markdown', panelId: 'panel-markdown', render: renderMarkdownPanel },
+                { id: 'html', panelId: 'panel-html', render: renderHtmlPanel },
+                { id: 'encode', panelId: 'panel-encode', render: renderEncodePanel },
+                { id: 'json', panelId: 'panel-json', render: renderJsonPanel },
+                { id: 'generate', panelId: 'panel-generate', render: renderGeneratePanel },
+            ];
+
+            function renderTabNav() {
+                const nav = document.getElementById('tab-nav');
+                nav.innerHTML = tabConfigs.map(tc =>
+                    `<button class="tab-btn${state.activeTab === tc.id ? ' active' : ''}" data-tab="${tc.id}" role="tab" aria-selected="${state.activeTab === tc.id}">${t('tab' + tc.id.charAt(0).toUpperCase() + tc.id.slice(1))}</button>`
+                ).join('');
+                nav.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.activeTab = btn.dataset.tab;
+                        renderTabNav();
+                        renderActivePanel();
+                        saveAll();
+                    });
+                });
+            }
+
+            function renderActivePanelExcept(skipId) {
+                tabConfigs.forEach(tc => {
+                    if (tc.id === skipId) return;
+                    if (tc.id === state.activeTab) {
+                        document.getElementById(tc.panelId).classList.add('active');
+                        tc.render();
+                    }
+                });
+            }
+
+            function renderActivePanel() {
+                tabConfigs.forEach(tc => {
+                    const panel = document.getElementById(tc.panelId);
+                    if (tc.id === state.activeTab) {
+                        panel.classList.add('active');
+                        tc.render();
+                    } else {
+                        panel.classList.remove('active');
+                        panel.innerHTML = '';
+                    }
+                });
+            }
+
+            function init() {
+                loadAll();
+                if (!state.theme || !['light', 'dark', 'amoled'].includes(state.theme)) state.theme = detectTheme();
+                applyTheme();
+                document.getElementById('textarea').value = state.text;
+                document.getElementById('setting-autosave').checked = state.autosave;
+                renderTabNav();
+                renderActivePanel();
+                updateAllTranslations();
+
+                const textarea = document.getElementById('textarea');
+                textarea.addEventListener('input', () => {
+                    pushUndo();
+                    state.text = textarea.value;
+                    state.searchMatches = [];
+                    state.currentMatchIndex = -1;
+                    saveAll();
+                    renderActivePanel();
+                });
+                textarea.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                        e.preventDefault();
+                        undo();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) {
+                        e.preventDefault();
+                        redo();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Z') {
+                        e.preventDefault();
+                        redo();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                        e.preventDefault();
+                        state.activeTab = 'search';
+                        renderTabNav();
+                        renderActivePanel();
+                        saveAll();
+                        setTimeout(() => {
+                            const fi = document.getElementById('search-find');
+                            if (fi) fi.focus();
+                        }, 100);
+                    }
+                });
+
+                document.getElementById('btn-theme').addEventListener('click', cycleTheme);
+                document.getElementById('btn-lang').addEventListener('click', cycleLanguage);
+                document.getElementById('btn-copy').addEventListener('click', () => {
+                    if (!state.text) return;
+                    navigator.clipboard.writeText(state.text).then(() => showToast(t('copied'))).catch(() => {
+                        textarea.select();
+                        document.execCommand('copy');
+                        showToast(t('copied'));
+                    });
+                });
+                document.getElementById('btn-paste').addEventListener('click', () => {
+                    navigator.clipboard.readText().then(txt => {
+                        if (txt) { setText(txt);
+                            showToast(t('pasted')); }
+                    }).catch(() => {
+                        textarea.focus();
+                        document.execCommand('paste');
+                    });
+                });
+                document.getElementById('btn-download').addEventListener('click', () => {
+                    const blob = new Blob([state.text], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'textstudio-export.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast(t('exported'));
+                });
+                document.getElementById('btn-import').addEventListener('click', () => {
+                    document.getElementById('file-input').click();
+                });
+                document.getElementById('file-input').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        setText(ev.target.result || '');
+                        showToast(t('imported'));
+                    };
+                    reader.readAsText(file);
+                    e.target.value = '';
+                });
+                document.getElementById('btn-undo').addEventListener('click', undo);
+                document.getElementById('btn-redo').addEventListener('click', redo);
+                document.getElementById('btn-clear').addEventListener('click', () => {
+                    if (!state.text) return;
+                    setText('');
+                    showToast(t('cleared'));
+                });
+                document.getElementById('btn-settings').addEventListener('click', () => {
+                    document.getElementById('settings-panel').classList.add('open');
+                    document.getElementById('settings-backdrop').classList.add('open');
+                });
+                document.getElementById('settings-backdrop').addEventListener('click', closeSettings);
+                document.getElementById('btn-settings-close').addEventListener('click', closeSettings);
+                document.getElementById('setting-autosave').addEventListener('change', function() {
+                    state.autosave = this.checked;
+                    saveAll();
+                });
+
+                function closeSettings() {
+                    document.getElementById('settings-panel').classList.remove('open');
+                    document.getElementById('settings-backdrop').classList.remove('open');
+                }
+
+                const dropOverlay = document.getElementById('drop-overlay');
+                const textareaWrap = document.getElementById('textarea-wrap');
+                ['dragenter', 'dragover'].forEach(evt => {
+                    textareaWrap.addEventListener(evt, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        dropOverlay.classList.add('active');
+                    });
+                });
+                ['dragleave', 'drop'].forEach(evt => {
+                    textareaWrap.addEventListener(evt, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        dropOverlay.classList.remove('active');
+                    });
+                });
+                textareaWrap.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        setText(ev.target.result || '');
+                        showToast(t('imported'));
+                    };
+                    reader.readAsText(file);
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') closeSettings();
+                });
+
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    try {
+                        const saved = localStorage.getItem('textstudio_theme');
+                        if (!saved) {
+                            state.theme = e.matches ? 'dark' : 'light';
+                            applyTheme();
+                            saveAll();
+                        }
+                    } catch (ex) {}
+                });
+
+                if (state.autosave) saveAll();
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+</html>
