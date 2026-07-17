@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CalcPro - Advanced Calculator Suite</title>
+    <meta name="description" content="CalcPro is a free, all-in-one calculator web app featuring a standard calculator, scientific calculator, percentage calculator, unit converter, and age calculator. Beautiful, fast, and works offline.">
+    <meta name="keywords" content="calculator, scientific calculator, percentage calculator, unit converter, age calculator, online calculator, free calculator, math tool">
+    <meta property="og:title" content="CalcPro - Advanced Calculator Suite">
+    <meta property="og:description" content="A beautiful all-in-one calculator with standard, scientific, percentage, unit converter, and age calculator. Free and works offline.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calcpro.example.com">
+    <meta property="og:image" content="https://calcpro.example.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CalcPro - Advanced Calculator Suite">
+    <meta name="twitter:description" content="A beautiful all-in-one calculator with standard, scientific, percentage, unit converter, and age calculator.">
+    <link rel="canonical" href="https://calcpro.example.com">
+    <meta name="theme-color" content="#ffffff" id="meta-theme-color">
+    <style>
+        :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+            --transition-speed: 180ms;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Monaco', 'Menlo', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        }
+        [data-theme="light"] {
+            --bg: #f2f3f5;
+            --surface: #ffffff;
+            --surface2: #e8e9ed;
+            --surface3: #dcdde2;
+            --text: #1a1a1e;
+            --text2: #3a3a40;
+            --text3: #6e6e78;
+            --border: #d9d9df;
+            --accent: #ff6b35;
+            --accent-hover: #e85d2c;
+            --accent-text: #ffffff;
+            --btn-num: #ffffff;
+            --btn-num-hover: #ecedf2;
+            --btn-func: #e4e5ea;
+            --btn-func-hover: #d5d6dc;
+            --btn-mem: #dce1e8;
+            --btn-mem-hover: #cdd3db;
+            --display-bg: #fafafb;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.10);
+            --tab-active-bg: #ffffff;
+            --tab-inactive: #7a7a85;
+            --input-bg: #f5f5f8;
+            --input-border: #d5d5dc;
+            --result-bg: #fefaf7;
+            --history-bg: #f8f9fb;
+            --overlay: rgba(0, 0, 0, 0.03);
+            --toggle-bg: #dcdde2;
+            --toggle-dot: #ffffff;
+        }
+        [data-theme="dark"] {
+            --bg: #1c1c1f;
+            --surface: #2a2a2f;
+            --surface2: #323238;
+            --surface3: #3a3a42;
+            --text: #f0f0f5;
+            --text2: #c8c8d0;
+            --text3: #8e8e98;
+            --border: #3e3e46;
+            --accent: #ff7b42;
+            --accent-hover: #ff9060;
+            --accent-text: #ffffff;
+            --btn-num: #3a3a42;
+            --btn-num-hover: #484852;
+            --btn-func: #2e2e35;
+            --btn-func-hover: #3c3c45;
+            --btn-mem: #35353d;
+            --btn-mem-hover: #42424c;
+            --display-bg: #242429;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.20);
+            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.30);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.40);
+            --tab-active-bg: #2a2a2f;
+            --tab-inactive: #7a7a88;
+            --input-bg: #2e2e35;
+            --input-border: #44444e;
+            --result-bg: #2a2522;
+            --history-bg: #222228;
+            --overlay: rgba(255, 255, 255, 0.02);
+            --toggle-bg: #4a4a55;
+            --toggle-dot: #f0f0f5;
+        }
+        [data-theme="amoled"] {
+            --bg: #000000;
+            --surface: #0a0a0d;
+            --surface2: #111116;
+            --surface3: #18181f;
+            --text: #f5f5f8;
+            --text2: #c0c0c8;
+            --text3: #7a7a85;
+            --border: #1f1f28;
+            --accent: #ff6b35;
+            --accent-hover: #ff8050;
+            --accent-text: #ffffff;
+            --btn-num: #14141a;
+            --btn-num-hover: #1e1e26;
+            --btn-func: #0d0d12;
+            --btn-func-hover: #181820;
+            --btn-mem: #101016;
+            --btn-mem-hover: #1a1a22;
+            --display-bg: #050508;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.50);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.60);
+            --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.70);
+            --tab-active-bg: #0a0a0d;
+            --tab-inactive: #60606b;
+            --input-bg: #0d0d14;
+            --input-border: #22222c;
+            --result-bg: #0a0806;
+            --history-bg: #06060a;
+            --overlay: rgba(255, 255, 255, 0.01);
+            --toggle-bg: #2a2a33;
+            --toggle-dot: #e0e0e8;
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: calc(12px + var(--safe-top)) max(12px, var(--safe-right)) calc(20px + var(--safe-bottom)) max(12px, var(--safe-left));
+            transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px;
+            gap: 12px;
+        }
+        .app-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            white-space: nowrap;
+        }
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--toggle-bg);
+            border: none;
+            border-radius: 20px;
+            padding: 4px;
+            cursor: pointer;
+            transition: background var(--transition-speed) ease;
+            flex-shrink: 0;
+        }
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: 20px;
+        }
+        .theme-option {
+            width: 32px;
+            height: 28px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            background: transparent;
+            color: var(--text3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .theme-option.active {
+            background: var(--toggle-dot);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+        }
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 2px 0;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-btn {
+            flex-shrink: 0;
+            padding: 9px 15px;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 590;
+            letter-spacing: -0.01em;
+            background: transparent;
+            color: var(--tab-inactive);
+            transition: all var(--transition-speed) ease;
+            white-space: nowrap;
+            position: relative;
+            font-family: var(--font-sans);
+        }
+        .tab-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .tab-btn.active {
+            background: var(--tab-active-bg);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            font-weight: 640;
+        }
+        .tab-btn:hover:not(.active) {
+            color: var(--text2);
+            background: var(--overlay);
+        }
+        .tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            animation: fadeSlideIn 200ms ease;
+        }
+        .tab-panel.active {
+            display: flex;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .calc-display {
+            background: var(--display-bg);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            gap: 4px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            transition: all var(--transition-speed) ease;
+            word-break: break-all;
+            overflow: hidden;
+        }
+        .calc-expression {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--text3);
+            min-height: 22px;
+            text-align: right;
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            letter-spacing: 0.02em;
+        }
+        .calc-expression::-webkit-scrollbar {
+            display: none;
+        }
+        .calc-result {
+            font-family: var(--font-mono);
+            font-size: 2.2rem;
+            font-weight: 500;
+            color: var(--text);
+            letter-spacing: 0.01em;
+            text-align: right;
+            width: 100%;
+            min-height: 40px;
+            line-height: 1.15;
+            transition: font-size 120ms ease;
+        }
+        .calc-result.small {
+            font-size: 1.5rem;
+        }
+        .calc-result.xsmall {
+            font-size: 1.1rem;
+        }
+        .memory-indicator {
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            min-height: 16px;
+            text-align: right;
+            width: 100%;
+        }
+        .btn-grid {
+            display: grid;
+            gap: 7px;
+        }
+        .btn-grid.col4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .btn-grid.col5 {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        .btn-grid.col3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .btn {
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.05rem;
+            font-weight: 540;
+            cursor: pointer;
+            padding: 13px 8px;
+            transition: all 100ms ease;
+            font-family: var(--font-sans);
+            letter-spacing: 0.01em;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            z-index: 2;
+        }
+        .btn:active {
+            transform: scale(0.94);
+            transition: transform 60ms ease;
+        }
+        .btn-num {
+            background: var(--btn-num);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-num:hover {
+            background: var(--btn-num-hover);
+        }
+        .btn-func {
+            background: var(--btn-func);
+            color: var(--text2);
+            font-weight: 560;
+        }
+        .btn-func:hover {
+            background: var(--btn-func-hover);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: var(--accent-text);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-accent:hover {
+            background: var(--accent-hover);
+        }
+        .btn-mem {
+            background: var(--btn-mem);
+            color: var(--text2);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .btn-mem:hover {
+            background: var(--btn-mem-hover);
+        }
+        .btn-mem.active-mem {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .btn-sm {
+            font-size: 0.82rem;
+            padding: 10px 5px;
+            min-height: 38px;
+            border-radius: var(--radius-sm);
+        }
+        .btn-xs {
+            font-size: 0.72rem;
+            padding: 7px 4px;
+            min-height: 30px;
+            border-radius: var(--radius-sm);
+            font-weight: 560;
+        }
+        .history-panel {
+            background: var(--history-bg);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+        .history-panel.open {
+            display: flex;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: background 100ms ease;
+            gap: 8px;
+            color: var(--text2);
+        }
+        .history-item:hover {
+            background: var(--overlay);
+        }
+        .history-item .expr {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text3);
+            font-size: 0.78rem;
+        }
+        .history-item .res {
+            font-weight: 590;
+            color: var(--text);
+            flex-shrink: 0;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .history-header span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            color: var(--text3);
+            text-transform: uppercase;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text3);
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: all 100ms ease;
+            font-family: var(--font-sans);
+            font-weight: 500;
+        }
+        .icon-btn:hover {
+            color: var(--text);
+            background: var(--overlay);
+        }
+        .icon-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+        .converter-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .converter-row input,
+        .converter-row select {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            padding: 11px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            transition: all var(--transition-speed) ease;
+            min-width: 0;
+            flex: 1;
+            outline: none;
+        }
+        .converter-row input:focus,
+        .converter-row select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.10);
+        }
+        .converter-row input {
+            min-width: 100px;
+        }
+        .converter-row select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e6e78' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+        }
+        .swap-btn {
+            background: var(--btn-func);
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 120ms ease;
+            color: var(--text2);
+            font-weight: 600;
+        }
+        .swap-btn:hover {
+            background: var(--btn-func-hover);
+            transform: rotate(180deg);
+        }
+        .swap-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .result-card {
+            background: var(--result-bg);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        .result-card .big-result {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--text);
+            word-break: break-all;
+        }
+        .result-card .label {
+            font-size: 0.78rem;
+            color: var(--text3);
+            margin-top: 2px;
+            letter-spacing: 0.02em;
+        }
+        .age-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+        }
+        .age-item {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        .age-item .val {
+            font-family: var(--font-mono);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .age-item .lbl {
+            font-size: 0.7rem;
+            color: var(--text3);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            margin-top: 1px;
+        }
+        .percent-mode-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .percent-mode-select .mode-chip {
+            padding: 8px 13px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 540;
+            background: var(--surface);
+            color: var(--text2);
+            transition: all 120ms ease;
+            font-family: var(--font-sans);
+            white-space: nowrap;
+        }
+        .percent-mode-select .mode-chip.active {
+            background: var(--accent);
+            color: var(--accent-text);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+        .percent-mode-select .mode-chip:hover:not(.active) {
+            background: var(--surface2);
+        }
+        .percent-mode-select .mode-chip:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .category-chip {
+            padding: 7px 12px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 540;
+            background: var(--surface);
+            color: var(--text2);
+            transition: all 120ms ease;
+            font-family: var(--font-sans);
+            white-space: nowrap;
+        }
+        .category-chip.active {
+            background: var(--accent);
+            color: var(--accent-text);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+        .category-chip:hover:not(.active) {
+            background: var(--surface2);
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all var(--transition-speed) ease;
+        }
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.10);
+        }
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 10px 20px;
+            border-radius: var(--radius-lg);
+            font-size: 0.85rem;
+            font-weight: 550;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 200ms ease;
+            z-index: 100;
+            font-family: var(--font-sans);
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        @media (max-width: 360px) {
+            .btn {
+                padding: 10px 4px;
+                font-size: 0.9rem;
+                min-height: 40px;
+                border-radius: var(--radius-sm);
+            }
+            .btn-grid {
+                gap: 4px;
+            }
+            .calc-result {
+                font-size: 1.7rem;
+            }
+            .calc-result.small {
+                font-size: 1.2rem;
+            }
+            .calc-result.xsmall {
+                font-size: 0.95rem;
+            }
+            .tab-btn {
+                padding: 7px 10px;
+                font-size: 0.75rem;
+            }
+            .calc-display {
+                padding: 12px 14px;
+                min-height: 70px;
+            }
+            .btn-mem {
+                font-size: 0.68rem;
+                padding: 8px 3px;
+                min-height: 32px;
+            }
+            .btn-sm {
+                font-size: 0.7rem;
+                padding: 7px 3px;
+                min-height: 30px;
+            }
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 560px;
+            }
+            .btn {
+                padding: 15px 10px;
+                font-size: 1.1rem;
+                min-height: 52px;
+                border-radius: var(--radius-lg);
+            }
+            .btn-grid {
+                gap: 9px;
+            }
+            .calc-result {
+                font-size: 2.6rem;
+            }
+            .calc-display {
+                padding: 20px 22px;
+                min-height: 105px;
+            }
+            .tab-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            .btn-mem {
+                font-size: 0.82rem;
+                padding: 10px 6px;
+                min-height: 38px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .app-container {
+                max-width: 600px;
+            }
+            body {
+                padding-top: calc(20px + var(--safe-top));
+                padding-bottom: calc(30px + var(--safe-bottom));
+            }
+        }
+        input[type="date"] {
+            color-scheme: inherit;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="app-container">
+        <header>
+            <h1 class="app-title">CalcPro</h1>
+            <div class="theme-toggle" role="radiogroup" aria-label="Theme selector">
+                <button class="theme-option active" data-theme-val="light" aria-label="Light theme" role="radio" aria-checked="true">☀️</button>
+                <button class="theme-option" data-theme-val="dark" aria-label="Dark theme" role="radio" aria-checked="false">🌙</button>
+                <button class="theme-option" data-theme-val="amoled" aria-label="AMOLED theme" role="radio" aria-checked="false">🖤</button>
+            </div>
+        </header>
+        <nav class="tab-nav" role="tablist" aria-label="Calculator tabs">
+            <button class="tab-btn active" data-tab="standard" role="tab" aria-selected="true">Calc</button>
+            <button class="tab-btn" data-tab="scientific" role="tab" aria-selected="false">Scientific</button>
+            <button class="tab-btn" data-tab="percentage" role="tab" aria-selected="false">%</button>
+            <button class="tab-btn" data-tab="converter" role="tab" aria-selected="false">Convert</button>
+            <button class="tab-btn" data-tab="age" role="tab" aria-selected="false">Age</button>
+        </nav>
+        <div class="tab-panel active" id="panel-standard" role="tabpanel" aria-label="Standard Calculator">
+            <div class="calc-display" id="std-display">
+                <div class="memory-indicator" id="std-mem-ind"></div>
+                <div class="calc-expression" id="std-expr" aria-live="polite"></div>
+                <div class="calc-result" id="std-result" aria-live="polite">0</div>
+            </div>
+            <div class="btn-grid col5" style="gap:5px;margin-bottom:2px;" id="std-memory-row">
+                <button class="btn btn-mem btn-xs" data-action="mc" aria-label="Memory Clear">MC</button>
+                <button class="btn btn-mem btn-xs" data-action="mr" aria-label="Memory Recall">MR</button>
+                <button class="btn btn-mem btn-xs" data-action="mplus" aria-label="Memory Add">M+</button>
+                <button class="btn btn-mem btn-xs" data-action="mminus" aria-label="Memory Subtract">M−</button>
+                <button class="btn btn-mem btn-xs" data-action="ms" aria-label="Memory Store">MS</button>
+            </div>
+            <div class="btn-grid col4" id="std-buttons">
+                <button class="btn btn-func btn-sm" data-action="clear" aria-label="Clear">C</button>
+                <button class="btn btn-func btn-sm" data-action="ce" aria-label="Clear Entry">CE</button>
+                <button class="btn btn-func btn-sm" data-action="backspace" aria-label="Backspace">⌫</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="/" aria-label="Divide">÷</button>
+                <button class="btn btn-func btn-sm" data-action="paren-open" aria-label="Open parenthesis">(</button>
+                <button class="btn btn-func btn-sm" data-action="paren-close" aria-label="Close parenthesis">)</button>
+                <button class="btn btn-func btn-sm" data-action="square" aria-label="Square">x²</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="*" aria-label="Multiply">×</button>
+                <button class="btn btn-num" data-action="digit" data-val="7" aria-label="Seven">7</button>
+                <button class="btn btn-num" data-action="digit" data-val="8" aria-label="Eight">8</button>
+                <button class="btn btn-num" data-action="digit" data-val="9" aria-label="Nine">9</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="-" aria-label="Subtract">−</button>
+                <button class="btn btn-num" data-action="digit" data-val="4" aria-label="Four">4</button>
+                <button class="btn btn-num" data-action="digit" data-val="5" aria-label="Five">5</button>
+                <button class="btn btn-num" data-action="digit" data-val="6" aria-label="Six">6</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="+" aria-label="Add">+</button>
+                <button class="btn btn-num" data-action="digit" data-val="1" aria-label="One">1</button>
+                <button class="btn btn-num" data-action="digit" data-val="2" aria-label="Two">2</button>
+                <button class="btn btn-num" data-action="digit" data-val="3" aria-label="Three">3</button>
+                <button class="btn btn-func btn-sm" data-action="sqrt" aria-label="Square root">√</button>
+                <button class="btn btn-num" data-action="negate" aria-label="Plus minus">±</button>
+                <button class="btn btn-num" data-action="digit" data-val="0" aria-label="Zero">0</button>
+                <button class="btn btn-num" data-action="decimal" aria-label="Decimal point">.</button>
+                <button class="btn btn-accent" data-action="equals" aria-label="Equals">=</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button class="icon-btn" id="std-undo-btn" aria-label="Undo" title="Undo">↩ Undo</button>
+                <button class="icon-btn" id="std-redo-btn" aria-label="Redo" title="Redo">↪ Redo</button>
+                <button class="icon-btn" id="std-copy-btn" aria-label="Copy result">📋 Copy</button>
+                <button class="icon-btn" id="std-history-toggle" aria-label="Toggle history">📜 History</button>
+            </div>
+            <div class="history-panel" id="std-history-panel" aria-label="Calculation history"></div>
+        </div>
+        <div class="tab-panel" id="panel-scientific" role="tabpanel" aria-label="Scientific Calculator">
+            <div class="calc-display" id="sci-display">
+                <div class="memory-indicator" id="sci-mem-ind"></div>
+                <div class="calc-expression" id="sci-expr" aria-live="polite"></div>
+                <div class="calc-result" id="sci-result" aria-live="polite">0</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
+                <span style="font-size:0.75rem;color:var(--text3);font-weight:600;">Trig:</span>
+                <button class="btn btn-mem btn-xs" id="sci-deg-rad-toggle" aria-label="Toggle degrees radians">DEG</button>
+            </div>
+            <div class="btn-grid col5" id="sci-buttons">
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="sin" aria-label="Sine">sin</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="cos" aria-label="Cosine">cos</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="tan" aria-label="Tangent">tan</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="asin" aria-label="Arc sine">asin</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="acos" aria-label="Arc cosine">acos</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="atan" aria-label="Arc tangent">atan</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="log" aria-label="Log base 10">log</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="ln" aria-label="Natural log">ln</button>
+                <button class="btn btn-func btn-xs" data-action="sci-const" data-const="pi" aria-label="Pi">π</button>
+                <button class="btn btn-func btn-xs" data-action="sci-const" data-const="e" aria-label="Euler's number">e</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="fact" aria-label="Factorial">!</button>
+                <button class="btn btn-func btn-xs" data-action="sci-func" data-func="abs" aria-label="Absolute value">abs</button>
+                <button class="btn btn-func btn-xs" data-action="sci-op" data-op="mod" aria-label="Modulo">mod</button>
+                <button class="btn btn-func btn-xs" data-action="sci-pow" data-pow="2" aria-label="Square">x²</button>
+                <button class="btn btn-func btn-xs" data-action="sci-pow" data-pow="3" aria-label="Cube">x³</button>
+                <button class="btn btn-func btn-xs" data-action="sci-pow" data-pow="y" aria-label="Power">xʸ</button>
+                <button class="btn btn-func btn-xs" data-action="sci-ten-exp" aria-label="Ten to the power">10ˣ</button>
+                <button class="btn btn-func btn-xs" data-action="sci-e-exp" aria-label="E to the power">eˣ</button>
+                <button class="btn btn-func btn-xs" data-action="clear" aria-label="Clear">C</button>
+                <button class="btn btn-func btn-xs" data-action="backspace" aria-label="Backspace">⌫</button>
+            </div>
+            <div class="btn-grid col4" id="sci-numpad">
+                <button class="btn btn-num" data-action="digit" data-val="7" aria-label="Seven">7</button>
+                <button class="btn btn-num" data-action="digit" data-val="8" aria-label="Eight">8</button>
+                <button class="btn btn-num" data-action="digit" data-val="9" aria-label="Nine">9</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="/" aria-label="Divide">÷</button>
+                <button class="btn btn-num" data-action="digit" data-val="4" aria-label="Four">4</button>
+                <button class="btn btn-num" data-action="digit" data-val="5" aria-label="Five">5</button>
+                <button class="btn btn-num" data-action="digit" data-val="6" aria-label="Six">6</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="*" aria-label="Multiply">×</button>
+                <button class="btn btn-num" data-action="digit" data-val="1" aria-label="One">1</button>
+                <button class="btn btn-num" data-action="digit" data-val="2" aria-label="Two">2</button>
+                <button class="btn btn-num" data-action="digit" data-val="3" aria-label="Three">3</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="-" aria-label="Subtract">−</button>
+                <button class="btn btn-num" data-action="digit" data-val="0" aria-label="Zero">0</button>
+                <button class="btn btn-num" data-action="decimal" aria-label="Decimal">.</button>
+                <button class="btn btn-num" data-action="negate" aria-label="Negate">±</button>
+                <button class="btn btn-accent btn-sm" data-action="operator" data-op="+" aria-label="Add">+</button>
+                <button class="btn btn-accent" data-action="equals" aria-label="Equals" style="grid-column:span 2;">=</button>
+                <button class="btn btn-func btn-sm" data-action="paren-open" aria-label="Open paren">(</button>
+                <button class="btn btn-func btn-sm" data-action="paren-close" aria-label="Close paren">)</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button class="icon-btn" id="sci-undo-btn" aria-label="Undo">↩ Undo</button>
+                <button class="icon-btn" id="sci-redo-btn" aria-label="Redo">↪ Redo</button>
+                <button class="icon-btn" id="sci-copy-btn" aria-label="Copy result">📋 Copy</button>
+                <button class="icon-btn" id="sci-history-toggle" aria-label="Toggle history">📜 History</button>
+            </div>
+            <div class="history-panel" id="sci-history-panel" aria-label="Calculation history"></div>
+        </div>
+        <div class="tab-panel" id="panel-percentage" role="tabpanel" aria-label="Percentage Calculator">
+            <div class="percent-mode-select" id="percent-mode-select" role="tablist" aria-label="Percentage modes">
+                <button class="mode-chip active" data-mode="of" role="tab" aria-selected="true">X% of Y</button>
+                <button class="mode-chip" data-mode="whatpercent" role="tab" aria-selected="false">X is what % of Y</button>
+                <button class="mode-chip" data-mode="increase" role="tab" aria-selected="false">Increase by %</button>
+                <button class="mode-chip" data-mode="decrease" role="tab" aria-selected="false">Decrease by %</button>
+                <button class="mode-chip" data-mode="diff" role="tab" aria-selected="false">% Difference</button>
+                <button class="mode-chip" data-mode="change" role="tab" aria-selected="false">% Change</button>
+            </div>
+            <div class="converter-row" id="percent-inputs">
+                <input type="number" id="perc-input1" placeholder="Value 1" aria-label="First value" inputmode="decimal">
+                <input type="number" id="perc-input2" placeholder="Value 2" aria-label="Second value" inputmode="decimal">
+            </div>
+            <div class="result-card" id="percent-result-card">
+                <div class="big-result" id="percent-result">—</div>
+                <div class="label" id="percent-label">Enter values above</div>
+            </div>
+        </div>
+        <div class="tab-panel" id="panel-converter" role="tabpanel" aria-label="Unit Converter">
+            <div class="category-tabs" id="converter-categories" role="tablist" aria-label="Unit categories">
+                <button class="category-chip active" data-cat="length">Length</button>
+                <button class="category-chip" data-cat="weight">Weight</button>
+                <button class="category-chip" data-cat="temperature">Temp</button>
+                <button class="category-chip" data-cat="area">Area</button>
+                <button class="category-chip" data-cat="volume">Volume</button>
+                <button class="category-chip" data-cat="speed">Speed</button>
+                <button class="category-chip" data-cat="time">Time</button>
+                <button class="category-chip" data-cat="data">Data</button>
+            </div>
+            <input type="text" class="search-input" id="unit-search" placeholder="🔍 Search units..." aria-label="Search units">
+            <div class="converter-row">
+                <input type="number" id="conv-input" placeholder="Enter value" aria-label="Value to convert" inputmode="decimal" value="1">
+                <select id="conv-from-unit" aria-label="From unit"></select>
+            </div>
+            <div style="display:flex;justify-content:center;">
+                <button class="swap-btn" id="conv-swap-btn" aria-label="Swap units">⇅</button>
+            </div>
+            <div class="converter-row">
+                <input type="text" id="conv-output" readonly aria-label="Converted result" placeholder="Result">
+                <select id="conv-to-unit" aria-label="To unit"></select>
+            </div>
+            <div class="result-card" id="conv-result-card" style="display:none;">
+                <div class="big-result" id="conv-result-text"></div>
+                <div class="label">Result</div>
+            </div>
+        </div>
+        <div class="tab-panel" id="panel-age" role="tabpanel" aria-label="Age Calculator">
+            <div class="converter-row">
+                <input type="date" id="age-birthdate" aria-label="Birth date">
+            </div>
+            <div class="age-results" id="age-results">
+                <div class="age-item"><div class="val" id="age-years">—</div><div class="lbl">Years</div></div>
+                <div class="age-item"><div class="val" id="age-months">—</div><div class="lbl">Months</div></div>
+                <div class="age-item"><div class="val" id="age-weeks">—</div><div class="lbl">Weeks</div></div>
+                <div class="age-item"><div class="val" id="age-days">—</div><div class="lbl">Days</div></div>
+                <div class="age-item"><div class="val" id="age-hours">—</div><div class="lbl">Hours</div></div>
+                <div class="age-item"><div class="val" id="age-minutes">—</div><div class="lbl">Minutes</div></div>
+                <div class="age-item"><div class="val" id="age-seconds">—</div><div class="lbl">Seconds</div></div>
+                <div class="age-item"><div class="val" id="age-totaldays">—</div><div class="lbl">Total Days</div></div>
+                <div class="age-item"><div class="val" id="age-totalweeks">—</div><div class="lbl">Total Weeks</div></div>
+                <div class="age-item"><div class="val" id="age-totalmonths">—</div><div class="lbl">Total Months</div></div>
+                <div class="age-item"><div class="val" id="age-nextbday">—</div><div class="lbl">Days to Next 🎂</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="copy-toast" id="copy-toast" aria-live="assertive">Copied!</div>
+    <script>
+        (function() {
+            const APP_KEY = 'calcpro_v2';
+            const state = {
+                theme: 'light',
+                activeTab: 'standard',
+                memory: 0,
+                hasMemory: false,
+                std: { expr: '', result: '0', history: [], undoStack: [], redoStack: [], lastResult: null },
+                sci: { expr: '', result: '0', history: [], undoStack: [], redoStack: [], lastResult: null,
+                    degRad: 'deg' },
+                converterCategory: 'length',
+                percentMode: 'of',
+            };
+
+            function loadState() {
+                try {
+                    const saved = localStorage.getItem(APP_KEY);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed.theme && ['light', 'dark', 'amoled'].includes(parsed.theme)) state.theme =
+                            parsed.theme;
+                        if (parsed.activeTab && ['standard', 'scientific', 'percentage', 'converter', 'age']
+                            .includes(parsed.activeTab)) state.activeTab = parsed.activeTab;
+                        if (typeof parsed.memory === 'number') { state.memory = parsed.memory;
+                            state.hasMemory = parsed.hasMemory || false; }
+                        if (parsed.std) state.std = { ...state.std, ...parsed.std };
+                        if (parsed.sci) state.sci = { ...state.sci, ...parsed.sci };
+                        if (parsed.converterCategory) state.converterCategory = parsed.converterCategory;
+                        if (parsed.percentMode) state.percentMode = parsed.percentMode;
+                    }
+                } catch (e) {}
+                if (!state.theme || state.theme === 'light') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+                    if (prefersDark && !localStorage.getItem(APP_KEY)) state.theme = 'dark';
+                }
+            }
+
+            function saveState() {
+                try {
+                    const toSave = {
+                        theme: state.theme,
+                        activeTab: state.activeTab,
+                        memory: state.memory,
+                        hasMemory: state.hasMemory,
+                        std: { history: state.std.history.slice(-50), lastResult: state.std.lastResult },
+                        sci: { history: state.sci.history.slice(-50), lastResult: state.sci.lastResult,
+                            degRad: state.sci.degRad },
+                        converterCategory: state.converterCategory,
+                        percentMode: state.percentMode,
+                    };
+                    localStorage.setItem(APP_KEY, JSON.stringify(toSave));
+                } catch (e) {}
+            }
+
+            function applyTheme(theme) {
+                document.body.setAttribute('data-theme', theme);
+                state.theme = theme;
+                const metaTheme = document.getElementById('meta-theme-color');
+                const colors = { light: '#ffffff', dark: '#1c1c1f', amoled: '#000000' };
+                if (metaTheme) metaTheme.setAttribute('content', colors[theme] || '#ffffff');
+                document.querySelectorAll('.theme-option').forEach(b => {
+                    b.classList.toggle('active', b.dataset.themeVal === theme);
+                    b.setAttribute('aria-checked', b.dataset.themeVal === theme ? 'true' : 'false');
+                });
+                saveState();
+            }
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.addEventListener('click', (e) => {
+                const btn = e.target.closest('.theme-option');
+                if (!btn) return;
+                applyTheme(btn.dataset.themeVal);
+            });
+            const tabNav = document.querySelector('.tab-nav');
+            tabNav.addEventListener('click', (e) => {
+                const btn = e.target.closest('.tab-btn');
+                if (!btn) return;
+                switchTab(btn.dataset.tab);
+            });
+
+            function switchTab(tab) {
+                state.activeTab = tab;
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.tab === tab);
+                    b.setAttribute('aria-selected', b.dataset.tab === tab ? 'true' : 'false');
+                });
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                const panel = document.getElementById('panel-' + tab);
+                if (panel) panel.classList.add('active');
+                saveState();
+                if (tab === 'converter') {
+                    populateUnitDropdowns();
+                    convertUnits();
+                }
+                if (tab === 'age') updateAgeCalc();
+                if (tab === 'percentage') updatePercentCalc();
+                if (tab === 'standard') updateStdDisplay();
+                if (tab === 'scientific') updateSciDisplay();
+            }
+            const toast = document.getElementById('copy-toast');
+            let toastTimer;
+
+            function showToast(msg) {
+                toast.textContent = msg || 'Copied!';
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+            }
+            async function copyText(text) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    showToast('Copied!');
+                } catch (e) {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showToast('Copied!');
+                }
+            }
+            const TOKEN_PATTERNS = [
+                { type: 'FUNC', regex: /^(sin|cos|tan|asin|acos|atan|log|ln|abs|sqrt|fact)\s*\(/ },
+                { type: 'CONST', regex: /^(pi|e)\b/ },
+                { type: 'MOD', regex: /^mod\b/ },
+                { type: 'NUMBER', regex: /^(\d+\.?\d*|\.\d+)/ },
+                { type: 'POWER', regex: /^\^/ },
+                { type: 'FACTORIAL', regex: /^!/ },
+                { type: 'PLUS', regex: /^\+/ },
+                { type: 'MINUS', regex: /^-/ },
+                { type: 'MULTIPLY', regex: /^\*/ },
+                { type: 'DIVIDE', regex: /^\// },
+                { type: 'LPAREN', regex: /^\(/ },
+                { type: 'RPAREN', regex: /^\)/ },
+            ];
+
+            function tokenize(str) {
+                const tokens = [];
+                let pos = 0;
+                str = str.trim();
+                while (pos < str.length) {
+                    if (str[pos] === ' ') { pos++; continue; }
+                    let matched = false;
+                    for (const pat of TOKEN_PATTERNS) {
+                        const m = str.slice(pos).match(pat.regex);
+                        if (m) {
+                            if (pat.type === 'FUNC') {
+                                tokens.push({ type: 'FUNC', value: m[1] });
+                                pos += m[1].length + 1;
+                            } else if (pat.type === 'CONST') {
+                                tokens.push({ type: 'CONST', value: m[1] });
+                                pos += m[1].length;
+                            } else if (pat.type === 'MOD') {
+                                tokens.push({ type: 'MOD' });
+                                pos += 3;
+                            } else if (pat.type === 'NUMBER') {
+                                tokens.push({ type: 'NUMBER', value: parseFloat(m[1]) });
+                                pos += m[1].length;
+                            } else {
+                                tokens.push({ type: pat.type });
+                                pos += m[0].length;
+                            }
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) {
+                        if (str[pos] === ',') { pos++; continue; }
+                        throw new Error('Unexpected character: ' + str[pos]);
+                    }
+                }
+                tokens.push({ type: 'EOF' });
+                return tokens;
+            }
+            class Parser {
+                constructor(tokens, degRad = 'deg') {
+                    this.tokens = tokens;
+                    this.pos = 0;
+                    this.degRad = degRad;
+                }
+                peek() { return this.tokens[this.pos]; }
+                consume() { return this.tokens[this.pos++]; }
+                parse() {
+                    const result = this.expression();
+                    if (this.peek().type !== 'EOF') throw new Error('Unexpected token');
+                    return result;
+                }
+                expression() {
+                    let left = this.term();
+                    while (this.peek().type === 'PLUS' || this.peek().type === 'MINUS') {
+                        const op = this.consume().type;
+                        const right = this.term();
+                        if (op === 'PLUS') left = left + right;
+                        else left = left - right;
+                    }
+                    return left;
+                }
+                term() {
+                    let left = this.unary();
+                    while (this.peek().type === 'MULTIPLY' || this.peek().type === 'DIVIDE' || this.peek()
+                        .type === 'MOD') {
+                        const op = this.consume().type;
+                        const right = this.unary();
+                        if (op === 'MULTIPLY') left = left * right;
+                        else if (op === 'DIVIDE') {
+                            if (right === 0) throw new Error('Division by zero');
+                            left = left / right;
+                        } else {
+                            if (right === 0) throw new Error('Modulo by zero');
+                            left = left % right;
+                        }
+                    }
+                    return left;
+                }
+                unary() {
+                    if (this.peek().type === 'MINUS') {
+                        this.consume();
+                        return -this.power();
+                    }
+                    if (this.peek().type === 'PLUS') {
+                        this.consume();
+                        return this.power();
+                    }
+                    return this.power();
+                }
+                power() {
+                    let left = this.factor();
+                    if (this.peek().type === 'POWER') {
+                        this.consume();
+                        const right = this.power();
+                        left = Math.pow(left, right);
+                    }
+                    return left;
+                }
+                factor() {
+                    const tok = this.peek();
+                    if (tok.type === 'NUMBER') {
+                        this.consume();
+                        let val = tok.value;
+                        if (this.peek().type === 'FACTORIAL') {
+                            this.consume();
+                            val = factorial(val);
+                        }
+                        return val;
+                    }
+                    if (tok.type === 'CONST') {
+                        this.consume();
+                        let val = tok.value === 'pi' ? Math.PI : Math.E;
+                        if (this.peek().type === 'FACTORIAL') {
+                            this.consume();
+                            val = factorial(val);
+                        }
+                        return val;
+                    }
+                    if (tok.type === 'LPAREN') {
+                        this.consume();
+                        const val = this.expression();
+                        if (this.peek().type !== 'RPAREN') throw new Error('Missing closing parenthesis');
+                        this.consume();
+                        let result = val;
+                        if (this.peek().type === 'FACTORIAL') {
+                            this.consume();
+                            result = factorial(result);
+                        }
+                        return result;
+                    }
+                    if (tok.type === 'FUNC') {
+                        this.consume();
+                        const funcName = tok.value;
+                        if (this.peek().type !== 'LPAREN') {
+                            const arg = this.expression();
+                            if (this.peek().type === 'RPAREN') this.consume();
+                            let result = evaluateFunc(funcName, arg, this.degRad);
+                            if (this.peek().type === 'FACTORIAL') { this.consume();
+                                result = factorial(result); }
+                            return result;
+                        }
+                        this.consume();
+                        const arg = this.expression();
+                        if (this.peek().type !== 'RPAREN') throw new Error('Missing closing parenthesis after function');
+                        this.consume();
+                        let result = evaluateFunc(funcName, arg, this.degRad);
+                        if (this.peek().type === 'FACTORIAL') { this.consume();
+                            result = factorial(result); }
+                        return result;
+                    }
+                    throw new Error('Unexpected token: ' + tok.type);
+                }
+            }
+
+            function factorial(n) {
+                if (!Number.isInteger(n) || n < 0) throw new Error('Factorial requires non-negative integer');
+                if (n > 170) throw new Error('Factorial too large');
+                if (n === 0 || n === 1) return 1;
+                let r = 1;
+                for (let i = 2; i <= n; i++) r *= i;
+                return r;
+            }
+
+            function evaluateFunc(name, arg, degRad) {
+                switch (name) {
+                    case 'sin':
+                        return Math.sin(degRad === 'deg' ? arg * Math.PI / 180 : arg);
+                    case 'cos':
+                        return Math.cos(degRad === 'deg' ? arg * Math.PI / 180 : arg);
+                    case 'tan':
+                        return Math.tan(degRad === 'deg' ? arg * Math.PI / 180 : arg);
+                    case 'asin':
+                        return degRad === 'deg' ? Math.asin(arg) * 180 / Math.PI : Math.asin(arg);
+                    case 'acos':
+                        return degRad === 'deg' ? Math.acos(arg) * 180 / Math.PI : Math.acos(arg);
+                    case 'atan':
+                        return degRad === 'deg' ? Math.atan(arg) * 180 / Math.PI : Math.atan(arg);
+                    case 'log':
+                        return Math.log10(arg);
+                    case 'ln':
+                        return Math.log(arg);
+                    case 'abs':
+                        return Math.abs(arg);
+                    case 'sqrt':
+                        return Math.sqrt(arg);
+                    case 'fact':
+                        return factorial(arg);
+                    default:
+                        throw new Error('Unknown function: ' + name);
+                }
+            }
+
+            function safeEval(exprStr, degRad = 'deg') {
+                if (!exprStr || exprStr.trim() === '') return null;
+                const tokens = tokenize(exprStr);
+                const parser = new Parser(tokens, degRad);
+                return parser.parse();
+            }
+
+            function formatResult(num) {
+                if (num === null || num === undefined || isNaN(num)) return 'Error';
+                if (!isFinite(num)) return num > 0 ? 'Infinity' : '-Infinity';
+                if (Number.isInteger(num) && Math.abs(num) < 1e15) return num.toLocaleString('en-US', {
+                    maximumFractionDigits: 0 });
+                if (Math.abs(num) < 1e-10 && num !== 0) return num.toExponential(8);
+                if (Math.abs(num) >= 1e15) return num.toExponential(8);
+                let formatted = parseFloat(num.toPrecision(12));
+                let str = formatted.toString();
+                if (str.includes('.') && str.split('.')[1].length > 10) str = formatted.toFixed(10);
+                str = str.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+                return str;
+            }
+
+            function pushUndo(calcState) {
+                calcState.undoStack.push(calcState.expr);
+                if (calcState.undoStack.length > 100) calcState.undoStack.shift();
+                calcState.redoStack = [];
+            }
+
+            function performUndo(calcState) {
+                if (calcState.undoStack.length === 0) return false;
+                calcState.redoStack.push(calcState.expr);
+                calcState.expr = calcState.undoStack.pop();
+                return true;
+            }
+
+            function performRedo(calcState) {
+                if (calcState.redoStack.length === 0) return false;
+                calcState.undoStack.push(calcState.expr);
+                calcState.expr = calcState.redoStack.pop();
+                return true;
+            }
+
+            function handleCalcAction(action, data, calcState, displayId) {
+                const expr = calcState.expr;
+                const lastResult = calcState.lastResult;
+                switch (action) {
+                    case 'digit':
+                        pushUndo(calcState);
+                        calcState.expr += data.val;
+                        break;
+                    case 'decimal':
+                        pushUndo(calcState);
+                        const parts = expr.split(/[\s+\-*\/^()]+/);
+                        const lastPart = parts[parts.length - 1] || '';
+                        if (lastPart.includes('.')) break;
+                        if (expr === '' || /[\s+\-*\/^(]$/.test(expr)) calcState.expr += '0.';
+                        else calcState.expr += '.';
+                        break;
+                    case 'operator':
+                        pushUndo(calcState);
+                        let opStr = data.op;
+                        if (opStr === '*') opStr = '*';
+                        if (opStr === '/') opStr = '/';
+                        if (expr === '' && data.op === '-') { calcState.expr = '-'; break; }
+                        if (expr === '') break;
+                        if (/[\s+\-*\/^]$/.test(expr)) calcState.expr = expr.replace(/[\s+\-*\/^]+$/, '') +
+                            ' ' + opStr + ' ';
+                        else calcState.expr += ' ' + opStr + ' ';
+                        break;
+                    case 'clear':
+                        pushUndo(calcState);
+                        calcState.expr = '';
+                        calcState.result = '0';
+                        calcState.lastResult = null;
+                        break;
+                    case 'ce':
+                        pushUndo(calcState);
+                        calcState.expr = expr.replace(/(\d+\.?\d*|\.\d+)$/, '').replace(/\s+$/, '');
+                        if (calcState.expr === '') calcState.result = '0';
+                        break;
+                    case 'backspace':
+                        pushUndo(calcState);
+                        if (expr.length > 0) {
+                            if (/[a-z]{2,}\s*$/i.test(expr)) {
+                                calcState.expr = expr.replace(/[a-z]+\s*$/i, '');
+                            } else if (expr.endsWith(' ')) calcState.expr = expr.slice(0, -2);
+                            else calcState.expr = expr.slice(0, -1);
+                        }
+                        break;
+                    case 'paren-open':
+                        pushUndo(calcState);
+                        calcState.expr += '(';
+                        break;
+                    case 'paren-close':
+                        pushUndo(calcState);
+                        const openCount = (expr.match(/\(/g) || []).length;
+                        const closeCount = (expr.match(/\)/g) || []).length;
+                        if (openCount > closeCount) calcState.expr += ')';
+                        break;
+                    case 'square':
+                        pushUndo(calcState);
+                        if (expr && !/[\s+\-*\/^(]$/.test(expr)) calcState.expr += '^2';
+                        break;
+                    case 'sqrt':
+                        pushUndo(calcState);
+                        calcState.expr += 'sqrt(';
+                        break;
+                    case 'negate':
+                        pushUndo(calcState);
+                        if (expr.startsWith('-')) calcState.expr = expr.slice(1);
+                        else if (expr.startsWith('+')) calcState.expr = '-' + expr.slice(1);
+                        else calcState.expr = '-' + expr;
+                        break;
+                    case 'equals':
+                        if (expr.trim() === '') {
+                            if (lastResult !== null) calcState.result = formatResult(lastResult);
+                            break;
+                        }
+                        try {
+                            const res = safeEval(expr, calcState.degRad || 'deg');
+                            if (res === null) break;
+                            calcState.result = formatResult(res);
+                            calcState.lastResult = res;
+                            calcState.history.unshift({ expr: expr, result: calcState.result });
+                            if (calcState.history.length > 100) calcState.history.pop();
+                            calcState.expr = '';
+                            saveState();
+                        } catch (e) {
+                            calcState.result = 'Error';
+                        }
+                        break;
+                    case 'sci-func':
+                        pushUndo(calcState);
+                        calcState.expr += data.func + '(';
+                        break;
+                    case 'sci-const':
+                        pushUndo(calcState);
+                        calcState.expr += data.const;
+                        break;
+                    case 'sci-op':
+                        pushUndo(calcState);
+                        if (expr && !/[\s+\-*\/^(]$/.test(expr)) calcState.expr += ' mod ';
+                        break;
+                    case 'sci-pow':
+                        pushUndo(calcState);
+                        if (data.pow === '2') calcState.expr += '^2';
+                        else if (data.pow === '3') calcState.expr += '^3';
+                        else calcState.expr += '^(';
+                        break;
+                    case 'sci-ten-exp':
+                        pushUndo(calcState);
+                        calcState.expr += '10^(';
+                        break;
+                    case 'sci-e-exp':
+                        pushUndo(calcState);
+                        calcState.expr += 'e^(';
+                        break;
+                    default:
+                        return;
+                }
+                updateCalcPreview(calcState, displayId);
+                saveState();
+            }
+
+            function updateCalcPreview(calcState, displayId) {
+                const expr = calcState.expr.trim();
+                if (expr === '') {
+                    calcState.result = calcState.lastResult !== null ? formatResult(calcState.lastResult) : '0';
+                } else {
+                    try {
+                        const res = safeEval(expr, calcState.degRad || 'deg');
+                        if (res !== null) calcState.result = formatResult(res);
+                    } catch (e) {}
+                }
+                if (displayId === 'std') updateStdDisplay();
+                else updateSciDisplay();
+            }
+
+            function updateStdDisplay() {
+                document.getElementById('std-expr').textContent = state.std.expr || '';
+                const resEl = document.getElementById('std-result');
+                resEl.textContent = state.std.result || '0';
+                resEl.classList.remove('small', 'xsmall');
+                const r = state.std.result || '0';
+                if (r.length > 14) resEl.classList.add('small');
+                if (r.length > 20) resEl.classList.add('xsmall');
+                document.getElementById('std-mem-ind').textContent = state.hasMemory ? 'M' : '';
+                updateHistoryPanel('std');
+            }
+
+            function updateSciDisplay() {
+                document.getElementById('sci-expr').textContent = state.sci.expr || '';
+                const resEl = document.getElementById('sci-result');
+                resEl.textContent = state.sci.result || '0';
+                resEl.classList.remove('small', 'xsmall');
+                const r = state.sci.result || '0';
+                if (r.length > 14) resEl.classList.add('small');
+                if (r.length > 20) resEl.classList.add('xsmall');
+                document.getElementById('sci-mem-ind').textContent = state.hasMemory ? 'M' : '';
+                const degRadBtn = document.getElementById('sci-deg-rad-toggle');
+                if (degRadBtn) degRadBtn.textContent = state.sci.degRad === 'deg' ? 'DEG' : 'RAD';
+                updateHistoryPanel('sci');
+            }
+
+            function updateHistoryPanel(calcType) {
+                const panel = document.getElementById(calcType + '-history-panel');
+                if (!panel || !panel.classList.contains('open')) return;
+                const history = calcType === 'std' ? state.std.history : state.sci.history;
+                if (history.length === 0) {
+                    panel.innerHTML =
+                        '<div style="padding:8px;color:var(--text3);font-size:0.8rem;text-align:center;">No history yet</div>';
+                    return;
+                }
+                panel.innerHTML =
+                    '<div class="history-header"><span>History</span><button class="icon-btn" data-action="clear-history" data-calc="' +
+                    calcType +
+                    '" style="font-size:0.7rem;">Clear</button></div>' +
+                    history.slice(0, 30).map((h, i) =>
+                        '<div class="history-item" data-calc="' + calcType + '" data-idx="' + i +
+                        '" tabindex="0" role="button" aria-label="Recall: ' + h.expr + ' = ' + h.result + '"><span class="expr">' +
+                        escapeHTML(h.expr) + '</span><span class="res">' + escapeHTML(h.result) + '</span></div>'
+                    ).join('');
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                if (btn.closest('#std-buttons') || btn.closest('#std-memory-row') || btn.closest('#sci-buttons') ||
+                    btn.closest('#sci-numpad')) {
+                    const action = btn.dataset.action;
+                    const data = { val: btn.dataset.val, op: btn.dataset.op, func: btn.dataset.func, const: btn
+                            .dataset.const, pow: btn.dataset.pow };
+                    let calcType = 'std';
+                    let calcState = state.std;
+                    let displayId = 'std';
+                    if (btn.closest('#sci-buttons') || btn.closest('#sci-numpad')) {
+                        calcType = 'sci';
+                        calcState = state.sci;
+                        displayId = 'sci';
+                    }
+                    if (action === 'equals' || action === 'clear' || action === 'ce' || action === 'backspace' || action ===
+                        'digit' || action === 'decimal' || action === 'operator' || action === 'paren-open' ||
+                        action === 'paren-close' || action === 'square' || action === 'sqrt' || action === 'negate' ||
+                        action === 'sci-func' || action === 'sci-const' || action === 'sci-op' || action === 'sci-pow' ||
+                        action === 'sci-ten-exp' || action === 'sci-e-exp') {
+                        handleCalcAction(action, data, calcState, displayId);
+                        if (displayId === 'std') updateStdDisplay();
+                        else updateSciDisplay();
+                    }
+                    if (action === 'mc') { state.memory = 0;
+                        state.hasMemory = false;
+                        saveState();
+                        updateStdDisplay();
+                        updateSciDisplay(); }
+                    if (action === 'mr') {
+                        if (state.hasMemory) {
+                            pushUndo(calcState);
+                            calcState.expr += state.memory.toString();
+                            updateCalcPreview(calcState, displayId);
+                        }
+                    }
+                    if (action === 'mplus') {
+                        const val = calcState.lastResult || parseFloat(calcState.result) || 0;
+                        state.memory += val;
+                        state.hasMemory = true;
+                        saveState();
+                        updateStdDisplay();
+                        updateSciDisplay();
+                    }
+                    if (action === 'mminus') {
+                        const val = calcState.lastResult || parseFloat(calcState.result) || 0;
+                        state.memory -= val;
+                        state.hasMemory = true;
+                        saveState();
+                        updateStdDisplay();
+                        updateSciDisplay();
+                    }
+                    if (action === 'ms') {
+                        const val = calcState.lastResult || parseFloat(calcState.result) || 0;
+                        state.memory = val;
+                        state.hasMemory = true;
+                        saveState();
+                        updateStdDisplay();
+                        updateSciDisplay();
+                    }
+                }
+                if (btn.id === 'std-undo-btn') {
+                    if (performUndo(state.std)) updateStdDisplay();
+                }
+                if (btn.id === 'std-redo-btn') {
+                    if (performRedo(state.std)) updateStdDisplay();
+                }
+                if (btn.id === 'sci-undo-btn') {
+                    if (performUndo(state.sci)) updateSciDisplay();
+                }
+                if (btn.id === 'sci-redo-btn') {
+                    if (performRedo(state.sci)) updateSciDisplay();
+                }
+                if (btn.id === 'std-copy-btn') {
+                    copyText(state.std.result || '0');
+                }
+                if (btn.id === 'sci-copy-btn') {
+                    copyText(state.sci.result || '0');
+                }
+                if (btn.id === 'std-history-toggle') {
+                    const panel = document.getElementById('std-history-panel');
+                    panel.classList.toggle('open');
+                    updateHistoryPanel('std');
+                }
+                if (btn.id === 'sci-history-toggle') {
+                    const panel = document.getElementById('sci-history-panel');
+                    panel.classList.toggle('open');
+                    updateHistoryPanel('sci');
+                }
+                if (btn.dataset.action === 'clear-history') {
+                    const calcType = btn.dataset.calc;
+                    if (calcType === 'std') { state.std.history = [];
+                        updateHistoryPanel('std'); }
+                    if (calcType === 'sci') { state.sci.history = [];
+                        updateHistoryPanel('sci'); }
+                    saveState();
+                }
+                if (btn.id === 'sci-deg-rad-toggle') {
+                    state.sci.degRad = state.sci.degRad === 'deg' ? 'rad' : 'deg';
+                    btn.textContent = state.sci.degRad === 'deg' ? 'DEG' : 'RAD';
+                    updateSciDisplay();
+                    saveState();
+                }
+                if (btn.closest('.history-item')) {
+                    const calcType = btn.closest('.history-item').dataset.calc;
+                    const idx = parseInt(btn.closest('.history-item').dataset.idx);
+                    const history = calcType === 'std' ? state.std.history : state.sci.history;
+                    if (history[idx]) {
+                        const calcState = calcType === 'std' ? state.std : state.sci;
+                        pushUndo(calcState);
+                        calcState.expr = history[idx].expr;
+                        calcState.result = history[idx].result;
+                        calcState.lastResult = parseFloat(history[idx].result);
+                        if (calcType === 'std') updateStdDisplay();
+                        else updateSciDisplay();
+                    }
+                }
+                if (btn.id === 'conv-swap-btn') {
+                    const fromSel = document.getElementById('conv-from-unit');
+                    const toSel = document.getElementById('conv-to-unit');
+                    const temp = fromSel.value;
+                    fromSel.value = toSel.value;
+                    toSel.value = temp;
+                    convertUnits();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName ===
+                    'TEXTAREA') return;
+                const activePanel = document.querySelector('.tab-panel.active');
+                if (!activePanel) return;
+                const panelId = activePanel.id;
+                let calcType = 'std';
+                let calcState = state.std;
+                let displayId = 'std';
+                if (panelId === 'panel-scientific') { calcType = 'sci';
+                    calcState = state.sci;
+                    displayId = 'sci'; }
+                if (panelId === 'panel-percentage' || panelId === 'panel-converter' || panelId === 'panel-age') return;
+                const key = e.key;
+                let action = null;
+                let data = {};
+                if (key >= '0' && key <= '9') { action = 'digit';
+                    data.val = key; } else if (key === '.') { action = 'decimal'; } else if (key === '+') { action =
+                        'operator';
+                    data.op = '+'; } else if (key === '-') { action = 'operator';
+                    data.op = '-'; } else if (key === '*') { action = 'operator';
+                    data.op = '*'; } else if (key === '/') { action = 'operator';
+                    data.op = '/';
+                    e.preventDefault(); } else if (key === 'Enter' || key === '=') { action = 'equals';
+                    e.preventDefault(); } else if (key === 'Escape') { action = 'clear'; } else if (key ===
+                    'Backspace') { action = 'backspace';
+                    e.preventDefault(); } else if (key === '(') { action = 'paren-open'; } else if (key === ')') { action =
+                        'paren-close'; } else if (key === '^') { action = 'sci-pow';
+                    data.pow = 'y'; }
+                if (action) {
+                    handleCalcAction(action, data, calcState, displayId);
+                    if (displayId === 'std') updateStdDisplay();
+                    else updateSciDisplay();
+                    e.preventDefault();
+                }
+                if ((e.ctrlKey || e.metaKey) && key === 'z') {
+                    e.preventDefault();
+                    if (performUndo(calcState)) {
+                        if (displayId === 'std') updateStdDisplay();
+                        else updateSciDisplay();
+                    }
+                }
+                if ((e.ctrlKey || e.metaKey) && (key === 'y' || (e.shiftKey && key === 'z'))) {
+                    e.preventDefault();
+                    if (performRedo(calcState)) {
+                        if (displayId === 'std') updateStdDisplay();
+                        else updateSciDisplay();
+                    }
+                }
+                if ((e.ctrlKey || e.metaKey) && key === 'c') {
+                    const result = calcState.result || '0';
+                    copyText(result);
+                }
+            });
+            const unitCategories = {
+                length: {
+                    name: 'Length',
+                    base: 'meter',
+                    units: [
+                        { id: 'meter', name: 'Meter', factor: 1 },
+                        { id: 'kilometer', name: 'Kilometer', factor: 1000 },
+                        { id: 'centimeter', name: 'Centimeter', factor: 0.01 },
+                        { id: 'millimeter', name: 'Millimeter', factor: 0.001 },
+                        { id: 'mile', name: 'Mile', factor: 1609.344 },
+                        { id: 'yard', name: 'Yard', factor: 0.9144 },
+                        { id: 'foot', name: 'Foot', factor: 0.3048 },
+                        { id: 'inch', name: 'Inch', factor: 0.0254 },
+                    ]
+                },
+                weight: {
+                    name: 'Weight',
+                    base: 'kilogram',
+                    units: [
+                        { id: 'kilogram', name: 'Kilogram', factor: 1 },
+                        { id: 'gram', name: 'Gram', factor: 0.001 },
+                        { id: 'milligram', name: 'Milligram', factor: 0.000001 },
+                        { id: 'pound', name: 'Pound', factor: 0.453592 },
+                        { id: 'ounce', name: 'Ounce', factor: 0.0283495 },
+                        { id: 'ton', name: 'Ton (metric)', factor: 1000 },
+                    ]
+                },
+                temperature: {
+                    name: 'Temperature',
+                    base: 'celsius',
+                    units: [
+                        { id: 'celsius', name: 'Celsius', factor: 'special' },
+                        { id: 'fahrenheit', name: 'Fahrenheit', factor: 'special' },
+                        { id: 'kelvin', name: 'Kelvin', factor: 'special' },
+                    ]
+                },
+                area: {
+                    name: 'Area',
+                    base: 'sqmeter',
+                    units: [
+                        { id: 'sqmeter', name: 'Square Meter', factor: 1 },
+                        { id: 'sqkilometer', name: 'Square Kilometer', factor: 1e6 },
+                        { id: 'sqmile', name: 'Square Mile', factor: 2589988 },
+                        { id: 'sqfoot', name: 'Square Foot', factor: 0.092903 },
+                        { id: 'acre', name: 'Acre', factor: 4046.86 },
+                        { id: 'hectare', name: 'Hectare', factor: 10000 },
+                    ]
+                },
+                volume: {
+                    name: 'Volume',
+                    base: 'liter',
+                    units: [
+                        { id: 'liter', name: 'Liter', factor: 1 },
+                        { id: 'milliliter', name: 'Milliliter', factor: 0.001 },
+                        { id: 'cubicmeter', name: 'Cubic Meter', factor: 1000 },
+                        { id: 'gallon', name: 'Gallon (US)', factor: 3.78541 },
+                        { id: 'quart', name: 'Quart (US)', factor: 0.946353 },
+                        { id: 'cup', name: 'Cup (US)', factor: 0.236588 },
+                    ]
+                },
+                speed: {
+                    name: 'Speed',
+                    base: 'mps',
+                    units: [
+                        { id: 'mps', name: 'Meters/sec', factor: 1 },
+                        { id: 'kph', name: 'Km/hour', factor: 0.277778 },
+                        { id: 'mph', name: 'Miles/hour', factor: 0.44704 },
+                        { id: 'knot', name: 'Knot', factor: 0.514444 },
+                    ]
+                },
+                time: {
+                    name: 'Time',
+                    base: 'second',
+                    units: [
+                        { id: 'second', name: 'Second', factor: 1 },
+                        { id: 'minute', name: 'Minute', factor: 60 },
+                        { id: 'hour', name: 'Hour', factor: 3600 },
+                        { id: 'day', name: 'Day', factor: 86400 },
+                        { id: 'week', name: 'Week', factor: 604800 },
+                        { id: 'year', name: 'Year (365d)', factor: 31536000 },
+                    ]
+                },
+                data: {
+                    name: 'Data Storage',
+                    base: 'byte',
+                    units: [
+                        { id: 'byte', name: 'Byte', factor: 1 },
+                        { id: 'kilobyte', name: 'Kilobyte', factor: 1000 },
+                        { id: 'megabyte', name: 'Megabyte', factor: 1e6 },
+                        { id: 'gigabyte', name: 'Gigabyte', factor: 1e9 },
+                        { id: 'terabyte', name: 'Terabyte', factor: 1e12 },
+                        { id: 'kibibyte', name: 'Kibibyte', factor: 1024 },
+                        { id: 'mebibyte', name: 'Mebibyte', factor: 1048576 },
+                    ]
+                },
+            };
+
+            function convertTemperature(value, fromUnit, toUnit) {
+                let celsius;
+                switch (fromUnit) {
+                    case 'celsius':
+                        celsius = value;
+                        break;
+                    case 'fahrenheit':
+                        celsius = (value - 32) * 5 / 9;
+                        break;
+                    case 'kelvin':
+                        celsius = value - 273.15;
+                        break;
+                    default:
+                        return value;
+                }
+                switch (toUnit) {
+                    case 'celsius':
+                        return celsius;
+                    case 'fahrenheit':
+                        return celsius * 9 / 5 + 32;
+                    case 'kelvin':
+                        return celsius + 273.15;
+                    default:
+                        return celsius;
+                }
+            }
+
+            function convertUnitsValue(value, fromUnit, toUnit, category) {
+                if (category === 'temperature') return convertTemperature(value, fromUnit, toUnit);
+                const cat = unitCategories[category];
+                if (!cat) return value;
+                const fromU = cat.units.find(u => u.id === fromUnit);
+                const toU = cat.units.find(u => u.id === toUnit);
+                if (!fromU || !toU) return value;
+                const baseValue = value * fromU.factor;
+                return baseValue / toU.factor;
+            }
+
+            function populateUnitDropdowns(filter = '') {
+                const cat = unitCategories[state.converterCategory];
+                if (!cat) return;
+                const fromSel = document.getElementById('conv-from-unit');
+                const toSel = document.getElementById('conv-to-unit');
+                const prevFrom = fromSel.value;
+                const prevTo = toSel.value;
+                let units = cat.units;
+                if (filter) {
+                    const q = filter.toLowerCase();
+                    units = units.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q));
+                }
+                fromSel.innerHTML = units.map(u => '<option value="' + u.id + '">' + u.name + '</option>').join('');
+                toSel.innerHTML = units.map(u => '<option value="' + u.id + '">' + u.name + '</option>').join('');
+                if (units.find(u => u.id === prevFrom)) fromSel.value = prevFrom;
+                else if (units.length > 0) fromSel.value = units[0].id;
+                if (units.find(u => u.id === prevTo)) toSel.value = prevTo;
+                else if (units.length > 1) toSel.value = units[Math.min(1, units.length - 1)].id;
+                else if (units.length > 0) toSel.value = units[0].id;
+            }
+
+            function convertUnits() {
+                const inputEl = document.getElementById('conv-input');
+                const outputEl = document.getElementById('conv-output');
+                const fromUnit = document.getElementById('conv-from-unit').value;
+                const toUnit = document.getElementById('conv-to-unit').value;
+                const value = parseFloat(inputEl.value);
+                if (isNaN(value)) {
+                    outputEl.value = '';
+                    return;
+                }
+                const result = convertUnitsValue(value, fromUnit, toUnit, state.converterCategory);
+                outputEl.value = formatResult(result);
+            }
+            document.getElementById('conv-input').addEventListener('input', convertUnits);
+            document.getElementById('conv-from-unit').addEventListener('change', convertUnits);
+            document.getElementById('conv-to-unit').addEventListener('change', convertUnits);
+            document.getElementById('unit-search').addEventListener('input', (e) => {
+                populateUnitDropdowns(e.target.value);
+                convertUnits();
+            });
+            document.getElementById('converter-categories').addEventListener('click', (e) => {
+                const chip = e.target.closest('.category-chip');
+                if (!chip) return;
+                state.converterCategory = chip.dataset.cat;
+                document.querySelectorAll('#converter-categories .category-chip').forEach(c => c.classList
+                    .remove('active'));
+                chip.classList.add('active');
+                document.getElementById('unit-search').value = '';
+                populateUnitDropdowns();
+                convertUnits();
+                saveState();
+            });
+
+            function updatePercentCalc() {
+                const mode = state.percentMode;
+                const v1 = parseFloat(document.getElementById('perc-input1').value);
+                const v2 = parseFloat(document.getElementById('perc-input2').value);
+                const resultEl = document.getElementById('percent-result');
+                const labelEl = document.getElementById('percent-label');
+                const input1 = document.getElementById('perc-input1');
+                const input2 = document.getElementById('perc-input2');
+                const labels = {
+                    of: ['Percentage (X)', 'Value (Y)'],
+                    whatpercent: ['Part (X)', 'Total (Y)'],
+                    increase: ['Base value', 'Increase by %'],
+                    decrease: ['Base value', 'Decrease by %'],
+                    diff: ['Value 1', 'Value 2'],
+                    change: ['Old value', 'New value'],
+                };
+                const currentLabels = labels[mode] || ['Value 1', 'Value 2'];
+                input1.placeholder = currentLabels[0];
+                input2.placeholder = currentLabels[1];
+                if (isNaN(v1) || isNaN(v2)) {
+                    resultEl.textContent = '—';
+                    labelEl.textContent = 'Enter both values';
+                    return;
+                }
+                let result;
+                switch (mode) {
+                    case 'of':
+                        result = (v1 / 100) * v2;
+                        labelEl.textContent = v1 + '% of ' + v2 + ' =';
+                        break;
+                    case 'whatpercent':
+                        if (v2 === 0) { resultEl.textContent = '—';
+                            labelEl.textContent = 'Total cannot be zero'; return; }
+                        result = (v1 / v2) * 100;
+                        labelEl.textContent = v1 + ' is what % of ' + v2 + ' =';
+                        resultEl.textContent = formatResult(result) + '%';
+                        return;
+                    case 'increase':
+                        result = v1 * (1 + v2 / 100);
+                        labelEl.textContent = v1 + ' increased by ' + v2 + '% =';
+                        break;
+                    case 'decrease':
+                        result = v1 * (1 - v2 / 100);
+                        labelEl.textContent = v1 + ' decreased by ' + v2 + '% =';
+                        break;
+                    case 'diff':
+                        const avg = (Math.abs(v1) + Math.abs(v2)) / 2;
+                        if (avg === 0) { resultEl.textContent = '—';
+                            labelEl.textContent = 'Cannot calculate'; return; }
+                        result = Math.abs(v1 - v2) / avg * 100;
+                        labelEl.textContent = '% difference between ' + v1 + ' and ' + v2 + ' =';
+                        resultEl.textContent = formatResult(result) + '%';
+                        return;
+                    case 'change':
+                        if (v1 === 0) { resultEl.textContent = '—';
+                            labelEl.textContent = 'Old value cannot be zero'; return; }
+                        result = ((v2 - v1) / Math.abs(v1)) * 100;
+                        labelEl.textContent = '% change from ' + v1 + ' to ' + v2 + ' =';
+                        resultEl.textContent = formatResult(result) + '%';
+                        return;
+                    default:
+                        result = 0;
+                }
+                resultEl.textContent = formatResult(result);
+            }
+            document.getElementById('perc-input1').addEventListener('input', updatePercentCalc);
+            document.getElementById('perc-input2').addEventListener('input', updatePercentCalc);
+            document.getElementById('percent-mode-select').addEventListener('click', (e) => {
+                const chip = e.target.closest('.mode-chip');
+                if (!chip) return;
+                state.percentMode = chip.dataset.mode;
+                document.querySelectorAll('#percent-mode-select .mode-chip').forEach(c => c.classList.remove(
+                    'active'));
+                chip.classList.add('active');
+                updatePercentCalc();
+                saveState();
+            });
+
+            function isLeapYear(year) {
+                return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+            }
+
+            function updateAgeCalc() {
+                const birthInput = document.getElementById('age-birthdate');
+                const birthDate = birthInput.value ? new Date(birthInput.value + 'T00:00:00') : null;
+                const fields = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'totaldays',
+                    'totalweeks', 'totalmonths', 'nextbday'
+                ];
+                if (!birthDate || isNaN(birthDate.getTime())) {
+                    fields.forEach(f => document.getElementById('age-' + f).textContent = '—');
+                    return;
+                }
+                const now = new Date();
+                const diffMs = now - birthDate;
+                if (diffMs < 0) {
+                    fields.forEach(f => document.getElementById('age-' + f).textContent = '—');
+                    return;
+                }
+                const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const totalMinutes = Math.floor(diffMs / (1000 * 60));
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const totalWeeks = Math.floor(totalDays / 7);
+                let years = now.getFullYear() - birthDate.getFullYear();
+                let months = now.getMonth() - birthDate.getMonth();
+                if (months < 0) { years--;
+                    months += 12; }
+                if (now.getDate() < birthDate.getDate()) { months--; if (months < 0) { years--;
+                        months += 11; } }
+                const totalMonths = years * 12 + months;
+                let tempDate = new Date(birthDate);
+                tempDate.setFullYear(tempDate.getFullYear() + years);
+                tempDate.setMonth(tempDate.getMonth() + months);
+                const remainingDays = Math.floor((now - tempDate) / (1000 * 60 * 60 * 24));
+                const remainingHours = Math.floor((now - tempDate) / (1000 * 60 * 60)) % 24;
+                const remainingMinutes = Math.floor((now - tempDate) / (1000 * 60)) % 60;
+                const remainingSeconds = Math.floor((now - tempDate) / 1000) % 60;
+                let nextBday = new Date(now.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+                if (nextBday <= now) nextBday.setFullYear(nextBday.getFullYear() + 1);
+                if (birthDate.getMonth() === 1 && birthDate.getDate() === 29 && !isLeapYear(nextBday.getFullYear())) {
+                    nextBday = new Date(nextBday.getFullYear(), 2, 1);
+                }
+                const daysToNextBday = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+                document.getElementById('age-years').textContent = years.toLocaleString();
+                document.getElementById('age-months').textContent = months.toLocaleString();
+                document.getElementById('age-weeks').textContent = remainingDays >= 7 ? Math.floor(remainingDays / 7)
+                    .toLocaleString() : '0';
+                document.getElementById('age-days').textContent = remainingDays.toLocaleString();
+                document.getElementById('age-hours').textContent = remainingHours.toLocaleString();
+                document.getElementById('age-minutes').textContent = remainingMinutes.toLocaleString();
+                document.getElementById('age-seconds').textContent = remainingSeconds.toLocaleString();
+                document.getElementById('age-totaldays').textContent = totalDays.toLocaleString();
+                document.getElementById('age-totalweeks').textContent = totalWeeks.toLocaleString();
+                document.getElementById('age-totalmonths').textContent = totalMonths.toLocaleString();
+                document.getElementById('age-nextbday').textContent = daysToNextBday.toLocaleString();
+            }
+            document.getElementById('age-birthdate').addEventListener('change', updateAgeCalc);
+            document.getElementById('age-birthdate').addEventListener('input', updateAgeCalc);
+            setInterval(() => {
+                if (state.activeTab === 'age') updateAgeCalc();
+            }, 30000);
+
+            function init() {
+                loadState();
+                applyTheme(state.theme);
+                switchTab(state.activeTab);
+                document.querySelectorAll('#converter-categories .category-chip').forEach(c => {
+                    c.classList.toggle('active', c.dataset.cat === state.converterCategory);
+                });
+                document.querySelectorAll('#percent-mode-select .mode-chip').forEach(c => {
+                    c.classList.toggle('active', c.dataset.mode === state.percentMode);
+                });
+                populateUnitDropdowns();
+                convertUnits();
+                updateStdDisplay();
+                updateSciDisplay();
+                updatePercentCalc();
+                updateAgeCalc();
+                const birthInput = document.getElementById('age-birthdate');
+                if (!birthInput.value && state.std.lastResult === null && state.sci.lastResult === null) {
+                    birthInput.value = '1990-01-01';
+                    updateAgeCalc();
+                }
+            }
+            init();
+            window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem(APP_KEY)) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') saveState();
+            });
+        })();
+    </script>
+</body>
+</html>
