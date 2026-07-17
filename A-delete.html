@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemstone Sort - Puzzle Game</title>
+    <!--
+    Stage 1: HTML Structure
+    All semantic elements for the complete game.
+    No CSS, no JavaScript - pure structure only.
+    -->
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- MAIN GAME CONTAINER -->
+    <!-- ============================================ -->
+    <div id="game-container">
+
+        <!-- ============================================ -->
+        <!-- HEADER -->
+        <!-- ============================================ -->
+        <header id="game-header">
+            <div class="header-left">
+                <!-- Logo: click 5 times for developer mode -->
+                <div id="game-logo" class="logo" title="Gemstone Sort" role="button" tabindex="0" aria-label="Game logo - click for developer options">
+                    <span class="logo-diamond">&#9670;</span>
+                </div>
+                <h1 class="game-title">Gemstone Sort</h1>
+            </div>
+
+            <div class="header-center">
+                <!-- Difficulty indicator -->
+                <div id="difficulty-badge" class="difficulty-badge">
+                    <span id="difficulty-label">Noob</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Coins display -->
+                <div id="coins-display" class="coins-display" title="Coins">
+                    <span class="coin-icon" aria-hidden="true">&#9671;</span>
+                    <span id="coins-amount">0</span>
+                </div>
+                <!-- Settings button -->
+                <button id="btn-settings" class="icon-button" title="Settings" aria-label="Open settings">
+                    <span class="icon-gear">&#9881;</span>
+                </button>
+                <!-- Stats button -->
+                <button id="btn-stats" class="icon-button" title="Statistics" aria-label="View statistics">
+                    <span class="icon-chart">&#9776;</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================ -->
+        <!-- DIFFICULTY SELECTOR BAR -->
+        <!-- ============================================ -->
+        <nav id="difficulty-bar" class="difficulty-bar" aria-label="Difficulty selection">
+            <button class="difficulty-btn active" data-difficulty="noob" title="Noob - unlocked">
+                <span class="diff-icon">&#9671;</span> Noob
+            </button>
+            <button class="difficulty-btn locked" data-difficulty="easy" title="Easy - locked" disabled>
+                <span class="diff-icon locked-icon">&#128274;</span> Easy
+            </button>
+            <button class="difficulty-btn locked" data-difficulty="medium" title="Medium - locked" disabled>
+                <span class="diff-icon locked-icon">&#128274;</span> Medium
+            </button>
+            <button class="difficulty-btn locked" data-difficulty="medium-plus" title="Medium+ - locked" disabled>
+                <span class="diff-icon locked-icon">&#128274;</span> Medium+
+            </button>
+            <button class="difficulty-btn locked" data-difficulty="hard" title="Hard - locked" disabled>
+                <span class="diff-icon locked-icon">&#128274;</span> Hard
+            </button>
+            <button class="difficulty-btn locked" data-difficulty="devil" title="Devil - locked" disabled>
+                <span class="diff-icon locked-icon">&#128274;</span> Devil
+            </button>
+            <button class="difficulty-btn custom-btn" data-difficulty="custom" title="Custom Game">
+                <span class="diff-icon">&#9998;</span> Custom
+            </button>
+        </nav>
+
+        <!-- ============================================ -->
+        <!-- GAME BOARD -->
+        <!-- ============================================ -->
+        <main id="game-board" class="game-board" aria-label="Game board with bottles">
+            <div id="bottle-rack" class="bottle-rack">
+
+                <!-- Bottle 0 - Sample with mixed gemstones -->
+                <div class="bottle" data-bottle-id="0" tabindex="0" role="button" aria-label="Bottle 1">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot" data-slot="3">
+                                <div class="gemstone" data-gem-color="ruby">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="2">
+                                <div class="gemstone" data-gem-color="emerald">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="1">
+                                <div class="gemstone" data-gem-color="sapphire">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="0">
+                                <div class="gemstone" data-gem-color="ruby">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 1 -->
+                <div class="bottle" data-bottle-id="1" tabindex="0" role="button" aria-label="Bottle 2">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot" data-slot="3">
+                                <div class="gemstone" data-gem-color="emerald">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="2">
+                                <div class="gemstone" data-gem-color="ruby">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="1">
+                                <div class="gemstone" data-gem-color="sapphire">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="0">
+                                <div class="gemstone" data-gem-color="emerald">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 2 -->
+                <div class="bottle" data-bottle-id="2" tabindex="0" role="button" aria-label="Bottle 3">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot" data-slot="3">
+                                <div class="gemstone" data-gem-color="sapphire">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="2">
+                                <div class="gemstone" data-gem-color="ruby">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="1">
+                                <div class="gemstone" data-gem-color="emerald">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="0">
+                                <div class="gemstone" data-gem-color="sapphire">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 3 -->
+                <div class="bottle" data-bottle-id="3" tabindex="0" role="button" aria-label="Bottle 4">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot" data-slot="3">
+                                <div class="gemstone" data-gem-color="amethyst">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="2">
+                                <div class="gemstone" data-gem-color="topaz">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="1">
+                                <div class="gemstone" data-gem-color="amethyst">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="0">
+                                <div class="gemstone" data-gem-color="topaz">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 4 -->
+                <div class="bottle" data-bottle-id="4" tabindex="0" role="button" aria-label="Bottle 5">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot" data-slot="3">
+                                <div class="gemstone" data-gem-color="topaz">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="2">
+                                <div class="gemstone" data-gem-color="amethyst">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="1">
+                                <div class="gemstone" data-gem-color="topaz">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                            <div class="gemstone-slot" data-slot="0">
+                                <div class="gemstone" data-gem-color="amethyst">
+                                    <span class="gem-shine"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 5 - Empty -->
+                <div class="bottle bottle-empty" data-bottle-id="5" tabindex="0" role="button" aria-label="Empty bottle 6">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="3"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="2"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="1"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="0"></div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+                <!-- Bottle 6 - Empty -->
+                <div class="bottle bottle-empty" data-bottle-id="6" tabindex="0" role="button" aria-label="Empty bottle 7">
+                    <div class="bottle-neck">
+                        <div class="bottle-rim"></div>
+                    </div>
+                    <div class="bottle-body">
+                        <div class="gemstone-slots">
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="3"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="2"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="1"></div>
+                            <div class="gemstone-slot gemstone-slot-empty" data-slot="0"></div>
+                        </div>
+                    </div>
+                    <div class="bottle-base"></div>
+                    <div class="bottle-selection-indicator"></div>
+                </div>
+
+            </div><!-- /bottle-rack -->
+        </main>
+
+        <!-- ============================================ -->
+        <!-- GAME CONTROLS -->
+        <!-- ============================================ -->
+        <div id="game-controls" class="game-controls">
+            <button id="btn-undo" class="control-button" title="Undo last move" aria-label="Undo">
+                <span class="btn-icon">&#8630;</span>
+                <span class="btn-label">Undo</span>
+            </button>
+            <button id="btn-hint" class="control-button" title="Get a hint" aria-label="Hint">
+                <span class="btn-icon">&#128161;</span>
+                <span class="btn-label">Hint</span>
+            </button>
+            <button id="btn-reset" class="control-button" title="Reset current level" aria-label="Reset">
+                <span class="btn-icon">&#8635;</span>
+                <span class="btn-label">Reset</span>
+            </button>
+            <button id="btn-new-game" class="control-button" title="Start a new game" aria-label="New game">
+                <span class="btn-icon">&#9654;</span>
+                <span class="btn-label">New</span>
+            </button>
+            <button id="btn-custom-game" class="control-button" title="Custom game settings" aria-label="Custom game">
+                <span class="btn-icon">&#9881;</span>
+                <span class="btn-label">Custom</span>
+            </button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- MOVE COUNTER & TIMER -->
+        <!-- ============================================ -->
+        <div id="game-info-bar" class="game-info-bar">
+            <div class="info-item" title="Number of moves">
+                <span class="info-label">Moves:</span>
+                <span id="move-counter">0</span>
+            </div>
+            <div class="info-item" title="Elapsed time">
+                <span class="info-label">Time:</span>
+                <span id="game-timer">00:00</span>
+            </div>
+            <div class="info-item" title="Best time for this difficulty">
+                <span class="info-label">Best:</span>
+                <span id="best-time-display">--:--</span>
+            </div>
+        </div>
+
+    </div><!-- /game-container -->
+
+    <!-- ============================================ -->
+    <!-- VICTORY OVERLAY (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="victory-overlay" class="overlay hidden" aria-hidden="true">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel victory-panel">
+            <div class="victory-icon">&#9733;</div>
+            <h2 class="victory-title">Level Complete!</h2>
+            <p class="victory-subtitle">All gemstones sorted perfectly</p>
+            <div class="victory-stats">
+                <div class="victory-stat">
+                    <span class="v-stat-label">Moves</span>
+                    <span id="victory-moves" class="v-stat-value">0</span>
+                </div>
+                <div class="victory-stat">
+                    <span class="v-stat-label">Time</span>
+                    <span id="victory-time" class="v-stat-value">00:00</span>
+                </div>
+                <div class="victory-stat">
+                    <span class="v-stat-label">Coins Earned</span>
+                    <span id="victory-coins" class="v-stat-value">0</span>
+                </div>
+            </div>
+            <div class="victory-actions">
+                <button id="btn-play-again" class="primary-button">Play Again</button>
+                <button id="btn-next-level" class="secondary-button">Next Level</button>
+                <button id="btn-close-victory" class="text-button">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SETTINGS MODAL (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="settings-modal" class="overlay hidden" aria-hidden="true" role="dialog" aria-label="Settings">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel settings-panel">
+            <div class="panel-header">
+                <h2>Settings</h2>
+                <button class="close-button" aria-label="Close settings">&times;</button>
+            </div>
+            <div class="panel-body">
+                <!-- Theme -->
+                <div class="setting-row">
+                    <span class="setting-label">Theme</span>
+                    <select id="setting-theme" class="setting-select">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+                <!-- Music toggle -->
+                <div class="setting-row">
+                    <span class="setting-label">Music</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="setting-music" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <!-- Sound toggle -->
+                <div class="setting-row">
+                    <span class="setting-label">Sound Effects</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="setting-sound" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <!-- Animation speed -->
+                <div class="setting-row">
+                    <span class="setting-label">Animation Speed</span>
+                    <select id="setting-animation-speed" class="setting-select">
+                        <option value="slow">Slow</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+                <!-- Language -->
+                <div class="setting-row">
+                    <span class="setting-label">Language</span>
+                    <select id="setting-language" class="setting-select">
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <!-- Reset progress -->
+                <div class="setting-row setting-row-danger">
+                    <span class="setting-label">Reset All Progress</span>
+                    <button id="btn-reset-progress" class="danger-button">Reset</button>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="btn-save-settings" class="primary-button">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STATISTICS MODAL (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="stats-modal" class="overlay hidden" aria-hidden="true" role="dialog" aria-label="Statistics">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel stats-panel">
+            <div class="panel-header">
+                <h2>Statistics</h2>
+                <button class="close-button" aria-label="Close statistics">&times;</button>
+            </div>
+            <div class="panel-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-icon">&#9671;</span>
+                        <span class="stat-value" id="stat-coins">0</span>
+                        <span class="stat-label">Coins</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#9733;</span>
+                        <span class="stat-value" id="stat-wins">0</span>
+                        <span class="stat-label">Wins</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#9654;</span>
+                        <span class="stat-value" id="stat-games">0</span>
+                        <span class="stat-label">Games Played</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#9201;</span>
+                        <span class="stat-value" id="stat-best-time">--:--</span>
+                        <span class="stat-label">Best Time</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#9202;</span>
+                        <span class="stat-value" id="stat-avg-time">--:--</span>
+                        <span class="stat-label">Average Time</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#8599;</span>
+                        <span class="stat-value" id="stat-best-moves">0</span>
+                        <span class="stat-label">Best Moves</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#128293;</span>
+                        <span class="stat-value" id="stat-current-streak">0</span>
+                        <span class="stat-label">Current Streak</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#128142;</span>
+                        <span class="stat-value" id="stat-best-streak">0</span>
+                        <span class="stat-label">Best Streak</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">&#128161;</span>
+                        <span class="stat-value" id="stat-hints-used">0</span>
+                        <span class="stat-label">Hints Used</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CUSTOM GAME MODAL (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="custom-game-modal" class="overlay hidden" aria-hidden="true" role="dialog" aria-label="Custom Game">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel custom-panel">
+            <div class="panel-header">
+                <h2>Custom Game</h2>
+                <button class="close-button" aria-label="Close custom game">&times;</button>
+            </div>
+            <div class="panel-body">
+                <div class="setting-row">
+                    <span class="setting-label">Bottle Count</span>
+                    <input type="range" id="custom-bottle-count" min="4" max="14" value="7" step="1">
+                    <span class="range-value" id="custom-bottle-count-value">7</span>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Bottle Height (gemstones)</span>
+                    <input type="range" id="custom-bottle-height" min="3" max="8" value="4" step="1">
+                    <span class="range-value" id="custom-bottle-height-value">4</span>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Number of Colors</span>
+                    <input type="range" id="custom-colors" min="2" max="12" value="5" step="1">
+                    <span class="range-value" id="custom-colors-value">5</span>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Empty Bottles</span>
+                    <input type="range" id="custom-empty-bottles" min="1" max="6" value="2" step="1">
+                    <span class="range-value" id="custom-empty-bottles-value">2</span>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Animation Speed</span>
+                    <select id="custom-animation-speed" class="setting-select">
+                        <option value="slow">Slow</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="btn-start-custom-game" class="primary-button">Start Custom Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- COLOR EDITOR MODAL (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="color-editor-modal" class="overlay hidden" aria-hidden="true" role="dialog" aria-label="Color Editor">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel color-editor-panel">
+            <div class="panel-header">
+                <h2>Gemstone Color Editor</h2>
+                <button class="close-button" aria-label="Close color editor">&times;</button>
+            </div>
+            <div class="panel-body">
+                <!-- Color list for editing -->
+                <div id="color-editor-list" class="color-editor-list">
+                    <!-- Dynamically populated color pickers -->
+                </div>
+                <!-- Preset palettes -->
+                <div class="preset-section">
+                    <h3>Preset Palettes</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="classic">Classic</button>
+                        <button class="preset-btn" data-preset="ocean">Ocean</button>
+                        <button class="preset-btn" data-preset="neon">Neon</button>
+                        <button class="preset-btn" data-preset="pastel">Pastel</button>
+                    </div>
+                </div>
+                <!-- Random palette -->
+                <button id="btn-random-palette" class="secondary-button">Random Palette</button>
+                <!-- Preview area -->
+                <div id="color-preview-area" class="color-preview-area">
+                    <h3>Preview</h3>
+                    <div id="color-preview-gems" class="preview-gems">
+                        <!-- Preview gemstones -->
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="btn-save-colors" class="primary-button">Save Colors</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DEVELOPER MODE PANEL (hidden by default) -->
+    <!-- ============================================ -->
+    <div id="dev-panel" class="overlay hidden" aria-hidden="true" role="dialog" aria-label="Developer Mode">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel dev-panel">
+            <div class="panel-header">
+                <h2>&#128295; Developer Mode</h2>
+                <button class="close-button" aria-label="Close developer panel">&times;</button>
+            </div>
+            <div class="panel-body">
+                <div class="dev-commands">
+                    <button class="dev-cmd-btn" data-command="unlockall">Unlock All Difficulties</button>
+                    <button class="dev-cmd-btn" data-command="resetprogress">Reset Progress</button>
+                    <button class="dev-cmd-btn" data-command="addcoins">Add 1000 Coins</button>
+                    <button class="dev-cmd-btn" data-command="resetstats">Reset Statistics</button>
+                </div>
+                <div class="dev-console">
+                    <label for="dev-input">Command:</label>
+                    <input type="text" id="dev-input" placeholder="Type command...">
+                    <button id="btn-dev-execute">Execute</button>
+                </div>
+                <div id="dev-output" class="dev-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CONFETTI CONTAINER (for victory animation) -->
+    <!-- ============================================ -->
+    <div id="confetti-container" class="confetti-container hidden" aria-hidden="true"></div>
+
+    <!-- ============================================ -->
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <!-- ============================================ -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ============================================ -->
+    <!-- HIDDEN DEV CLICK TRACKER -->
+    <!-- ============================================ -->
+    <span id="dev-click-count" class="hidden" aria-hidden="true">0</span>
+
+</body>
+</html>
