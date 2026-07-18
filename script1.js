@@ -138,7 +138,7 @@ const AppState = {
     }),
     // Transient
     screen: 'menu',
-    game: null, // active game state object
+    game: null,
     selectedBottle: null,
     undoStack: [],
     hintUsed: false,
@@ -147,43 +147,14 @@ const AppState = {
     devModeActive: false,
     logoClickCount: 0,
     logoClickTimer: null,
-    // Difficulty currently selected for "Play"
-    playDifficulty: null
+    playDifficulty: null,
+    animating: false        // lock during pour animation
 };
 
 // ==================== GAME STATE FACTORY ====================
 function createGameState(bottleCount, height, colorNames, emptyBottleCount) {
-    const totalBottles = bottleCount;
-    const bottles = [];
-    // Create empty bottles
-    for (let i = 0; i < totalBottles; i++) {
-        bottles.push([]);
-    }
-    // Fill non-empty bottles with gems
-    const nonEmptyBottles = totalBottles - emptyBottleCount;
-    const gemCount = nonEmptyBottles * height;
-    const gemsPerColor = height;
-    const allGems = [];
-    colorNames.forEach(color => {
-        for (let i = 0; i < gemsPerColor; i++) {
-            allGems.push(color);
-        }
-    });
-    if (allGems.length > gemCount) {
-        allGems.length = gemCount;
-    }
-    // Shuffle and distribute
-    const shuffled = shuffleArray(allGems);
-    for (let i = 0; i < nonEmptyBottles; i++) {
-        for (let j = 0; j < height; j++) {
-            const idx = i * height + j;
-            if (idx < shuffled.length) {
-                bottles[i].push(shuffled[idx]);
-            }
-        }
-    }
     return {
-        bottles,
+        bottles: [],          // will be set by generator
         height,
         colorNames,
         moves: 0,
@@ -195,7 +166,6 @@ function createGameState(bottleCount, height, colorNames, emptyBottleCount) {
 
 // ==================== GAME LOGIC ====================
 const GameLogic = {
-    // Get top contiguous group of same color from bottle
     getTopGroup(bottle) {
         if (bottle.length === 0) return { color: null, count: 0 };
         const topColor = bottle[bottle.length - 1];
@@ -207,7 +177,6 @@ const GameLogic = {
         return { color: topColor, count };
     },
 
-    // Check if move is valid
     isValidMove(sourceBottle, destBottle, maxHeight) {
         if (sourceBottle.length === 0) return false;
         const sourceGroup = this.getTopGroup(sourceBottle);
@@ -218,7 +187,6 @@ const GameLogic = {
         return true;
     },
 
-    // Execute move on state bottles, returns new bottles array
     executeMove(bottles, fromIdx, toIdx, height) {
         const newBottles = bottles.map(b => [...b]);
         const source = newBottles[fromIdx];
@@ -231,19 +199,16 @@ const GameLogic = {
         return newBottles;
     },
 
-    // Check if a bottle is completely sorted (all same color and full or empty)
     isBottleComplete(bottle, height) {
         if (bottle.length === 0) return true;
         if (bottle.length !== height) return false;
         return bottle.every(gem => gem === bottle[0]);
     },
 
-    // Check if board is won
     isWin(bottles, height) {
         return bottles.every(b => this.isBottleComplete(b, height));
     },
 
-    // Find all valid moves
     findValidMoves(bottles, height) {
         const moves = [];
         for (let i = 0; i < bottles.length; i++) {
@@ -257,85 +222,102 @@ const GameLogic = {
         return moves;
     },
 
-    // Check for deadlock (no useful moves)
     isDeadlock(bottles, height) {
         const moves = this.findValidMoves(bottles, height);
         if (moves.length === 0) return true;
-        // Check if any move can lead to progress (i.e., not just shuffling empty or already full)
         for (const move of moves) {
             const fromBottle = bottles[move.from];
             const toBottle = bottles[move.to];
-            // Skip moves that pour into a full bottle
             if (toBottle.length === height) continue;
-            // Skip moves from an already sorted bottle to empty (useless)
             if (this.isBottleComplete(fromBottle, height) && toBottle.length === 0) continue;
-            // Otherwise, a potentially useful move exists
             return false;
         }
         return true;
     },
 
-    // Generate a solvable board from a solved state
+    // Generates a guaranteed solvable and unsolved board
     generateSolvableBoard(bottleCount, height, colorNames, emptyBottleCount) {
-        // Start with solved board
-        const bottles = [];
-        for (let i = 0; i < bottleCount - emptyBottleCount; i++) {
-            const color = colorNames[i % colorNames.length];
-            const bottle = Array(height).fill(color);
-            bottles.push(bottle);
-        }
-        for (let i = 0; i < emptyBottleCount; i++) {
-            bottles.push([]);
-        }
-        // Shuffle by performing valid random moves
-        const maxMoves = bottleCount * height * 3; // arbitrary number
-        let currentBottles = deepClone(bottles);
-        for (let step = 0; step < maxMoves; step++) {
-            const moves = this.findValidMoves(currentBottles, height);
-            // Filter out moves that would undo the last move or lead to trivial loops
-            const usefulMoves = moves.filter(m => {
-                const from = currentBottles[m.from];
-                const to = currentBottles[m.to];
-                if (from.length === 0) return false;
-                if (to.length === height) return false;
-                return true;
-            });
-            if (usefulMoves.length === 0) break;
-            const randomMove = usefulMoves[Math.floor(Math.random() * usefulMoves.length)];
-            currentBottles = this.executeMove(currentBottles, randomMove.from, randomMove.to, height);
-            if (!currentBottles) break;
-            // Ensure we don't accidentally solve it early
-            if (this.isWin(currentBottles, height) && step > 2) {
-                // Undo last move if solved, continue
-                currentBottles = this.executeMove(currentBottles, randomMove.to, randomMove.from, height);
+        const maxAttempts = 500;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            const board = this._randomBoard(bottleCount, height, colorNames, emptyBottleCount);
+            if (this.isWin(board, height)) continue;   // already solved, try again
+            if (this._isSolvable(board, height)) {
+                return board;
             }
         }
-        // Final check: not already solved
-        if (this.isWin(currentBottles, height)) {
-            // Try one more random move
-            const moves = this.findValidMoves(currentBottles, height);
-            if (moves.length > 0) {
-                const m = moves[Math.floor(Math.random() * moves.length)];
-                currentBottles = this.executeMove(currentBottles, m.from, m.to, height);
+        // Fallback: return the last generated board (possibly unsolvable) – should not happen
+        console.warn('Could not generate solvable board after many attempts, returning random board.');
+        return this._randomBoard(bottleCount, height, colorNames, emptyBottleCount);
+    },
+
+    // Create a random distribution of gems into bottles
+    _randomBoard(bottleCount, height, colorNames, emptyBottleCount) {
+        const bottles = Array.from({ length: bottleCount }, () => []);
+        // Collect all gems (height of each color)
+        const allGems = [];
+        colorNames.forEach(color => {
+            for (let i = 0; i < height; i++) allGems.push(color);
+        });
+        // Shuffle gems
+        shuffleArray(allGems);
+        // Determine non-empty bottle indices (first N bottles, rest are empty)
+        const nonEmptyIndices = Array.from({ length: bottleCount - emptyBottleCount }, (_, i) => i);
+        // Randomly assign each gem to a non-empty bottle that still has space
+        for (const gem of allGems) {
+            // collect available bottles (with free space)
+            const available = nonEmptyIndices.filter(idx => bottles[idx].length < height);
+            if (available.length === 0) {
+                // This can happen if capacity is less than total gems (should not)
+                console.error('Not enough capacity for all gems, check puzzle parameters');
+                break;
+            }
+            const randomIdx = available[Math.floor(Math.random() * available.length)];
+            bottles[randomIdx].push(gem);
+        }
+        // Shuffle the order of bottles to avoid bias
+        return shuffleArray(bottles);
+    },
+
+    // Simple BFS solver with state limit
+    _isSolvable(initialBottles, height) {
+        const MAX_STATES = 25000;
+        const stateToString = (bottles) => JSON.stringify(bottles.map(b => [...b].sort()));
+        const startState = deepClone(initialBottles);
+        if (this.isWin(startState, height)) return true;
+        const visited = new Set();
+        visited.add(stateToString(startState));
+        const queue = [startState];
+        let stateCount = 0;
+
+        while (queue.length > 0 && stateCount < MAX_STATES) {
+            const current = queue.shift();
+            stateCount++;
+            const moves = this.findValidMoves(current, height);
+            for (const move of moves) {
+                const next = this.executeMove(current, move.from, move.to, height);
+                if (!next) continue;
+                if (this.isWin(next, height)) return true;
+                const nextStr = stateToString(next);
+                if (!visited.has(nextStr)) {
+                    visited.add(nextStr);
+                    queue.push(next);
+                }
             }
         }
-        return currentBottles;
+        return false;
     }
 };
 
 // ==================== ANIMATION HELPER ====================
 function animatePour(fromElement, toElement, gemsCount, duration = 300) {
     return new Promise(resolve => {
-        // Get the top gemstone elements from source bottle
         const gemElements = fromElement.querySelectorAll('.gemstone');
         if (gemElements.length === 0) { resolve(); return; }
         const movingGems = [];
         for (let i = gemElements.length - 1; i >= Math.max(0, gemElements.length - gemsCount); i--) {
             movingGems.push(gemElements[i]);
         }
-        // Temporarily hide originals
         movingGems.forEach(g => g.style.opacity = '0');
-        // Create clones for animation
         const fromRect = fromElement.getBoundingClientRect();
         const toRect = toElement.getBoundingClientRect();
         const clones = movingGems.map((gem, index) => {
@@ -349,9 +331,7 @@ function animatePour(fromElement, toElement, gemsCount, duration = 300) {
             document.body.appendChild(clone);
             return clone;
         });
-        // Trigger reflow
         clones[0].offsetHeight;
-        // Animate to destination
         const destStack = toElement.querySelector('.bottle-gems-stack');
         const existingGems = destStack ? destStack.children.length : 0;
         const gemHeight = movingGems[0] ? movingGems[0].offsetHeight : 28;
@@ -361,7 +341,6 @@ function animatePour(fromElement, toElement, gemsCount, duration = 300) {
             clone.style.left = targetX + 'px';
             clone.style.top = targetY + 'px';
         });
-        // Clean up after animation
         setTimeout(() => {
             clones.forEach(c => c.remove());
             resolve();
@@ -473,7 +452,6 @@ const UI = {
         const screen = this.screens[screenId];
         if (screen) screen.classList.add('active');
         AppState.screen = screenId;
-        // Update header
         const headerTitle = document.getElementById('headerTitle');
         const btnBack = document.getElementById('btnBack');
         switch (screenId) {
@@ -487,7 +465,7 @@ const UI = {
                 break;
             case 'game':
                 headerTitle.textContent = AppState.playDifficulty ? DIFFICULTIES[AppState.playDifficulty]?.name + ' Mode' : 'Custom Game';
-                btnBack.style.visibility = 'hidden'; // Use quit button
+                btnBack.style.visibility = 'hidden';
                 break;
             case 'custom':
                 headerTitle.textContent = 'Custom Game';
@@ -571,6 +549,7 @@ const UI = {
         AppState.undoStack = [];
         AppState.selectedBottle = null;
         AppState.hintUsed = false;
+        AppState.animating = false;
         this.startGameTimer();
         Renderer.renderBoard(AppState.game, -1);
         Renderer.updateMoveCounter(0);
@@ -581,8 +560,7 @@ const UI = {
 
     startCustomGame() {
         const config = AppState.customGameConfig;
-        const colorNames = config.colors.slice(0, config.colors.length);
-        // Ensure enough colors for bottle height
+        const colorNames = config.colors.slice();
         if (colorNames.length === 0) {
             UI.showToast('Please select at least one color.');
             return;
@@ -596,6 +574,7 @@ const UI = {
         AppState.undoStack = [];
         AppState.selectedBottle = null;
         AppState.hintUsed = false;
+        AppState.animating = false;
         this.startGameTimer();
         Renderer.renderBoard(AppState.game, -1);
         Renderer.updateMoveCounter(0);
@@ -623,13 +602,11 @@ const UI = {
     },
 
     handleBottleClick(index) {
-        if (!AppState.game) return;
+        if (!AppState.game || AppState.game.completed || AppState.animating) return;
         const game = AppState.game;
-        if (game.completed) return;
         const bottles = game.bottles;
 
         if (AppState.selectedBottle === null) {
-            // Select source bottle
             if (bottles[index].length === 0) {
                 UI.showToast('Empty bottle selected. Choose a bottle with gems.');
                 return;
@@ -637,39 +614,31 @@ const UI = {
             AppState.selectedBottle = index;
             Renderer.renderBoard(game, index);
         } else {
-            // Attempt move
             const fromIdx = AppState.selectedBottle;
             if (fromIdx === index) {
-                // Deselect
                 AppState.selectedBottle = null;
                 Renderer.renderBoard(game, -1);
                 return;
             }
             if (GameLogic.isValidMove(bottles[fromIdx], bottles[index], game.height)) {
-                // Save undo state
                 AppState.undoStack.push(deepClone(bottles));
-                // Animate
+                AppState.animating = true;
                 const fromEl = Renderer.bottlesArea.querySelector(`[data-index="${fromIdx}"]`);
                 const toEl = Renderer.bottlesArea.querySelector(`[data-index="${index}"]`);
                 const group = GameLogic.getTopGroup(bottles[fromIdx]);
                 animatePour(fromEl, toEl, group.count, 250).then(() => {
-                    // Execute move
                     const newBottles = GameLogic.executeMove(bottles, fromIdx, index, game.height);
                     if (newBottles) {
                         game.bottles = newBottles;
                         game.moves++;
                         Renderer.updateMoveCounter(game.moves);
-                        AppState.selectedBottle = null;
-                        Renderer.renderBoard(game, -1);
-                        this.checkGameEnd();
-                    } else {
-                        Renderer.shakeBottle(index);
-                        AppState.selectedBottle = null;
-                        Renderer.renderBoard(game, -1);
                     }
+                    AppState.selectedBottle = null;
+                    AppState.animating = false;
+                    Renderer.renderBoard(game, -1);
+                    this.checkGameEnd();
                 });
             } else {
-                // Invalid move
                 Renderer.shakeBottle(index);
                 AppState.selectedBottle = null;
                 Renderer.renderBoard(game, -1);
@@ -678,7 +647,7 @@ const UI = {
     },
 
     performUndo() {
-        if (!AppState.game || AppState.undoStack.length === 0) return;
+        if (!AppState.game || AppState.undoStack.length === 0 || AppState.animating) return;
         const prevState = AppState.undoStack.pop();
         AppState.game.bottles = prevState;
         AppState.game.moves = Math.max(0, AppState.game.moves - 1);
@@ -691,7 +660,6 @@ const UI = {
         if (!AppState.game || AppState.game.completed) return;
         const moves = GameLogic.findValidMoves(AppState.game.bottles, AppState.game.height);
         if (moves.length === 0) return;
-        // Choose a move randomly but avoid selecting from already completed bottle
         const usefulMoves = moves.filter(m => {
             const from = AppState.game.bottles[m.from];
             const to = AppState.game.bottles[m.to];
@@ -713,12 +681,11 @@ const UI = {
             game.completed = true;
             const elapsed = game.elapsedTime;
             const moves = game.moves;
-            // Calculate diamonds: one per completed non-empty bottle
-            const completedBottles = game.bottles.filter(b => b.length === game.height).length;
-            const diamondsEarned = completedBottles;
+            // Diamonds: one per full sorted bottle (non‑empty)
+            const fullCompleted = game.bottles.filter(b => b.length === game.height && b.every(g => g === b[0])).length;
+            const diamondsEarned = fullCompleted;
             AppState.coins += diamondsEarned;
             Storage.set(STORAGE_KEYS.COINS, AppState.coins);
-            // Update statistics
             AppState.statistics.gamesPlayed++;
             AppState.statistics.gamesWon++;
             if (!AppState.statistics.bestTime || elapsed < AppState.statistics.bestTime) AppState.statistics.bestTime = elapsed;
@@ -727,14 +694,12 @@ const UI = {
             AppState.statistics.currentStreak++;
             if (AppState.statistics.currentStreak > AppState.statistics.bestStreak) AppState.statistics.bestStreak = AppState.statistics.currentStreak;
             Storage.set(STORAGE_KEYS.STATISTICS, AppState.statistics);
-            // Update difficulty progress
             if (AppState.playDifficulty) {
                 const diffKey = AppState.playDifficulty;
                 if (!AppState.progress.difficultyWins[diffKey]) AppState.progress.difficultyWins[diffKey] = 0;
                 AppState.progress.difficultyWins[diffKey]++;
                 const diff = DIFFICULTIES[diffKey];
                 if (AppState.progress.difficultyWins[diffKey] >= diff.winTarget) {
-                    // Unlock next difficulty
                     const diffKeys = Object.keys(DIFFICULTIES);
                     const currentIndex = diffKeys.indexOf(diffKey);
                     if (currentIndex >= 0 && currentIndex < diffKeys.length - 1) {
@@ -747,21 +712,18 @@ const UI = {
                 }
                 Storage.set(STORAGE_KEYS.PROGRESS, AppState.progress);
             }
-            // Show win modal
             document.getElementById('winTime').textContent = formatTime(elapsed);
             document.getElementById('winMoves').textContent = moves;
             document.getElementById('winDiamonds').textContent = `+${diamondsEarned}`;
             document.getElementById('winBest').textContent = AppState.statistics.bestTime ? formatTime(AppState.statistics.bestTime) : '-';
             UI.showModal('modalWin');
             Renderer.updateHeaderCoins();
-            // Clear current game
             Storage.remove(STORAGE_KEYS.CURRENT_GAME);
             AppState.currentGame = null;
         } else if (GameLogic.isDeadlock(game.bottles, game.height)) {
             this.stopGameTimer();
             UI.showModal('modalDeadlock');
         }
-        // Save game
         this.saveCurrentGame();
     },
 
@@ -793,6 +755,7 @@ const UI = {
         AppState.undoStack = [];
         AppState.selectedBottle = null;
         AppState.hintUsed = false;
+        AppState.animating = false;
         this.startGameTimer();
         Renderer.renderBoard(AppState.game, -1);
         Renderer.updateMoveCounter(AppState.game.moves);
@@ -803,11 +766,12 @@ const UI = {
     resetGame() {
         if (!AppState.game) return;
         const game = AppState.game;
-        const colorNames = game.colorNames;
-        const emptyBottles = game.bottles.filter(b => b.length === 0).length;
-        const totalBottles = game.bottles.length;
-        const height = game.height;
-        const board = GameLogic.generateSolvableBoard(totalBottles, height, colorNames, emptyBottles);
+        const board = GameLogic.generateSolvableBoard(
+            game.bottles.length,
+            game.height,
+            game.colorNames,
+            game.bottles.filter(b => b.length === 0).length
+        );
         game.bottles = board;
         game.moves = 0;
         game.elapsedTime = 0;
@@ -816,6 +780,7 @@ const UI = {
         AppState.undoStack = [];
         AppState.selectedBottle = null;
         AppState.hintUsed = false;
+        AppState.animating = false;
         this.stopGameTimer();
         this.startGameTimer();
         Renderer.renderBoard(game, -1);
@@ -830,6 +795,7 @@ const UI = {
         AppState.game = null;
         AppState.selectedBottle = null;
         AppState.undoStack = [];
+        AppState.animating = false;
         UI.hideAllModals();
         UI.showScreen('menu');
         this.refreshContinueButton();
@@ -838,7 +804,6 @@ const UI = {
 
 // ==================== EVENT HANDLERS ====================
 function setupEventListeners() {
-    // Bottle click delegation
     Renderer.bottlesArea.addEventListener('click', (e) => {
         const bottleContainer = e.target.closest('.bottle-container');
         if (!bottleContainer) return;
@@ -848,16 +813,13 @@ function setupEventListeners() {
         }
     });
 
-    // Back button
     document.getElementById('btnBack').addEventListener('click', () => {
-        if (AppState.screen === 'difficulty' || AppState.screen === 'custom' || AppState.screen === 'stats' ||
-            AppState.screen === 'settings' || AppState.screen === 'collection') {
+        if (['difficulty', 'custom', 'stats', 'settings', 'collection'].includes(AppState.screen)) {
             UI.showScreen('menu');
             UI.refreshContinueButton();
         }
     });
 
-    // Main menu buttons
     document.getElementById('btnPlay').addEventListener('click', () => {
         UI.showScreen('difficulty');
         UI.refreshDifficultyGrid();
@@ -871,37 +833,24 @@ function setupEventListeners() {
         UI.showScreen('stats');
         updateStatsDisplay();
     });
-    document.getElementById('btnCollection').addEventListener('click', () => {
-        UI.showScreen('collection');
-    });
+    document.getElementById('btnCollection').addEventListener('click', () => UI.showScreen('collection'));
     document.getElementById('btnSettingsMenu').addEventListener('click', () => {
         UI.showScreen('settings');
         loadSettingsToForm();
     });
 
-    // Difficulty back
     document.getElementById('btnDiffBack').addEventListener('click', () => UI.showScreen('menu'));
 
-    // Game actions
     document.getElementById('btnUndo').addEventListener('click', UI.performUndo);
     document.getElementById('btnHint').addEventListener('click', UI.useHint);
     document.getElementById('btnRestart').addEventListener('click', () => {
-        if (AppState.game) {
-            if (confirm('Restart this level?')) UI.resetGame();
-        }
+        if (AppState.game && confirm('Restart this level?')) UI.resetGame();
     });
-    document.getElementById('btnQuitGame').addEventListener('click', () => {
-        UI.showModal('modalConfirmQuit');
-    });
+    document.getElementById('btnQuitGame').addEventListener('click', () => UI.showModal('modalConfirmQuit'));
 
-    // Win modal
     document.getElementById('btnNextLevel').addEventListener('click', () => {
         UI.hideAllModals();
-        if (AppState.playDifficulty) {
-            UI.startDifficultyGame(AppState.playDifficulty);
-        } else {
-            UI.startCustomGame();
-        }
+        AppState.playDifficulty ? UI.startDifficultyGame(AppState.playDifficulty) : UI.startCustomGame();
     });
     document.getElementById('btnReplayWin').addEventListener('click', () => {
         UI.hideAllModals();
@@ -912,7 +861,6 @@ function setupEventListeners() {
         UI.quitToMenu();
     });
 
-    // Deadlock modal
     document.getElementById('btnDeadlockRestart').addEventListener('click', () => {
         UI.hideAllModals();
         UI.resetGame();
@@ -920,7 +868,6 @@ function setupEventListeners() {
     document.getElementById('btnDeadlockUndo').addEventListener('click', () => {
         UI.hideAllModals();
         UI.performUndo();
-        // Re-check deadlock after undo
         if (AppState.game && GameLogic.isDeadlock(AppState.game.bottles, AppState.game.height)) {
             UI.showModal('modalDeadlock');
         } else {
@@ -932,17 +879,13 @@ function setupEventListeners() {
         UI.quitToMenu();
     });
 
-    // Confirm quit
     document.getElementById('btnConfirmQuitYes').addEventListener('click', () => {
         UI.hideAllModals();
         UI.quitToMenu();
     });
     document.getElementById('btnConfirmQuitNo').addEventListener('click', () => UI.hideAllModals());
 
-    // Confirm reset progress
-    document.getElementById('btnResetProgress').addEventListener('click', () => {
-        UI.showModal('modalConfirmReset');
-    });
+    document.getElementById('btnResetProgress').addEventListener('click', () => UI.showModal('modalConfirmReset'));
     document.getElementById('btnConfirmResetYes').addEventListener('click', () => {
         resetAllProgress();
         UI.hideAllModals();
@@ -952,8 +895,6 @@ function setupEventListeners() {
     });
     document.getElementById('btnConfirmResetNo').addEventListener('click', () => UI.hideAllModals());
 
-    // Settings buttons
-    document.getElementById('btnSettingsBack').addEventListener('click', () => UI.showScreen('menu'));
     document.getElementById('settingTheme').addEventListener('change', (e) => {
         AppState.settings.theme = e.target.value;
         applyTheme(AppState.settings.theme);
@@ -972,7 +913,6 @@ function setupEventListeners() {
         Storage.set(STORAGE_KEYS.SETTINGS, AppState.settings);
     });
 
-    // Custom game form
     document.getElementById('customBottleCount').addEventListener('input', (e) => {
         const val = e.target.value;
         document.getElementById('customBottleCountVal').textContent = val;
@@ -982,7 +922,7 @@ function setupEventListeners() {
         const val = e.target.value;
         document.getElementById('customBottleHeightVal').textContent = val;
         AppState.customGameConfig.height = parseInt(val);
-        updateCustomColorCount();
+        updateCustomColorCount();   // stub
     });
     document.getElementById('customColorCount').addEventListener('input', (e) => {
         const val = e.target.value;
@@ -1008,7 +948,6 @@ function setupEventListeners() {
             const colors = PALETTE_PRESETS[paletteName] || PALETTE_PRESETS.classic;
             AppState.customGameConfig.colors = [...colors];
             updateCustomColorEditor();
-            // Update color count slider
             document.getElementById('customColorCount').value = colors.length;
             document.getElementById('customColorCountVal').textContent = colors.length;
             Storage.set(STORAGE_KEYS.CUSTOM_GAME, AppState.customGameConfig);
@@ -1020,12 +959,9 @@ function setupEventListeners() {
     });
     document.getElementById('btnCustomBack').addEventListener('click', () => UI.showScreen('menu'));
 
-    // Stats back
     document.getElementById('btnStatsBack').addEventListener('click', () => UI.showScreen('menu'));
-    // Collection back
     document.getElementById('btnCollectionBack').addEventListener('click', () => UI.showScreen('menu'));
 
-    // Logo click for dev mode
     document.getElementById('logoGem').addEventListener('click', () => {
         AppState.logoClickCount++;
         if (AppState.logoClickTimer) clearTimeout(AppState.logoClickTimer);
@@ -1036,7 +972,6 @@ function setupEventListeners() {
         }
     });
 
-    // Developer command input
     const devInput = document.getElementById('devCommandInput');
     devInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -1047,7 +982,6 @@ function setupEventListeners() {
         }
     });
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
         switch (e.key.toUpperCase()) {
@@ -1064,11 +998,8 @@ function setupEventListeners() {
         }
     });
 
-    // Modal overlay close on click outside
     document.getElementById('modalOverlay').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) {
-            UI.hideAllModals();
-        }
+        if (e.target === e.currentTarget) UI.hideAllModals();
     });
 }
 
@@ -1086,9 +1017,8 @@ function updateCustomFormFromState() {
     document.getElementById('customAnimSpeed').value = cfg.animationSpeed;
     const labels = ['Very Slow', 'Slow', 'Normal', 'Fast', 'Very Fast'];
     document.getElementById('customAnimSpeedVal').textContent = labels[cfg.animationSpeed - 1];
-    // Palette buttons
-    const currentPalette = Object.entries(PALETTE_PRESETS).find(([k, v]) => JSON.stringify(v) === JSON.stringify(cfg.colors));
     document.querySelectorAll('.btn-palette').forEach(b => b.classList.remove('active'));
+    const currentPalette = Object.entries(PALETTE_PRESETS).find(([k, v]) => JSON.stringify(v) === JSON.stringify(cfg.colors));
     if (currentPalette) {
         const btn = document.querySelector(`.btn-palette[data-palette="${currentPalette[0]}"]`);
         if (btn) btn.classList.add('active');
@@ -1113,12 +1043,10 @@ function updateCustomColorEditor() {
 function openColorEditor(index) {
     const colorName = AppState.customGameConfig.colors[index];
     const gemColor = getGemColorData(colorName);
-    // Show modal
     document.getElementById('colorHexInput').value = gemColor.hex;
     document.getElementById('colorPickerInput').value = gemColor.hex;
     updateColorPreview(gemColor.hex);
     UI.showModal('modalColorEditor');
-    // Store current edit index
     document.getElementById('modalColorEditor')._editIndex = index;
 }
 
@@ -1134,7 +1062,6 @@ function updateColorPreview(hex) {
     `;
 }
 
-// Simple color manipulation helpers
 function lightenColor(hex, percent) {
     const num = parseInt(hex.replace('#', ''), 16);
     const r = Math.min(255, (num >> 16) + percent);
@@ -1150,7 +1077,6 @@ function darkenColor(hex, percent) {
     return `#${(0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
-// Color editor modal events
 document.getElementById('colorHexInput').addEventListener('input', (e) => {
     let hex = e.target.value;
     if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
@@ -1170,7 +1096,6 @@ document.getElementById('btnColorReset').addEventListener('click', () => {
     document.getElementById('colorHexInput').value = gemColor.hex;
     document.getElementById('colorPickerInput').value = gemColor.hex;
     updateColorPreview(gemColor.hex);
-    // Update custom config
     AppState.customGameConfig.colors[index] = defaultColor;
     updateCustomColorEditor();
 });
@@ -1184,22 +1109,11 @@ document.getElementById('btnColorApply').addEventListener('click', () => {
     const index = document.getElementById('modalColorEditor')._editIndex;
     const hex = document.getElementById('colorHexInput').value;
     if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
-        // Create or update custom gem color
-        const existing = GEM_COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase());
         let colorName;
+        const existing = GEM_COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase());
         if (existing) {
             colorName = existing.name;
         } else {
-            // Generate new color name and add to GEM_COLORS dynamically? Simpler: we'll just update the hex of existing color name? No, better to treat as custom named color.
-            // Since custom colors not in predefined list, we'll use a dynamic approach: assign a unique name and add to a custom palette.
-            // For simplicity, we'll replace the color name at that index with a custom object. But our system uses color names to map to CSS classes.
-            // We'll instead store the hex in custom config and use inline styles for gem rendering if needed. That's complex.
-            // We'll restrict to only using predefined palette colors for now, but allow editor to change hex which updates the gem preview, but for game, it uses class-based colors.
-            // So we'll just apply hex to the custom config color hex, but we need a way to render custom hex gems.
-            // To fully support arbitrary colors, we'd need to use inline styles instead of CSS classes. Let's adapt: we'll use a special class 'gem-custom' and set background via inline style.
-            // We'll implement that.
-            UI.showToast('Custom colors beyond preset palette will be applied using the closest preset. Use palette buttons for full support.');
-            // Find closest color
             let closest = GEM_COLORS[0];
             let minDist = Infinity;
             GEM_COLORS.forEach(c => {
@@ -1237,6 +1151,11 @@ function updateCustomColorsFromCount(count) {
     AppState.customGameConfig.colors = [...currentColors];
     updateCustomColorEditor();
     Storage.set(STORAGE_KEYS.CUSTOM_GAME, AppState.customGameConfig);
+}
+
+// stub for height change
+function updateCustomColorCount() {
+    // can be used to auto-adjust color count based on height if needed
 }
 
 // ==================== STATISTICS DISPLAY ====================
@@ -1351,25 +1270,18 @@ function handleDevCommand(command) {
 
 // ==================== INITIALIZATION ====================
 function init() {
-    // Apply saved theme
     applyTheme(AppState.settings.theme);
-    // Update header coins
     Renderer.updateHeaderCoins();
-    // Setup UI
     UI.refreshContinueButton = function() {
         const saved = Storage.get(STORAGE_KEYS.CURRENT_GAME);
         document.getElementById('btnContinue').style.display = saved ? 'flex' : 'none';
     };
     UI.refreshContinueButton();
-    // Set initial screen
     UI.showScreen('menu');
-    // Setup event listeners
     setupEventListeners();
-    // Listen for system theme changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         if (AppState.settings.theme === 'system') applyTheme('system');
     });
 }
 
-// Start application
 document.addEventListener('DOMContentLoaded', init);
