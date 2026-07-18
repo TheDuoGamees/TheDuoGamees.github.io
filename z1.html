@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Gemstone Sort - A beautiful gemstone sorting puzzle game">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Gemstone Sort</title>
+<style>
+    /* ==================== CSS VARIABLES & THEMES ==================== */
+:root {
+    /* Base dark theme (default) */
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #252540;
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --bg-glass-strong: rgba(255, 255, 255, 0.12);
+    --text-primary: #e8e8f0;
+    --text-secondary: #b0b0c0;
+    --text-muted: #7a7a90;
+    --accent: #ffb347;
+    --accent-glow: #ff8c42;
+    --danger: #ff5e5e;
+    --success: #4ecdc4;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    --bottle-glass: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 100%);
+    --bottle-border: rgba(255,255,255,0.25);
+    --bottle-cap: #a0a0b0;
+    --gem-shine: rgba(255,255,255,0.3);
+    --dialog-bg: #1e1e32;
+    --dialog-shadow: 0 16px 48px rgba(0,0,0,0.7);
+    --input-bg: #2a2a40;
+    --btn-primary-bg: linear-gradient(135deg, #ffb347, #ff8c42);
+    --btn-primary-text: #0a0a0a;
+    --btn-secondary-bg: rgba(255,255,255,0.1);
+    --btn-secondary-text: #e8e8f0;
+    --toast-bg: #252540;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f0f0f5;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e8e8f0;
+    --bg-glass: rgba(0, 0, 0, 0.03);
+    --bg-glass-strong: rgba(0, 0, 0, 0.08);
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a60;
+    --text-muted: #7a7a90;
+    --accent: #ff7f00;
+    --accent-glow: #cc6600;
+    --danger: #d32f2f;
+    --success: #2e7d32;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
+    --bottle-glass: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.2) 100%);
+    --bottle-border: rgba(0,0,0,0.3);
+    --bottle-cap: #666677;
+    --gem-shine: rgba(255,255,255,0.5);
+    --dialog-bg: #ffffff;
+    --dialog-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    --input-bg: #f0f0f5;
+    --btn-primary-bg: linear-gradient(135deg, #ff7f00, #e65c00);
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: rgba(0,0,0,0.08);
+    --btn-secondary-text: #1a1a2e;
+    --toast-bg: #ffffff;
+}
+
+/* ==================== GLOBAL RESET ==================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==================== APP CONTAINER ==================== */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ==================== TOP BAR ==================== */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    z-index: 10;
+    flex-shrink: 0;
+    gap: 0.5rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+.logo-area:hover {
+    background: var(--bg-glass);
+}
+
+.logo-gem {
+    font-size: 1.6rem;
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.logo-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.diamond-display {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--bg-glass-strong);
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+}
+.diamond-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+}
+.diamond-count {
+    color: var(--text-primary);
+}
+
+.icon-btn {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+    padding: 0;
+    line-height: 1;
+}
+.icon-btn:hover, .icon-btn:focus-visible {
+    background: var(--bg-glass-strong);
+    transform: scale(1.05);
+    outline: none;
+}
+.icon-btn:active {
+    transform: scale(0.95);
+}
+.nav-btn {
+    width: 2.2rem;
+    height: 2.2rem;
+}
+.icon {
+    display: block;
+}
+
+/* ==================== GAME INFO BAR ==================== */
+.game-info-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+.info-label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.info-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent);
+}
+
+/* ==================== GAME AREA (BOTTLE RACK) ==================== */
+.game-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem 0.5rem;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background: var(--bg-primary);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bottle-rack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+    max-width: 700px;
+    align-content: flex-start;
+}
+
+/* ==================== BOTTLE STYLES ==================== */
+.bottle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    outline: none;
+}
+.bottle-wrapper:focus-visible {
+    transform: translateY(-5px);
+}
+.bottle-wrapper:focus-visible .bottle {
+    box-shadow: 0 0 0 3px var(--accent), var(--shadow-md);
+}
+
+.bottle {
+    width: 4.2rem;
+    height: auto;
+    min-height: 10rem;
+    background: var(--bottle-glass);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 2px solid var(--bottle-border);
+    border-radius: 0.8rem 0.8rem 2rem 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    padding-bottom: 0.2rem;
+    box-shadow: var(--shadow-md), inset 0 0 10px rgba(255,255,255,0.05);
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.bottle-cap {
+    width: 75%;
+    height: 0.5rem;
+    background: var(--bottle-cap);
+    border-radius: 0.3rem 0.3rem 0 0;
+    margin: -0.1rem auto 0;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+.bottle.selected {
+    transform: translateY(-12px);
+    box-shadow: 0 0 0 3px var(--accent), 0 12px 24px rgba(0,0,0,0.4);
+    border-color: var(--accent);
+}
+
+/* Gemstone inside bottle */
+.gem {
+    width: 85%;
+    height: 2rem;
+    margin: 0.1rem auto;
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4), inset 0 1px 0 var(--gem-shine);
+    transition: all 0.2s;
+    transform: translateZ(0);
+}
+.gem::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 15%;
+    right: 15%;
+    height: 30%;
+    background: var(--gem-shine);
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+/* Gem color classes will be applied via JS inline style or predefined classes for common palettes */
+/* But for generic, JS sets background. We'll add a generic shimmer */
+
+/* ==================== SELECTION INDICATOR ==================== */
+.selection-indicator {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+.selection-indicator.active {
+    opacity: 0.2;
+}
+
+/* ==================== ACTION BAR ==================== */
+.action-bar {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    min-width: 4.5rem;
+}
+.action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.action-btn:hover:not(:disabled), .action-btn:focus-visible:not(:disabled) {
+    background: var(--bg-glass-strong);
+    transform: translateY(-2px);
+    outline: none;
+}
+.action-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+.action-icon {
+    font-size: 1.3rem;
+}
+.action-text {
+    font-weight: 600;
+}
+
+/* ==================== SCREENS (Difficulty, etc.) ==================== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 1rem;
+    z-index: 20;
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.screen.hidden {
+    display: none;
+}
+.screen-content {
+    width: 100%;
+    max-width: 500px;
+}
+
+.screen-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--text-primary);
+}
+
+.difficulty-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.difficulty-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    width: 100%;
+}
+.difficulty-btn.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.difficulty-btn.unlocked:hover, .difficulty-btn.unlocked:focus-visible {
+    border-color: var(--accent);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+    outline: none;
+}
+.difficulty-btn .unlock-info {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* ==================== DIALOGS / OVERLAYS ==================== */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease;
+}
+.dialog-overlay[hidden] {
+    display: none;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.dialog-panel {
+    background: var(--dialog-bg);
+    border-radius: 24px;
+    box-shadow: var(--dialog-shadow);
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border-color);
+}
+.dialog-panel-wide {
+    max-width: 520px;
+}
+.dialog-panel-sm {
+    max-width: 340px;
+}
+.dialog-panel-celebration {
+    background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+    border-color: var(--accent);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.dialog-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+.dialog-close-btn {
+    flex-shrink: 0;
+}
+
+.dialog-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ==================== SETTINGS / FORM ROWS ==================== */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.setting-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    min-width: 100px;
+}
+.setting-select, .setting-input {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.setting-select:focus, .setting-input:focus {
+    border-color: var(--accent);
+}
+.setting-range {
+    flex: 1;
+    accent-color: var(--accent);
+}
+.setting-value {
+    min-width: 45px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--accent);
+}
+.setting-row-danger {
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+.btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 140, 66, 0.4);
+    outline: none;
+}
+.btn-secondary {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--border-color);
+}
+.btn-secondary:hover, .btn-secondary:focus-visible {
+    background: var(--bg-glass-strong);
+    outline: none;
+}
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 94, 94, 0.3);
+}
+.btn-danger:hover, .btn-danger:focus-visible {
+    background: #ff4040;
+    transform: translateY(-2px);
+    outline: none;
+}
+
+/* ==================== CUSTOM GAME & COLOR EDITOR SPECIFIC ==================== */
+.validation-msg {
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: rgba(255, 94, 94, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    border-left: 3px solid var(--danger);
+}
+
+.color-editor-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+.color-editor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--bg-glass);
+    border-radius: 12px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    width: 80px;
+}
+.color-editor-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid white;
+}
+.color-editor-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ==================== STATISTICS GRID ==================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+.stat-item {
+    background: var(--bg-glass);
+    border-radius: 12px;
+    padding: 0.75rem;
+    text-align: center;
+}
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ==================== WIN DIALOG ==================== */
+.celebration-title {
+    font-size: 1.8rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--accent), #ffcc00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+.celebration-body {
+    text-align: center;
+}
+.win-stats {
+    background: var(--bg-glass);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.win-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-color);
+}
+.win-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ==================== TOAST ==================== */
+.toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--toast-bg);
+    color: var(--text-primary);
+    padding: 0.7rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    z-index: 200;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2s forwards;
+    white-space: nowrap;
+}
+.toast[hidden] {
+    display: none;
+}
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+    to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* ==================== HINT OVERLAY ==================== */
+.hint-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 15;
+}
+.hint-glow {
+    position: absolute;
+    border-radius: 20px;
+    box-shadow: 0 0 0 4px var(--accent), 0 0 30px var(--accent-glow);
+    animation: hintPulse 1s infinite alternate;
+    pointer-events: none;
+}
+@keyframes hintPulse {
+    from { box-shadow: 0 0 0 4px var(--accent), 0 0 20px var(--accent-glow); }
+    to { box-shadow: 0 0 0 8px var(--accent), 0 0 40px var(--accent-glow); }
+}
+
+/* ==================== ANIMATIONS ==================== */
+.shake {
+    animation: shake 0.4s ease;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+.pour-animation {
+    animation: pourUp 0.4s ease-in-out forwards;
+}
+@keyframes pourUp {
+    0% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-15px); opacity: 0.8; }
+    100% { transform: translateY(-25px); opacity: 0; }
+}
+
+.gem-exit {
+    animation: gemExit 0.3s ease-in forwards;
+}
+@keyframes gemExit {
+    to { transform: translateY(-30px); opacity: 0; }
+}
+.gem-enter {
+    animation: gemEnter 0.3s ease-out;
+}
+@keyframes gemEnter {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 600px) {
+    .bottle {
+        width: 3.5rem;
+        min-height: 8rem;
+    }
+    .gem {
+        height: 1.6rem;
+    }
+    .bottle-rack {
+        gap: 0.75rem;
+    }
+    .action-bar {
+        gap: 0.8rem;
+    }
+    .action-btn {
+        padding: 0.4rem 0.6rem;
+        min-width: 3.5rem;
+        font-size: 0.7rem;
+    }
+    .top-bar {
+        padding: 0.5rem 0.75rem;
+    }
+    .logo-text {
+        font-size: 1.1rem;
+    }
+    .diamond-display {
+        padding: 0.3rem 0.5rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .bottle {
+        width: 2.8rem;
+        min-height: 7rem;
+    }
+    .gem {
+        height: 1.4rem;
+    }
+    .bottle-rack {
+        gap: 0.5rem;
+    }
+    .game-info-bar {
+        font-size: 0.75rem;
+    }
+}
+
+/* Landscape adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+    .top-bar {
+        padding: 0.3rem 0.75rem;
+    }
+    .game-area {
+        padding: 0.4rem;
+    }
+    .bottle-rack {
+        gap: 0.5rem;
+    }
+    .action-bar {
+        padding: 0.4rem;
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+/* Ensure touch targets are large enough */
+button, .bottle-wrapper, select, input[type="range"] {
+    min-width: 44px;
+    min-height: 44px;
+}
+</style>
+</head>
+<body>
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div id="app-container" class="app-container">
+
+        <!-- ==================== HEADER / TOP BAR ==================== -->
+        <header id="top-bar" class="top-bar" role="banner">
+            <button id="btn-back" class="icon-btn nav-btn" aria-label="Back to menu" title="Back to menu" tabindex="0">
+                <span class="icon icon-back">◀</span>
+            </button>
+
+            <div id="logo-area" class="logo-area" title="Gemstone Sort">
+                <span class="logo-gem">💎</span>
+                <h1 class="logo-text">Gemstone Sort</h1>
+            </div>
+
+            <div class="top-bar-right">
+                <div id="diamond-display" class="diamond-display" title="Diamonds">
+                    <span class="diamond-icon">💎</span>
+                    <span id="diamond-count" class="diamond-count">0</span>
+                </div>
+                <button id="btn-settings" class="icon-btn" aria-label="Settings" title="Settings" tabindex="0">
+                    <span class="icon icon-settings">⚙️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================== GAME INFO BAR ==================== -->
+        <div id="game-info-bar" class="game-info-bar" role="status" aria-live="polite">
+            <div class="info-item">
+                <span class="info-label" data-i18n="moves">Moves</span>
+                <span id="move-counter" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="time">Time</span>
+                <span id="time-display" class="info-value">00:00</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="difficulty">Difficulty</span>
+                <span id="difficulty-label" class="info-value">Noob</span>
+            </div>
+        </div>
+
+        <!-- ==================== MAIN GAME AREA ==================== -->
+        <main id="game-area" class="game-area" role="main" aria-label="Game board">
+            <div id="bottle-rack" class="bottle-rack" role="group" aria-label="Bottles">
+                <!-- Bottles are dynamically rendered here -->
+            </div>
+
+            <!-- Selection indicator -->
+            <div id="selection-indicator" class="selection-indicator" aria-hidden="true"></div>
+        </main>
+
+        <!-- ==================== GAME ACTION BAR ==================== -->
+        <div id="action-bar" class="action-bar" role="toolbar" aria-label="Game actions">
+            <button id="btn-undo" class="action-btn" aria-label="Undo last move" title="Undo (U)" tabindex="0" disabled>
+                <span class="action-icon">↩</span>
+                <span class="action-text" data-i18n="undo">Undo</span>
+            </button>
+            <button id="btn-restart" class="action-btn" aria-label="Restart puzzle" title="Restart (R)" tabindex="0">
+                <span class="action-icon">↻</span>
+                <span class="action-text" data-i18n="restart">Restart</span>
+            </button>
+            <button id="btn-hint" class="action-btn" aria-label="Get hint" title="Hint (H)" tabindex="0">
+                <span class="action-icon">💡</span>
+                <span class="action-text" data-i18n="hint">Hint</span>
+            </button>
+        </div>
+
+        <!-- ==================== DIFFICULTY SELECT SCREEN ==================== -->
+        <div id="difficulty-screen" class="screen difficulty-screen" role="region" aria-label="Difficulty selection">
+            <div class="screen-content">
+                <h2 class="screen-title" data-i18n="select_difficulty">Select Difficulty</h2>
+                <div id="difficulty-list" class="difficulty-list" role="list">
+                    <!-- Dynamically filled -->
+                </div>
+                <button id="btn-custom-game" class="btn btn-secondary" data-i18n="custom_game" tabindex="0">
+                    🛠️ Custom Game
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== SETTINGS DIALOG ==================== -->
+        <div id="settings-dialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-label="Settings" hidden>
+            <div class="dialog-panel">
+                <div class="dialog-header">
+                    <h2 class="dialog-title" data-i18n="settings">Settings</h2>
+                    <button id="btn-close-settings" class="icon-btn dialog-close-btn" aria-label="Close settings" tabindex="0">✕</button>
+                </div>
+                <div class="dialog-body">
+                    <!-- Theme -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="theme">Theme</label>
+                        <select id="setting-theme" class="setting-select" aria-label="Theme selection" tabindex="0">
+                            <option value="dark" data-i18n="theme_dark">Dark</option>
+                            <option value="light" data-i18n="theme_light">Light</option>
+                            <option value="system" data-i18n="theme_system">System</option>
+                        </select>
+                    </div>
+                    <!-- Language -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="language">Language</label>
+                        <select id="setting-language" class="setting-select" aria-label="Language selection" tabindex="0">
+                            <option value="en" data-i18n="lang_en">English</option>
+                            <option value="ru" data-i18n="lang_ru">Русский</option>
+                        </select>  <span id="music-value" class="setting-value">50%</span>
+                    </div>
+                    <!-- Sound -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="sound">Sound</label>
+                        <input type="range" id="setting-sound" class="setting-range" min="0" max="100" value="70" step="1" aria-label="Sound volume" tabindex="0">
+                        <span id="sound-value" class="setting-value">70%</span>
+                    </div>
+                    <!-- Animation Speed -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="anim_speed">Animation Speed</label>
+                        <select id="setting-anim-speed" class="setting-select" aria-label="Animation speed" tabindex="0">
+                            <option value="0.5" data-i18n="speed_slow">Slow</option>
+                            <option value="1" data-i18n="speed_normal" selected>Normal</option>
+                            <option value="1.5" data-i18n="speed_fast">Fast</option>
+                            <option value="2.5" data-i18n="speed_ultra">Ultra Fast</option>
+                        </select>
+                    </div>
+                    <!-- Reset Progress -->
+                    <div class="setting-row setting-row-danger">
+                        <button id="btn-reset-progress" class="btn btn-danger" data-i18n="reset_progress" tabindex="0">
+                            🔄 Reset Progress
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CUSTOM GAME DIALOG ==================== -->
+        <div id="custom-game-dialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-label="Custom Game" hidden>
+            <div class="dialog-panel dialog-panel-wide">
+                <div class="dialog-header">
+                    <h2 class="dialog-title" data-i18n="custom_game_title">Custom Game</h2>
+                    <button id="btn-close-custom" class="icon-btn dialog-close-btn" aria-label="Close" tabindex="0">✕</button>
+                </div>
+                <div class="dialog-body">
+                    <!-- Bottle Count -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="bottle_count">Bottle Count</label>
+                        <input type="number" id="custom-bottle-count" class="setting-input" min="3" max="20" value="7" step="1" aria-label="Bottle count" tabindex="0">
+                    </div>
+                    <!-- Bottle Height -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="bottle_height">Bottle Height</label>
+                        <input type="number" id="custom-bottle-height" class="setting-input" min="2" max="8" value="4" step="1" aria-label="Bottle height" tabindex="0">
+                    </div>
+                    <!-- Number of Colors -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="num_colors">Number of Colors</label>
+                        <input type="number" id="custom-num-colors" class="setting-input" min="2" max="16" value="5" step="1" aria-label="Number of colors" tabindex="0">
+                    </div>
+                    <!-- Empty Bottles -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="empty_bottles">Empty Bottles</label>
+                        <input type="number" id="custom-empty-bottles" class="setting-input" min="1" max="10" value="2" step="1" aria-label="Empty bottles" tabindex="0">
+                    </div>
+                    <!-- Palette -->
+                    <div class="setting-row">
+                        <label class="setting-label" data-i18n="palette">Palette</label>
+                        <select id="custom-palette" class="setting-select" aria-label="Color palette" tabindex="0">
+                            <option value="classic" data-i18n="palette_classic">Classic</option>
+                            <option value="ocean" data-i18n="palette_ocean">Ocean</option>
+                            <option value="neon" data-i18n="palette_neon">Neon</option>
+                            <option value="pastel" data-i18n="palette_pastel">Pastel</option>
+                        </select>
+                    </div>
+                    <!-- Validation message -->
+                    <div id="custom-validation-msg" class="validation-msg" role="alert" aria-live="assertive" hidden></div>
+                    <!-- Color Editor Trigger -->
+                    <button id="btn-open-color-editor" class="btn btn-secondary" data-i18n="edit_colors" tabindex="0">
+                        🎨 Edit Colors
+                    </button>
+                    <!-- Start button -->
+                    <button id="btn-start-custom" class="btn btn-primary" data-i18n="start_game" tabindex="0">
+                        ▶ Start Game
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== COLOR EDITOR DIALOG ==================== -->
+        <div id="color-editor-dialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-label="Color Editor" hidden>
+            <div class="dialog-panel dialog-panel-wide">
+                <div class="dialog-header">
+                    <h2 class="dialog-title" data-i18n="color_editor">Color Editor</h2>
+                    <button id="btn-close-color-editor" class="icon-btn dialog-close-btn" aria-label="Close" tabindex="0">✕</button>
+                </div>
+                <div class="dialog-body">
+                    <div id="color-editor-list" class="color-editor-list" role="list">
+                        <!-- Dynamically filled -->
+                    </div>
+                    <div class="color-editor-actions">
+                        <button id="btn-randomize-colors" class="btn btn-secondary" data-i18n="randomize" tabindex="0">🎲 Randomize</button>
+                        <button id="btn-reset-colors" class="btn btn-secondary" data-i18n="reset_colors" tabindex="0">↺ Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== STATISTICS DIALOG ==================== -->
+        <div id="statistics-dialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-label="Statistics" hidden>
+            <div class="dialog-panel">
+                <div class="dialog-header">
+                    <h2 class="dialog-title" data-i18n="statistics">Statistics</h2>
+                    <button id="btn-close-stats" class="icon-btn dialog-close-btn" aria-label="Close" tabindex="0">✕</button>
+                </div>
+                <div class="dialog-body">
+                    <div id="stats-content" class="stats-grid">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== WIN DIALOG ==================== -->
+        <div id="win-dialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-label="Puzzle Complete" hidden>
+            <div class="dialog-panel dialog-panel-celebration">
+                <div class="dialog-header">
+                    <h2 class="dialog-title celebration-title" data-i18n="puzzle_complete">🎉 Puzzle Complete!</h2>
+                    <button id="btn-close-win" class="icon-btn dialog-close-btn" aria-label="Close" tabindex="0">✕</button>
+                </div>
+                <div class="dialog-body celebration-body">
+                    <div class="win-stats">
+                        <div class="win-stat-row"><span data-i18n="moves">Moves:</span> <span id="win-moves">0</span></div>
+                        <div class="win-stat-row"><span data-i18n="time">Time:</span> <span id="win-time">00:00</span></div>
+                        <div class="win-stat-row"><span>💎</span> <span data-i18n="diamonds_earned">Diamonds Earned:</span> <span id="win-diamonds">0</span></div>
+                    </div>
+                    <div class="win-actions">
+                        <button id="btn-next-level" class="btn btn-primary" data-i18n="next_level" tabindex="0">▶ Next Level</button>
+                        <button id="btn-replay" class="btn btn-secondary" data-i18n="replay" tabindex="0">↻ Replay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CONFIRMATION DIALOG ==================== -->
+        <div id="confirm-dialog" class="dialog-overlay" role="alertdialog" aria-modal="true" aria-label="Confirm" hidden>
+            <div class="dialog-panel dialog-panel-sm">
+                <div class="dialog-header">
+                    <h2 id="confirm-title" class="dialog-title">Confirm</h2>
+                </div>
+                <div class="dialog-body">
+                    <p id="confirm-message"></p>
+                    <div class="confirm-actions">
+                        <button id="btn-confirm-yes" class="btn btn-danger" tabindex="0">Yes</button>
+                        <button id="btn-confirm-no" class="btn btn-secondary" tabindex="0">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TOAST NOTIFICATION ==================== -->
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+            <span id="toast-message"></span>
+        </div>
+
+        <!-- ==================== HINT HIGHLIGHT OVERLAY ==================== -->
+        <div id="hint-overlay" class="hint-overlay" aria-hidden="true" hidden></div>
+
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>/**
+ * Gemstone Sort — Complete Game Script
+ * ==========================================
+ * Architecture: Modular vanilla JS, no frameworks
+ * Sections: Constants, i18n, Utils, Storage, Sound,
+ *           State, Generator, Logic, Renderer, Animations,
+ *           UI, Events, Settings, Stats, DevMode, Init
+ */
+
+// ==================== CONSTANTS ====================
+const PALETTES = {
+    classic: ['#E63946', '#F4A261', '#2A9D8F', '#264653', '#E9C46A', '#D62828', '#457B9D', '#1D3557',
+              '#F77F00', '#FCBF49', '#06D6A0', '#118AB2', '#073B4C', '#EF476F', '#FFD166', '#83D483'],
+    ocean: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#03045E', '#023E8A', '#0096C7', '#48CAE4',
+            '#0A9396', '#94D2BD', '#E9D8A6', '#EE9B00', '#BB3E03', '#9B2226', '#005F73', '#0A9396'],
+    neon: ['#FF006E', '#FB5607', '#FFBE0B', '#8338EC', '#3A86FF', '#FF0A54', '#FF477E', '#FF85A1',
+           '#FFD166', '#06D6A0', '#118AB2', '#073B4C', '#F15BB5', '#9B5DE5', '#FEE440', '#00F5D4'],
+    pastel: ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E8B7D4', '#C9C9FF', '#BDE0FE',
+             '#A2D2FF', '#FAD2E1', '#FDE2E4', '#E2ECE9', '#D0F4DE', '#F8EDEB', '#F9DCC4', '#FEC89A']
+};
+
+const DIFFICULTY_CONFIG = {
+    noob:    { numColors: 3, emptyBottles: 2, bottleHeight: 4, shuffleMoves: 1000, minSolvingLength: 3 },
+    easy:    { numColors: 5, emptyBottles: 2, bottleHeight: 4, shuffleMoves: 1500, minSolvingLength: 6 },
+    medium:  { numColors: 7, emptyBottles: 2, bottleHeight: 4, shuffleMoves: 2000, minSolvingLength: 10 },
+    mediumplus: { numColors: 8, emptyBottles: 2, bottleHeight: 5, shuffleMoves: 2200, minSolvingLength: 13 },
+    hard:    { numColors: 10, emptyBottles: 2, bottleHeight: 5, shuffleMoves: 2500, minSolvingLength: 16 },
+    devil:   { numColors: 12, emptyBottles: 3, bottleHeight: 5, shuffleMoves: 3000, minSolvingLength: 22 }
+};
+
+const DEFAULT_SETTINGS = {
+    theme: 'dark',
+    language: 'en',
+    musicVolume: 50,
+    soundVolume: 70,
+    animSpeed: 1
+};
+
+// ==================== INTERNATIONALIZATION (i18n) ====================
+const TRANSLATIONS = {
+    en: {
+        moves: 'Moves',
+        time: 'Time',
+        difficulty: 'Difficulty',
+        undo: 'Undo',
+        restart: 'Restart',
+        hint: 'Hint',
+        select_difficulty: 'Select Difficulty',
+        custom_game: '🛠️ Custom Game',
+        settings: 'Settings',
+        theme: 'Theme',
+        theme_dark: 'Dark',
+        theme_light: 'Light',
+        theme_system: 'System',
+        language: 'Language',
+        lang_en: 'English',
+        lang_ru: 'Русский',
+        music: 'Music',
+        sound: 'Sound',
+        anim_speed: 'Animation Speed',
+        speed_slow: 'Slow',
+        speed_normal: 'Normal',
+        speed_fast: 'Fast',
+        speed_ultra: 'Ultra Fast',
+        reset_progress: '🔄 Reset Progress',
+        custom_game_title: 'Custom Game',
+        bottle_count: 'Bottle Count',
+        bottle_height: 'Bottle Height',
+        num_colors: 'Number of Colors',
+        empty_bottles: 'Empty Bottles',
+        palette: 'Palette',
+        palette_classic: 'Classic',
+        palette_ocean: 'Ocean',
+        palette_neon: 'Neon',
+        palette_pastel: 'Pastel',
+        edit_colors: '🎨 Edit Colors',
+        start_game: '▶ Start Game',
+        color_editor: 'Color Editor',
+        randomize: '🎲 Randomize',
+        reset_colors: '↺ Reset',
+        statistics: 'Statistics',
+        puzzle_complete: '🎉 Puzzle Complete!',
+        diamonds_earned: 'Diamonds Earned',
+        next_level: '▶ Next Level',
+        replay: '↻ Replay',
+        games_played: 'Games Played',
+        games_won: 'Games Won',
+        win_rate: 'Win Rate',
+        best_time: 'Best Time',
+        avg_time: 'Average Time',
+        fewest_moves: 'Fewest Moves',
+        win_streak: 'Win Streak',
+        best_streak: 'Best Streak',
+        hints_used: 'Hints Used',
+        coins: 'Coins',
+        confirm_reset: 'Are you sure you want to reset all progress? This cannot be undone.',
+        validation_impossible: 'Invalid configuration:',
+        validation_bottle_count: 'Bottle count must be at least (colors + empty bottles).',
+        validation_empty: 'At least 1 empty bottle required.',
+        validation_duplicate_colors: 'All colors must be unique.',
+        validation_capacity: 'Not enough total space.',
+        unlock_next: 'Complete {} more {difficulty} levels to unlock next.',
+        locked: 'Locked',
+        noob: 'Noob',
+        easy: 'Easy',
+        medium: 'Medium',
+        mediumplus: 'Medium+',
+        hard: 'Hard',
+        devil: 'Devil'
+    },
+    ru: {
+        moves: 'Ходы',
+        time: 'Время',
+        difficulty: 'Сложность',
+        undo: 'Отмена',
+        restart: 'Заново',
+        hint: 'Подсказка',
+        select_difficulty: 'Выберите сложность',
+        custom_game: '🛠️ Своя игра',
+        settings: 'Настройки',
+        theme: 'Тема',
+        theme_dark: 'Тёмная',
+        theme_light: 'Светлая',
+        theme_system: 'Системная',
+        language: 'Язык',
+        lang_en: 'English',
+        lang_ru: 'Русский',
+        music: 'Музыка',
+        sound: 'Звук',
+        anim_speed: 'Скорость анимации',
+        speed_slow: 'Медленно',
+        speed_normal: 'Нормально',
+        speed_fast: 'Быстро',
+        speed_ultra: 'Очень быстро',
+        reset_progress: '🔄 Сбросить прогресс',
+        custom_game_title: 'Своя игра',
+        bottle_count: 'Кол-во флаконов',
+        bottle_height: 'Высота флакона',
+        num_colors: 'Кол-во цветов',
+        empty_bottles: 'Пустые флаконы',
+        palette: 'Палитра',
+        palette_classic: 'Классика',
+        palette_ocean: 'Океан',
+        palette_neon: 'Неон',
+        palette_pastel: 'Пастель',
+        edit_colors: '🎨 Редактировать цвета',
+        start_game: '▶ Начать игру',
+        color_editor: 'Редактор цветов',
+        randomize: '🎲 Случайно',
+        reset_colors: '↺ Сброс',
+        statistics: 'Статистика',
+        puzzle_complete: '🎉 Головоломка решена!',
+        diamonds_earned: 'Заработано алмазов',
+        next_level: '▶ Следующий уровень',
+        replay: '↻ Повторить',
+        games_played: 'Сыграно игр',
+        games_won: 'Выиграно',
+        win_rate: 'Процент побед',
+        best_time: 'Лучшее время',
+        avg_time: 'Среднее время',
+        fewest_moves: 'Мин. ходов',
+        win_streak: 'Серия побед',
+        best_streak: 'Лучшая серия',
+        hints_used: 'Подсказок',
+        coins: 'Монеты',
+        confirm_reset: 'Вы уверены, что хотите сбросить весь прогресс? Это действие необратимо.',
+        validation_impossible: 'Невозможная конфигурация:',
+        validation_bottle_count: 'Флаконов должно быть не менее (цвета + пустые).',
+        validation_empty: 'Нужен хотя бы 1 пустой флакон.',
+        validation_duplicate_colors: 'Все цвета должны быть уникальными.',
+        validation_capacity: 'Не хватает общего места.',
+        unlock_next: 'Пройдите ещё {} уровней на {difficulty}, чтобы открыть следующий.',
+        locked: 'Заблокировано',
+        noob: 'Новичок',
+        easy: 'Лёгкий',
+        medium: 'Средний',
+        mediumplus: 'Средний+',
+        hard: 'Сложный',
+        devil: 'Дьявол'
+    }
+};
+
+// ==================== UTILITY FUNCTIONS ====================
+function deepCopy(arr) {
+    return arr.map(inner => [...inner]);
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function bottlesToString(bottles) {
+    return bottles.map(b => b.join(',')).join('|');
+}
+
+// ==================== STORAGE MANAGER ====================
+const Storage = {
+    get(key, fallback = null) {
+        try {
+            const raw = localStorage.getItem(`gemSort_${key}`);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+            return fallback;
+        }
+    },
+    set(key, value) {
+        try {
+            localStorage.setItem(`gemSort_${key}`, JSON.stringify(value));
+        } catch (e) {}
+    },
+    remove(key) {
+        localStorage.removeItem(`gemSort_${key}`);
+    }
+};
+
+// ==================== SOUND MANAGER (Web Audio API) ====================
+let audioCtx = null;
+function getAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.1) {
+    const settings = Storage.get('settings', DEFAULT_SETTINGS);
+    if (settings.soundVolume === 0) return;
+    try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(volume * (settings.soundVolume / 100), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + duration);
+    } catch (e) {}
+}
+
+const Sound = {
+    click() { playTone(800, 0.1, 'square', 0.08); },
+    pour() { playTone(300, 0.2, 'triangle', 0.12); },
+    invalid() { playTone(200, 0.3, 'sawtooth', 0.1); },
+    win() { playTone(523, 0.15, 'sine', 0.12); setTimeout(() => playTone(659, 0.15, 'sine', 0.12), 150); setTimeout(() => playTone(784, 0.2, 'sine', 0.15), 300); },
+    unlock() { playTone(600, 0.1, 'sine', 0.1); setTimeout(() => playTone(900, 0.15, 'sine', 0.12), 100); }
+};
+
+// ==================== GAME STATE ====================
+const gameState = {
+    difficulty: null,          // string key or 'custom'
+    customConfig: null,
+    bottles: [],               // Array of arrays of color strings
+    originalColors: [],        // Colors used for generating this puzzle
+    moveCount: 0,
+    history: [],               // Stack of previous bottle states
+    timerSeconds: 0,
+    timerInterval: null,
+    isGameActive: false,
+    selectedBottle: -1,        // index
+    undoCount: 0,
+    hintUsed: false,
+    moveInProgress: false      // lock during animation
+};
+
+// ==================== STATISTICS ====================
+const defaultStats = {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    bestTime: null,
+    totalTime: 0,
+    fewestMoves: null,
+    currentWinStreak: 0,
+    bestWinStreak: 0,
+    hintsUsedTotal: 0,
+    diamonds: 0
+};
+
+let stats = Storage.get('stats', defaultStats);
+
+function saveStats() {
+    Storage.set('stats', stats);
+}
+
+// Unlock progress: track completed levels per difficulty
+const unlockRequirements = {
+    noob: 3,
+    easy: 5,
+    medium: 5,
+    mediumplus: 5,
+    hard: 5
+};
+
+let progress = Storage.get('progress', {
+    completed: { noob: 0, easy: 0, medium: 0, mediumplus: 0, hard: 0 }
+});
+
+function saveProgress() {
+    Storage.set('progress', progress);
+}
+
+// ==================== PUZZLE GENERATOR (Reverse Moves) ====================
+function generatePuzzle(difficultyKey, customConfig = null) {
+    let config;
+    if (difficultyKey === 'custom' && customConfig) {
+        config = {
+            numColors: customConfig.numColors,
+            emptyBottles: customConfig.emptyBottles,
+            bottleHeight: customConfig.bottleHeight,
+            shuffleMoves: 2500,  // plenty for custom
+            minSolvingLength: 8
+        };
+    } else {
+        config = DIFFICULTY_CONFIG[difficultyKey];
+        if (!config) throw new Error('Unknown difficulty');
+    }
+
+    const colors = customConfig ? customConfig.colors : PALETTES.classic.slice(0, config.numColors);
+    const bottleHeight = config.bottleHeight;
+    const numColors = config.numColors;
+    const emptyBottles = config.emptyBottles;
+    const totalBottles = numColors + emptyBottles;
+
+    // Create solved board: each color bottle completely filled
+    let bottles = [];
+    for (let i = 0; i < numColors; i++) {
+        const bottle = Array(bottleHeight).fill(colors[i]);
+        bottles.push(bottle);
+    }
+    // Add empty bottles
+    for (let i = 0; i < emptyBottles; i++) {
+        bottles.push([]);
+    }
+
+    // Shuffle by performing legal moves
+    const maxMoves = config.shuffleMoves;
+    const visited = new Set();
+    visited.add(bottlesToString(bottles));
+    let lastMove = null;
+
+    for (let move = 0; move < maxMoves; move++) {
+        // Get all possible moves
+        const possibleMoves = [];
+        for (let from = 0; from < bottles.length; from++) {
+            if (bottles[from].length === 0) continue;
+            const topColor = bottles[from][bottles[from].length - 1];
+            // Count continuous group size
+            let groupSize = 0;
+            for (let i = bottles[from].length - 1; i >= 0 && bottles[from][i] === topColor; i--) {
+                groupSize++;
+            }
+            for (let to = 0; to < bottles.length; to++) {
+                if (from === to) continue;
+                if (bottles[to].length + groupSize > bottleHeight) continue;
+                if (bottles[to].length === 0 || bottles[to][bottles[to].length - 1] === topColor) {
+                    // Avoid immediate reverse move
+                    if (lastMove && lastMove.from === to && lastMove.to === from && lastMove.color === topColor) continue;
+                    possibleMoves.push({ from, to, groupSize, color: topColor });
+                }
+            }
+        }
+
+        if (possibleMoves.length === 0) break;
+
+        // Pick random move
+        const chosen = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+
+        // Execute move
+        const fromBottle = bottles[chosen.from];
+        const movingGems = fromBottle.splice(fromBottle.length - chosen.groupSize, chosen.groupSize);
+        bottles[chosen.to].push(...movingGems);
+
+        const stateStr = bottlesToString(bottles);
+        // Avoid revisiting states (cycle prevention)
+        if (visited.has(stateStr)) {
+            // Revert
+            bottles[chosen.to].splice(bottles[chosen.to].length - chosen.groupSize, chosen.groupSize);
+            bottles[chosen.from].push(...movingGems);
+            continue;
+        }
+        visited.add(stateStr);
+        lastMove = { from: chosen.to, to: chosen.from, color: chosen.color }; // store reverse
+
+        // Periodically check if almost solved and reject early (but we'll do final check)
+    }
+
+    // Final check: reject if too many bottles already sorted
+    let sortedCount = 0;
+    for (const bottle of bottles) {
+        if (bottle.length === bottleHeight && new Set(bottle).size === 1) sortedCount++;
+        else if (bottle.length === 0) sortedCount++; // empty counts as sorted
+    }
+    if (sortedCount >= totalBottles - 1) {
+        // Almost solved, try again with more moves or different seed
+        return generatePuzzle(difficultyKey, customConfig);
+    }
+
+    return { bottles, colors };
+}
+
+// ==================== GAME LOGIC ====================
+function canMove(fromIdx, toIdx) {
+    if (fromIdx === toIdx) return false;
+    const fromBottle = gameState.bottles[fromIdx];
+    if (fromBottle.length === 0) return false;
+    const topColor = fromBottle[fromBottle.length - 1];
+    // Count continuous group
+    let groupSize = 0;
+    for (let i = fromBottle.length - 1; i >= 0 && fromBottle[i] === topColor; i--) {
+        groupSize++;
+    }
+    const toBottle = gameState.bottles[toIdx];
+    const maxHeight = gameState.customConfig ? gameState.customConfig.bottleHeight : DIFFICULTY_CONFIG[gameState.difficulty].bottleHeight;
+    if (toBottle.length + groupSize > maxHeight) return false;
+    if (toBottle.length === 0 || toBottle[toBottle.length - 1] === topColor) return true;
+    return false;
+}
+
+function performMove(fromIdx, toIdx) {
+    const fromBottle = gameState.bottles[fromIdx];
+    const topColor = fromBottle[fromBottle.length - 1];
+    let groupSize = 0;
+    for (let i = fromBottle.length - 1; i >= 0 && fromBottle[i] === topColor; i--) groupSize++;
+    const movingGems = fromBottle.splice(fromBottle.length - groupSize, groupSize);
+    gameState.bottles[toIdx].push(...movingGems);
+    return { fromIdx, toIdx, groupSize, color: topColor };
+}
+
+function undoMove(move) {
+    const { fromIdx, toIdx, groupSize } = move;
+    const movingGems = gameState.bottles[toIdx].splice(gameState.bottles[toIdx].length - groupSize, groupSize);
+    gameState.bottles[fromIdx].push(...movingGems);
+}
+
+function checkWin() {
+    const bottleHeight = gameState.customConfig ? gameState.customConfig.bottleHeight : DIFFICULTY_CONFIG[gameState.difficulty].bottleHeight;
+    for (const bottle of gameState.bottles) {
+        if (bottle.length === 0) continue;
+        if (bottle.length !== bottleHeight || new Set(bottle).size !== 1) return false;
+    }
+    return true;
+}
+
+// ==================== RENDERER ====================
+const bottleRack = document.getElementById('bottle-rack');
+let bottleElements = []; // array of DOM elements for each bottle
+
+function createBottleElement(index) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bottle-wrapper';
+    wrapper.setAttribute('data-index', index);
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('role', 'button');
+    wrapper.setAttribute('aria-label', `Bottle ${index + 1}`);
+
+    const cap = document.createElement('div');
+    cap.className = 'bottle-cap';
+
+    const bottle = document.createElement('div');
+    bottle.className = 'bottle';
+    bottle.setAttribute('data-index', index);
+
+    const gemContainer = document.createElement('div');
+    gemContainer.className = 'gem-container';
+    // gems will be appended here
+
+    bottle.appendChild(gemContainer);
+    wrapper.appendChild(bottle);
+    wrapper.appendChild(cap);
+    return { wrapper, gemContainer };
+}
+
+function renderBottle(index) {
+    const bottleData = gameState.bottles[index];
+    const { wrapper, gemContainer } = bottleElements[index];
+    const bottleDiv = wrapper.querySelector('.bottle');
+    // Update aria-label
+    wrapper.setAttribute('aria-label', `Bottle ${index + 1}: ${bottleData.length} gems`);
+    // Clear gemContainer
+    gemContainer.innerHTML = '';
+    // Add gems from bottom to top (we render in reverse order because flex-direction: column-reverse)
+    // Since CSS uses column-reverse, the first child is at the bottom. We'll append in normal order (bottom first).
+    for (let i = 0; i < bottleData.length; i++) {
+        const gem = document.createElement('div');
+        gem.className = 'gem';
+        gem.style.backgroundColor = bottleData[i];
+        gemContainer.appendChild(gem);
+    }
+}
+
+function renderAllBottles() {
+    if (bottleElements.length === 0) {
+        // Initialize bottle elements
+        bottleRack.innerHTML = '';
+        bottleElements = [];
+        for (let i = 0; i < gameState.bottles.length; i++) {
+            const { wrapper, gemContainer } = createBottleElement(i);
+            bottleRack.appendChild(wrapper);
+            bottleElements.push({ wrapper, gemContainer, index: i });
+        }
+    }
+    // Re-render each
+    for (let i = 0; i < gameState.bottles.length; i++) {
+        renderBottle(i);
+    }
+}
+
+function updateBottleDOM(index) {
+    if (bottleElements[index]) renderBottle(index);
+}
+
+// ==================== ANIMATIONS ====================
+async function animatePour(fromIdx, toIdx, groupSize, color) {
+    if (gameState.moveInProgress) return;
+    gameState.moveInProgress = true;
+    const settings = Storage.get('settings', DEFAULT_SETTINGS);
+    const speedFactor = parseFloat(settings.animSpeed) || 1;
+    const duration = 400 / speedFactor;
+
+    const fromEl = bottleElements[fromIdx].wrapper.querySelector('.bottle');
+    const toEl = bottleElements[toIdx].wrapper.querySelector('.bottle');
+    const fromRect = fromEl.getBoundingClientRect();
+    const toRect = toEl.getBoundingClientRect();
+
+    // Get position of top gem in source (the first of the group)
+    const fromGemContainer = bottleElements[fromIdx].gemContainer;
+    const fromGems = fromGemContainer.children;
+    const startGemIndex = fromGems.length - groupSize;
+    const startGem = fromGems[startGemIndex];
+    const startGemRect = startGem.getBoundingClientRect();
+
+    // Destination position: if empty, bottom of bottle; else top of top gem
+    const toGemContainer = bottleElements[toIdx].gemContainer;
+    let targetY, targetX;
+    const toBottleData = gameState.bottles[toIdx];
+    if (toGemContainer.children.length === 0) {
+        const toBottleRect = toEl.getBoundingClientRect();
+        targetX = toBottleRect.left + toBottleRect.width / 2;
+        targetY = toBottleRect.bottom - 15; // near bottom
+    } else {
+        const topGemTo = toGemContainer.children[toGemContainer.children.length - 1];
+        const topGemRect = topGemTo.getBoundingClientRect();
+        targetX = topGemRect.left + topGemRect.width / 2;
+        targetY = topGemRect.top - 5;
+    }
+
+    // Create flying gem clones
+    const clones = [];
+    for (let i = 0; i < groupSize; i++) {
+        const gem = fromGems[startGemIndex + i];
+        const clone = gem.cloneNode(true);
+        clone.style.position = 'fixed';
+        clone.style.left = (startGemRect.left + startGemRect.width / 2 - gem.offsetWidth / 2) + 'px';
+        clone.style.top = (startGemRect.top + i * (startGemRect.height + 2)) + 'px'; // adjust for gap
+        clone.style.zIndex = '150';
+        clone.style.transition = `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+        clone.style.margin = '0';
+        document.body.appendChild(clone);
+        clones.push(clone);
+    }
+
+    // Trigger reflow and animate
+    await new Promise(resolve => requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            clones.forEach((clone, i) => {
+                clone.style.left = (targetX - clone.offsetWidth / 2) + 'px';
+                clone.style.top = (targetY - (groupSize - 1 - i) * (clone.offsetHeight + 2)) + 'px';
+            });
+            setTimeout(() => {
+                clones.forEach(c => c.remove());
+                resolve();
+            }, duration + 50);
+        });
+    }));
+
+    // Update game state (already done in performMove before animate? We should perform move then animate, but animate shows the move)
+    // Actually we need to update DOM after animation. We'll perform move before animation but immediately update DOM after.
+    // Better: perform move, update DOM (which would instantly show gems in new place), then animate clones over it? That would flicker.
+    // Standard approach: remove gems from source DOM temporarily, perform move, add to dest DOM, then animate clones from old position to new. 
+    // We'll restructure: before move, record source positions. Perform move. Update DOM. Then animate clones from old source pos to new dest pos.
+    // But easier: perform move, re-render both bottles, then animate clones from source old position (before re-render) to new position.
+    // However we already re-rendered. So we can get old positions before state change.
+    // Let's do this in the main move handler.
+
+    gameState.moveInProgress = false;
+}
+
+// ==================== GAME FLOW ====================
+function startGame(difficultyKey, customConfig = null) {
+    stopTimer();
+    gameState.difficulty = difficultyKey;
+    gameState.customConfig = customConfig;
+    gameState.moveCount = 0;
+    gameState.undoCount = 0;
+    gameState.hintUsed = false;
+    gameState.history = [];
+    gameState.selectedBottle = -1;
+
+    const { bottles, colors } = generatePuzzle(difficultyKey, customConfig);
+    gameState.bottles = deepCopy(bottles);
+    gameState.originalColors = colors;
+
+    renderAllBottles();
+    updateMoveCounter();
+    updateDiamondDisplay();
+    startTimer();
+    gameState.isGameActive = true;
+    document.getElementById('difficulty-screen').classList.add('hidden');
+    document.getElementById('game-area').style.display = '';
+    document.getElementById('action-bar').style.display = '';
+    document.getElementById('game-info-bar').style.display = '';
+    updateDifficultyLabel();
+    enableUndoButton(false);
+    clearSelection();
+}
+
+function restartGame() {
+    if (!gameState.isGameActive) return;
+    stopTimer();
+    gameState.moveCount = 0;
+    gameState.undoCount = 0;
+    gameState.hintUsed = false;
+    gameState.history = [];
+    gameState.selectedBottle = -1;
+    gameState.bottles = deepCopy(gameState.bottles); // Actually restart should regenerate? The prompt says Restart: restart puzzle. So we'll regenerate same difficulty.
+    const diff = gameState.difficulty;
+    const custom = gameState.customConfig;
+    const { bottles, colors } = generatePuzzle(diff, custom);
+    gameState.bottles = deepCopy(bottles);
+    gameState.originalColors = colors;
+    renderAllBottles();
+    updateMoveCounter();
+    startTimer();
+    gameState.isGameActive = true;
+    clearSelection();
+    enableUndoButton(false);
+}
+
+function handleBottleClick(index) {
+    if (!gameState.isGameActive || gameState.moveInProgress) return;
+    Sound.click();
+    if (gameState.selectedBottle === -1) {
+        // Select source
+        if (gameState.bottles[index].length === 0) return; // can't select empty
+        gameState.selectedBottle = index;
+        highlightSelectedBottle(index);
+    } else if (gameState.selectedBottle === index) {
+        // Deselect
+        clearSelection();
+    } else {
+        // Attempt move
+        const fromIdx = gameState.selectedBottle;
+        if (canMove(fromIdx, index)) {
+            // Save state for undo
+            gameState.history.push(deepCopy(gameState.bottles));
+            // Perform move (state change)
+            const moveInfo = performMove(fromIdx, index);
+            // Animate and update DOM
+            executeMoveWithAnimation(fromIdx, index, moveInfo.groupSize, moveInfo.color);
+            gameState.moveCount++;
+            updateMoveCounter();
+            enableUndoButton(true);
+            clearSelection();
+            // Check win
+            if (checkWin()) {
+                handleWin();
+            }
+        } else {
+            // Invalid move
+            animateShake(index);
+            Sound.invalid();
+            clearSelection();
+        }
+    }
+}
+
+async function executeMoveWithAnimation(fromIdx, toIdx, groupSize, color) {
+    // Before updating DOM, grab positions for animation
+    const fromEl = bottleElements[fromIdx].wrapper.querySelector('.bottle');
+    const toEl = bottleElements[toIdx].wrapper.querySelector('.bottle');
+    const fromGemContainer = bottleElements[fromIdx].gemContainer;
+    const fromGems = fromGemContainer.children;
+    const startGemIndex = fromGems.length - groupSize;
+    const startGem = fromGems[startGemIndex];
+    const startGemRect = startGem.getBoundingClientRect();
+
+    // Destination target (before update)
+    const toGemContainer = bottleElements[toIdx].gemContainer;
+    let targetX, targetY;
+    if (toGemContainer.children.length === 0) {
+        const toBottleRect = toEl.getBoundingClientRect();
+        targetX = toBottleRect.left + toBottleRect.width / 2;
+        targetY = toBottleRect.bottom - 15;
+    } else {
+        const topGemTo = toGemContainer.children[toGemContainer.children.length - 1];
+        const topGemRect = topGemTo.getBoundingClientRect();
+        targetX = topGemRect.left + topGemRect.width / 2;
+        targetY = topGemRect.top - 5;
+    }
+
+    // Update DOM for both bottles
+    updateBottleDOM(fromIdx);
+    updateBottleDOM(toIdx);
+
+    // Create flying clones from old positions to new positions
+    const newFromGems = bottleElements[fromIdx].gemContainer.children; // after update
+    const newToGems = bottleElements[toIdx].gemContainer.children;
+    // New position of the moved gems in destination: they are the last groupSize elements
+    const newDestStartIndex = newToGems.length - groupSize;
+
+    const clones = [];
+    for (let i = 0; i < groupSize; i++) {
+        const clone = document.createElement('div');
+        clone.className = 'gem';
+        clone.style.backgroundColor = color;
+        clone.style.position = 'fixed';
+        clone.style.zIndex = '150';
+        clone.style.margin = '0';
+        // Start at source position
+        clone.style.left = (startGemRect.left + startGemRect.width / 2 - startGem.offsetWidth / 2) + 'px';
+        clone.style.top = (startGemRect.top + i * (startGemRect.height + 2)) + 'px';
+        document.body.appendChild(clone);
+        clones.push(clone);
+    }
+
+    // Force reflow and animate to destination
+    const settings = Storage.get('settings', DEFAULT_SETTINGS);
+    const speedFactor = parseFloat(settings.animSpeed) || 1;
+    const duration = 400 / speedFactor;
+
+    await new Promise(resolve => requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            const destGem = newToGems[newDestStartIndex];
+            const destGemRect = destGem.getBoundingClientRect();
+            const destStartX = destGemRect.left + destGemRect.width / 2 - destGem.offsetWidth / 2;
+            const destStartY = destGemRect.top;
+
+            clones.forEach((clone, i) => {
+                clone.style.transition = `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                clone.style.left = destStartX + 'px';
+                clone.style.top = (destStartY + i * (destGemRect.height + 2)) + 'px';
+            });
+            setTimeout(() => {
+                clones.forEach(c => c.remove());
+                resolve();
+            }, duration + 50);
+        });
+    }));
+    Sound.pour();
+}
+
+function animateShake(index) {
+    const bottle = bottleElements[index].wrapper;
+    bottle.classList.add('shake');
+    bottle.addEventListener('animationend', () => bottle.classList.remove('shake'), { once: true });
+}
+
+function highlightSelectedBottle(index) {
+    clearSelection();
+    bottleElements[index].wrapper.querySelector('.bottle').classList.add('selected');
+}
+
+function clearSelection() {
+    gameState.selectedBottle = -1;
+    document.querySelectorAll('.bottle.selected').forEach(el => el.classList.remove('selected'));
+}
+
+function enableUndoButton(enable) {
+    const btn = document.getElementById('btn-undo');
+    btn.disabled = !enable || gameState.history.length === 0;
+}
+
+function undoLastMove() {
+    if (!gameState.isGameActive || gameState.moveInProgress || gameState.history.length === 0) return;
+    const prevState = gameState.history.pop();
+    gameState.bottles = prevState;
+    gameState.moveCount = Math.max(0, gameState.moveCount - 1);
+    gameState.undoCount++;
+    renderAllBottles();
+    updateMoveCounter();
+    enableUndoButton(gameState.history.length > 0);
+    clearSelection();
+}
+
+function handleWin() {
+    stopTimer();
+    gameState.isGameActive = false;
+    Sound.win();
+    // Stats
+    stats.gamesPlayed++;
+    stats.gamesWon++;
+    const time = gameState.timerSeconds;
+    stats.totalTime += time;
+    if (stats.bestTime === null || time < stats.bestTime) stats.bestTime = time;
+    if (stats.fewestMoves === null || gameState.moveCount < stats.fewestMoves) stats.fewestMoves = gameState.moveCount;
+    stats.currentWinStreak++;
+    if (stats.currentWinStreak > stats.bestWinStreak) stats.bestWinStreak = stats.currentWinStreak;
+    if (gameState.hintUsed) stats.hintsUsedTotal++;
+    // Diamonds: each completed bottle = 1 diamond
+    const completedBottles = gameState.bottles.filter(b => b.length > 0 && new Set(b).size === 1).length;
+    stats.diamonds += completedBottles;
+    saveStats();
+
+    // Progress for unlock
+    if (gameState.difficulty !== 'custom') {
+        progress.completed[gameState.difficulty] = (progress.completed[gameState.difficulty] || 0) + 1;
+        saveProgress();
+    }
+
+    // Show win dialog
+    document.getElementById('win-moves').textContent = gameState.moveCount;
+    document.getElementById('win-time').textContent = formatTime(time);
+    document.getElementById('win-diamonds').textContent = completedBottles;
+    document.getElementById('win-dialog').hidden = false;
+    updateDiamondDisplay();
+    updateDifficultyScreen();
+}
+
+// ==================== TIMER ====================
+function startTimer() {
+    stopTimer();
+    gameState.timerSeconds = 0;
+    document.getElementById('time-display').textContent = '00:00';
+    gameState.timerInterval = setInterval(() => {
+        gameState.timerSeconds++;
+        document.getElementById('time-display').textContent = formatTime(gameState.timerSeconds);
+    }, 1000);
+}
+
+function stopTimer() {
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
+}
+
+// ==================== UI HELPERS ====================
+function updateMoveCounter() {
+    document.getElementById('move-counter').textContent = gameState.moveCount;
+}
+
+function updateDiamondDisplay() {
+    document.getElementById('diamond-count').textContent = stats.diamonds;
+}
+
+function updateDifficultyLabel() {
+    const label = gameState.difficulty === 'custom' ? 'Custom' : gameState.difficulty.charAt(0).toUpperCase() + gameState.difficulty.slice(1);
+    document.getElementById('difficulty-label').textContent = label;
+}
+
+function showDifficultyScreen() {
+    document.getElementById('difficulty-screen').classList.remove('hidden');
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('action-bar').style.display = 'none';
+    document.getElementById('game-info-bar').style.display = 'none';
+    updateDifficultyScreen();
+}
+
+function updateDifficultyScreen() {
+    const list = document.getElementById('difficulty-list');
+    list.innerHTML = '';
+    const difficulties = ['noob', 'easy', 'medium', 'mediumplus', 'hard', 'devil'];
+    const unlocked = getUnlockedDifficulties();
+    difficulties.forEach(diff => {
+        const btn = document.createElement('button');
+        btn.className = 'difficulty-btn ' + (unlocked.includes(diff) ? 'unlocked' : 'locked');
+        btn.setAttribute('data-difficulty', diff);
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'diff-name';
+        nameSpan.textContent = TRANSLATIONS[getCurrentLanguage()][diff] || diff;
+        btn.appendChild(nameSpan);
+
+        if (!unlocked.includes(diff)) {
+            const req = unlockRequirements[diff];
+            const infoSpan = document.createElement('span');
+            infoSpan.className = 'unlock-info';
+            const lang = getCurrentLanguage();
+            infoSpan.textContent = TRANSLATIONS[lang].locked + ' - ' + TRANSLATIONS[lang].unlock_next.replace('{}', req).replace('{difficulty}', TRANSLATIONS[lang][diff]);
+            btn.appendChild(infoSpan);
+        } else {
+            btn.addEventListener('click', () => startGame(diff));
+        }
+        list.appendChild(btn);
+    });
+}
+
+function getUnlockedDifficulties() {
+    const unlocked = ['noob'];
+    if (progress.completed.noob >= unlockRequirements.noob) unlocked.push('easy');
+    if (progress.completed.easy >= unlockRequirements.easy) unlocked.push('medium');
+    if (progress.completed.medium >= unlockRequirements.medium) unlocked.push('mediumplus');
+    if (progress.completed.mediumplus >= unlockRequirements.mediumplus) unlocked.push('hard');
+    if (progress.completed.hard >= unlockRequirements.hard) unlocked.push('devil');
+    return unlocked;
+}
+
+function getCurrentLanguage() {
+    return Storage.get('settings', DEFAULT_SETTINGS).language;
+}
+
+// ==================== I18N UPDATE ====================
+function updateI18n() {
+    const lang = getCurrentLanguage();
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang][key]) {
+            el.textContent = TRANSLATIONS[lang][key];
+        }
+    });
+    // Update dynamic elements
+    if (gameState.isGameActive) {
+        updateDifficultyLabel();
+    }
+    updateDifficultyScreen();
+}
+
+// ==================== SETTINGS DIALOG ====================
+function openSettings() {
+    const dialog = document.getElementById('settings-dialog');
+    const settings = Storage.get('settings', DEFAULT_SETTINGS);
+    document.getElementById('setting-theme').value = settings.theme;
+    document.getElementById('setting-language').value = settings.language;
+    document.getElementById('setting-music').value = settings.musicVolume;
+    document.getElementById('music-value').textContent = settings.musicVolume + '%';
+    document.getElementById('setting-sound').value = settings.soundVolume;
+    document.getElementById('sound-value').textContent = settings.soundVolume + '%';
+    document.getElementById('setting-anim-speed').value = settings.animSpeed.toString();
+    dialog.hidden = false;
+}
+
+function closeSettings() {
+    document.getElementById('settings-dialog').hidden = true;
+}
+
+function saveSettings() {
+    const settings = {
+        theme: document.getElementById('setting-theme').value,
+        language: document.getElementById('setting-language').value,
+        musicVolume: parseInt(document.getElementById('setting-music').value),
+        soundVolume: parseInt(document.getElementById('setting-sound').value),
+        animSpeed: parseFloat(document.getElementById('setting-anim-speed').value)
+    };
+    Storage.set('settings', settings);
+    applyTheme(settings.theme);
+    updateI18n();
+    closeSettings();
+}
+
+function applyTheme(theme) {
+    if (theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+}
+
+// ==================== CUSTOM GAME DIALOG ====================
+function openCustomGameDialog() {
+    document.getElementById('custom-game-dialog').hidden = false;
+    document.getElementById('custom-validation-msg').hidden = true;
+    // Set defaults
+    document.getElementById('custom-bottle-count').value = 7;
+    document.getElementById('custom-bottle-height').value = 4;
+    document.getElementById('custom-num-colors').value = 5;
+    document.getElementById('custom-empty-bottles').value = 2;
+    document.getElementById('custom-palette').value = 'classic';
+}
+
+function closeCustomGameDialog() {
+    document.getElementById('custom-game-dialog').hidden = true;
+}
+
+function validateCustomConfig() {
+    const bottleCount = parseInt(document.getElementById('custom-bottle-count').value);
+    const bottleHeight = parseInt(document.getElementById('custom-bottle-height').value);
+    const numColors = parseInt(document.getElementById('custom-num-colors').value);
+    const emptyBottles = parseInt(document.getElementById('custom-empty-bottles').value);
+    const paletteKey = document.getElementById('custom-palette').value;
+    const colors = PALETTES[paletteKey].slice(0, numColors);
+
+    const errors = [];
+    if (bottleCount < numColors + emptyBottles) errors.push(TRANSLATIONS[getCurrentLanguage()].validation_bottle_count);
+    if (emptyBottles < 1) errors.push(TRANSLATIONS[getCurrentLanguage()].validation_empty);
+    if (new Set(colors).size !== colors.length) errors.push(TRANSLATIONS[getCurrentLanguage()].validation_duplicate_colors);
+    if (bottleCount * bottleHeight < numColors * bottleHeight + emptyBottles * bottleHeight) errors.push(TRANSLATIONS[getCurrentLanguage()].validation_capacity);
+
+    if (errors.length > 0) {
+        const msgEl = document.getElementById('custom-validation-msg');
+        msgEl.hidden = false;
+        msgEl.textContent = TRANSLATIONS[getCurrentLanguage()].validation_impossible + ' ' + errors.join(' ');
+        return null;
+    }
+    return { bottleCount, bottleHeight, numColors, emptyBottles, colors };
+}
+
+function startCustomGame() {
+    const config = validateCustomConfig();
+    if (!config) return;
+    startGame('custom', config);
+    closeCustomGameDialog();
+}
+
+// ==================== COLOR EDITOR ====================
+let editingColors = [];
+function openColorEditor() {
+    const paletteKey = document.getElementById('custom-palette').value;
+    const numColors = parseInt(document.getElementById('custom-num-colors').value);
+    editingColors = PALETTES[paletteKey].slice(0, numColors);
+    renderColorEditor();
+    document.getElementById('color-editor-dialog').hidden = false;
+}
+
+function renderColorEditor() {
+    const list = document.getElementById('color-editor-list');
+    list.innerHTML = '';
+    editingColors.forEach((color, i) => {
+        const item = document.createElement('div');
+        item.className = 'color-editor-item';
+        const preview = document.createElement('div');
+        preview.className = 'color-editor-preview';
+        preview.style.backgroundColor = color;
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.value = color;
+        input.addEventListener('input', (e) => {
+            editingColors[i] = e.target.value;
+            preview.style.backgroundColor = e.target.value;
+        });
+        item.appendChild(preview);
+        item.appendChild(input);
+        list.appendChild(item);
+    });
+}
+
+function randomizeColors() {
+    editingColors = editingColors.map(() => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'));
+    renderColorEditor();
+}
+
+function resetColorsToPalette() {
+    const paletteKey = document.getElementById('custom-palette').value;
+    const numColors = parseInt(document.getElementById('custom-num-colors').value);
+    editingColors = PALETTES[paletteKey].slice(0, numColors);
+    renderColorEditor();
+}
+
+function applyColorEditor() {
+    // Update the palette? Actually we need to allow custom colors for the game. We'll store editingColors and use in custom config.
+    // We'll store in a global variable and when starting custom game, use those if set.
+    window.customColorsOverride = [...editingColors];
+    document.getElementById('color-editor-dialog').hidden = true;
+}
+
+// ==================== STATISTICS DIALOG ====================
+function openStatistics() {
+    const dialog = document.getElementById('statistics-dialog');
+    const content = document.getElementById('stats-content');
+    content.innerHTML = '';
+    const lang = getCurrentLanguage();
+    const statsPairs = [
+        [TRANSLATIONS[lang].games_played, stats.gamesPlayed],
+        [TRANSLATIONS[lang].games_won, stats.gamesWon],
+        [TRANSLATIONS[lang].win_rate, stats.gamesPlayed ? Math.round(stats.gamesWon / stats.gamesPlayed * 100) + '%' : '0%'],
+        [TRANSLATIONS[lang].best_time, stats.bestTime ? formatTime(stats.bestTime) : '--'],
+        [TRANSLATIONS[lang].avg_time, stats.gamesWon ? formatTime(Math.round(stats.totalTime / stats.gamesWon)) : '--'],
+        [TRANSLATIONS[lang].fewest_moves, stats.fewestMoves ?? '--'],
+        [TRANSLATIONS[lang].win_streak, stats.currentWinStreak],
+        [TRANSLATIONS[lang].best_streak, stats.bestWinStreak],
+        [TRANSLATIONS[lang].hints_used, stats.hintsUsedTotal],
+        [TRANSLATIONS[lang].coins, stats.diamonds]
+    ];
+    statsPairs.forEach(([label, value]) => {
+        const div = document.createElement('div');
+        div.className = 'stat-item';
+        div.innerHTML = `<span class="stat-value">${value}</span><span class="stat-label">${label}</span>`;
+        content.appendChild(div);
+    });
+    dialog.hidden = false;
+}
+
+// ==================== HINT SYSTEM ====================
+function useHint() {
+    if (!gameState.isGameActive || gameState.moveInProgress) return;
+    // Find a valid move that makes progress (prefer move that creates a full bottle or reduces unsorted)
+    // Simple approach: find any valid move and highlight bottles briefly.
+    for (let from = 0; from < gameState.bottles.length; from++) {
+        for (let to = 0; to < gameState.bottles.length; to++) {
+            if (canMove(from, to)) {
+                gameState.hintUsed = true;
+                // Visual hint: highlight both bottles
+                bottleElements[from].wrapper.querySelector('.bottle').style.boxShadow = '0 0 0 4px #ffd700';
+                bottleElements[to].wrapper.querySelector('.bottle').style.boxShadow = '0 0 0 4px #ffd700';
+                setTimeout(() => {
+                    bottleElements[from].wrapper.querySelector('.bottle').style.boxShadow = '';
+                    bottleElements[to].wrapper.querySelector('.bottle').style.boxShadow = '';
+                }, 1500);
+                return;
+            }
+        }
+    }
+    // No moves possible (shouldn't happen)
+}
+
+// ==================== DEVELOPER MODE ====================
+let devClickCount = 0;
+let devMode = false;
+function handleLogoClick() {
+    devClickCount++;
+    if (devClickCount >= 5 && !devMode) {
+        devMode = true;
+        devClickCount = 0;
+        // Create dev panel
+        const devPanel = document.createElement('div');
+        devPanel.id = 'dev-panel';
+        devPanel.style.cssText = 'position:fixed;bottom:20px;left:20px;background:#333;color:#fff;padding:10px;border-radius:8px;z-index:9999;font-family:monospace;';
+        devPanel.innerHTML = `
+            <input type="text" id="dev-command" placeholder="command" style="background:#555;color:#fff;border:none;padding:5px;width:200px;">
+            <button id="dev-execute" style="margin-left:5px;">Run</button>
+            <div style="font-size:12px;margin-top:5px;">unlockall | addcoins 1000 | resetprogress | resetstats</div>
+        `;
+        document.body.appendChild(devPanel);
+        document.getElementById('dev-execute').addEventListener('click', executeDevCommand);
+        document.getElementById('dev-command').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeDevCommand();
+        });
+        setTimeout(() => { devClickCount = 0; }, 2000);
+    }
+}
+
+function executeDevCommand() {
+    const input = document.getElementById('dev-command');
+    const cmd = input.value.trim().toLowerCase();
+    if (cmd === 'unlockall') {
+        progress.completed = { noob: 3, easy: 5, medium: 5, mediumplus: 5, hard: 5 };
+        saveProgress();
+        updateDifficultyScreen();
+        alert('All difficulties unlocked');
+    } else if (cmd.startsWith('addcoins')) {
+        const amount = parseInt(cmd.split(' ')[1]) || 0;
+        stats.diamonds += amount;
+        saveStats();
+        updateDiamondDisplay();
+        alert(`Added ${amount} diamonds`);
+    } else if (cmd === 'resetprogress') {
+        progress = { completed: { noob: 0, easy: 0, medium: 0, mediumplus: 0, hard: 0 } };
+        saveProgress();
+        updateDifficultyScreen();
+        alert('Progress reset');
+    } else if (cmd === 'resetstats') {
+        stats = { ...defaultStats };
+        saveStats();
+        updateDiamondDisplay();
+        alert('Stats reset');
+    }
+    input.value = '';
+}
+
+// ==================== EVENT HANDLERS ====================
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+});
+
+function initApp() {
+    // Load settings
+    const settings = Storage.get('settings', DEFAULT_SETTINGS);
+    applyTheme(settings.theme);
+    updateI18n();
+
+    // Update settings UI listeners
+    document.getElementById('setting-music').addEventListener('input', (e) => {
+        document.getElementById('music-value').textContent = e.target.value + '%';
+    });
+    document.getElementById('setting-sound').addEventListener('input', (e) => {
+        document.getElementById('sound-value').textContent = e.target.value + '%';
+    });
+    document.getElementById('setting-theme').addEventListener('change', saveSettings);
+    document.getElementById('setting-language').addEventListener('change', saveSettings);
+    document.getElementById('setting-anim-speed').addEventListener('change', saveSettings);
+
+    // Dialogs close buttons
+    document.getElementById('btn-close-settings').addEventListener('click', closeSettings);
+    document.getElementById('btn-close-custom').addEventListener('click', closeCustomGameDialog);
+    document.getElementById('btn-close-color-editor').addEventListener('click', () => document.getElementById('color-editor-dialog').hidden = true);
+    document.getElementById('btn-close-stats').addEventListener('click', () => document.getElementById('statistics-dialog').hidden = true);
+    document.getElementById('btn-close-win').addEventListener('click', () => {
+        document.getElementById('win-dialog').hidden = true;
+        showDifficultyScreen();
+    });
+    document.getElementById('btn-next-level').addEventListener('click', () => {
+        document.getElementById('win-dialog').hidden = true;
+        if (gameState.difficulty === 'custom') {
+            startCustomGame();
+        } else {
+            startGame(gameState.difficulty);
+        }
+    });
+    document.getElementById('btn-replay').addEventListener('click', () => {
+        document.getElementById('win-dialog').hidden = true;
+        restartGame();
+    });
+
+    // Confirm dialog
+    document.getElementById('btn-confirm-yes').addEventListener('click', () => {
+        // Handle reset progress confirmation
+        progress = { completed: { noob: 0, easy: 0, medium: 0, mediumplus: 0, hard: 0 } };
+        stats = { ...defaultStats };
+        saveProgress();
+        saveStats();
+        updateDiamondDisplay();
+        updateDifficultyScreen();
+        document.getElementById('confirm-dialog').hidden = true;
+        closeSettings();
+    });
+    document.getElementById('btn-confirm-no').addEventListener('click', () => {
+        document.getElementById('confirm-dialog').hidden = true;
+    });
+
+    // Action buttons
+    document.getElementById('btn-undo').addEventListener('click', undoLastMove);
+    document.getElementById('btn-restart').addEventListener('click', restartGame);
+    document.getElementById('btn-hint').addEventListener('click', useHint);
+    document.getElementById('btn-settings').addEventListener('click', openSettings);
+    document.getElementById('btn-back').addEventListener('click', showDifficultyScreen);
+    document.getElementById('btn-custom-game').addEventListener('click', openCustomGameDialog);
+    document.getElementById('btn-start-custom').addEventListener('click', startCustomGame);
+    document.getElementById('btn-open-color-editor').addEventListener('click', openColorEditor);
+    document.getElementById('btn-randomize-colors').addEventListener('click', randomizeColors);
+    document.getElementById('btn-reset-colors').addEventListener('click', resetColorsToPalette);
+    document.getElementById('btn-reset-progress').addEventListener('click', () => {
+        document.getElementById('confirm-message').textContent = TRANSLATIONS[getCurrentLanguage()].confirm_reset;
+        document.getElementById('confirm-dialog').hidden = false;
+    });
+
+    // Logo click for dev mode
+    document.getElementById('logo-area').addEventListener('click', handleLogoClick);
+
+    // Bottle rack click delegation
+    bottleRack.addEventListener('click', (e) => {
+        const wrapper = e.target.closest('.bottle-wrapper');
+        if (wrapper) {
+            const index = parseInt(wrapper.getAttribute('data-index'));
+            handleBottleClick(index);
+        }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'r' || e.key === 'R') {
+            e.preventDefault();
+            restartGame();
+        } else if (e.key === 'u' || e.key === 'U') {
+            e.preventDefault();
+            undoLastMove();
+        } else if (e.key === 'h' || e.key === 'H') {
+            e.preventDefault();
+            useHint();
+        } else if (e.key === 'Escape') {
+            // Close dialogs
+            document.querySelectorAll('.dialog-overlay:not([hidden])').forEach(d => d.hidden = true);
+            if (gameState.selectedBottle !== -1) clearSelection();
+        }
+    });
+
+    // Restore saved game if exists
+    const savedGame = Storage.get('currentGame');
+    if (savedGame && savedGame.bottles) {
+        // Restore game
+        gameState.difficulty = savedGame.difficulty;
+        gameState.customConfig = savedGame.customConfig;
+        gameState.bottles = savedGame.bottles;
+        gameState.moveCount = savedGame.moveCount || 0;
+        gameState.history = savedGame.history || [];
+        gameState.timerSeconds = savedGame.timerSeconds || 0;
+        gameState.hintUsed = savedGame.hintUsed || false;
+        gameState.originalColors = savedGame.originalColors;
+        renderAllBottles();
+        updateMoveCounter();
+        updateDiamondDisplay();
+        gameState.isGameActive = true;
+        startTimerWithOffset(gameState.timerSeconds);
+        enableUndoButton(gameState.history.length > 0);
+        document.getElementById('difficulty-screen').classList.add('hidden');
+        document.getElementById('game-area').style.display = '';
+        document.getElementById('action-bar').style.display = '';
+        document.getElementById('game-info-bar').style.display = '';
+        updateDifficultyLabel();
+    } else {
+        showDifficultyScreen();
+    }
+
+    // Auto-save before unload
+    window.addEventListener('beforeunload', () => {
+        if (gameState.isGameActive) {
+            Storage.set('currentGame', {
+                difficulty: gameState.difficulty,
+                customConfig: gameState.customConfig,
+                bottles: gameState.bottles,
+                moveCount: gameState.moveCount,
+                history: gameState.history,
+                timerSeconds: gameState.timerSeconds,
+                hintUsed: gameState.hintUsed,
+                originalColors: gameState.originalColors
+            });
+        } else {
+            Storage.remove('currentGame');
+        }
+    });
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const settings = Storage.get('settings', DEFAULT_SETTINGS);
+        if (settings.theme === 'system') applyTheme('system');
+    });
+
+    // Update statistics button (add to settings or separate - we'll add a stats button in settings maybe)
+    // We'll add a stats button in top bar? Not in initial HTML, we can add via JS.
+    const topBarRight = document.querySelector('.top-bar-right');
+    const statsBtn = document.createElement('button');
+    statsBtn.className = 'icon-btn';
+    statsBtn.id = 'btn-stats';
+    statsBtn.title = 'Statistics';
+    statsBtn.setAttribute('aria-label', 'Statistics');
+    statsBtn.innerHTML = '<span class="icon">📊</span>';
+    statsBtn.addEventListener('click', openStatistics);
+    topBarRight.insertBefore(statsBtn, document.getElementById('btn-settings'));
+
+    updateDiamondDisplay();
+}
+
+function startTimerWithOffset(seconds) {
+    stopTimer();
+    gameState.timerSeconds = seconds;
+    document.getElementById('time-display').textContent = formatTime(seconds);
+    gameState.timerInterval = setInterval(() => {
+        gameState.timerSeconds++;
+        document.getElementById('time-display').textContent = formatTime(gameState.timerSeconds);
+    }, 1000);
+}
+</script>
+</body>
+</html>
