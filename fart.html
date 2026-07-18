@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Fortune</title>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --surface2: #e8ecf1;
+            --text: #1a1d23;
+            --text2: #555a63;
+            --accent: #5b6af0;
+            --accent2: #7c8aff;
+            --border: #d8dce3;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.11);
+            --glass: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 18px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --wheel-glow: #5b6af0;
+            --confetti-color1: #ff6b6b;
+            --confetti-color2: #ffd93d;
+            --confetti-color3: #6bcb77;
+            --confetti-color4: #4d96ff;
+        }
+        [data-theme="neon"] {
+            --bg: #0d0d1a;
+            --surface: #151530;
+            --surface2: #1a1a3a;
+            --text: #e0e0ff;
+            --text2: #a0a0cc;
+            --accent: #ff2d95;
+            --accent2: #ff5eb8;
+            --border: #2a2a50;
+            --shadow: 0 4px 24px rgba(255, 45, 149, 0.2);
+            --shadow-lg: 0 12px 48px rgba(255, 45, 149, 0.25);
+            --glass: rgba(21, 21, 48, 0.8);
+            --glass-border: rgba(255, 45, 149, 0.3);
+            --wheel-glow: #ff2d95;
+        }
+        [data-theme="gaming"] {
+            --bg: #12151a;
+            --surface: #1a1e26;
+            --surface2: #222833;
+            --text: #e2e8f0;
+            --text2: #94a3b8;
+            --accent: #f59e0b;
+            --accent2: #fbbf24;
+            --border: #2d3543;
+            --shadow: 0 4px 24px rgba(245, 158, 11, 0.18);
+            --shadow-lg: 0 12px 48px rgba(245, 158, 11, 0.22);
+            --glass: rgba(26, 30, 38, 0.8);
+            --glass-border: rgba(245, 158, 11, 0.3);
+            --wheel-glow: #f59e0b;
+        }
+        [data-theme="fire"] {
+            --bg: #1a0f0a;
+            --surface: #241510;
+            --surface2: #2e1a14;
+            --text: #ffe8dc;
+            --text2: #c9a28b;
+            --accent: #ff5722;
+            --accent2: #ff784e;
+            --border: #3d2218;
+            --shadow: 0 4px 24px rgba(255, 87, 34, 0.25);
+            --shadow-lg: 0 12px 48px rgba(255, 87, 34, 0.3);
+            --glass: rgba(36, 21, 16, 0.8);
+            --glass-border: rgba(255, 87, 34, 0.35);
+            --wheel-glow: #ff5722;
+        }
+        [data-theme="ice"] {
+            --bg: #e8f4f8;
+            --surface: #f0f8fb;
+            --surface2: #dceef4;
+            --text: #1a2d3a;
+            --text2: #4a6d7e;
+            --accent: #2196f3;
+            --accent2: #54b0f8;
+            --border: #c5dce6;
+            --shadow: 0 4px 24px rgba(33, 150, 243, 0.12);
+            --shadow-lg: 0 12px 48px rgba(33, 150, 243, 0.16);
+            --glass: rgba(240, 248, 251, 0.8);
+            --glass-border: rgba(33, 150, 243, 0.25);
+            --wheel-glow: #2196f3;
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 12px) env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 12px);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 8px;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 720px;
+                gap: 20px;
+                padding: 16px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .app-container {
+                max-width: 900px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 24px;
+            }
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .header-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 15px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: var(--font);
+            min-height: 40px;
+            outline: none;
+            letter-spacing: -0.2px;
+        }
+        .btn:hover {
+            background: var(--surface2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        .btn:active {
+            transform: scale(0.97);
+            transition: 0.1s;
+        }
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: var(--radius-xs);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 4px 16px rgba(91, 106, 240, 0.35);
+        }
+        .btn-primary:hover {
+            background: var(--accent2);
+            box-shadow: 0 6px 22px rgba(91, 106, 240, 0.45);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+            border-color: transparent;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            min-height: 32px;
+        }
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            min-height: unset;
+        }
+        .theme-select {
+            padding: 7px 10px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font);
+            outline: none;
+            transition: all var(--transition);
+            min-height: 38px;
+            letter-spacing: -0.2px;
+        }
+        .theme-select:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: var(--radius-xs);
+        }
+        .wheel-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 20px 16px;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition);
+            position: relative;
+        }
+        @media (min-width: 1024px) {
+            .wheel-section {
+                flex: 1 1 55%;
+                min-width: 380px;
+            }
+        }
+        .wheel-wrapper {
+            position: relative;
+            width: min(75vw, 340px);
+            height: min(75vw, 340px);
+            flex-shrink: 0;
+        }
+        @media (min-width: 768px) {
+            .wheel-wrapper {
+                width: 340px;
+                height: 340px;
+            }
+        }
+        .wheel-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.18));
+            transition: filter 0.5s;
+        }
+        .wheel-svg.spinning {
+            filter: drop-shadow(0 8px 40px var(--wheel-glow));
+        }
+        .pointer-svg {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            z-index: 5;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+            pointer-events: none;
+        }
+        .winner-panel {
+            text-align: center;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(6px);
+            box-shadow: var(--shadow);
+            gap: 8px;
+        }
+        .winner-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .winner-panel.winner-glow {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 6px 28px rgba(91, 106, 240, 0.45);
+            animation: winnerPulse 0.6s ease-out;
+        }
+        @keyframes winnerPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.06);
+            }
+        }
+        .editor-section {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        @media (min-width: 1024px) {
+            .editor-section {
+                flex: 1 1 38%;
+                min-width: 280px;
+                max-height: 600px;
+                overflow-y: auto;
+            }
+        }
+        .editor-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .editor-list-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border-radius: var(--radius-xs);
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+            flex-wrap: wrap;
+        }
+        .editor-list-item:hover {
+            box-shadow: var(--shadow);
+        }
+        .editor-list-item.eliminated {
+            opacity: 0.4;
+            text-decoration: line-through;
+            pointer-events: none;
+        }
+        .editor-input {
+            flex: 1;
+            min-width: 80px;
+            padding: 7px 10px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: var(--font);
+            outline: none;
+            transition: all var(--transition);
+            letter-spacing: -0.2px;
+        }
+        .editor-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(91, 106, 240, 0.12);
+        }
+        .editor-color-input {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            padding: 2px;
+            background: transparent;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        .editor-weight {
+            width: 48px;
+            text-align: center;
+        }
+        .editor-actions-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            width: 100%;
+            max-width: 460px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            animation: slideUp 0.25s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal h3 {
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+        }
+        .modal-close {
+            align-self: flex-end;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 6px 0;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--border);
+            border-radius: 28px;
+            transition: var(--transition);
+        }
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(22px);
+        }
+        .toggle-switch input:focus-visible+.toggle-slider {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .spin-mode-indicator {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: center;
+        }
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            color: var(--text2);
+        }
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(91, 106, 240, 0.05);
+            color: var(--accent);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
+        }
+        @media (max-width: 380px) {
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .btn {
+                padding: 7px 10px;
+                font-size: 0.78rem;
+                min-height: 34px;
+            }
+            .btn-primary {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            .wheel-wrapper {
+                width: min(78vw, 280px);
+                height: min(78vw, 280px);
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="app-container">
+        <header class="header" role="banner">
+            <span class="header-title" aria-label="Wheel of Fortune">🎡 Wheel of Fortune</span>
+            <div class="header-actions">
+                <select class="theme-select" id="themeSelect" aria-label="Select theme">
+                    <option value="light">☀️ Light</option>
+                    <option value="neon">💜 Neon</option>
+                    <option value="gaming">🎮 Gaming</option>
+                    <option value="fire">🔥 Fire</option>
+                    <option value="ice">❄️ Ice</option>
+                </select>
+                <button class="btn btn-icon" id="btnSettings" aria-label="Settings" title="Settings">⚙️</button>
+                <button class="btn btn-icon" id="btnTemplates" aria-label="Templates" title="Templates">📋</button>
+            </div>
+        </header>
+
+        <section class="wheel-section" aria-label="Fortune Wheel">
+            <div class="spin-mode-indicator" id="spinModeIndicator">Standard</div>
+            <div class="wheel-wrapper" id="wheelWrapper">
+                <svg class="pointer-svg" viewBox="0 0 36 36" aria-hidden="true">
+                    <polygon points="18,34 4,2 32,2" fill="#1a1d23" stroke="#fff" stroke-width="2"/>
+                </svg>
+                <svg class="wheel-svg" id="wheelSvg" viewBox="0 0 300 300" aria-label="Spinning wheel">
+                    <g id="wheelGroup"></g>
+                    <circle cx="150" cy="150" r="22" fill="#1a1d23" stroke="#fff" stroke-width="3"/>
+                    <circle cx="150" cy="150" r="8" fill="#fff"/>
+                </svg>
+            </div>
+            <button class="btn btn-primary" id="btnSpin" aria-label="Spin the wheel">🎯 Spin</button>
+            <div class="winner-panel" id="winnerPanel" aria-live="polite"></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+                <button class="btn btn-sm" id="btnModeStandard">Standard</button>
+                <button class="btn btn-sm" id="btnModeWeighted">Weighted</button>
+                <button class="btn btn-sm" id="btnModeElimination">Elimination</button>
+                <button class="btn btn-sm" id="btnModeInfinite">Infinite</button>
+            </div>
+            <button class="btn btn-sm btn-danger" id="btnResetElimination" style="display:none;">Reset Elimination</button>
+        </section>
+
+        <section class="editor-section" aria-label="Entry Editor">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                <input class="editor-input" id="newEntryText" placeholder="New entry..." aria-label="New entry text" maxlength="60">
+                <input class="editor-input editor-weight" id="newEntryWeight" type="number" value="1" min="0.1" max="100" step="0.1" aria-label="Weight" title="Weight (probability)">
+                <input class="editor-color-input" id="newEntryColor" type="color" value="#5b6af0" aria-label="Entry color" title="Custom color">
+                <button class="btn btn-sm" id="btnAddEntry" aria-label="Add entry">+ Add</button>
+            </div>
+            <ul class="editor-list" id="editorList" aria-label="Entries list"></ul>
+            <div class="editor-actions-row">
+                <button class="btn btn-sm" id="btnShuffle">🔀 Shuffle</button>
+                <button class="btn btn-sm" id="btnClearAll">🗑 Clear All</button>
+                <button class="btn btn-sm" id="btnImport">📥 Import</button>
+                <button class="btn btn-sm" id="btnExport">📤 Export</button>
+                <button class="btn btn-sm" id="btnHistory">📜 History</button>
+                <button class="btn btn-sm" id="btnStats">📊 Stats</button>
+            </div>
+            <div class="drop-zone" id="dropZone" style="display:none;" aria-label="Drop files to import">
+                Drop TXT, CSV, or JSON file here
+            </div>
+        </section>
+    </div>
+
+    <canvas class="confetti-canvas" id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <div class="modal-overlay" id="modalOverlay" style="display:none;" aria-hidden="true">
+        <div class="modal" id="modalContent" role="dialog" aria-modal="true"></div>
+    </div>
+
+    <script>
+        (function() {
+            const STORAGE_KEYS = {
+                ENTRIES: 'wof_entries',
+                SETTINGS: 'wof_settings',
+                THEME: 'wof_theme',
+                HISTORY: 'wof_history',
+                STATISTICS: 'wof_statistics',
+                ELIMINATED: 'wof_eliminated',
+                SPIN_MODE: 'wof_spinMode',
+            };
+
+            const DEFAULT_ENTRIES = [
+                { id: '1', text: 'Pizza', emoji: '🍕', color: '#ff6b6b', weight: 1 },
+                { id: '2', text: 'Sushi', emoji: '🍣', color: '#ffd93d', weight: 1 },
+                { id: '3', text: 'Burger', emoji: '🍔', color: '#6bcb77', weight: 1 },
+                { id: '4', text: 'Tacos', emoji: '🌮', color: '#4d96ff', weight: 1 },
+                { id: '5', text: 'Pasta', emoji: '🍝', color: '#ff922b', weight: 1 },
+                { id: '6', text: 'Salad', emoji: '🥗', color: '#20c997', weight: 1 },
+            ];
+
+            const DEFAULT_SETTINGS = {
+                spinDuration: 5,
+                spinSpeed: 1,
+                soundEnabled: true,
+                vibrationEnabled: true,
+                confettiEnabled: true,
+                autoColors: true,
+                autoTextContrast: true,
+                soundTheme: 'classic',
+            };
+
+            const TEMPLATES = {
+                '🍕 What to eat?': [
+                    { text: 'Pizza', emoji: '🍕', color: '#ff6b6b', weight: 1 },
+                    { text: 'Sushi', emoji: '🍣', color: '#ffd93d', weight: 1 },
+                    { text: 'Burger', emoji: '🍔', color: '#6bcb77', weight: 1 },
+                    { text: 'Tacos', emoji: '🌮', color: '#4d96ff', weight: 1 },
+                    { text: 'Pasta', emoji: '🍝', color: '#ff922b', weight: 1 },
+                    { text: 'Salad', emoji: '🥗', color: '#20c997', weight: 1 },
+                ],
+                '🎬 Movie Night': [
+                    { text: 'Action', emoji: '💥', color: '#ef4444', weight: 1 },
+                    { text: 'Comedy', emoji: '😂', color: '#f59e0b', weight: 1 },
+                    { text: 'Horror', emoji: '👻', color: '#7c3aed', weight: 1 },
+                    { text: 'Romance', emoji: '💕', color: '#ec4899', weight: 1 },
+                    { text: 'Sci-Fi', emoji: '🚀', color: '#3b82f6', weight: 1 },
+                    { text: 'Documentary', emoji: '📚', color: '#10b981', weight: 1 },
+                ],
+                '🎮 What game?': [
+                    { text: 'Fortnite', emoji: '🔫', color: '#8b5cf6', weight: 1 },
+                    { text: 'Minecraft', emoji: '⛏️', color: '#22c55e', weight: 1 },
+                    { text: 'Valorant', emoji: '🎯', color: '#ef4444', weight: 1 },
+                    { text: 'Among Us', emoji: '🚀', color: '#f97316', weight: 1 },
+                    { text: 'Zelda', emoji: '🗡️', color: '#eab308', weight: 1 },
+                ],
+                '🏖 What to do?': [
+                    { text: 'Beach', emoji: '🏖️', color: '#06b6d4', weight: 1 },
+                    { text: 'Hike', emoji: '🥾', color: '#84cc16', weight: 1 },
+                    { text: 'Read', emoji: '📖', color: '#a78bfa', weight: 1 },
+                    { text: 'Movie', emoji: '🎬', color: '#f43f5e', weight: 1 },
+                    { text: 'Games', emoji: '🎲', color: '#fb923c', weight: 1 },
+                ],
+                '🎁 Giveaway': [
+                    { text: 'Prize A', emoji: '🎁', color: '#ff6b6b', weight: 1 },
+                    { text: 'Prize B', emoji: '🎀', color: '#ffd93d', weight: 2 },
+                    { text: 'Prize C', emoji: '🎈', color: '#6bcb77', weight: 3 },
+                    { text: 'Prize D', emoji: '🎊', color: '#4d96ff', weight: 1 },
+                ],
+                '📚 Study Topics': [
+                    { text: 'Math', emoji: '🧮', color: '#3b82f6', weight: 1 },
+                    { text: 'Science', emoji: '🔬', color: '#10b981', weight: 1 },
+                    { text: 'History', emoji: '📜', color: '#f59e0b', weight: 1 },
+                    { text: 'Art', emoji: '🎨', color: '#ec4899', weight: 1 },
+                    { text: 'Coding', emoji: '💻', color: '#8b5cf6', weight: 1 },
+                ],
+            };
+
+            const AUTO_COLORS = [
+                '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff922b', '#20c997',
+                '#f06595', '#74c0fc', '#ffa94d', '#a9e34b', '#da77f2', '#4ecdc4',
+                '#ff6b9d', '#c084fc', '#fbbf24', '#34d399', '#f87171', '#60a5fa',
+                '#f472b6', '#a3e635', '#fb923c', '#38bdf8', '#e879f9', '#2dd4bf',
+            ];
+
+            let state = {
+                entries: [],
+                settings: { ...DEFAULT_SETTINGS },
+                theme: 'light',
+                history: [],
+                statistics: { totalSpins: 0, winsPerEntry: {} },
+                eliminatedEntries: new Set(),
+                spinMode: 'standard',
+                isSpinning: false,
+                winner: null,
+                currentRotation: 0,
+                animationId: null,
+                audioContext: null,
+            };
+
+            const dom = {
+                body: document.body,
+                themeSelect: document.getElementById('themeSelect'),
+                wheelSvg: document.getElementById('wheelSvg'),
+                wheelGroup: document.getElementById('wheelGroup'),
+                wheelWrapper: document.getElementById('wheelWrapper'),
+                btnSpin: document.getElementById('btnSpin'),
+                winnerPanel: document.getElementById('winnerPanel'),
+                spinModeIndicator: document.getElementById('spinModeIndicator'),
+                editorList: document.getElementById('editorList'),
+                newEntryText: document.getElementById('newEntryText'),
+                newEntryWeight: document.getElementById('newEntryWeight'),
+                newEntryColor: document.getElementById('newEntryColor'),
+                confettiCanvas: document.getElementById('confettiCanvas'),
+                confettiCtx: document.getElementById('confettiCanvas').getContext('2d'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                modalContent: document.getElementById('modalContent'),
+                dropZone: document.getElementById('dropZone'),
+                btnResetElimination: document.getElementById('btnResetElimination'),
+            };
+
+            function generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+            }
+
+            function loadFromStorage(key, fallback) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    if (raw === null) return fallback;
+                    const parsed = JSON.parse(raw);
+                    return parsed !== null && parsed !== undefined ? parsed : fallback;
+                } catch {
+                    return fallback;
+                }
+            }
+
+            function saveToStorage(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch {}
+            }
+
+            function loadState() {
+                state.entries = loadFromStorage(STORAGE_KEYS.ENTRIES, [...DEFAULT_ENTRIES]);
+                state.settings = { ...DEFAULT_SETTINGS, ...loadFromStorage(STORAGE_KEYS.SETTINGS, {}) };
+                state.theme = loadFromStorage(STORAGE_KEYS.THEME, 'light');
+                state.history = loadFromStorage(STORAGE_KEYS.HISTORY, []);
+                state.statistics = loadFromStorage(STORAGE_KEYS.STATISTICS, { totalSpins: 0, winsPerEntry: {} });
+                const eliminatedArr = loadFromStorage(STORAGE_KEYS.ELIMINATED, []);
+                state.eliminatedEntries = new Set(eliminatedArr);
+                state.spinMode = loadFromStorage(STORAGE_KEYS.SPIN_MODE, 'standard');
+                if (!Array.isArray(state.entries)) state.entries = [...DEFAULT_ENTRIES];
+                if (!state.statistics || typeof state.statistics.totalSpins !== 'number') {
+                    state.statistics = { totalSpins: 0, winsPerEntry: {} };
+                }
+                if (!Array.isArray(state.history)) state.history = [];
+            }
+
+            function saveAll() {
+                saveToStorage(STORAGE_KEYS.ENTRIES, state.entries);
+                saveToStorage(STORAGE_KEYS.SETTINGS, state.settings);
+                saveToStorage(STORAGE_KEYS.THEME, state.theme);
+                saveToStorage(STORAGE_KEYS.HISTORY, state.history.slice(-100));
+                saveToStorage(STORAGE_KEYS.STATISTICS, state.statistics);
+                saveToStorage(STORAGE_KEYS.ELIMINATED, [...state.eliminatedEntries]);
+                saveToStorage(STORAGE_KEYS.SPIN_MODE, state.spinMode);
+            }
+
+            function applyTheme() {
+                dom.body.setAttribute('data-theme', state.theme);
+                dom.themeSelect.value = state.theme;
+            }
+
+            function getActiveEntries() {
+                if (state.spinMode === 'elimination') {
+                    return state.entries.filter(e => !state.eliminatedEntries.has(e.id));
+                }
+                return [...state.entries];
+            }
+
+            function getEntryColor(entry, index) {
+                if (!state.settings.autoColors && entry.color && entry.color !== '#5b6af0') {
+                    return entry.color;
+                }
+                return AUTO_COLORS[index % AUTO_COLORS.length];
+            }
+
+            function getContrastColor(hexColor) {
+                if (!state.settings.autoTextContrast) return '#1a1d23';
+                const hex = hexColor.replace('#', '');
+                const r = parseInt(hex.slice(0, 2), 16);
+                const g = parseInt(hex.slice(2, 4), 16);
+                const b = parseInt(hex.slice(4, 6), 16);
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                return luminance > 0.55 ? '#1a1d23' : '#ffffff';
+            }
+
+            function renderWheel() {
+                const activeEntries = getActiveEntries();
+                const group = dom.wheelGroup;
+                group.innerHTML = '';
+                if (activeEntries.length === 0) {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', '150');
+                    circle.setAttribute('cy', '150');
+                    circle.setAttribute('r', '130');
+                    circle.setAttribute('fill', '#e0e0e0');
+                    circle.setAttribute('stroke', '#ccc');
+                    circle.setAttribute('stroke-width', '2');
+                    group.appendChild(circle);
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', '150');
+                    text.setAttribute('y', '155');
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('font-size', '16');
+                    text.setAttribute('fill', '#888');
+                    text.textContent = 'Add entries →';
+                    group.appendChild(text);
+                    return;
+                }
+                const count = activeEntries.length;
+                const sectorAngle = (2 * Math.PI) / count;
+                const radius = 130;
+                const cx = 150;
+                const cy = 150;
+                activeEntries.forEach((entry, i) => {
+                    const startAngle = i * sectorAngle - Math.PI / 2;
+                    const endAngle = (i + 1) * sectorAngle - Math.PI / 2;
+                    const color = getEntryColor(entry, i);
+                    const x1 = cx + radius * Math.cos(startAngle);
+                    const y1 = cy + radius * Math.sin(startAngle);
+                    const x2 = cx + radius * Math.cos(endAngle);
+                    const y2 = cy + radius * Math.sin(endAngle);
+                    const largeArc = sectorAngle > Math.PI ? 1 : 0;
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const d =
+                        `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                    path.setAttribute('d', d);
+                    path.setAttribute('fill', color);
+                    path.setAttribute('stroke', 'rgba(255,255,255,0.3)');
+                    path.setAttribute('stroke-width', '2');
+                    path.setAttribute('data-entry-id', entry.id);
+                    group.appendChild(path);
+                    const midAngle = startAngle + sectorAngle / 2;
+                    const textRadius = radius * 0.68;
+                    const tx = cx + textRadius * Math.cos(midAngle);
+                    const ty = cy + textRadius * Math.sin(midAngle);
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', tx);
+                    text.setAttribute('y', ty);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('dominant-baseline', 'central');
+                    text.setAttribute('font-size', '13');
+                    text.setAttribute('font-weight', '700');
+                    text.setAttribute('fill', getContrastColor(color));
+                    text.setAttribute('transform', `rotate(${(midAngle * 180) / Math.PI + 90}, ${tx}, ${ty})`);
+                    text.setAttribute('pointer-events', 'none');
+                    const displayText = (entry.emoji ? entry.emoji + ' ' : '') + entry.text;
+                    text.textContent = displayText.length > 16 ? displayText.slice(0, 14) + '…' :
+                        displayText;
+                    group.appendChild(text);
+                });
+            }
+
+            function updateWinnerPanel(message, isWin = false) {
+                dom.winnerPanel.textContent = message || '';
+                if (message) {
+                    dom.winnerPanel.classList.add('visible');
+                    if (isWin) {
+                        dom.winnerPanel.classList.add('winner-glow');
+                        setTimeout(() => dom.winnerPanel.classList.remove('winner-glow'), 1200);
+                    } else {
+                        dom.winnerPanel.classList.remove('winner-glow');
+                    }
+                } else {
+                    dom.winnerPanel.classList.remove('visible', 'winner-glow');
+                }
+            }
+
+            function getWinningEntryIndex(activeEntries) {
+                if (activeEntries.length === 0) return -1;
+                if (state.spinMode === 'weighted') {
+                    const totalWeight = activeEntries.reduce((sum, e) => sum + Math.max(0.1, e.weight || 1),
+                        0);
+                    let random = Math.random() * totalWeight;
+                    for (let i = 0; i < activeEntries.length; i++) {
+                        random -= Math.max(0.1, activeEntries[i].weight || 1);
+                        if (random <= 0) return i;
+                    }
+                    return activeEntries.length - 1;
+                }
+                return Math.floor(Math.random() * activeEntries.length);
+            }
+
+            function calculateTargetRotation(winningIndex, activeCount) {
+                const sectorAngle = 360 / activeCount;
+                const sectorCenter = winningIndex * sectorAngle + sectorAngle / 2;
+                const randomOffset = (Math.random() - 0.5) * sectorAngle * 0.7;
+                const targetAngle = sectorCenter + randomOffset;
+                const fullRotations = (5 + Math.floor(Math.random() * 4)) * 360;
+                const currentMod = state.currentRotation % 360;
+                let neededRotation = fullRotations + targetAngle;
+                while (neededRotation < state.currentRotation + 360) {
+                    neededRotation += 360;
+                }
+                const delta = neededRotation - state.currentRotation;
+                const extraFull = Math.floor(delta / 360) * 360;
+                return state.currentRotation + extraFull + ((targetAngle - currentMod + 360) % 360) + fullRotations;
+            }
+
+            function spinEasing(t) {
+                if (t < 0.08) return t * t * 30;
+                if (t < 0.6) return 0.19 + (t - 0.08) * 1.25;
+                return 1 - Math.pow(1 - t, 3.8);
+            }
+
+            function initAudioContext() {
+                if (!state.audioContext) {
+                    try {
+                        state.audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                    } catch {
+                        state.audioContext = null;
+                    }
+                }
+                if (state.audioContext && state.audioContext.state === 'suspended') {
+                    state.audioContext.resume();
+                }
+                return state.audioContext;
+            }
+
+            function playTickSound() {
+                if (!state.settings.soundEnabled || state.settings.soundTheme === 'silent') return;
+                const ctx = initAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const theme = state.settings.soundTheme;
+                const now = ctx.currentTime;
+                switch (theme) {
+                    case 'casino':
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(1200, now);
+                        osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+                        gain.gain.setValueAtTime(0.25, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                        osc.start(now);
+                        osc.stop(now + 0.04);
+                        break;
+                    case 'wood':
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(300, now);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                        osc.start(now);
+                        osc.stop(now + 0.06);
+                        break;
+                    case 'metal':
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(2000, now);
+                        osc.frequency.exponentialRampToValueAtTime(600, now + 0.03);
+                        gain.gain.setValueAtTime(0.12, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                        osc.start(now);
+                        osc.stop(now + 0.03);
+                        break;
+                    case 'classic':
+                    default:
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(900, now);
+                        gain.gain.setValueAtTime(0.3, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                        osc.start(now);
+                        osc.stop(now + 0.05);
+                        break;
+                }
+            }
+
+            function playWinSound() {
+                if (!state.settings.soundEnabled || state.settings.soundTheme === 'silent') return;
+                const ctx = initAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const notes = [523, 659, 784, 1047];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(freq, now + i * 0.12);
+                    gain.gain.setValueAtTime(0.3, now + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.25);
+                    osc.start(now + i * 0.12);
+                    osc.stop(now + i * 0.12 + 0.25);
+                });
+            }
+
+            function vibrateDevice(pattern) {
+                if (state.settings.vibrationEnabled && navigator.vibrate) {
+                    navigator.vibrate(pattern);
+                }
+            }
+
+            function launchConfetti() {
+                if (!state.settings.confettiEnabled) return;
+                const canvas = dom.confettiCanvas;
+                const ctx = dom.confettiCtx;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const particles = [];
+                const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff922b', '#f06595',
+                    '#74c0fc', '#ffa94d', '#da77f2', '#ff6b9d'
+                ];
+                const pointerRect = dom.wheelWrapper.getBoundingClientRect();
+                const originX = pointerRect.left + pointerRect.width / 2;
+                const originY = pointerRect.top;
+                for (let i = 0; i < 150; i++) {
+                    particles.push({
+                        x: originX,
+                        y: originY,
+                        vx: (Math.random() - 0.5) * 18,
+                        vy: (Math.random() - 1.5) * 14 - 6,
+                        life: 1,
+                        decay: 0.008 + Math.random() * 0.025,
+                        size: 4 + Math.random() * 7,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rotation: Math.random() * 360,
+                        rotSpeed: (Math.random() - 0.5) * 15,
+                        shape: Math.random() > 0.5 ? 'rect' : 'circle',
+                    });
+                }
+                let confettiAnimationId;
+
+                function animateConfetti() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    let alive = false;
+                    particles.forEach(p => {
+                        if (p.life <= 0) return;
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.35;
+                        p.life -= p.decay;
+                        p.rotation += p.rotSpeed;
+                        ctx.save();
+                        ctx.globalAlpha = Math.max(0, p.life);
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+                        ctx.fillStyle = p.color;
+                        if (p.shape === 'rect') {
+                            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                        } else {
+                            ctx.beginPath();
+                            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                    });
+                    if (alive) {
+                        confettiAnimationId = requestAnimationFrame(animateConfetti);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+                animateConfetti();
+                setTimeout(() => {
+                    if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }, 4000);
+            }
+
+            function spinWheel(infiniteMode = false) {
+                if (state.isSpinning) return;
+                const activeEntries = getActiveEntries();
+                if (activeEntries.length === 0) {
+                    updateWinnerPanel('⚠️ Add some entries first!');
+                    return;
+                }
+                if (state.spinMode === 'elimination' && activeEntries.length <= 1) {
+                    updateWinnerPanel('🏆 Only one entry remains! Reset elimination.');
+                    return;
+                }
+                initAudioContext();
+                state.isSpinning = true;
+                state.winner = null;
+                updateWinnerPanel('');
+                dom.wheelSvg.classList.add('spinning');
+                dom.btnSpin.textContent = infiniteMode ? '🛑 Stop' : '🌀 Spinning...';
+                dom.btnSpin.disabled = infiniteMode ? false : true;
+                if (infiniteMode) {
+                    dom.btnSpin.style.background = '#ef4444';
+                }
+                const winningIndex = getWinningEntryIndex(activeEntries);
+                const targetRotation = calculateTargetRotation(winningIndex, activeEntries.length);
+                const startRotation = state.currentRotation;
+                const totalRotation = targetRotation - startRotation;
+                const durationMs = state.settings.spinDuration * 1000;
+                const startTime = performance.now();
+                let lastSectorIndex = -1;
+                const activeCount = activeEntries.length;
+                const sectorAngleDeg = 360 / activeCount;
+                let infiniteStopped = false;
+                let infiniteSpeed = 720;
+
+                function animate(now) {
+                    const elapsed = now - startTime;
+                    if (infiniteMode && !infiniteStopped) {
+                        const dt = Math.min(elapsed - (state._lastInfiniteTime || elapsed), 50);
+                        state._lastInfiniteTime = elapsed;
+                        state.currentRotation += infiniteSpeed * (dt / 1000);
+                        infiniteSpeed = Math.max(300, infiniteSpeed - 8 * (dt / 1000));
+                        const currentMod = ((state.currentRotation % 360) + 360) % 360;
+                        const currentSector = Math.floor(currentMod / sectorAngleDeg) % activeCount;
+                        if (currentSector !== lastSectorIndex && activeCount > 0) {
+                            lastSectorIndex = currentSector;
+                            playTickSound();
+                            vibrateDevice(15);
+                        }
+                        dom.wheelGroup.setAttribute('transform',
+                            `rotate(${state.currentRotation}, 150, 150)`);
+                        if (infiniteStopped) {
+                            state._infiniteStopTime = performance.now();
+                            state._infiniteStartRotation = state.currentRotation;
+                            state._infiniteTargetRotation = state.currentRotation + (540 + Math.random() *
+                                720);
+                            state._infiniteTotalRotation = state._infiniteTargetRotation - state
+                                ._infiniteStartRotation;
+                            state._infiniteDuration = 3000 + Math.random() * 2000;
+                        } else {
+                            state.animationId = requestAnimationFrame(animate);
+                            return;
+                        }
+                    }
+                    let effectiveStartRotation = startRotation;
+                    let effectiveTotalRotation = totalRotation;
+                    let effectiveDuration = durationMs;
+                    let effectiveStartTime = startTime;
+                    if (infiniteMode && state._infiniteStopTime) {
+                        effectiveStartRotation = state._infiniteStartRotation;
+                        effectiveTotalRotation = state._infiniteTotalRotation;
+                        effectiveDuration = state._infiniteDuration;
+                        effectiveStartTime = state._infiniteStopTime;
+                    }
+                    const elapsedAdjusted = now - effectiveStartTime;
+                    let t = Math.min(elapsedAdjusted / effectiveDuration, 1);
+                    t = spinEasing(t);
+                    const currentRot = effectiveStartRotation + effectiveTotalRotation * t;
+                    state.currentRotation = currentRot;
+                    const currentMod = ((currentRot % 360) + 360) % 360;
+                    const currentSector = Math.floor(currentMod / sectorAngleDeg) % activeCount;
+                    if (currentSector !== lastSectorIndex && activeCount > 0) {
+                        lastSectorIndex = currentSector;
+                        playTickSound();
+                        vibrateDevice(15);
+                    }
+                    dom.wheelGroup.setAttribute('transform', `rotate(${currentRot}, 150, 150)`);
+                    if (t < 1) {
+                        state.animationId = requestAnimationFrame(animate);
+                    } else {
+                        finishSpin(activeEntries, winningIndex, infiniteMode);
+                    }
+                }
+                state._lastInfiniteTime = startTime;
+                if (infiniteMode) {
+                    state._infiniteStopTime = null;
+                }
+                state.animationId = requestAnimationFrame(animate);
+            }
+
+            function finishSpin(activeEntries, winningIndex, infiniteMode) {
+                state.isSpinning = false;
+                state.animationId = null;
+                dom.wheelSvg.classList.remove('spinning');
+                dom.btnSpin.textContent = '🎯 Spin';
+                dom.btnSpin.disabled = false;
+                dom.btnSpin.style.background = '';
+                state._lastInfiniteTime = null;
+                state._infiniteStopTime = null;
+                const currentMod = ((state.currentRotation % 360) + 360) % 360;
+                const sectorAngleDeg = 360 / activeEntries.length;
+                const actualWinnerIndex = Math.floor(currentMod / sectorAngleDeg) % activeEntries.length;
+                const winnerEntry = activeEntries[actualWinnerIndex];
+                if (!winnerEntry) {
+                    updateWinnerPanel('⚠️ Try again!');
+                    return;
+                }
+                state.winner = winnerEntry;
+                state.statistics.totalSpins = (state.statistics.totalSpins || 0) + 1;
+                state.statistics.winsPerEntry[winnerEntry.id] = (state.statistics.winsPerEntry[winnerEntry.id] || 0) +
+                    1;
+                state.history.unshift({
+                    entryId: winnerEntry.id,
+                    text: winnerEntry.text,
+                    emoji: winnerEntry.emoji || '',
+                    timestamp: Date.now(),
+                });
+                if (state.history.length > 200) state.history = state.history.slice(0, 200);
+                if (state.spinMode === 'elimination') {
+                    state.eliminatedEntries.add(winnerEntry.id);
+                    const remaining = state.entries.filter(e => !state.eliminatedEntries.has(e.id));
+                    if (remaining.length <= 1) {
+                        updateWinnerPanel(
+                            `🏆 Final Winner: ${winnerEntry.emoji || ''} ${winnerEntry.text}! (Elimination complete)`,
+                            true);
+                    } else {
+                        updateWinnerPanel(
+                            `✅ Eliminated: ${winnerEntry.emoji || ''} ${winnerEntry.text} (${remaining.length} remaining)`,
+                            true);
+                    }
+                    dom.btnResetElimination.style.display = 'inline-flex';
+                } else {
+                    updateWinnerPanel(`🎉 Winner: ${winnerEntry.emoji || ''} ${winnerEntry.text}!`, true);
+                }
+                playWinSound();
+                vibrateDevice([80, 60, 80, 60, 200]);
+                launchConfetti();
+                renderWheel();
+                renderEditorList();
+                saveAll();
+            }
+
+            function stopInfiniteSpin() {
+                if (!state.isSpinning || state.spinMode !== 'infinite') return;
+                if (state._infiniteStopTime) return;
+                state._infiniteStopTime = performance.now();
+                state._infiniteStartRotation = state.currentRotation;
+                const activeEntries = getActiveEntries();
+                const winningIndex = getWinningEntryIndex(activeEntries);
+                const sectorAngleDeg = 360 / activeEntries.length;
+                const sectorCenter = winningIndex * sectorAngleDeg + sectorAngleDeg / 2;
+                const randomOffset = (Math.random() - 0.5) * sectorAngleDeg * 0.6;
+                const targetMod = sectorCenter + randomOffset;
+                const currentMod = ((state.currentRotation % 360) + 360) % 360;
+                let extra = targetMod - currentMod;
+                if (extra < 0) extra += 360;
+                const fullRots = (2 + Math.floor(Math.random() * 3)) * 360;
+                state._infiniteTargetRotation = state.currentRotation + extra + fullRots;
+                state._infiniteTotalRotation = state._infiniteTargetRotation - state._infiniteStartRotation;
+                state._infiniteDuration = 2500 + Math.random() * 2000;
+                state._infiniteWinningIndex = winningIndex;
+                dom.btnSpin.textContent = '⏳ Stopping...';
+                dom.btnSpin.disabled = true;
+                dom.btnSpin.style.background = '';
+            }
+
+            function handleSpinClick() {
+                if (state.isSpinning && state.spinMode === 'infinite') {
+                    stopInfiniteSpin();
+                    return;
+                }
+                if (state.isSpinning) return;
+                spinWheel(state.spinMode === 'infinite');
+            }
+
+            function renderEditorList() {
+                const list = dom.editorList;
+                list.innerHTML = '';
+                state.entries.forEach((entry, index) => {
+                    const isEliminated = state.eliminatedEntries.has(entry.id);
+                    const li = document.createElement('li');
+                    li.className = 'editor-list-item' + (isEliminated ? ' eliminated' : '');
+                    li.setAttribute('data-entry-id', entry.id);
+                    const colorInput = document.createElement('input');
+                    colorInput.type = 'color';
+                    colorInput.className = 'editor-color-input';
+                    colorInput.value = entry.color || getEntryColor(entry, index);
+                    colorInput.setAttribute('aria-label', 'Entry color');
+                    colorInput.addEventListener('input', (e) => {
+                        entry.color = e.target.value;
+                        if (state.settings.autoColors) state.settings.autoColors = false;
+                        renderWheel();
+                        saveAll();
+                    });
+                    const textInput = document.createElement('input');
+                    textInput.type = 'text';
+                    textInput.className = 'editor-input';
+                    textInput.value = (entry.emoji || '') + ' ' + entry.text;
+                    textInput.placeholder = 'Entry text';
+                    textInput.setAttribute('aria-label', 'Entry text');
+                    textInput.addEventListener('input', () => {
+                        const val = textInput.value.trim();
+                        const emojiMatch = val.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u);
+                        if (emojiMatch) {
+                            entry.emoji = emojiMatch[1];
+                            entry.text = val.slice(emojiMatch[0].length).trim() || entry.text;
+                        } else {
+                            entry.emoji = '';
+                            entry.text = val || 'Untitled';
+                        }
+                        renderWheel();
+                        saveAll();
+                    });
+                    const weightInput = document.createElement('input');
+                    weightInput.type = 'number';
+                    weightInput.className = 'editor-input editor-weight';
+                    weightInput.value = entry.weight || 1;
+                    weightInput.min = '0.1';
+                    weightInput.max = '100';
+                    weightInput.step = '0.1';
+                    weightInput.setAttribute('aria-label', 'Weight');
+                    weightInput.addEventListener('input', () => {
+                        entry.weight = parseFloat(weightInput.value) || 1;
+                        saveAll();
+                    });
+                    const dupBtn = document.createElement('button');
+                    dupBtn.className = 'btn btn-sm';
+                    dupBtn.textContent = '📋';
+                    dupBtn.title = 'Duplicate';
+                    dupBtn.setAttribute('aria-label', 'Duplicate entry');
+                    dupBtn.addEventListener('click', () => {
+                        const newEntry = { ...entry, id: generateId() };
+                        state.entries.splice(index + 1, 0, newEntry);
+                        renderWheel();
+                        renderEditorList();
+                        saveAll();
+                    });
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn btn-sm btn-danger';
+                    delBtn.textContent = '✕';
+                    delBtn.title = 'Delete';
+                    delBtn.setAttribute('aria-label', 'Delete entry');
+                    delBtn.addEventListener('click', () => {
+                        state.entries = state.entries.filter(e => e.id !== entry.id);
+                        state.eliminatedEntries.delete(entry.id);
+                        renderWheel();
+                        renderEditorList();
+                        saveAll();
+                    });
+                    li.appendChild(colorInput);
+                    li.appendChild(textInput);
+                    li.appendChild(weightInput);
+                    li.appendChild(dupBtn);
+                    li.appendChild(delBtn);
+                    list.appendChild(li);
+                });
+                const remaining = state.entries.filter(e => !state.eliminatedEntries.has(e.id)).length;
+                if (state.spinMode === 'elimination' && state.eliminatedEntries.size > 0) {
+                    dom.btnResetElimination.style.display = 'inline-flex';
+                    dom.btnResetElimination.textContent = `Reset Elimination (${remaining} left)`;
+                } else if (state.spinMode === 'elimination' && state.eliminatedEntries.size === 0) {
+                    dom.btnResetElimination.style.display = 'none';
+                } else {
+                    dom.btnResetElimination.style.display = 'none';
+                }
+            }
+
+            function addEntry() {
+                const textVal = dom.newEntryText.value.trim();
+                if (!textVal) return;
+                const emojiMatch = textVal.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u);
+                let emoji = '';
+                let text = textVal;
+                if (emojiMatch) {
+                    emoji = emojiMatch[1];
+                    text = textVal.slice(emojiMatch[0].length).trim() || textVal;
+                }
+                const color = dom.newEntryColor.value;
+                const weight = parseFloat(dom.newEntryWeight.value) || 1;
+                const entry = {
+                    id: generateId(),
+                    text: text || 'Untitled',
+                    emoji,
+                    color,
+                    weight: Math.max(0.1, weight),
+                };
+                state.entries.push(entry);
+                dom.newEntryText.value = '';
+                dom.newEntryWeight.value = '1';
+                renderWheel();
+                renderEditorList();
+                saveAll();
+                dom.newEntryText.focus();
+            }
+
+            function shuffleEntries() {
+                if (state.entries.length < 2) return;
+                for (let i = state.entries.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [state.entries[i], state.entries[j]] = [state.entries[j], state.entries[i]];
+                }
+                renderWheel();
+                renderEditorList();
+                saveAll();
+            }
+
+            function clearAllEntries() {
+                if (state.entries.length === 0) return;
+                if (confirm('Delete all entries?')) {
+                    state.entries = [];
+                    state.eliminatedEntries.clear();
+                    state.winner = null;
+                    updateWinnerPanel('');
+                    renderWheel();
+                    renderEditorList();
+                    saveAll();
+                }
+            }
+
+            function resetElimination() {
+                state.eliminatedEntries.clear();
+                state.winner = null;
+                updateWinnerPanel('');
+                dom.btnResetElimination.style.display = 'none';
+                renderWheel();
+                renderEditorList();
+                saveAll();
+            }
+
+            function setSpinMode(mode) {
+                state.spinMode = mode;
+                state.eliminatedEntries.clear();
+                state.winner = null;
+                updateWinnerPanel('');
+                dom.btnResetElimination.style.display = 'none';
+                dom.spinModeIndicator.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+                dom.btnSpin.textContent = '🎯 Spin';
+                dom.btnSpin.style.background = '';
+                dom.btnSpin.disabled = false;
+                if (state.isSpinning) {
+                    if (state.animationId) cancelAnimationFrame(state.animationId);
+                    state.isSpinning = false;
+                    state.animationId = null;
+                    dom.wheelSvg.classList.remove('spinning');
+                }
+                renderWheel();
+                renderEditorList();
+                saveAll();
+            }
+
+            function showModal(title, contentHTML) {
+                dom.modalContent.innerHTML = `
+                    <button class="btn btn-sm modal-close" id="modalCloseBtn" aria-label="Close">✕ Close</button>
+                    <h3>${title}</h3>
+                    ${contentHTML}
+                `;
+                dom.modalOverlay.style.display = 'flex';
+                dom.modalOverlay.setAttribute('aria-hidden', 'false');
+                document.getElementById('modalCloseBtn').addEventListener('click', hideModal);
+                dom.modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === dom.modalOverlay) hideModal();
+                });
+            }
+
+            function hideModal() {
+                dom.modalOverlay.style.display = 'none';
+                dom.modalOverlay.setAttribute('aria-hidden', 'true');
+                dom.modalContent.innerHTML = '';
+            }
+
+            function showSettingsModal() {
+                const s = state.settings;
+                const content = `
+                    <div class="toggle-row"><span>Spin Duration (s)</span>
+                        <input class="editor-input" type="number" id="setDuration" value="${s.spinDuration}" min="1" max="30" step="0.5" style="width:70px;"></div>
+                    <div class="toggle-row"><span>Spin Speed</span>
+                        <input class="editor-input" type="range" id="setSpeed" value="${s.spinSpeed}" min="0.3" max="3" step="0.1" style="width:120px;"></div>
+                    <div class="toggle-row"><span>Sound</span>
+                        <label class="toggle-switch"><input type="checkbox" id="setSound" ${s.soundEnabled?'checked':''}><span class="toggle-slider"></span></label></div>
+                    <div class="toggle-row"><span>Sound Theme</span>
+                        <select class="theme-select" id="setSoundTheme">
+                            <option value="classic" ${s.soundTheme==='classic'?'selected':''}>Classic</option>
+                            <option value="casino" ${s.soundTheme==='casino'?'selected':''}>Casino</option>
+                            <option value="wood" ${s.soundTheme==='wood'?'selected':''}>Wood</option>
+                            <option value="metal" ${s.soundTheme==='metal'?'selected':''}>Metal</option>
+                            <option value="silent" ${s.soundTheme==='silent'?'selected':''}>Silent</option>
+                        </select></div>
+                    <div class="toggle-row"><span>Vibration</span>
+                        <label class="toggle-switch"><input type="checkbox" id="setVibration" ${s.vibrationEnabled?'checked':''}><span class="toggle-slider"></span></label></div>
+                    <div class="toggle-row"><span>Confetti</span>
+                        <label class="toggle-switch"><input type="checkbox" id="setConfetti" ${s.confettiEnabled?'checked':''}><span class="toggle-slider"></span></label></div>
+                    <div class="toggle-row"><span>Auto Colors</span>
+                        <label class="toggle-switch"><input type="checkbox" id="setAutoColors" ${s.autoColors?'checked':''}><span class="toggle-slider"></span></label></div>
+                    <div class="toggle-row"><span>Auto Text Contrast</span>
+                        <label class="toggle-switch"><input type="checkbox" id="setAutoContrast" ${s.autoTextContrast?'checked':''}><span class="toggle-slider"></span></label></div>
+                    <button class="btn btn-primary" id="btnSaveSettings">Save Settings</button>
+                `;
+                showModal('⚙️ Settings', content);
+                document.getElementById('btnSaveSettings').addEventListener('click', () => {
+                    state.settings.spinDuration = parseFloat(document.getElementById('setDuration')
+                        .value) || 5;
+                    state.settings.spinSpeed = parseFloat(document.getElementById('setSpeed').value) ||
+                        1;
+                    state.settings.soundEnabled = document.getElementById('setSound').checked;
+                    state.settings.soundTheme = document.getElementById('setSoundTheme').value;
+                    state.settings.vibrationEnabled = document.getElementById('setVibration').checked;
+                    state.settings.confettiEnabled = document.getElementById('setConfetti').checked;
+                    state.settings.autoColors = document.getElementById('setAutoColors').checked;
+                    state.settings.autoTextContrast = document.getElementById('setAutoContrast')
+                    .checked;
+                    renderWheel();
+                    saveAll();
+                    hideModal();
+                });
+            }
+
+            function showTemplatesModal() {
+                let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+                Object.keys(TEMPLATES).forEach(name => {
+                    html +=
+                        `<button class="btn btn-sm template-btn" data-name="${name}">${name}</button>`;
+                });
+                html += '</div>';
+                showModal('📋 Ready Templates', html);
+                document.querySelectorAll('.template-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const name = btn.getAttribute('data-name');
+                        const template = TEMPLATES[name];
+                        if (template && confirm(`Load template "${name}"? This replaces current entries.`)) {
+                            state.entries = template.map(t => ({
+                                ...t,
+                                id: generateId(),
+                                color: t.color || '#5b6af0',
+                                weight: t.weight || 1,
+                                emoji: t.emoji || '',
+                            }));
+                            state.eliminatedEntries.clear();
+                            state.winner = null;
+                            updateWinnerPanel('');
+                            dom.btnResetElimination.style.display = 'none';
+                            renderWheel();
+                            renderEditorList();
+                            saveAll();
+                            hideModal();
+                        }
+                    });
+                });
+            }
+
+            function showHistoryModal() {
+                if (state.history.length === 0) {
+                    showModal('📜 History', '<p>No spins yet. Spin the wheel!</p>');
+                    return;
+                }
+                let html =
+                    '<div style="max-height:350px;overflow-y:auto;"><button class="btn btn-sm btn-danger" id="btnClearHistory" style="margin-bottom:8px;">Clear History</button>';
+                state.history.slice(0, 50).forEach((h, i) => {
+                    const date = new Date(h.timestamp).toLocaleString();
+                    html +=
+                        `<div class="stat-row"><span>${h.emoji||''} ${h.text}</span><span style="color:var(--text2);font-size:0.75rem;">${date}</span></div>`;
+                });
+                html += '</div>';
+                showModal('📜 History', html);
+                const clearBtn = document.getElementById('btnClearHistory');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        if (confirm('Clear all history?')) {
+                            state.history = [];
+                            saveAll();
+                            hideModal();
+                        }
+                    });
+                }
+            }
+
+            function showStatsModal() {
+                const total = state.statistics.totalSpins || 0;
+                let html = `<p><strong>Total Spins:</strong> ${total}</p>`;
+                if (total > 0 && state.entries.length > 0) {
+                    html += '<div style="max-height:300px;overflow-y:auto;">';
+                    state.entries.forEach(e => {
+                        const wins = state.statistics.winsPerEntry[e.id] || 0;
+                        const pct = total > 0 ? ((wins / total) * 100).toFixed(1) : '0';
+                        html +=
+                            `<div class="stat-row"><span>${e.emoji||''} ${e.text}</span><span>${wins} wins (${pct}%)</span></div>`;
+                    });
+                    html += '</div>';
+                }
+                html +=
+                    '<button class="btn btn-sm btn-danger" id="btnClearStats" style="margin-top:8px;">Reset Statistics</button>';
+                showModal('📊 Statistics', html);
+                const clearBtn = document.getElementById('btnClearStats');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        if (confirm('Reset all statistics?')) {
+                            state.statistics = { totalSpins: 0, winsPerEntry: {} };
+                            saveAll();
+                            hideModal();
+                        }
+                    });
+                }
+            }
+
+            function showImportModal() {
+                const content = `
+                    <p>Paste data or drop a file below:</p>
+                    <textarea class="editor-input" id="importTextarea" rows="6" placeholder="One entry per line, or paste CSV/JSON..."></textarea>
+                    <div class="drop-zone" id="importDropZone" style="display:block;">Drop TXT, CSV, or JSON file here</div>
+                    <select class="theme-select" id="importFormat">
+                        <option value="auto">Auto-detect</option>
+                        <option value="txt">TXT (one per line)</option>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                    </select>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-primary" id="btnDoImport">Import</button>
+                        <button class="btn btn-sm" id="btnImportAppend">Append (don't replace)</button>
+                    </div>
+                `;
+                showModal('📥 Import', content);
+                const textarea = document.getElementById('importTextarea');
+                const dropZone = document.getElementById('importDropZone');
+                const formatSelect = document.getElementById('importFormat');
+                dropZone.addEventListener('dragover', (e) => { e.preventDefault();
+                    dropZone.classList.add('drag-over'); });
+                dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file) readFileAndImport(file, textarea);
+                });
+                dropZone.addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.txt,.csv,.json';
+                    input.addEventListener('change', () => {
+                        if (input.files[0]) readFileAndImport(input.files[0], textarea);
+                    });
+                    input.click();
+                });
+                document.getElementById('btnDoImport').addEventListener('click', () => {
+                    processImportData(textarea.value, formatSelect.value, false);
+                });
+                document.getElementById('btnImportAppend').addEventListener('click', () => {
+                    processImportData(textarea.value, formatSelect.value, true);
+                });
+            }
+
+            function readFileAndImport(file, textarea) {
+                const reader = new FileReader();
+                reader.onload = () => { textarea.value = reader.result; };
+                reader.readAsText(file);
+            }
+
+            function processImportData(data, format, append) {
+                if (!data.trim()) return;
+                let parsed = [];
+                const detectFormat = format === 'auto' ? detectDataFormat(data) : format;
+                try {
+                    if (detectFormat === 'json') {
+                        const json = JSON.parse(data);
+                        const arr = Array.isArray(json) ? json : (json.entries || json.items || [json]);
+                        parsed = arr.map(item => ({
+                            id: generateId(),
+                            text: typeof item === 'string' ? item : (item.text || item.name ||
+                                item.label || 'Untitled'),
+                            emoji: typeof item === 'object' ? (item.emoji || '') : '',
+                            color: typeof item === 'object' ? (item.color || '#5b6af0') : '#5b6af0',
+                            weight: typeof item === 'object' ? (item.weight || 1) : 1,
+                        }));
+                    } else if (detectFormat === 'csv') {
+                        const lines = data.trim().split('\n');
+                        const headers = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g,
+                            ''));
+                        parsed = lines.slice(1).filter(l => l.trim()).map(line => {
+                            const vals = parseCSVLine(line);
+                            const obj = {};
+                            headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+                            return {
+                                id: generateId(),
+                                text: obj.text || obj.name || obj.entry || obj.label || 'Untitled',
+                                emoji: obj.emoji || '',
+                                color: obj.color || '#5b6af0',
+                                weight: parseFloat(obj.weight) || 1,
+                            };
+                        });
+                    } else {
+                        parsed = data.trim().split('\n').filter(l => l.trim()).map(line => {
+                            const trimmed = line.trim();
+                            const emojiMatch = trimmed.match(
+                                /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)\s*/u);
+                            return {
+                                id: generateId(),
+                                text: emojiMatch ? trimmed.slice(emojiMatch[0].length).trim() ||
+                                    trimmed : trimmed,
+                                emoji: emojiMatch ? emojiMatch[1] : '',
+                                color: '#5b6af0',
+                                weight: 1,
+                            };
+                        });
+                    }
+                } catch {
+                    alert('Failed to parse import data. Please check the format.');
+                    return;
+                }
+                if (parsed.length === 0) { alert('No entries found in data.'); return; }
+                if (append) {
+                    state.entries = [...state.entries, ...parsed];
+                } else {
+                    state.entries = parsed;
+                    state.eliminatedEntries.clear();
+                }
+                state.winner = null;
+                updateWinnerPanel('');
+                dom.btnResetElimination.style.display = 'none';
+                renderWheel();
+                renderEditorList();
+                saveAll();
+                hideModal();
+            }
+
+            function detectDataFormat(data) {
+                const trimmed = data.trim();
+                if (trimmed.startsWith('{') || trimmed.startsWith('[')) return 'json';
+                if (trimmed.includes(',') && trimmed.split('\n')[0].includes(',')) return 'csv';
+                return 'txt';
+            }
+
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (const char of line) {
+                    if (char === '"') { inQuotes = !inQuotes; continue; }
+                    if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; continue; }
+                    current += char;
+                }
+                result.push(current.trim());
+                return result;
+            }
+
+            function exportData(format) {
+                if (state.entries.length === 0) { alert('No entries to export.'); return; }
+                let content = '';
+                let filename = 'wheel-entries.';
+                const mimeType = 'text/plain';
+                if (format === 'json') {
+                    content = JSON.stringify(state.entries.map(e => ({
+                        text: e.text,
+                        emoji: e.emoji,
+                        color: e.color,
+                        weight: e.weight,
+                    })), null, 2);
+                    filename += 'json';
+                } else if (format === 'csv') {
+                    content = 'text,emoji,color,weight\n';
+                    content += state.entries.map(e =>
+                        `"${e.text}","${e.emoji||''}","${e.color||''}",${e.weight||1}`).join('\n');
+                    filename += 'csv';
+                } else {
+                    content = state.entries.map(e => (e.emoji ? e.emoji + ' ' : '') + e.text).join('\n');
+                    filename += 'txt';
+                }
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function exportPNG() {
+                const svgEl = dom.wheelSvg;
+                const clone = svgEl.cloneNode(true);
+                clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                const serializer = new XMLSerializer();
+                const svgString = serializer.serializeToString(clone);
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 600;
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                img.onload = () => {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, 600, 600);
+                    ctx.drawImage(img, 0, 0, 600, 600);
+                    URL.revokeObjectURL(url);
+                    canvas.toBlob((blob) => {
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = 'wheel-snapshot.png';
+                        a.click();
+                    }, 'image/png');
+                };
+                img.src = url;
+            }
+
+            function showExportModal() {
+                const content = `
+                    <p>Choose export format:</p>
+                    <button class="btn btn-sm" id="btnExportTXT">📄 TXT</button>
+                    <button class="btn btn-sm" id="btnExportCSV">📊 CSV</button>
+                    <button class="btn btn-sm" id="btnExportJSON">📋 JSON</button>
+                    <button class="btn btn-sm" id="btnExportPNG">🖼️ PNG Snapshot</button>
+                `;
+                showModal('📤 Export', content);
+                document.getElementById('btnExportTXT').addEventListener('click', () => { exportData('txt');
+                    hideModal(); });
+                document.getElementById('btnExportCSV').addEventListener('click', () => { exportData('csv');
+                    hideModal(); });
+                document.getElementById('btnExportJSON').addEventListener('click', () => { exportData('json');
+                    hideModal(); });
+                document.getElementById('btnExportPNG').addEventListener('click', () => { exportPNG();
+                    hideModal(); });
+            }
+
+            function handleSwipeToSpin() {
+                let touchStartY = 0;
+                let touchStartTime = 0;
+                const wheelEl = dom.wheelWrapper;
+                wheelEl.addEventListener('touchstart', (e) => {
+                    if (state.isSpinning) return;
+                    touchStartY = e.touches[0].clientY;
+                    touchStartTime = Date.now();
+                }, { passive: true });
+                wheelEl.addEventListener('touchend', (e) => {
+                    if (state.isSpinning) return;
+                    const dy = (e.changedTouches[0]?.clientY || touchStartY) - touchStartY;
+                    const dt = Date.now() - touchStartTime;
+                    if (Math.abs(dy) > 40 && dt < 400) {
+                        handleSpinClick();
+                    }
+                });
+            }
+
+            function bindEvents() {
+                dom.themeSelect.addEventListener('change', () => {
+                    state.theme = dom.themeSelect.value;
+                    applyTheme();
+                    saveAll();
+                });
+                dom.btnSpin.addEventListener('click', handleSpinClick);
+                document.getElementById('btnSettings').addEventListener('click', showSettingsModal);
+                document.getElementById('btnTemplates').addEventListener('click', showTemplatesModal);
+                document.getElementById('btnAddEntry').addEventListener('click', addEntry);
+                dom.newEntryText.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') addEntry();
+                });
+                document.getElementById('btnShuffle').addEventListener('click', shuffleEntries);
+                document.getElementById('btnClearAll').addEventListener('click', clearAllEntries);
+                document.getElementById('btnImport').addEventListener('click', showImportModal);
+                document.getElementById('btnExport').addEventListener('click', showExportModal);
+                document.getElementById('btnHistory').addEventListener('click', showHistoryModal);
+                document.getElementById('btnStats').addEventListener('click', showStatsModal);
+                document.getElementById('btnModeStandard').addEventListener('click', () => setSpinMode(
+                    'standard'));
+                document.getElementById('btnModeWeighted').addEventListener('click', () => setSpinMode(
+                    'weighted'));
+                document.getElementById('btnModeElimination').addEventListener('click', () => setSpinMode(
+                    'elimination'));
+                document.getElementById('btnModeInfinite').addEventListener('click', () => setSpinMode('infinite'));
+                dom.btnResetElimination.addEventListener('click', resetElimination);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') hideModal();
+                    if (e.key === ' ' && !state.isSpinning && document.activeElement === document
+                        .body) {
+                        e.preventDefault();
+                        handleSpinClick();
+                    }
+                });
+                handleSwipeToSpin();
+                window.addEventListener('resize', () => {
+                    if (dom.confettiCanvas) {
+                        dom.confettiCanvas.width = window.innerWidth;
+                        dom.confettiCanvas.height = window.innerHeight;
+                    }
+                });
+            }
+
+            function init() {
+                loadState();
+                applyTheme();
+                state.currentRotation = 0;
+                dom.wheelGroup.setAttribute('transform', 'rotate(0, 150, 150)');
+                dom.confettiCanvas.width = window.innerWidth;
+                dom.confettiCanvas.height = window.innerHeight;
+                dom.spinModeIndicator.textContent = state.spinMode.charAt(0).toUpperCase() + state.spinMode.slice(
+                    1);
+                if (state.spinMode === 'elimination' && state.eliminatedEntries.size > 0) {
+                    dom.btnResetElimination.style.display = 'inline-flex';
+                    const remaining = state.entries.filter(e => !state.eliminatedEntries.has(e.id)).length;
+                    dom.btnResetElimination.textContent = `Reset Elimination (${remaining} left)`;
+                }
+                renderWheel();
+                renderEditorList();
+                updateWinnerPanel('');
+                bindEvents();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
